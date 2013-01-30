@@ -1,12 +1,21 @@
 ### getting info on classes and methods
 
-getClass("BetaSpecifier")
+getClass("BetaSpecifier")  ### displays the class itself!
 getSlots("BetaSpecifier")
 slotNames("BetaSpecifier")
+findClass("BetaSpecifier") ## where in the search list?
+find("BetaSpecifier") ## can't find it in the search list this way!
+
+getClass(ToxDoseThresholdModelSpec) ## displays the class of this OBJECT! (DoseThresholdModelSpecifier) Returns the class.
+getClass("DoseThresholdModelSpecifier")  ### 
+getSlots(getClass("DoseThresholdModelSpecifier"))  ### just DoseThresholdName
+getClassName  ### defunct!
+
 
 showMethods(f="getMean")
 showMethods(f="getMean", classes="BetaSpecifier")
 showMethods(f="getMean", classes="BetaSpecifier", includeDefs=F)
+showMethods(f="getMean", classes="ContinuousDistrSpecifier") ## none.
 methods( class="BetaSpecifier")  ###None????
 length(showMethods(classes="BetaSpecifier", printTo=F))  # > 1400
 
