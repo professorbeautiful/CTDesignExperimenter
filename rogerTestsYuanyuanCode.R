@@ -8,7 +8,15 @@ crm9 <- new("CRMSpecifier",
 	InitialStageDoseLevels=NULL)
 DesignSpecs <- list(crm9)
 
-PopModelSpecs = list(NULL)
+# PopModelSpecs = list(NULL)  ## incorrect for signature.
+
+
+doseThresholdPopModelSpec = new("PopModelSpecifier")  ## which is a list.
+doseThresholdPopModelSpec@PopModelSpec[[1]] = 
+  BaseCharSpec1 <- new("BaseCharModelSpecifier",
+                       BaseCharName = "ToxDoseThreshold",
+                       RGenFun = "exp(rnorm(1,mean=log(15),sd=0.5))") 
+
 
 ToxDoseThresholdModelSpec <- new("DoseThresholdModelSpecifier",
 				DoseThresholdName="ToxDoseThreshold")
@@ -20,10 +28,10 @@ EvalSpec3 <- new("EvalRP2DSpecifier")
 EvalSpecs <- list(EvalSpec1,EvalSpec2,EvalSpec3)
 
 oneCTresult = sim1CT(designSpec=crm9,
-		popModelSpec=PopModelSpec,
-#		popModelSpec=NULL,
+		popModelSpec=doseThresholdPopModelSpec,   ## correct.
 		outcomeModelSpec=ToxDoseThresholdModelSpec)
 oneCTresult
+
 anExperiment = doExperiment(
 	designSpecs, popModelSpecs=list(PopModelSpec), 
 	outcomeModelSpecs=list(ToxDoseThresholdModelSpec), 
