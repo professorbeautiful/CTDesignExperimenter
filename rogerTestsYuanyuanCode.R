@@ -6,17 +6,27 @@ crm9 <- new("CRMSpecifier",
 	StartingDoseLevel=3,
 	TierDoses=1:5,
 	InitialStageDoseLevels=NULL)
-DesignSpecs <- list(crm9)
+
+designSpecs <- list(crm9)
 
 # PopModelSpecs = list(NULL)  ## incorrect for signature.
 
 
 doseThresholdPopModelSpec = new("PopModelSpecifier")  ## which is a list.
 doseThresholdPopModelSpec@PopModelSpec[[1]] = 
-  BaseCharSpec1 <- new("BaseCharModelSpecifier",
-                       BaseCharName = "ToxDoseThreshold",
-                       RGenFun = "exp(rnorm(1,mean=log(15),sd=0.5))") 
-
+  new("BaseCharModelSpecifier",
+      BaseCharName = "PKclearance",
+      RGenFun = "exp(rnorm(1,mean=log(15),sd=0.5))") 
+doseThresholdPopModelSpec@PopModelSpec[[2]] = 
+  new("BaseCharModelSpecifier",
+      BaseCharName = "ToxDoseThreshold",
+      ConditionBaseCharNames = "PKclearance",
+      RGenFun = "PKclearance * exp(rnorm(1, sd=0.02))") 
+doseThresholdPopModelSpec@PopModelSpec[[3]] = 
+  new("BaseCharModelSpecifier",
+      BaseCharName = "ResponseDoseThreshold",
+      ConditionBaseCharNames = "PKclearance",
+      RGenFun = "PKclearance * exp(rnorm(1, sd=0.02))") 
 
 ToxDoseThresholdModelSpec <- new("DoseThresholdModelSpecifier",
 				DoseThresholdName="ToxDoseThreshold")
@@ -33,9 +43,11 @@ oneCTresult = sim1CT(designSpec=crm9,
 oneCTresult
 
 anExperiment = doExperiment(
-	designSpecs, popModelSpecs=list(PopModelSpec), 
+	designSpecs, popModelSpecs=list(doseThresholdPopModelSpec), 
 	outcomeModelSpecs=list(ToxDoseThresholdModelSpec), 
 	evalSpecs=EvalSpecs, 
 	nReps=200, 
 	seed=NULL, simDataDir="./") 
+length(anExperiment)  #  1;  just one scenario.
 length(anExperiment$Scenario1)  #  3 = length(EvalSpecs)
+
