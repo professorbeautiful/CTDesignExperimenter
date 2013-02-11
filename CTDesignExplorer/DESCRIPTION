@@ -1,0 +1,15 @@
+Package: CTDesignExplorer
+Type: Package
+Title: Clinical Trial Simulation Experiment Platform
+Version: 1.0
+Date: 2010-04-16
+Author: Yuanyuan Wang
+Maintainer: Yuanyuan Wang <ywangpitt@gmail.com>
+Description: This package presents an extendible simulation experiment platform for evaluating
+ clinical trial designs. The code base relies on S4 classes and methods. Design, baseline
+ characteristic model, population model, outcome model, and evaluation criterion are five key
+ object types. An action queue-based approach allows for complex decision making at the patient
+ or CT level. The exchange of common data elements provides interoperability among the objects.
+License: GPL (>=2)
+LazyLoad: yes
+Depends: R (>= 2.10.1), methods
