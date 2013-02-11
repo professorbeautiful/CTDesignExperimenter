@@ -861,13 +861,13 @@ setMethod("generateInitialActions",signature(designSpec="APlusBSpecifier"),
 setMethod("generateInitialActions",signature(designSpec="CRMSpecifier"),
     function(designSpec){
         sapply(slotNames(designSpec),function(x) assign(x,slot(designSpec,x),pos=1))
-        assign("NDoseLevels",length(TierDoses),pos=1)
+        assign("NDoseLevels",length(TierDoses),pos=1)  ### TODO: can we avoid globbing this?
         if(OutcomeModelType=="Exponential") assign("ScaledDoses",
-            exp(log(InitialProbGuesses)/exp(getMean(BetaPriorSpec))),pos=1)
+            exp(log(InitialProbGuesses)/exp(getMean(designSpec))),pos=1)
         else if (class(designSpec)=="CRMLogit1Specifier"){
             BetaPriorMean <- getMean(BetaPriorSpec)
-            assign("Param1PriorSpec",AlphaPriorSpec,pos=1)
-            assign("Param2PriorSpec",BetaPriorSpec,pos=1)
+            assign("Param1PriorSpec",AlphaPriorSpec,pos=1)   ### TODO: can we avoid globbing this?
+            assign("Param2PriorSpec",BetaPriorSpec,pos=1)   ### TODO: can we avoid globbing this?
             if (class(AlphaPriorSpec)=="numeric")
                 assign("ScaledDoses",(log(InitialProbGuesses/(1-InitialProbGuesses))-AlphaPriorSpec)/exp(BetaPriorMean),
                     pos=1)
