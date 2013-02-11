@@ -20,6 +20,7 @@ getMean(temp)
 getValidity(temp) # not defined.
 
 
+showMethods(f="doExperiment")
 showMethods(f="getMean")
 showMethods(f="getMean", classes="BetaSpecifier")
 showMethods(f="getMean", classes="BetaSpecifier", includeDefs=F)
