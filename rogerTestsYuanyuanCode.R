@@ -1,3 +1,4 @@
+library("CTDesignExplorerDevel")
 crm9 <- new("CRMSpecifier",
 	InitialProbGuesses=c(0.1,0.2,0.3,0.4,0.5),
 	TargetProb=0.3,
@@ -46,8 +47,10 @@ anExperiment = doExperiment(
 	designSpecs, popModelSpecs=list(doseThresholdPopModelSpec), 
 	outcomeModelSpecs=list(ToxDoseThresholdModelSpec), 
 	evalSpecs=EvalSpecs, 
-	nReps=200, 
-	seed=NULL, simDataDir="./") 
+	nReps=2, 
+	seed=NULL, simDataDir="./", userInput=FALSE) 
 length(anExperiment)  #  1;  just one scenario.
 length(anExperiment$Scenario1)  #  3 = length(EvalSpecs)
-
+anExperiment$Scenario1[[1]] #sample sizes, per rep;  summary => table
+anExperiment$Scenario1[[2]] # toxicities per rep;  summary => mean and variance
+anExperiment$Scenario1[[3]] # RP2D, per re;  summary => mean, variance, NAs
