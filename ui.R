@@ -30,12 +30,13 @@ makeExperimentTab = function(){
 makeResultsTab = function(){
   h1("results tab")
 }
-shinyUI(bootstrapPage(
-    textOutput(outputId="tabName" ),
-    br(),
-    verbatimTextOutput("TITLE"),
-    br(),
-    tabsetPanel(id="myTabSet",
+
+shinyUI(pageWithSidebar(
+  sidebarPanel=textOutput(outputId="tabName" ),
+#     br(),
+    headerPane= h3("TITLE"),## this works, but verbatimTextOutput does not.
+#     br(),
+    mainPanel=tabsetPanel(id="myTabSet",
               tabPanel(names(classNames)[1], 
                        makeSpecifierTab(classNames[1])), 
               tabPanel(names(classNames)[2], 
