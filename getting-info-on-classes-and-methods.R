@@ -7,7 +7,6 @@ findClass("BetaSpecifier") ## where in the search list?
 find("BetaSpecifier") ## can't find it in the search list this way!
 
 getMethod("getMean", signature="BetaSpecifier")
-getMethod("getMean", signature="BetaSpecifier")
 
 getClass(ToxDoseThresholdModelSpec) ## displays the class of this OBJECT! (DoseThresholdModelSpecifier) Returns the class.
 getClass("DoseThresholdModelSpecifier")  ### 
@@ -20,6 +19,7 @@ getMean(temp)
 getValidity(temp) # not defined.
 
 
+showMethods(f="sim1CT")
 showMethods(f="doExperiment")
 showMethods(f="getMean")
 showMethods(f="getMean", classes="BetaSpecifier")
