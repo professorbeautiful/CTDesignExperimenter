@@ -13,11 +13,11 @@ makeSpecifierTab = function(specifierName) {
   tabPanel(shortName, 
            h3(specifierName %&% "/" %&% shortName),
            br(),
-           textOutput(outputId="tabName"),
-           textOutput(outputId="tabNameName"),
+#            textOutput(outputId="tabName"),
+#            textOutput(outputId="tabNameName"),
            h3("2nd line"),
            br(),
-           tableOutput(outputId="object_table"),
+           tableOutput(outputId="object_table_" %&% specifierName),
            br(),
            h3("after the table")
   )
@@ -45,14 +45,12 @@ myTabsetPanel=tabsetPanel(id="myTabSet",
                           tabPanel("Results", makeResultsTab())
 )
 
-shinyUI(pageWithSidebar(
-  tableOutput(outputId="object_table"),
+shinyUI(bootstrapPage(
     h3("TITLE"),## this works, but verbatimTextOutput does not.
     br(),
-  verbatimTextOutput(outputId="tabNameName"),
-  br(),
     (textOutput(outputId="tabName")),
     br(),
+    tableOutput(outputId="object_table_" %&% classNames[1]),  
     mainPanel=myTabsetPanel
 #   mainPanel=verbatimTextOutput("Verbatim")
 #     mainPanel=plotOutput(outputId = "main_plot", height = "300px")  
