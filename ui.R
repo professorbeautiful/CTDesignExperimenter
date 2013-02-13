@@ -30,23 +30,30 @@ makeExperimentTab = function(){
 makeResultsTab = function(){
   h1("results tab")
 }
+myTabsetPanel=tabsetPanel(id="myTabSet",
+                          tabPanel(names(classNames)[1], 
+                                   makeSpecifierTab(classNames[1])), 
+                          tabPanel(names(classNames)[2], 
+                                   makeSpecifierTab(classNames[2])), 
+                          tabPanel(names(classNames)[3], 
+                                   makeSpecifierTab(classNames[3])), 
+                          tabPanel(names(classNames)[4], 
+                                   makeSpecifierTab(classNames[4])), 
+                          tabPanel(names(classNames)[5], 
+                                   makeSpecifierTab(classNames[5])), 
+                          tabPanel("doExperiment", makeExperimentTab()),
+                          tabPanel("Results", makeResultsTab())
+)
 
 shinyUI(pageWithSidebar(
-  sidebarPanel=textOutput(outputId="tabName" ),
-#     br(),
-    headerPane= h3("TITLE"),## this works, but verbatimTextOutput does not.
-#     br(),
-    mainPanel=tabsetPanel(id="myTabSet",
-              tabPanel(names(classNames)[1], 
-                       makeSpecifierTab(classNames[1])), 
-              tabPanel(names(classNames)[2], 
-                       makeSpecifierTab(classNames[2])), 
-              tabPanel(names(classNames)[3], 
-                       makeSpecifierTab(classNames[3])), 
-              tabPanel(names(classNames)[4], 
-                       makeSpecifierTab(classNames[4])), 
-              tabPanel(names(classNames)[5], 
-                       makeSpecifierTab(classNames[5])), 
-              tabPanel("doExperiment", makeExperimentTab()),
-              tabPanel("Results", makeResultsTab())
-  )))
+  tableOutput(outputId="object_table"),
+    h3("TITLE"),## this works, but verbatimTextOutput does not.
+    br(),
+  verbatimTextOutput(outputId="tabNameName"),
+  br(),
+    (textOutput(outputId="tabName")),
+    br(),
+    mainPanel=myTabsetPanel
+#   mainPanel=verbatimTextOutput("Verbatim")
+#     mainPanel=plotOutput(outputId = "main_plot", height = "300px")  
+  ))
