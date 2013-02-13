@@ -13,16 +13,16 @@ shortName = function(specifierName)
 shinyUI(pageWithSidebar(
     headerPanel=headerPanel(title="Clinical Trial Experiment Platform", windowTitle="Clinical Trial Experiment Platform"),
     sidebarPanel=sidebarPanel(
-      h3("CT element spec types"),
+      h2("CT element spec types"),
       br(),
       radioButtons("specChoice", "choose spec type",
                    specClassNames),
       br(),
-      h3("Actions-TODO-View")
+      h2("Actions-TODO-View")
     ),
     mainPanel=mainPanel(
       h3("main panel"),
-      textOutput(outputId="specName")
-#      tableOutput(outputId="object_table")
+      textOutput(outputId="specName"),
+      tableOutput(outputId="object_table")
     )
 ) )

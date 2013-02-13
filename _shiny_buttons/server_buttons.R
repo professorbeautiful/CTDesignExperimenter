@@ -11,6 +11,14 @@ shinyServer(function(input, output) {
   classNames = cq(BaseCharModelSpecifier,PopModelSpecifier,OutcomeModelSpecifier,DesignSpecifier,EvalSpecifier)
   output$object_table <- 
     reactiveTable(function() {
-      data.frame(subClassNames(specName))
-    })
+      theObjects = data.frame(subClassNames(
+        input$specChoice
+        # reactiveText(function()input$specChoice)
+        #  reactiveText(function()input$specChoice) #fails
+      ))
+      cat("\n==theObjects==\n")
+      print(str(theObjects))
+      theObjects
+    }
+    )
 })
