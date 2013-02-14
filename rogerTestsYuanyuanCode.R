@@ -83,15 +83,32 @@ oneCTresult = sim1CT(designSpec=crm9,
 		popModelSpec=doseThresholdPopModelSpec,   ## correct.
 		outcomeModelSpec=toxDoseThresholdModelSpec)
 oneCTresult
+slotNames(oneCTresult)
+#  [1] "PatsData"    "CTTimes"     "Conclusions"
+oneCTresult@CTTimes  ### NULL
+oneCTresult@Conclusions
+length(oneCTresult@PatsData)  #21
+oneCTresult@PatsData[[4]]
+slotNames(oneCTresult@PatsData[[4]])
+#  "ID"  "BaseChars"  "ConcurrentTrtsDataList" "PatTimes" 
+oneCTresult@PatsData[[4]]@ID #NULL
+oneCTresult@PatsData[[4]]@BaseChars
+# PKclearance      ToxDoseThreshold efficacyDoseThreshold 
+# 10.83429              10.71533              10.64177 
+oneCTresult@PatsData[[4]]@ConcurrentTrtsDataList
+### includes TrtAllos, Outcomes, and TimesToOutcomes
+oneCTresult@PatsData[[4]]@PatTimes  ### NULL
 
-# anExperiment = doExperiment(
-# 	designSpecs, popModelSpecs=list(doseThresholdPopModelSpec), 
-# 	outcomeModelSpecs=list(ToxDoseThresholdModelSpec), 
-# 	evalSpecs=EvalSpecs, 
-# 	nReps=2, 
-# 	seed=NULL, simDataDir="./", userInput=FALSE) 
-# length(anExperiment)  #  1;  just one scenario.
-# length(anExperiment$Scenario1)  #  3 = length(EvalSpecs)
-# anExperiment$Scenario1[[1]] #sample sizes, per rep;  summary => table
-# anExperiment$Scenario1[[2]] # toxicities per rep;  summary => mean and variance
-# anExperiment$Scenario1[[3]] # RP2D, per re;  summary => mean, variance, NAs
+
+anExperiment = doExperiment(
+  designSpec=designSpecs,
+  popModelSpecs=list(doseThresholdPopModelSpec), 
+	outcomeModelSpecs=list(ToxDoseThresholdModelSpec), 
+	evalSpecs=EvalSpecs, 
+	nReps=2, 
+	seed=NULL, simDataDir="./", userInput=FALSE) 
+length(anExperiment)  #  1;  just one scenario.
+length(anExperiment$Scenario1)  #  3 = length(EvalSpecs)
+anExperiment$Scenario1[[1]] #sample sizes, per rep;  summary => table
+anExperiment$Scenario1[[2]] # toxicities per rep;  summary => mean and variance
+anExperiment$Scenario1[[3]] # RP2D, per re;  summary => mean, variance, NAs
