@@ -55,7 +55,7 @@ setClass("CTData",representation(PatsData="list",CTTimes="OptionalNumeric",Concl
 # OtherArgs is a named list 
 # GlobalTime in an "Action" object refers to the time when the action method is called.
 # In an action queue, all GlobalTime's should have the same reference time point.
-# If no time specification is available in the design specification, GlobalTime can be 1,2,3...for
+# If no time specificBaseCharModelSpecifieration is available in the design specification, GlobalTime can be 1,2,3...for
 # first action, second action, third action, etc in an action queue and when a new action is added to
 # the queue, its GlobalTime is (GlobalTime of the last action in a queue + 1)
 setClass("Action",representation(MethodCall="character",OtherArgs="list",GlobalTime="numeric"))
@@ -114,15 +114,25 @@ setMethod("addAction",signature(currentActionQ="ActionQueue",newAction="Action")
 ### Classes and Methods for population model
 ## Class: BaseCharModelSpecifier
 setClass("BaseCharModelSpecifier",
-    representation(BaseCharName="character",ConditionBaseCharNames="OptionalCharacter",RGenFun="character"),
+    representation(BaseCharName="character",
+                   ConditionBaseCharNames="OptionalCharacter",
+                   RGenFun="character"),
     prototype = list(ConditionBaseCharNames = NULL))
 
 ## Method: generateBaseChar  
 # this method can only be dispatched within the method "generateBaseChars"  
-setGeneric("generateBaseChar",function(baseCharModelSpec) standardGeneric("generateBaseChar"))
-setMethod("generateBaseChar",signature(baseCharModelSpec="BaseCharModelSpecifier"),
+setGeneric("generateBaseChar",
+           function(baseCharModelSpec) 
+             standardGeneric("generateBaseChar"))
+setMethod("generateBaseChar",
+          signature(baseCharModelSpec="BaseCharModelSpecifier"),
     function(baseCharModelSpec){       
-        BaseChar <- eval(parse(text=baseCharModelSpec@RGenFun))
+        BaseChar <- eval(parse(
+          text=baseCharModelSpec@RGenFun) 
+             # , envir=baseCharModelSpec # you can find slots but not package:stats.
+              #           ,enclos="package:stats" ### error.
+          ) ## sad. you have to prepend slots with "baseCharModelSpec@"
+        ### .self@ doesnt work,  with(baseCharModelSpec,... doesnt work.
         names(BaseChar) <- baseCharModelSpec@BaseCharName
         return(BaseChar)
     }
@@ -208,9 +218,14 @@ setMethod("generatePatsBaseChars",signature(popModelSpec="OptionalPopModelSpecif
 setClassUnion("OutcomeModelSpecifier")
 
 ## Class: DoseThresholdModelSpecifier
-setClass("DoseThresholdModelSpecifier",representation(DoseThresholdName="character"),contains="OutcomeModelSpecifier",
-    validity=function(object){
-        if(!any(sapply(c("ToxDoseThreshold","EfficacyDoseThreshold"),function(x) x==object@DoseThresholdName)))
+setClass("DoseThresholdModelSpecifier",
+         representation(DoseThresholdName="character"),
+         contains="OutcomeModelSpecifier",
+    validity=function(object){ 
+      ## simplified code. 
+      ##Do we want this restriction?
+        if(!(object@DoseThresholdName %in% 
+               c("ToxDoseThreshold","EfficacyDoseThreshold")))
             stop("The dose threshold name is wrong!","\n")
         else TRUE
     }
@@ -1272,5 +1287,9 @@ instantiateS4Object <- function(className,slots){
     return(Object)
 } 
              
-             
-    
+setClassUnion("Specifier", 
+              c("BaseCharModelSpecifier", "PopModelSpecifier",
+                "OutcomeModelSpecifier",
+                "DesignSpecifier",
+                "EvalSpecifier"))
+
