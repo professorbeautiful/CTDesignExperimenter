@@ -1,5 +1,6 @@
 ### getting info on classes and methods
 
+#  BetaSpecifier is NOT in 1.0.  Only 1.1
 getClass("BetaSpecifier")  ### displays the class itself!
 getSlots("BetaSpecifier")
 slotNames("BetaSpecifier")
@@ -8,7 +9,9 @@ find("BetaSpecifier") ## can't find it in the search list this way!
 
 getMethod("getMean", signature="BetaSpecifier")
 
-getClass(ToxDoseThresholdModelSpec) ## displays the class of this OBJECT! (DoseThresholdModelSpecifier) Returns the class.
+getClass(ToxDoseThresholdModelSpec) 
+## displays class information! (DoseThresholdModelSpecifier) Returns the class.
+class(standardPKclearanceModel) ## for object
 getClass("DoseThresholdModelSpecifier")  ### 
 getSlots(getClass("DoseThresholdModelSpecifier"))  ### just DoseThresholdName
 getClassName  ### defunct!
@@ -17,6 +20,8 @@ temp = new(Class="BetaSpecifier", Shape1=10, Shape2=20)
 temp@Shape1
 getMean(temp)
 getValidity(temp) # not defined.
+
+slotNames(toxDoseThresholdOutcomeModel)
 
 
 showMethods(f="sim1CT")
