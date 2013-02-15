@@ -9,16 +9,16 @@ specClassNames = c(base="BaseCharModelSpecifier",
                    eval="EvalSpecifier")
 shortName = function(specifierName)
   names(classNames)[match(specifierName, classNames)]
+
 addAttr = function(x, att, value) {attr(x, att) = value; x }
 
 shinyUI(pageWithSidebar(  
+#<style font='red' bg='yellow' > </style>
   headerPanel=
-#     addAttr("html", TRUE,
-# x="<head>\n  <title>Clinical Trial Experiment Platform</title>\n</head>\n<div class=\"span12\" style=\"padding: 10px 0px;\">\n
-#   <h3><style font='red' bg='yellow>
-#   Clinical Trial Experiment Platform</style></h3>\n</div>")
-  
-    headerPanel(title="Clinical Trial Experiment Platform", windowTitle="Clinical Trial Experiment Platform")
+    addAttr("html", TRUE,
+x="<head>\n  <title>Clinical Trial Experiment Platform</title>\n</head>\n<div class=\"span12\" style=\"padding: 10px 0px;\">
+  <h2 color=rgb(200,300,400) > <i>Clinical Trial Experiment Platform </i> </h2>\n</div>") 
+#    headerPanel(title="Clinical Trial Experiment Platform", windowTitle="Clinical Trial Experiment Platform")
   ,
   sidebarPanel=sidebarPanel(
     #tag('font', varArgs=c(size=-2))
@@ -27,26 +27,27 @@ shinyUI(pageWithSidebar(
                  specClassNames)
     #           )
     ,    tag('hr', NULL),
-    selectInput("ClassesOrObjects", "ClassesOrObjects",
+    selectInput("xClassesOrObjects", "ClassesOrObjects",
                 c("Classes", "Objects")),
     tag('hr', NULL),
-    h3("Actions-TODO-View"),
+    h2("Actions-TODO-View"),
     tags$button(type="button", value='view_experiment',
                 name='view_experiment')
   ),
   mainPanel=mainPanel(
     textOutput(outputId="specName"),
     textOutput(outputId="ClassesOrObjects")
-    ,   tableOutput(outputId="classes_table")
-    ,   tableOutput(outputId="objects_table")
-    #     ,    conditionalPanel(condition=
-#                            "input.ClassesOrObjects=='Classes'",
-#                          tableOutput(outputId="classes_table")
-#         ),
-#         conditionalPanel(condition=
-#                            "input.ClassesOrObjects=='Objects'",
-#                          tableOutput(outputId="objects_table")
-#         )    
+#     ,   tableOutput(outputId="classes_table")
+#     ,   tableOutput(outputId="objects_table")
+         ,    conditionalPanel(condition=
+    # MUST BE VALID JS!!
+                           "input.xClassesOrObjects==\"Classes\"",
+                         tableOutput(outputId="classes_table")
+        )
+      ,  conditionalPanel(condition=
+                           "input.xClassesOrObjects==\"Objects\"",
+                         tableOutput(outputId="objects_table")
+        )    
   )
 )
 )

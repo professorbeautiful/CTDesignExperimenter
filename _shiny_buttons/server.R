@@ -10,8 +10,8 @@ instanceNames = function(className) {
 
 shinyServer(function(input, output) {
   output$ClassesOrObjects = reactiveText(function()
-    if(is.null(input$ClassesOrObjects))
-    "NULL" else input$ClassesOrObjects)
+    if(is.null(input$xClassesOrObjects))
+    "NULL" else input$xClassesOrObjects)
   specName = 
     reactiveText(function()input$specChoice)
   print(specName)
@@ -25,6 +25,8 @@ shinyServer(function(input, output) {
       names(theClasses) = "subClasses of " %&% input$specChoice
         # reactiveText(function()input$specChoice)
         #  reactiveText(function()input$specChoice) #fails
+      theClasses$slotNames = sapply(theClasses[[1]], slotNames)
+      theClasses$slotTypes = sapply(theClasses[[1]], getSlots)
       cat("\n==theClasses==\n")
       print(str(theClasses))
       theClasses
@@ -38,6 +40,10 @@ shinyServer(function(input, output) {
                                 FUN=function(obName)
                                   class(get(obName))
                                 )
+      theObjects$requirements = sapply(theObjects[[1]], function(theObject)
+        paste(getRequirements(get(theObject)), collapse=","))
+      theObjects$provisions = sapply(theObjects[[1]], function(theObject)
+        paste(getProvisions(get(theObject)), collapse=","))
       cat("\n==theObjects==\n")
       print(str(theObjects))
       theObjects
