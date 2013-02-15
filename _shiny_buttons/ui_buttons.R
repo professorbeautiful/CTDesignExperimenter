@@ -35,18 +35,23 @@ x="<head>\n  <title>Clinical Trial Experiment Platform</title>\n</head>\n<div cl
                 name='view_experiment')
   ),
   mainPanel=mainPanel(
-    textOutput(outputId="specName"),
-    textOutput(outputId="ClassesOrObjects")
-#     ,   tableOutput(outputId="classes_table")
-#     ,   tableOutput(outputId="objects_table")
-         ,    conditionalPanel(condition=
-    # MUST BE VALID JS!!
+    # condition MUST BE VALID JS. 
+    # Therefore: input & output cannot share an ID. 
+    # Thus, the prepended "x".
+    # Likewise, you can't put the following 2 lines in 2 places!!
+    # If you see...
+    #   Error in tag("div", list(...)) : argument is missing, with no default
+    # it's because of an extra comma--  empty arg.
+    textOutput(outputId="specName")
+    , textOutput(outputId="ClassesOrObjects")
+    ## this'd be nice...addAttr("Subclasses for the spec class", "html", TRUE),
+    , conditionalPanel(condition=
                            "input.xClassesOrObjects==\"Classes\"",
-                         tableOutput(outputId="classes_table")
+                           tableOutput(outputId="classes_table")
         )
       ,  conditionalPanel(condition=
                            "input.xClassesOrObjects==\"Objects\"",
-                         tableOutput(outputId="objects_table")
+                          tableOutput(outputId="objects_table")
         )    
   )
 )
