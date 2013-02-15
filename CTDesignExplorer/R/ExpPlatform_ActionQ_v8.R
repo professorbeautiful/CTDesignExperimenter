@@ -176,8 +176,8 @@ setClass("PopModelSpecifier",representation(PopModelSpec="list"),
 )
     
 ## Class: OptionalPopModelSpecifier
-setClassUnion("OptionalPopModelSpecifier",c("PopModelSpecifier
-                                            ","NULL"))
+setClassUnion("OptionalPopModelSpecifier",
+              c("PopModelSpecifier","NULL"))
 
 # This method is to get provisions from an "OptionalPopModelSpecifier" object
 setMethod("getProvisions",signature(spec="OptionalPopModelSpecifier"),
