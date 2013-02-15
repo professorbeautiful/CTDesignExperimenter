@@ -71,17 +71,12 @@ toxDoseThresholdOutcomeModel <- new("DoseThresholdModelSpecifier",
 efficacyDoseThresholdOutcomeModel <- new("DoseThresholdModelSpecifier",
                                  DoseThresholdName="EfficacyDoseThreshold")
 ### currently the validation allows only these two DoseThresholdName.
-OutcomeModelSpecs <- list(toxDoseThresholdModelSpec,
+outcomeModelSpecs <- list(toxDoseThresholdOutcomeModel,
                           efficacyDoseThresholdOutcomeModel )
-
-EvalSpec1 <- new("EvalSampleSizeSpecifier")
-EvalSpec2 <- new("EvalNToxsSpecifier")
-EvalSpec3 <- new("EvalRP2DSpecifier")
-EvalSpecs <- list(EvalSpec1,EvalSpec2,EvalSpec3)
 
 oneCTresult = sim1CT(designSpec=crm9,
 		popModelSpec=doseThresholdPopModelSpec,   ## correct.
-		outcomeModelSpec=toxDoseThresholdModelSpec)
+		outcomeModelSpec=outcomeModelSpecs)
 oneCTresult
 slotNames(oneCTresult)
 #  [1] "PatsData"    "CTTimes"     "Conclusions"
@@ -99,12 +94,16 @@ oneCTresult@PatsData[[4]]@ConcurrentTrtsDataList
 ### includes TrtAllos, Outcomes, and TimesToOutcomes
 oneCTresult@PatsData[[4]]@PatTimes  ### NULL
 
+evalSpec1 <- new("EvalSampleSizeSpecifier")
+evalSpec2 <- new("EvalNToxsSpecifier")
+evalSpec3 <- new("EvalRP2DSpecifier")
+evalSpecs <- list(evalSpec1,evalSpec2,evalSpec3)
 
 anExperiment = doExperiment(
   designSpec=designSpecs,
   popModelSpecs=list(doseThresholdPopModelSpec), 
-	outcomeModelSpecs=list(ToxDoseThresholdModelSpec), 
-	evalSpecs=EvalSpecs, 
+	outcomeModelSpecs=list(toxDoseThresholdModelSpec), 
+	evalSpecs=evalSpecs, 
 	nReps=2, 
 	seed=NULL, simDataDir="./", userInput=FALSE) 
 length(anExperiment)  #  1;  just one scenario.
