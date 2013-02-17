@@ -2,15 +2,16 @@
 
 require(RBioinf)
 
-specClassNames = c(base="BaseCharModelSpecifier",
-                   pop="PopModelSpecifier",
-                   outcome="OutcomeModelSpecifier",
-                   design="DesignSpecifier",
-                   eval="EvalSpecifier")
+specClassNames = c(`patient attributes`="BaseCharModelSpecifier",
+                   `population models`="PopModelSpecifier",
+                   `outcome models`="OutcomeModelSpecifier",
+                   designs="DesignSpecifier",
+                   `evaluation criteria`="EvalSpecifier")
 shortName = function(specifierName)
   names(classNames)[match(specifierName, classNames)]
 
 addAttr = function(x, att, value) {attr(x, att) = value; x }
+asHTML = function(x) addAttr(x, "html", TRUE)
 
 shinyUI(pageWithSidebar(  
 #<style font='red' bg='yellow' > </style>
@@ -23,16 +24,19 @@ x="<head>\n  <title>Clinical Trial Experiment Platform</title>\n</head>\n<div cl
   sidebarPanel=sidebarPanel(
     #tag('font', varArgs=c(size=-2))
     #tags$style(" size=\"-2\" color='red'",
-    radioButtons("specChoice", "choose spec type",
-                 specClassNames)
+    radioButtons("specChoice", "Choose spec type",
+                 specClassNames, selected=NULL)
     #           )
-    ,    tag('hr', NULL),
-    selectInput("xClassesOrObjects", "ClassesOrObjects",
-                c("Classes", "Objects")),
-    tag('hr', NULL),
-    h2("Actions-TODO-View"),
-    tags$button(type="button", value='view_experiment',
-                name='view_experiment')
+    , tag('hr', NULL)
+    , selectInput("xClassesOrObjects", "ClassesOrObjects",
+                c("Classes", "Objects"))
+    , tag('hr', NULL)
+    ,  tags$button(type="button",
+                style="color: red",
+                onclick='SimpleExperimentPane()',
+                ("Simple experiment"))
+    , tag("script ", 
+        "function SimpleExperimentPane() {alert(\"Not yet ready!\");}")
   ),
   mainPanel=mainPanel(
     # condition MUST BE VALID JS. 
