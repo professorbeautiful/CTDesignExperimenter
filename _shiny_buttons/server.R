@@ -1,30 +1,51 @@
 # install.packages('shiny')
 # install.packages('RJSONIO')
 library("shiny")
-library(datasets)
+# library(datasets)
+require(RBioinf)
+
 options(shiny.trace=FALSE)
+
+
+specClassNames = c(`patient attributes`="BaseCharModelSpecifier",
+                   `population models`="PopModelSpecifier",
+                   `outcome models`="OutcomeModelSpecifier",
+                   designs="DesignSpecifier",
+                   `evaluation criteria`="EvalSpecifier")
+
+shortName = function(specifierName)
+  names(specClassNames)[match(specifierName, specClassNames)]
 
 instanceNames = function(className) {
   names(which(sapply(.GlobalEnv, is, className )))
 }
 
 shinyServer(function(input, output) {
-  output$ClassesOrObjects = reactiveText(function()
-    if(is.null(input$xClassesOrObjects))
-    "NULL" else input$xClassesOrObjects)
-  specName = 
-    reactiveText(function()input$specChoice)
+  output$actionChoice = reactiveText(function()
+    input$viewChoice)
+  specName = reactiveText(function()input$specChoice)
   print(specName)
   output$specName = specName  
+  output$mainPanelHeader = reactiveText(
+    function() { if(input$viewChoice 
+                  %in% c("View spec classes", "View spec objects"))
+      input$viewChoice %&% "for  " %&% 
+                   shortName(input$specChoice)  %&%
+                   " (class="    %&%
+                   input$specChoice %&% ")"
+    else input$viewChoice %&% ": not yet implemented"
+  })
   classNames = cq(BaseCharModelSpecifier,PopModelSpecifier,OutcomeModelSpecifier,DesignSpecifier,EvalSpecifier)
   output$classes_table <- 
     reactiveTable(function() {
       cat("\n==specChoice Class==\n")
       theClasses = data.frame(c(input$specChoice,
                                 subClassNames(
-        input$specChoice)))
+                                  input$specChoice)))
       names(theClasses) = "subClasses of " %&% input$specChoice
-        #  reactiveText(function()input$specChoice) #fails
+      rownames(theClasses) = 
+        "<input type=\"radio\" name=\"chooseOneClass\" 
+        value=" %&% 1:nrow(theClasses) %&% ">"
       theClasses$slotNames = 
         sapply(theClasses[[1]], 
                FUN=function(theClass){
@@ -41,6 +62,7 @@ shinyServer(function(input, output) {
         )
       cat("\n==theClasses==\n")
       print(str(theClasses))
+      cat("radio value for chooseOneClass = ", input$chooseOneClass,"\n")
       theClasses
     })
   output$objects_table <- 
