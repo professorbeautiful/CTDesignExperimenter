@@ -73,12 +73,7 @@ shinyUI(pageWithSidebar(
       tableOutput(outputId="objects_table_1")
     )
     ,  conditionalPanel(
-        condition=
-        "input.viewChoice==\"Define one clinical trial\""
-      ,    HTML("Select model object (by number) <br>to build simulation.")
-#       , numericInput("model_row_num", "model row num",
-#                    "1", min=1, 10)    # max=nrow(output$objects_table_2))
-#       ,    tableOutput(outputId="objects_table_2")
+        condition="input.viewChoice==\"Define one clinical trial\""
       , uiOutput("buildingModelMain")
     )
     ,  conditionalPanel(
