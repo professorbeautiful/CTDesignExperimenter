@@ -272,14 +272,14 @@ setMethod("getRequirements",signature(spec="DoseThresholdModelSpecifier"),
 # This method is to get the requirements from an "ToxDeathDoseThresholdModelSpecifier" object
 setMethod("getRequirements",signature(spec="ToxDeathDoseThresholdModelSpecifier"),
     function(spec){
-        return(list(TrtAllos="Dose",BaseChars="ToxDoseThrehold"))
+        return(list(TrtAllos="Dose",BaseChars="ToxDoseThreshold"))
     }
 )
 
 # This method is to get the requirements from an "ToxEfficacyDoseThresholdsModelSpecifier" object
 setMethod("getRequirements",signature(spec="ToxEfficacyDoseThresholdsModelSpecifier"),
     function(spec){
-        return(list(TrtAllos="Dose",BaseChars=c("ToxDoseThrehold","EfficacyDoseThreshold")))
+        return(list(TrtAllos="Dose",BaseChars=c("ToxDoseThreshold","EfficacyDoseThreshold")))
     }
 )
 
