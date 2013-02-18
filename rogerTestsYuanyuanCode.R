@@ -74,6 +74,7 @@ efficacyDoseThresholdOutcomeModel <- new("DoseThresholdModelSpecifier",
 outcomeModelSpecs <- list(toxDoseThresholdOutcomeModel,
                           efficacyDoseThresholdOutcomeModel )
 
+showMethods("sim1CT", includeDefs=T)
 oneCTresult = sim1CT(designSpec=crm9,
 		popModelSpec=doseThresholdPopModelSpec,   ## correct.
 		outcomeModelSpec=outcomeModelSpecs)
