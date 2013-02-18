@@ -15,6 +15,8 @@ specClassNames = c(`patient attributes`="BaseCharModelSpecifier",
 shortName = function(specifierName)
   names(specClassNames)[match(specifierName, specClassNames)]
 
+specClassNamesForSim1CT = specClassNames %except% "BaseCharModelSpecifier" %except% "EvalSpecifier"  ### not the "nice" names
+
 instanceNames = function(className) {
   names(which(sapply(.GlobalEnv, is, className )))
 }
@@ -22,8 +24,8 @@ instanceNames = function(className) {
 shinyServer(function(input, output) {
 
   ### Called just once!
-  buildingModelIndices = rep(NA, 4)
-  names(buildingModelIndices) = (specClassNames) %except% "BaseCharModelSpecifier"  ### not the "nice" names
+  buildingModelIndices = rep(NA, 3)
+  names(buildingModelIndices) = specClassNamesForSim1CT
   
   output$actionChoice = reactiveText(function()
     input$viewChoice)
@@ -40,13 +42,13 @@ shinyServer(function(input, output) {
                  " (class="    %&%
                  input$specChoiceModels %&% ")")
       else if(input$viewChoice == "Define one clinical trial") { 
-#         if(is.na(buildingModelIndices[input$specChoiceOneCTCleaned]))  
-#           buildingModelIndices[input$specChoiceOneCTCleaned] == 1
+#         if(is.na(buildingModelIndices[f.specChoiceOneCTCleaned()]))  
+#           buildingModelIndices[f.specChoiceOneCTCleaned()] == 1
               ### do we want this? maybe the user wants to leave it undecided?
         return(input$viewChoice %&% ": <br>pick a" %&% 
-                 shortName(input$specChoiceOneCTCleaned)  %&%
+                 shortName(f.specChoiceOneCTCleaned())  %&%
                  " (class="    %&%
-                 input$specChoiceOneCTCleaned %&% ")" )
+                 f.specChoiceOneCTCleaned() %&% ")" )
       }
       else return(input$viewChoice %&% ": not yet implemented")
   }
@@ -56,7 +58,7 @@ shinyServer(function(input, output) {
   classNames = cq(BaseCharModelSpecifier,PopModelSpecifier,OutcomeModelSpecifier,DesignSpecifier,EvalSpecifier)
   output$classes_table <- 
     reactiveTable(function() {
-      cat("\n==specChoiceClasses Class==\n")
+    #  cat("\n==specChoiceClasses Class==\n")
       theClasses = data.frame(c(input$specChoiceClasses,
                                 subClassNames(
                                   input$specChoiceClasses)))
@@ -81,8 +83,8 @@ shinyServer(function(input, output) {
                  if(class(slots) == "try-error" | is.null(slots)) return ("")
                  return(paste(slots, collapse="\n"))}
         )
-      cat("\n==theClasses==\n")
-      print(str(theClasses))
+#      cat("\n==theClasses==\n")
+#      print(str(theClasses))
       #cat("radio value for chooseOneClass = ", input$chooseOneClass,"\n")
       theClasses
     })
@@ -117,8 +119,8 @@ shinyServer(function(input, output) {
                if(class(prov) == "try-error") return ("")
                return(paste(prov, collapse="\n"))}
       )
-    cat("\n==theObjects==\n")
-    print(str(theObjects))
+#    cat("\n==theObjects==\n")
+#    print(str(theObjects))
     theObjects
   }
 #  debug(createObjectsTable)
@@ -134,44 +136,60 @@ shinyServer(function(input, output) {
       oneCTclassName = substring(oneCTclassName, 1, regexpr("\\[", oneCTclassName) - 2) 
     oneCTclassName
   }
-  debug(f.specChoiceOneCTCleaned)
-  output$specChoiceOneCTCleaned = reactive(f.specChoiceOneCTCleaned)
-  
+  #debug(f.specChoiceOneCTCleaned)
+  reactive(f.specChoiceOneCTCleaned)   #### See the help file.
+    
   f.buildingModelIndices = function() {
-    catn("Changing the model indices:  buildingModelIndices=\n", 
+    catn("Changing the model index for ", isolate(f.specChoiceOneCTCleaned()),
+         ":  buildingModelIndices=\n", 
          paste(names(buildingModelIndices), buildingModelIndices, sep="=", collapse=", "))
-    if(!is.null(input$specChoiceOneCTCleaned) & !is.null(input$model_row_num))
-      buildingModelIndices[isolate(print(input$specChoiceOneCTCleaned))] <<- input$model_row_num ## From the box.
+    if(!is.null(isolate(f.specChoiceOneCTCleaned())) & !is.null(input$model_row_num))
+      buildingModelIndices[(isolate(f.specChoiceOneCTCleaned()))] <<- input$model_row_num ## From the box.
     ## single or double headed assignment?
     ## The purpose of "isolate" here is ???
-    catn(paste(names(buildingModelIndices), buildingModelIndices, sep="=", collapse=", "))
+    catn("f.buildingModelIndices: exit:", paste(names(buildingModelIndices), buildingModelIndices, sep="=", collapse=", "))
     buildingModelIndices
   }
-  debug(f.buildingModelIndices)
-  output$buildingModelIndices = reactiveUI(f.buildingModelIndices)
+#  debug(f.buildingModelIndices)
+  reactive(f.buildingModelIndices)
 
   f.buildingModelMain = function() {
     theTableOutput = tableOutput(outputId="objects_table_2")
     ## This should set the value of output$objects_table_2, for use in the text.
-    list(   " In this box, type (or arrow to) the row  number for your object.",
+    list( HTML("Select model object (by number) <br>to build simulation."),
+         " In this box, type (or arrow to) the row  number for your object.",
             numericInput("model_row_num", "model row num",
-                         buildingModelIndices[input$specChoiceOneCT], 
-                         min=1, max=length(instanceNames(input$specChoiceOneCT)))
+                         buildingModelIndices[f.specChoiceOneCTCleaned()], 
+                         min=1, max=length(instanceNames(f.specChoiceOneCTCleaned())))
     ,  theTableOutput  )
   }
   output$buildingModelMain = reactiveUI(f.buildingModelMain)
   
+  f.isModelFinished = function() {
+    all(!is.na(buildingModelIndices))
+  }
+  reactiveUI(f.isModelFinished)
+  
   f.buildingModelSide = function() {
     radioButtonLabels = paste(
-      specClassNames %except% "BaseCharModelSpecifier",
-      "[", "index goes here", "]")
-#    if(is.na(nrow_table)) nrow_table=10
-    return(list(
+      specClassNamesForSim1CT,
+      "[", as.character(f.buildingModelIndices()), "]")
       radioButtons("specChoiceOneCT", "One CT component type:", 
                    radioButtonLabels)
-      #      textOutput("CurrentCTasText"),
-    ))
-  }
+#      textOutput("CurrentCTasText"),
+  theRadioButtons = radioButtons("specChoiceOneCT", "One CT component type:", 
+             radioButtonLabels)
+  if(f.isModelFinished()) return(
+      list(theRadioButtons
+        , tags$button(type="button",
+                  style="color: red",
+                  onclick='sim1CT()',
+                  ("Simulate one CT"))
+        , tag("script ", 
+                      "function sim1CT() {alert(\"Not yet ready!\");}")
+      ))
+  else  return(theRadioButtons)
+}
 #  debug(f.buildingModelSide)
   output$buildingModelSide = reactiveUI(f.buildingModelSide)
   
