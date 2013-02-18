@@ -39,13 +39,14 @@ shinyUI(pageWithSidebar(
                          "input.viewChoice==\"View spec objects\"",
                        "Choose spec class to view its objects.",
                        radioButtons("specChoiceModels", "choose spec type", 
-                                    specClassNames %except% "BaseCharModelSpecifier")
+                                    specClassNames )
+  #                     specClassNames %except% "BaseCharModelSpecifier")
     )
     , conditionalPanel(condition=
                          "input.viewChoice==\"Define one clinical trial\""
-                       #, "This view choice is not yet implemented." 
-                       ,    HTML("Select model object (by number) <br>to build simulation.")
-                       ,                   uiOutput("buildingModelSide")
+                       #, "This view choice is not yet implemented."
+                       , "Spec selections for one CT:"
+                       ,     uiOutput("buildingModelSide")
     )
     , conditionalPanel(condition=
                          "input.viewChoice==\"Do a CT experiment\""
@@ -72,13 +73,16 @@ shinyUI(pageWithSidebar(
       tableOutput(outputId="objects_table_1")
     )
     ,  conditionalPanel(
-      condition=
-        "input.viewChoice==\"Define one clinical trial\"",
-      "Spec selections for one CT:"
+        condition=
+        "input.viewChoice==\"Define one clinical trial\""
+      ,    HTML("Select model object (by number) <br>to build simulation.")
+#       , numericInput("model_row_num", "model row num",
+#                    "1", min=1, 10)    # max=nrow(output$objects_table_2))
+#       ,    tableOutput(outputId="objects_table_2")
       , uiOutput("buildingModelMain")
     )
     ,  conditionalPanel(
-      condition=
+        condition=
         "input.viewChoice==\"Do a CT experiment\"",
       ("NOT YET IMPLEMENTED")
     )

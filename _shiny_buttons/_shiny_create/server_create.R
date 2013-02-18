@@ -11,8 +11,8 @@ specClassNames = c(`patient attributes`="BaseCharModelSpecifier",
                    `outcome models`="OutcomeModelSpecifier",
                    designs="DesignSpecifier",
                    `evaluation criteria`="EvalSpecifier")
-buildingModelIndices = rep(NA, 4)
-names(buildingModelIndices) = names(specClassNames)[-1]
+# buildingModelIndices = rep(NA, 4)
+# names(buildingModelIndices) = names(specClassNames)
 
 shortName = function(specifierName)
   names(specClassNames)[match(specifierName, specClassNames)]
@@ -86,7 +86,10 @@ shinyServer(function(input, output) {
     theSpecChoice = switch(input$viewChoice,
                            `View spec objects`=input$specChoiceModels,
                            `Define one clinical trial`=input$specChoiceOneCT
-                           )    
+                           )    #### TODO-- handle NULL.""trying to get slot \"className\" from an object of a basic class (\"NULL\") with no slots","
+    if(is.null(theSpecChoice)) theSpecChoice = "PopModelSpecifier"
+    if(regexpr("\\[", theSpecChoice) > 0)  ### Remove extra characters
+      theSpecChoice = substring(theSpecChoice, 1, regexpr("\\[", theSpecChoice) - 2)
     theObjects = data.frame(instanceNames(theSpecChoice))
     names(theObjects) = "instance"
     theObjects$class = 
@@ -110,38 +113,38 @@ shinyServer(function(input, output) {
     print(str(theObjects))
     theObjects
   }
-  output$objects_table <- reactiveTable()
+#  debug(createObjectsTable)
+  output$objects_table <- reactiveTable(createObjectsTable)
   output$objects_table_1 <- reactiveTable(createObjectsTable)
   output$objects_table_2 <- reactiveTable(createObjectsTable)
 
-  output$buildingModelIndices = reactiveUI(function() {
-    cat("buildingModelIndices=", buildingModelIndices)
-    if(!is.null(input$specChoiceModels) & !is.null(input$model_row_num))
-      buildingModelIndices[isolate(print(input$specChoiceModels))] <<- input$model_row_num
-    ## The purpose of "isolate" here is to prevent 
-    buildingModelIndices
-  })
+#   output$buildingModelIndices = reactiveUI(function() {
+#     cat("buildingModelIndices=", buildingModelIndices)
+#     if(!is.null(input$specChoiceModels) & !is.null(input$model_row_num))
+#       buildingModelIndices[isolate(print(input$specChoiceModels))] <<- input$model_row_num
+#     ## The purpose of "isolate" here is to prevent 
+#     buildingModelIndices
+#   })
   
   f.buildingModelMain = function() {
-    tableOutput(outputId="objects_table_2")
+    list(      numericInput("model_row_num", "model row num",
+                            "1", min=1, 10)# max=nrow(output$objects_table_2))
+    ,    tableOutput(outputId="objects_table_2"))
   }
   output$buildingModelMain = reactiveUI(f.buildingModelMain)
   
   f.buildingModelSide = function() {
     radioButtonLabels = paste(
       specClassNames %except% "BaseCharModelSpecifier",
-      "[", input$buildingModelIndices, "]")
-    nrow_table = nrow(output$objects_table_2)
-    if(is.na(nrow_table)) nrow_table=10
+      "[", "index goes here", "]")
+#    if(is.na(nrow_table)) nrow_table=10
     return(list(
       radioButtons("specChoiceOneCT", "One CT component type:", 
-                   radioButtonLabels),
+                   radioButtonLabels)
       #      textOutput("CurrentCTasText"),
-      numericInput("model_row_num", "model row num",
-                   "1", min=1, max=nrow_table)
     ))
   }
-  debug(f.buildingModelSide)
+#  debug(f.buildingModelSide)
   output$buildingModelSide = reactiveUI(f.buildingModelSide)
   
   #   output$objects_table_nrows <- 
