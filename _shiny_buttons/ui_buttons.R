@@ -24,19 +24,26 @@ x="<head>\n  <title>Clinical Trial Experiment Platform</title>\n</head>\n<div cl
   sidebarPanel=sidebarPanel(
     #tag('font', varArgs=c(size=-2))
     #tags$style(" size=\"-2\" color='red'",
-    radioButtons("specChoice", "Choose spec type",
-                 specClassNames, selected=NULL)
-    #           )
-    , tag('hr', NULL)
-    , selectInput("xClassesOrObjects", "ClassesOrObjects",
-                c("Classes", "Objects"))
-    , tag('hr', NULL)
-    ,  tags$button(type="button",
-                style="color: red",
-                onclick='SimpleExperimentPane()',
-                ("Simple experiment"))
-    , tag("script ", 
-        "function SimpleExperimentPane() {alert(\"Not yet ready!\");}")
+    radioButtons("viewChoice", "Choose a view",
+                 cq("View spec classes", 
+                    "View spec objects",
+                    "Define one clinical trial",
+                    "Do a CT experiment")
+     , tag('hr', NULL)
+     , conditionalPanel(condition=
+                     "input.viewChoice==\"View spec classes\"
+                  ||  input.viewChoice==\"View spec objects\"",
+          radioButtons("specChoice", "choose spec type", specClassNames))
+     , conditionalPanel(condition=
+                    "input.viewChoice==\"Do a CT experiment\"
+                  ||  input.viewChoice==\"Define one clinical trial\"",
+        input$viewChoice %&% " not yet implemented")                    
+#     ,  tags$button(type="button",
+#                 style="color: red",
+#                 onclick='SimpleExperimentPane()',
+#                 ("Simple experiment"))
+#     , tag("script ", 
+#         "function SimpleExperimentPane() {alert(\"Not yet ready!\");}")
   ),
   mainPanel=mainPanel(
     # condition MUST BE VALID JS. 
@@ -46,15 +53,15 @@ x="<head>\n  <title>Clinical Trial Experiment Platform</title>\n</head>\n<div cl
     # If you see...
     #   Error in tag("div", list(...)) : argument is missing, with no default
     # it's because of an extra comma--  empty arg.
-    textOutput(outputId="specName")
-    , textOutput(outputId="ClassesOrObjects")
+    
+    h2(textOutput(outputId="actionChoice"))
     ## this'd be nice...addAttr("Subclasses for the spec class", "html", TRUE),
     , conditionalPanel(condition=
-                           "input.xClassesOrObjects==\"Classes\"",
+                           "input.viewChoice==\"View spec classes\"",
                            tableOutput(outputId="classes_table")
         )
-      ,  conditionalPanel(condition=
-                           "input.xClassesOrObjects==\"Objects\"",
+    ,  conditionalPanel(condition=
+                           "input.viewChoice==\"View spec objects\"",
                           tableOutput(outputId="objects_table")
         )    
   )
