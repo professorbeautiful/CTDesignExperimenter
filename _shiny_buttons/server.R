@@ -4,15 +4,13 @@ library("shiny")
 # library(datasets)
 require(RBioinf)
 
-options(shiny.trace=TRUE)
+options(shiny.trace=FALSE)
 
 specClassNames = c(`patient attributes`="BaseCharModelSpecifier",
                    `population models`="PopModelSpecifier",
                    `outcome models`="OutcomeModelSpecifier",
                    designs="DesignSpecifier",
                    `evaluation criteria`="EvalSpecifier")
-# buildingModelIndices = rep(NA, 4)
-# names(buildingModelIndices) = names(specClassNames)
 
 shortName = function(specifierName)
   names(specClassNames)[match(specifierName, specClassNames)]
@@ -22,11 +20,15 @@ instanceNames = function(className) {
 }
 
 shinyServer(function(input, output) {
+
+  ### Called just once!
+  buildingModelIndices = rep(NA, 4)
+  names(buildingModelIndices) = (specClassNames) %except% "BaseCharModelSpecifier"  ### not the "nice" names
+  
   output$actionChoice = reactiveText(function()
     input$viewChoice)
-#  specName = reactiveText(function()input$specChoice)
-  output$mainPanelHeader = reactiveText(
-    function() { 
+
+  f.mainPanelHeader = function() { 
       if(input$viewChoice == "View spec classes")
         return(input$viewChoice %&% " for  " %&% 
                  shortName(input$specChoiceClasses)  %&% 
@@ -37,14 +39,20 @@ shinyServer(function(input, output) {
                  shortName(input$specChoiceModels)  %&% 
                  " (class="    %&%
                  input$specChoiceModels %&% ")")
-      else if(input$viewChoice == "Define one clinical trial")
-        return(input$viewChoice %&% ": pick an object of type " %&% 
-                 shortName(input$specChoiceModels)  %&%
+      else if(input$viewChoice == "Define one clinical trial") { 
+#         if(is.na(buildingModelIndices[input$specChoiceOneCTCleaned]))  
+#           buildingModelIndices[input$specChoiceOneCTCleaned] == 1
+              ### do we want this? maybe the user wants to leave it undecided?
+        return(input$viewChoice %&% ": <br>pick a" %&% 
+                 shortName(input$specChoiceOneCTCleaned)  %&%
                  " (class="    %&%
-                 input$specChoiceModels %&% ")" %&%
-                 " by typing object number in this box")
-      else input$viewChoice %&% ": not yet implemented"
-    })
+                 input$specChoiceOneCTCleaned %&% ")" )
+      }
+      else return(input$viewChoice %&% ": not yet implemented")
+  }
+#  debug(f.mainPanelHeader)
+  output$mainPanelHeader = reactiveText(f.mainPanelHeader)
+  
   classNames = cq(BaseCharModelSpecifier,PopModelSpecifier,OutcomeModelSpecifier,DesignSpecifier,EvalSpecifier)
   output$classes_table <- 
     reactiveTable(function() {
@@ -62,14 +70,14 @@ shinyServer(function(input, output) {
       theClasses$slotNames = 
         sapply(theClasses[[1]], 
                FUN=function(theClass){
-                 slotNames = try(slotNames(getClass(theClass)))
+                 slotNames = try(slotNames(getClass(theClass)), silent=TRUE)
                  if(class(slotNames) == "try-error" | is.null(slotNames)) return ("")
                  return(paste(slotNames, collapse="\n"))}
         )
       theClasses$slotTypes = 
         sapply(theClasses[[1]], 
                FUN=function(theClass){
-                 slots = try(getSlots(getClass(theClass)))
+                 slots = try(getSlots(getClass(theClass)), silent=TRUE)
                  if(class(slots) == "try-error" | is.null(slots)) return ("")
                  return(paste(slots, collapse="\n"))}
         )
@@ -98,14 +106,14 @@ shinyServer(function(input, output) {
     theObjects$requirements = 
       sapply(theObjects[[1]], 
              FUN=function(theObject){
-               req = try(getRequirements(get(theObject)))
+               req = try(getRequirements(get(theObject)), silent=TRUE)
                if(class(req) == "try-error") return ("")
                return(paste(req, collapse="\n"))}
       )
     theObjects$provisions = 
       sapply(theObjects[[1]], 
              FUN=function(theObject){
-               prov = try(getProvisions(get(theObject)))
+               prov = try(getProvisions(get(theObject)), silent=TRUE)
                if(class(prov) == "try-error") return ("")
                return(paste(prov, collapse="\n"))}
       )
@@ -118,18 +126,38 @@ shinyServer(function(input, output) {
   output$objects_table_1 <- reactiveTable(createObjectsTable)
   output$objects_table_2 <- reactiveTable(createObjectsTable)
 
-#   output$buildingModelIndices = reactiveUI(function() {
-#     cat("buildingModelIndices=", buildingModelIndices)
-#     if(!is.null(input$specChoiceModels) & !is.null(input$model_row_num))
-#       buildingModelIndices[isolate(print(input$specChoiceModels))] <<- input$model_row_num
-#     ## The purpose of "isolate" here is to prevent 
-#     buildingModelIndices
-#   })
+  f.specChoiceOneCTCleaned = function() { 
+    if(is.null(input$specChoiceOneCT))
+      return("")
+    oneCTclassName = ifelse(is.na(input$specChoiceOneCT), "PopModelSpecification", input$specChoiceOneCT)
+    if(regexpr("\\[", oneCTclassName) > 0)  ### Remove extra characters
+      oneCTclassName = substring(oneCTclassName, 1, regexpr("\\[", oneCTclassName) - 2) 
+    oneCTclassName
+  }
+  debug(f.specChoiceOneCTCleaned)
+  output$specChoiceOneCTCleaned = reactive(f.specChoiceOneCTCleaned)
   
+  f.buildingModelIndices = function() {
+    catn("Changing the model indices:  buildingModelIndices=\n", 
+         paste(names(buildingModelIndices), buildingModelIndices, sep="=", collapse=", "))
+    if(!is.null(input$specChoiceOneCTCleaned) & !is.null(input$model_row_num))
+      buildingModelIndices[isolate(print(input$specChoiceOneCTCleaned))] <<- input$model_row_num ## From the box.
+    ## single or double headed assignment?
+    ## The purpose of "isolate" here is ???
+    catn(paste(names(buildingModelIndices), buildingModelIndices, sep="=", collapse=", "))
+    buildingModelIndices
+  }
+  debug(f.buildingModelIndices)
+  output$buildingModelIndices = reactiveUI(f.buildingModelIndices)
+
   f.buildingModelMain = function() {
-    list(      numericInput("model_row_num", "model row num",
-                            "1", min=1, 10)# max=nrow(output$objects_table_2))
-    ,    tableOutput(outputId="objects_table_2"))
+    theTableOutput = tableOutput(outputId="objects_table_2")
+    ## This should set the value of output$objects_table_2, for use in the text.
+    list(   " In this box, type (or arrow to) the row  number for your object.",
+            numericInput("model_row_num", "model row num",
+                         buildingModelIndices[input$specChoiceOneCT], 
+                         min=1, max=length(instanceNames(input$specChoiceOneCT)))
+    ,  theTableOutput  )
   }
   output$buildingModelMain = reactiveUI(f.buildingModelMain)
   
