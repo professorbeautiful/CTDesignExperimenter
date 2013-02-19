@@ -15,12 +15,8 @@ asHTML = function(x) addAttr(x, "html", TRUE)
 
 shinyUI(pageWithSidebar(  
   #<style font='red' bg='yellow' > </style>
-  headerPanel=
-    #    addAttr("html", TRUE,
-    #HTML("<head>\n  <title>Clinical Trial Experiment Platform</title>\n</head>\n<div class=\"span12\" style=\"padding: 10px 0px;\">)
-    #<h2 color=rgb(200,300,400) > <i>Clinical Trial Experiment Platform </i> </h2>\n</div>") 
-    headerPanel(title="Clinical Trial Experiment Platform", windowTitle="Clinical Trial Experiment Platform")
-  ,
+  headerPanel=uiOutput(outputId="headerOutput")
+ ,
   sidebarPanel=sidebarPanel(
     #tag('font', varArgs=c(size=-2))
     #tags$style(" size=\"-2\" color='red'",
@@ -32,7 +28,7 @@ shinyUI(pageWithSidebar(
     , tag('hr', NULL)
     , conditionalPanel(condition=
                          "input.viewChoice==\"View spec classes\"",
-                       "Choose spec class to view itsvsubclasses.",
+                       "Choose spec class to view its subclasses.",
                        radioButtons("specChoiceClasses", "choose spec type", specClassNames)
     )
     , conditionalPanel(condition=
@@ -47,6 +43,7 @@ shinyUI(pageWithSidebar(
                        #, "This view choice is not yet implemented."
                        , "Spec selections for one CT:"
                        ,     uiOutput("buildingModelSide")
+                       ,     uiOutput("sim1CTbutton")
     )
     , conditionalPanel(condition=
                          "input.viewChoice==\"Do a CT experiment\""
