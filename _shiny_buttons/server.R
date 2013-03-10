@@ -49,7 +49,7 @@ shinyServer(function(input, output) {
     else return(input$viewChoice %&% ": not yet implemented")
   }
   #  debug(f.mainPanelHeader)
-  output$mainPanelHeader = reactiveText(f.mainPanelHeader)
+  output$mainPanelHeader = renderText({f.mainPanelHeader()})
   
   classNames = cq(BaseCharModelSpecifier,PopModelSpecifier,OutcomeModelSpecifier,DesignSpecifier,EvalSpecifier)
   output$classes_table <- 
@@ -172,12 +172,18 @@ shinyServer(function(input, output) {
   
   f.isModelFinished = function() {
     updateModelIndices()
+    #cat("length(values): ", length(values), "\n")
     rowValues = c(values$PopRow, values$OutcomeRow, values$DesignRow)
-    result = try(!any(sapply(rowValues, is.na)),  silent=TRUE)
-    if((is.na(result)) 
+    result = try(
+        ! is.null(rowValues)
+      & ! any(sapply(rowValues, is.na))
+      & ! any(rowValues < 1)
+    ,  silent=TRUE)
+    #cat("result: ", result, "\n")
+    if((length(result) == 0)
+       | (is.na(result)) 
        | class(result)=="try-error"
-       | (length(result) == 0) 
-       | (any(rowValues==0)) )
+     )
       result = FALSE
     values$isModelFinished = result
     result
@@ -215,8 +221,24 @@ shinyServer(function(input, output) {
           "function sim1CT() {alert(\"Not yet ready!\");}")
     )
   }
-  output$sim1CTbutton = renderUI({f.sim1CTbutton()})
   
+  f.buttonColor = reactive({
+    ifelse(f.isModelFinished(), " green", " red")
+  })
+  
+  f.buttonLabel = reactive({
+    "Simulate one CT" %&% ifelse(f.isModelFinished(), " READY!", " (not ready)")
+  })
+  output$sim1CTbutton = renderUI({
+    actionButton("sim1CTbutton", HTML("<div 
+                 style='color: " %&% f.buttonColor() %&% "'> " %&% f.buttonLabel()
+                 %&% "</div>")
+    )
+  })
+  
+  reactive({
+    cat("Value of sim1CTbutton is ", input$sim1CTbutton)
+  })
   
   values = reactiveValues()
   ## values  is an S3 class "reactivevalues". Put this in the eval box:
