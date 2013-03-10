@@ -24,8 +24,7 @@ instanceNames = function(className) {
 shinyServer(function(input, output) {
   
   
-  output$actionChoice = reactiveText(function()
-    input$viewChoice)
+  output$actionChoice = renderText({input$viewChoice})
   
   f.mainPanelHeader = function() { 
     if(input$viewChoice == "View spec classes")
@@ -54,7 +53,7 @@ shinyServer(function(input, output) {
   
   classNames = cq(BaseCharModelSpecifier,PopModelSpecifier,OutcomeModelSpecifier,DesignSpecifier,EvalSpecifier)
   output$classes_table <- 
-    reactiveTable(function() {
+    renderTable( {
       #  cat("\n==specChoiceClasses Class==\n")
       theClasses = data.frame(c(input$specChoiceClasses,
                                 subClassNames(
@@ -86,7 +85,7 @@ shinyServer(function(input, output) {
       theClasses
     })
   output$classes_table_nrows <- 
-    reactiveTable(function() {
+    renderTable( {
       nrow(output$classes_table)
     })
   createObjectsTable = function() {
@@ -121,9 +120,9 @@ shinyServer(function(input, output) {
     theObjects
   }
   #  debug(createObjectsTable)
-  output$objects_table <- reactiveTable(createObjectsTable)
-  output$objects_table_1 <- reactiveTable(createObjectsTable)
-  output$objects_table_2 <- reactiveTable(createObjectsTable)
+  output$objects_table <- renderTable({createObjectsTable()})
+  output$objects_table_1 <- renderTable({createObjectsTable()})
+  output$objects_table_2 <- renderTable({createObjectsTable()})
   
   #   f.specChoiceOneCT.save = reactive(function() {
   #     catn("f.specChoiceOneCT.save: saving ", input$specChoiceOneCT)
@@ -169,15 +168,15 @@ shinyServer(function(input, output) {
           #                        min=1, max=length(instanceNames(f.specChoiceOneCTCleaned())))
           ,  theTableOutput  )
   }
-  output$buildingModelMain = reactiveUI(f.buildingModelMain)
+  output$buildingModelMain = renderUI({f.buildingModelMain()})
   
   f.isModelFinished = function() {
     updateModelIndices()
     rowValues = c(values$PopRow, values$OutcomeRow, values$DesignRow)
     result = try(!any(sapply(rowValues, is.na)),  silent=TRUE)
-    if(class(result)=="try-error"
+    if((is.na(result)) 
+       | class(result)=="try-error"
        | (length(result) == 0) 
-       | (is.na(result)) 
        | (any(rowValues==0)) )
       result = FALSE
     values$isModelFinished = result
@@ -186,7 +185,7 @@ shinyServer(function(input, output) {
   
   output$isModelFinished = reactive(f.isModelFinished)
   
-  output$currentModelText = reactiveText(function(){
+  output$currentModelText = renderText({
     paste(specClassNamesForSim1CT, 
           "[", c(values$PopRow,values$OutcomeRow,values$DesignRow), "]", 
           collapse="\n")
@@ -204,7 +203,7 @@ shinyServer(function(input, output) {
     return(components)
   }
   #  debug(f.buildingModelSide)
-  output$buildingModelSide = reactiveUI(f.buildingModelSide)
+  output$buildingModelSide = renderUI({f.buildingModelSide()})
   
   f.sim1CTbutton = function() {
     #      conditionalPanel(condition="input.isModelFinished"
@@ -216,7 +215,7 @@ shinyServer(function(input, output) {
           "function sim1CT() {alert(\"Not yet ready!\");}")
     )
   }
-  output$sim1CTbutton = reactiveUI(f.sim1CTbutton)
+  output$sim1CTbutton = renderUI({f.sim1CTbutton()})
   
   
   values = reactiveValues()
@@ -225,26 +224,28 @@ shinyServer(function(input, output) {
     #  and this is what you get:
     # [.reactivevalues [[.reactivevalues [[<-.reactivevalues [<-.reactivevalues $.reactivevalues $<-.reactivevalues as.list.reactivevalues names.reactivevalues names<-.reactivevalues
 
-  updateModelIndices = reactive(function(){
+  updateModelIndices = reactive({
     values$PopRow <- input$PopRow
     values$OutcomeRow <- input$OutcomeRow
     values$DesignRow <- input$DesignRow
   })
   
   #   output$objects_table_nrows <- 
-  #     reactiveTable(function() {
+  #     renderTable(function() {
   #       nrow(output$objects_table)
   #     })
   #   output$CurrentCT <- 
-  #     reactiveTable(function() {
+  #     renderTable(function() {
   #       specChoiceObjects      model_row_num
   #       nrow(output$objects_table)
   #     })
   #   
   
-  output$evalOutput = reactiveText(function() if(input$evalToggle) eval(parse(text=isolate(input$evalString))))
+  output$evalOutput = renderText({
+    if(input$evalToggle) eval(parse(text=isolate(input$evalString)))
+    })
   
-  output$headerOutput = reactiveUI(function() {
+  output$headerOutput = renderUI({
     #    addAttr("html", TRUE,
     list(HTML("<head>\n  <title>Clinical Trial Experiment Platform</title>
             </head>\n<div class=\"span12\" style=\"padding: 10px 0px; color:rgb(fff,300,400)\">
