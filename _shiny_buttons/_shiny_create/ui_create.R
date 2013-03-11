@@ -43,7 +43,7 @@ shinyUI(pageWithSidebar(
                        #, "This view choice is not yet implemented."
                        , "Spec selections for one CT:"
                        ,     uiOutput("buildingModelSide")
-                       ,     uiOutput("sim1CTbutton")
+                       ,     uiOutput("sim1CTbuttonUI")
     )
     , conditionalPanel(condition=
                          "input.viewChoice==\"Do a CT experiment\""

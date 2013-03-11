@@ -1,3 +1,5 @@
+## NOTE:  sometimes jQuery fails to load.  Just try again with runApp().
+
 # install.packages('shiny')
 # install.packages('RJSONIO')
 library("shiny")
@@ -42,9 +44,9 @@ shinyServer(function(input, output) {
       #           buildingModelIndices[f.specChoiceOneCTCleaned()] == 1
       ### do we want this? maybe the user wants to leave it undecided?
       return(input$viewChoice %&% ": \npick a " %&% 
-               shortName(input$specChoiceOneCT  %&%
-                           " \n(class="    %&%
-                           input$specChoiceOneCT %&% ")" ))
+               shortName(input$specChoiceOneCT)  %&%
+               " \n(class="    %&%
+               input$specChoiceOneCT %&% ")" )
     }
     else return(input$viewChoice %&% ": not yet implemented")
   }
@@ -88,11 +90,13 @@ shinyServer(function(input, output) {
     renderTable( {
       nrow(output$classes_table)
     })
-  createObjectsTable = function() {
-    theSpecChoice = switch(input$viewChoice,
-                           `View spec objects`=input$specChoiceModels,
-                           `Define one clinical trial`= input$specChoiceOneCT
-    )    #### TODO-- handle NULL.""trying to get slot \"className\" from an object of a basic class (\"NULL\") with no slots","
+  
+  createObjectsTable = function(theSpecChoice) {
+    if(missing(theSpecChoice))
+      theSpecChoice = switch(input$viewChoice,
+                             `View spec objects`=input$specChoiceModels,
+                             `Define one clinical trial`= input$specChoiceOneCT
+      )    #### TODO-- handle NULL.""trying to get slot \"className\" from an object of a basic class (\"NULL\") with no slots","
     if(is.null(theSpecChoice)) theSpecChoice = "PopModelSpecifier"
     if(regexpr("\\[", theSpecChoice) > 0)  ### Remove extra characters
       theSpecChoice = substring(theSpecChoice, 1, regexpr("\\[", theSpecChoice) - 2)
@@ -123,6 +127,10 @@ shinyServer(function(input, output) {
   output$objects_table <- renderTable({createObjectsTable()})
   output$objects_table_1 <- renderTable({createObjectsTable()})
   output$objects_table_2 <- renderTable({createObjectsTable()})
+  
+  #   highlightObjectsTable = reactive({
+  #         
+  #   })
   
   #   f.specChoiceOneCT.save = reactive(function() {
   #     catn("f.specChoiceOneCT.save: saving ", input$specChoiceOneCT)
@@ -160,8 +168,10 @@ shinyServer(function(input, output) {
   
   f.buildingModelMain = function() {
     theTableOutput = tableOutput(outputId="objects_table_2")
+    print(theTableOutput)
     ## This should set the value of output$objects_table_2, for use in the text.
-    list( HTML("Select model object (by number) <br>to build simulation.")
+    list( textOutput(outputId="sim1CTbuttonAction")
+          , HTML("Select model object (by number) <br>to build simulation.")
           #           " In this box, type (or arrow to) the row  number for your object.",
           #           numericInput("model_row_num", "model row num",
           #                        buildingModelIndices[f.specChoiceOneCTCleaned()], 
@@ -172,18 +182,18 @@ shinyServer(function(input, output) {
   
   f.isModelFinished = function() {
     updateModelIndices()
-    #cat("length(values): ", length(values), "\n")
+    #cat("length(values): ", length(values), "\n") ### always == 1 !!!
     rowValues = c(values$PopRow, values$OutcomeRow, values$DesignRow)
     result = try(
-        ! is.null(rowValues)
+      ! is.null(rowValues)
       & ! any(sapply(rowValues, is.na))
       & ! any(rowValues < 1)
-    ,  silent=TRUE)
+      ,  silent=TRUE)
     #cat("result: ", result, "\n")
     if((length(result) == 0)
        | (is.na(result)) 
        | class(result)=="try-error"
-     )
+    )
       result = FALSE
     values$isModelFinished = result
     result
@@ -211,16 +221,16 @@ shinyServer(function(input, output) {
   #  debug(f.buildingModelSide)
   output$buildingModelSide = renderUI({f.buildingModelSide()})
   
-  f.sim1CTbutton = function() {
-    #      conditionalPanel(condition="input.isModelFinished"
-    list(tags$button( type="button",
-                  style="color: " %&% ifelse(f.isModelFinished(), " green", " red"),
-                  onclick="sim1CT()",
-                  ("Simulate one CT" %&% ifelse(f.isModelFinished(), " READY!", " (not ready)")))
-    , tag("script ", 
-          "function sim1CT() {alert(\"Not yet ready!\");}")
-    )
-  }
+  #   f.sim1CTbutton = function() {
+  #     #      conditionalPanel(condition="input.isModelFinished"
+  #     list(tags$button( type="button",
+  #                   style="color: " %&% ifelse(f.isModelFinished(), " green", " red"),
+  #                   onclick="sim1CT()",
+  #                   ("Simulate one CT" %&% ifelse(f.isModelFinished(), " READY!", " (not ready)")))
+  #     , tag("script ", 
+  #           "function sim1CT() {alert(\"Not yet ready!\");}")
+  #     )
+  #   }  ### No longer used.
   
   f.buttonColor = reactive({
     ifelse(f.isModelFinished(), " green", " red")
@@ -229,23 +239,43 @@ shinyServer(function(input, output) {
   f.buttonLabel = reactive({
     "Simulate one CT" %&% ifelse(f.isModelFinished(), " READY!", " (not ready)")
   })
-  output$sim1CTbutton = renderUI({
-    actionButton("sim1CTbutton", HTML("<div 
+  
+  output$sim1CTbuttonUI = renderUI({
+    (actionButton("sim1CTbutton", HTML("<div 
                  style='color: " %&% f.buttonColor() %&% "'> " %&% f.buttonLabel()
-                 %&% "</div>")
-    )
+                                       %&% "</div>")
+    ))
   })
   
-  reactive({
-    cat("Value of sim1CTbutton is ", input$sim1CTbutton)
+  output$sim1CTbuttonAction = reactive({
+    #browser()
+    if(f.isModelFinished()) {
+      designSpecName        = createObjectsTable("DesignSpecifier")$instance[isolate(input$DesignRow)]
+      outcomeModelSpecName  = createObjectsTable("OutcomeModelSpecifier")$instance[isolate(input$OutcomeRow)]
+      popModelSpecName      = createObjectsTable("PopModelSpecifier")$instance[isolate(input$PopRow)]
+      browser()
+      catn("sim1CTbuttonAction: Running model!\n" %&% 
+              "    designSpec = " %&% designSpecName %&% 
+              ",   outcomeModelSpec = " %&% outcomeModelSpecName %&% 
+              ",   popModelSpec = " %&% popModelSpecName
+      )
+      sim1CToutcome = sim1CT(
+        popModelSpec=get(popModelSpecName),
+        designSpec=get(designSpecName),
+        outcomeModelSpec=get(outcomeModelSpecName)
+      )
+    } else { ### 
+      catn("sim1CTbuttonAction: model is not ready")
+    }
+    #print("Value of sim1CTbutton is " %&% input$sim1CTbutton %&% "\n")
   })
-  
+    
   values = reactiveValues()
   ## values  is an S3 class "reactivevalues". Put this in the eval box:
-    #   methods(class="reactivevalues")
-    #  and this is what you get:
-    # [.reactivevalues [[.reactivevalues [[<-.reactivevalues [<-.reactivevalues $.reactivevalues $<-.reactivevalues as.list.reactivevalues names.reactivevalues names<-.reactivevalues
-
+  #   methods(class="reactivevalues")
+  #  and this is what you get:
+  # [.reactivevalues [[.reactivevalues [[<-.reactivevalues [<-.reactivevalues $.reactivevalues $<-.reactivevalues as.list.reactivevalues names.reactivevalues names<-.reactivevalues
+  
   updateModelIndices = reactive({
     values$PopRow <- input$PopRow
     values$OutcomeRow <- input$OutcomeRow
@@ -265,7 +295,7 @@ shinyServer(function(input, output) {
   
   output$evalOutput = renderText({
     if(input$evalToggle) eval(parse(text=isolate(input$evalString)))
-    })
+  })
   
   output$headerOutput = renderUI({
     #    addAttr("html", TRUE,
@@ -276,12 +306,16 @@ shinyServer(function(input, output) {
                        style="color: blue",
                        onclick="\"toggleDebug()\"",
                        "Toggle debugging")
-         , 
-         checkboxInput(inputId="evalToggle", "evalToggle", value=FALSE)
+         , checkboxInput(inputId="evalToggle", "evalToggle", value=FALSE)
          , textInput(inputId="evalString", label="=>", value="1+1")
          , textOutput(outputId="evalOutput")
          , tag("script ", 
-               "function toggleDebug() {alert(\"Not yet ready!\");}")                             
+               "function toggleDebug() {alert(\"Debug is not yet ready!\");}")
+         , tag("script ", 
+               "function alertModelNotReady() {alert(\"Model is not yet fully specified!\");}")
+         , tag("script ", 
+               "function alertModelIsReady() {alert(\"Model is running!\\n\" + 
+               output.);}")                             
          #headerPanel(title="Clinical Trial Experiment Platform", windowTitle="Clinical Trial Experiment Platform")
     )
   })
