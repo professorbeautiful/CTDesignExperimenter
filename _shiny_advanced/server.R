@@ -3,6 +3,7 @@
 # install.packages('shiny')
 # install.packages('RJSONIO')
 library("shiny")
+library("shinyIncubator")
 # library(datasets)
 require(RBioinf)
 
@@ -181,10 +182,10 @@ shinyServer(function(input, output) {
   #debug(f.buildingModelMain)
   output$buildingModelMain = renderUI({f.buildingModelMain()})
   
-  f.isModelFinished = function() {
-    updateModelIndices()
+  f.isModelFinished = reactive( {
+    #updateModelIndices()
     #cat("length(values): ", length(values), "\n") ### always == 1 !!!
-    rowValues = c(values$PopRow, values$OutcomeRow, values$DesignRow)
+    rowValues = c(input$PopRow, input$OutcomeRow, input$DesignRow)
     result = try(
       ! is.null(rowValues)
       & ! any(sapply(rowValues, is.na))
@@ -196,19 +197,22 @@ shinyServer(function(input, output) {
        | class(result)=="try-error"
     )
       result = FALSE
-    values$isModelFinished = result
+    values$isModelFinished = result  ## removing this doesnt help LOOP PROBLEM
     result
-  }
+  })
   
-  output$isModelFinished = reactive(f.isModelFinished)
+#  output$isModelFinished = reactive({f.isModelFinished()})
   
   output$currentModelText = renderText({
-    specLine = function(specName, rowNum) specName %&% " = " %&%
+    specLine = function(specName, rowNum) strong(specName)  %&% " = " %&%
       ifelse(is.null(rowNum) | is.na(rowNum), "(not chosen)", 
              objects_tables[[specName]][rowNum, "instance"]) ;
-    specLine("PopModelSpecifier", input$PopRow) %&% "\n" %&%
-      specLine("OutcomeModelSpecifier", input$OutcomeRow) %&% "\n" %&%
+    line = specLine("PopModelSpecifier", input$PopRow) %&% "<br>" %&%
+      specLine("OutcomeModelSpecifier", input$OutcomeRow) %&% "<br>" %&%
       specLine("DesignSpecifier", input$DesignRow) 
+    attr(line, "html") = TRUE
+    print(line)
+    line
   })
   
   f.componentsForBuildingModel = function() {
@@ -231,7 +235,7 @@ shinyServer(function(input, output) {
     print("f.componentsForBuildingModel: length(components) = " %&% length(components))
     return(components)
   }
-  #debug(f.componentsForBuildingModel)
+  debug(f.componentsForBuildingModel)
   output$componentsForBuildingModel = renderUI({f.componentsForBuildingModel()})
   
   #   f.sim1CTbutton = function() {
@@ -253,12 +257,27 @@ shinyServer(function(input, output) {
     "Simulate one CT" %&% ifelse(f.isModelFinished(), " READY!", " (not ready)")
   })
   
-  output$sim1CTbuttonUI = renderUI({
-    (actionButton("sim1CTbutton", HTML("<div 
-                 style='color: " %&% f.buttonColor() %&% "'> " %&% f.buttonLabel()
-                                       %&% "</div>")
-    ))
-  })
+  f.sim1CTbuttonUI = function(){
+    catn("Here in f.sim1CTbuttonUI")# %&% input.toggleDetailTable);
+    #catn("Input is ", str(input))
+    #input$PopRow ## <== this does NOT cause the infinite looping.
+    print(values$PopRow) ## <== this does NOT cause the infinite looping.
+    # but it generates error message:
+    #   Error in tag$name : $ operator is invalid for atomic vectors
+    #f.isModelFinished() ## <== this DOES  cause the infinite looping
+    #updateModelIndices
+    #     f.buttonColor()  ## <== this causes the infinite looping.
+#    "Here in output$sim1CTbuttonUI"
+    ## Commenting out the following does NOT remove the problem of the repeated
+    #==> Shiny URLs starting with /actionbutton will mapped to /Users/Roger/Library/R/2.15/library/shinyIncubator/actionbutton
+    actionButton("sim1CTbutton", HTML("<div style='color:blue'> sim1CT </div>"))
+#     (actionButton("sim1CTbutton", HTML("<div 
+#                    style='color: " %&% f.buttonColor() %&% "'> " %&% f.buttonLabel()
+#                                        %&% "</div>")
+#     ))
+  }
+  debug(f.sim1CTbuttonUI)
+  output$sim1CTbuttonUI = renderUI({f.sim1CTbuttonUI()})
   
   f.sim1CTbuttonOutput = function(){
     print("Value of sim1CTbutton is " %&% input$sim1CTbutton %&% "\n")  ## make it reactive to the button.
@@ -291,20 +310,21 @@ shinyServer(function(input, output) {
     renderText({f.sim1CTbuttonOutput()})
   
   
-  values = reactiveValues()
+  values = reactiveValues(PopRow=1,OutcomeRow=1, DesignRow=2)
+
   ## values  is an S3 class "reactivevalues". Put this in the eval box:
   #   methods(class="reactivevalues")
   #  and this is what you get:
   # [.reactivevalues [[.reactivevalues [[<-.reactivevalues [<-.reactivevalues $.reactivevalues $<-.reactivevalues as.list.reactivevalues names.reactivevalues names<-.reactivevalues
   
-  updateModelIndices = reactive({
-    values$PopRow <- input$PopRow
-    values$OutcomeRow <- input$OutcomeRow
-    values$DesignRow <- input$DesignRow
-    if(is.null(values$PopRow)) values$PopRow = NA
-    if(is.null(values$OutcomRow)) values$OutcomeRow = NA
-    if(is.null(values$DesignRow)) values$DesignRow = NA
-  })
+#   updateModelIndices = reactive({
+#     values$PopRow <- input$PopRow
+#     values$OutcomeRow <- input$OutcomeRow
+#     values$DesignRow <- input$DesignRow
+#     if(is.null(values$PopRow)) values$PopRow = NA
+#     if(is.null(values$OutcomRow)) values$OutcomeRow = NA
+#     if(is.null(values$DesignRow)) values$DesignRow = NA
+#   })
   
   #   output$objects_table_nrows <- 
   #     renderTable(function() {

@@ -45,7 +45,8 @@ shinyUI(pageWithSidebar(
     )
     , conditionalPanel(condition=
                          "input.viewChoice==\"Run one clinical trial\""
-                       ,    "PlaceHolder"# uiOutput("sim1CTbuttonUI")
+                       ,   "sim1CTbuttonUI"
+                       ,  uiOutput("sim1CTbuttonUI")
     )
     , conditionalPanel(condition=
                          "input.viewChoice==\"Do a CT experiment\""
