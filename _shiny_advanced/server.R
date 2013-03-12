@@ -44,13 +44,13 @@ shinyServer(function(input, output) {
       #         if(is.na(buildingModelIndices[f.specChoiceOneCTCleaned()]))  
       #           buildingModelIndices[f.specChoiceOneCTCleaned()] == 1
       ### do we want this? maybe the user wants to leave it undecided?
-      return("Define one clinical trial" %&% ": <br>pick  population model, outcome model, and design.\n")
+      return(HTML("<strong>Define one clinical trial:</strong> <br>pick  population model, outcome model, and design."))
     }
     else if(input$viewChoice == "Run one clinical trial") { 
       #         if(is.na(buildingModelIndices[f.specChoiceOneCTCleaned()]))  
       #           buildingModelIndices[f.specChoiceOneCTCleaned()] == 1
       ### do we want this? maybe the user wants to leave it undecided?
-      return("Run one clinical trial\n")
+      return("Run one clinical trial: results appear here.\n")
     }
     else return(input$viewChoice %&% ": not yet implemented")
   }
@@ -171,8 +171,9 @@ shinyServer(function(input, output) {
     ## "<div id=\"objects_table_2\" class=\"shiny-html-output\"></div>"
     # print(theTableOutput)
     ## This should set the value of output$objects_table_2, for use in the text.
-    list( textOutput(outputId="currentModelText")
-          , HTML("Select model object (by number) to build simulation.")
+    list( uiOutput(outputId="currentModelText")
+          , HTML("<DIV style='color:blue'> Select model object (by number) to build simulation.</DIV>")
+          ###  THIS HTML LINE WORKED!!!
           #           " In this box, type (or arrow to) the row  number for your object.",
           #           numericInput("model_row_num", "model row num",
           #                        buildingModelIndices[f.specChoiceOneCTCleaned()], 
@@ -212,7 +213,7 @@ shinyServer(function(input, output) {
       specLine("DesignSpecifier", input$DesignRow) 
     attr(line, "html") = TRUE
     print(line)
-    line
+    HTML(line)
   })
   
   f.componentsForBuildingModel = function() {
@@ -222,9 +223,9 @@ shinyServer(function(input, output) {
                    specClassNamesForSim1CT)
     components[[2]] = checkboxInput(inputId="toggleDetailTable", "show/hide details", value=FALSE)
     components[[3]] = conditionalPanel(condition="input.specChoiceOneCT == \"PopModelSpecifier\"",
-                                    numericInput(inputId="PopRow", label="Pop model", value=NA, min=1, max=4, step=1))
+                                    numericInput(inputId="PopRow", label="Pop model", value=values$PopRow, min=1, max=4, step=1))
     components[[4]] = conditionalPanel(condition="input.specChoiceOneCT == \"OutcomeModelSpecifier\"",
-                                    numericInput(inputId="OutcomeRow", label="Outcome model", value=NA, min=1, max=4, step=1))
+                                    numericInput(inputId="OutcomeRow", label="Outcome model", value=values$OutcomeRow, min=1, max=4, step=1))
     components[[5]] = conditionalPanel(condition="input.specChoiceOneCT == \"DesignSpecifier\"",
                                     numericInput(inputId="DesignRow", label="Design", value=NA, min=1, max=4, step=1))
 # here is the cause of the error message  
@@ -235,7 +236,7 @@ shinyServer(function(input, output) {
     print("f.componentsForBuildingModel: length(components) = " %&% length(components))
     return(components)
   }
-  debug(f.componentsForBuildingModel)
+  #debug(f.componentsForBuildingModel)
   output$componentsForBuildingModel = renderUI({f.componentsForBuildingModel()})
   
   #   f.sim1CTbutton = function() {
@@ -261,7 +262,7 @@ shinyServer(function(input, output) {
     catn("Here in f.sim1CTbuttonUI")# %&% input.toggleDetailTable);
     #catn("Input is ", str(input))
     #input$PopRow ## <== this does NOT cause the infinite looping.
-    print(values$PopRow) ## <== this does NOT cause the infinite looping.
+#    print(values$PopRow) ## <== this does NOT cause the infinite looping.
     # but it generates error message:
     #   Error in tag$name : $ operator is invalid for atomic vectors
     #f.isModelFinished() ## <== this DOES  cause the infinite looping
@@ -270,13 +271,13 @@ shinyServer(function(input, output) {
 #    "Here in output$sim1CTbuttonUI"
     ## Commenting out the following does NOT remove the problem of the repeated
     #==> Shiny URLs starting with /actionbutton will mapped to /Users/Roger/Library/R/2.15/library/shinyIncubator/actionbutton
-    actionButton("sim1CTbutton", HTML("<div style='color:blue'> sim1CT </div>"))
-#     (actionButton("sim1CTbutton", HTML("<div 
-#                    style='color: " %&% f.buttonColor() %&% "'> " %&% f.buttonLabel()
-#                                        %&% "</div>")
-#     ))
+#    actionButton("sim1CTbutton", HTML("<div style='color:blue'> sim1CT </div>"))
+    actionButton("sim1CTbutton", HTML("<div 
+                   style='color: " %&% f.buttonColor() %&% "'> " %&% f.buttonLabel()
+                                       %&% "</div>")
+    )
   }
-  debug(f.sim1CTbuttonUI)
+ # debug(f.sim1CTbuttonUI)
   output$sim1CTbuttonUI = renderUI({f.sim1CTbuttonUI()})
   
   f.sim1CTbuttonOutput = function(){
@@ -299,7 +300,8 @@ shinyServer(function(input, output) {
         outcomeModelSpec=get(outcomeModelSpecName)
       )
       assign("sim1CToutcome." %&% input$sim1CTbutton, sim1CToutcome)
-      return(CTresultToString(sim1CToutcome))
+      return(HTML(gsub("\n", "<br>", CTresultToString(sim1CToutcome))))
+      ### This HTML(gsub()) works great!
     } else { ### 
       return("sim1CTbuttonAction: model is not ready")
     }

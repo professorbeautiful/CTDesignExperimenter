@@ -62,8 +62,8 @@ shinyUI(pageWithSidebar(
     # If you see...
     #   Error in tag("div", list(...)) : argument is missing, with no default
     # it's because of an extra comma--  empty arg.
-    
-    h3(textOutput(outputId="mainPanelHeader"))
+      
+    h3(uiOutput(outputId="mainPanelHeader"))
     , conditionalPanel(
       condition="input.viewChoice==\"View spec classes\"",
       tableOutput(outputId="classes_table")
