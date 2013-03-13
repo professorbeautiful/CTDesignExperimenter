@@ -25,8 +25,7 @@ instanceNames = function(className) {
 }
 
 shinyServer(function(input, output) {
-  
-  
+    
   output$actionChoice = renderText({input$viewChoice})
   
   f.mainPanelHeader = function() { 
@@ -340,30 +339,47 @@ shinyServer(function(input, output) {
   #   
   
   output$evalOutput = renderText({
-    if(input$evalToggle) eval(parse(text=isolate(input$evalString)))
+    if(input$evalButton > 0) eval(parse(text=isolate(input$evalString)))
   })
+  
+  reactive({options(shiny.trace = input$debugButton) })
   
   output$headerOutput = renderUI({
     #    addAttr("html", TRUE,
     list(HTML("<head>\n  <title>Clinical Trial Experiment Platform</title>
             </head>\n<div class=\"span12\" style=\"padding: 10px 0px; color:rgb(fff,300,400)\">
             <h2  > <i>Clinical Trial Experiment Platform </i> </h2>\n</div>")
-         , tags$button(type="button",
-                       style="color: blue",
-                       onclick="\"toggleDebug()\"",
-                       "Toggle debugging")
-         , checkboxInput(inputId="evalToggle", "evalToggle", value=FALSE)
-         , textInput(inputId="evalString", label="=>", value="1+1")
-         , textOutput(outputId="evalOutput")
-#          , tag("script ", 
-#                "function toggleDebug() {alert(\"Debug is not yet ready!\");}")
-#          , tag("script ", 
-#                "function alertModelNotReady() {alert(\"Model is not yet fully specified!\");}")
-#          , tag("script ", 
+         , tag("script ", 
+               "function toggleDebug() {alert(\"Debug is not yet ready!\");}")       
+         , tag("table", list(
+           tag("tr", 
+               list(
+                 tag("TD",
+                     list(width=120, style="color: blue",
+                          checkboxInput(inputId="debugButton", 
+                                        value=FALSE,
+                                        "debug=" %&% options("shiny.trace")[[1]]
+                          ))),
+                 #                             tags$button(type="button", style="color: blue",
+                 #                                                   onclick="\"toggleDebug()\"",
+                 #                                                   "Toggle debugging"))),
+                 tag("TD", 
+                     list(style="color:\"red\"", actionButton("evalButton", "evalButton"))),
+                 #                       list(checkboxInput(inputId="evalToggle", "evalToggle", value=FALSE))),
+                 tag("TD",
+                     list(width=10, textInput(inputId="evalString", label="", value="1+1"))),
+                 tag("TD", list(style="color:red", HTML("&rarr;"))),
+                 tag("TD",
+                     list(width=800, `text-align`="right", color="red", uiOutput(outputId="evalOutput")))
+               )
+           )
+           ))
+               #          , tag("script ", 
+               #                "function alertModelNotReady() {alert(\"Model is not yet fully specified!\");}")
+               #          , tag("script ", 
 #                "function alertModelIsReady() {alert(\"Model is running!\\n\" + 
 #                output.);}"
          #)                             
-         #headerPanel(title="Clinical Trial Experiment Platform", windowTitle="Clinical Trial Experiment Platform")
     )
   })
 })
