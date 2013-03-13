@@ -222,11 +222,17 @@ shinyServer(function(input, output) {
                    specClassNamesForSim1CT)
     components[[2]] = checkboxInput(inputId="toggleDetailTable", "show/hide details", value=FALSE)
     components[[3]] = conditionalPanel(condition="input.specChoiceOneCT == \"PopModelSpecifier\"",
-                                    numericInput(inputId="PopRow", label="Pop model", value=values$PopRow, min=1, max=4, step=1))
+                                    numericInput(inputId="PopRow", label="Pop model", 
+                                                 value=values$PopRow, min=1, 
+                                                 max=nrow(objects_tables[["PopModelSpecifier"]]), step=1))
     components[[4]] = conditionalPanel(condition="input.specChoiceOneCT == \"OutcomeModelSpecifier\"",
-                                    numericInput(inputId="OutcomeRow", label="Outcome model", value=values$OutcomeRow, min=1, max=4, step=1))
+                                    numericInput(inputId="OutcomeRow", label="Outcome model", 
+                                                 value=values$OutcomeRow, min=1, 
+                                                 max=nrow(objects_tables[["OutcomeModelSpecifier"]]), step=1))
     components[[5]] = conditionalPanel(condition="input.specChoiceOneCT == \"DesignSpecifier\"",
-                                    numericInput(inputId="DesignRow", label="Design", value=NA, min=1, max=4, step=1))
+                                    numericInput(inputId="DesignRow", label="Design", 
+                                                 value=NA, min=1, 
+                                                 max=nrow(objects_tables[["DesignSpecifier"]]), step=1))
 # here is the cause of the error message  
     #Error in as.character(value) : 
     #cannot coerce type 'closure' to vector of type 'character'
@@ -281,8 +287,6 @@ shinyServer(function(input, output) {
   
   f.sim1CTbuttonOutput = function(){
     print("Value of sim1CTbutton is " %&% input$sim1CTbutton %&% "\n")  ## make it reactive to the button.
-    #browser()
-    ### TODO: figure out why changing the indices triggers this function
     if(isolate(f.isModelFinished())) {
       designSpecName        = objects_tables[["DesignSpecifier"]]$instance[isolate(input$DesignRow)]
       outcomeModelSpecName  = objects_tables[["OutcomeModelSpecifier"]]$instance[isolate(input$OutcomeRow)]
@@ -342,7 +346,7 @@ shinyServer(function(input, output) {
     if(input$evalButton > 0) eval(parse(text=isolate(input$evalString)))
   })
   
-  reactive({options(shiny.trace = input$debugButton) })
+  reactive({options("shiny.trace") <- input$traceButton})
   
   output$headerOutput = renderUI({
     #    addAttr("html", TRUE,
@@ -350,22 +354,18 @@ shinyServer(function(input, output) {
             </head>\n<div class=\"span12\" style=\"padding: 10px 0px; color:rgb(fff,300,400)\">
             <h2  > <i>Clinical Trial Experiment Platform </i> </h2>\n</div>")
          , tag("script ", 
-               "function toggleDebug() {alert(\"Debug is not yet ready!\");}")       
+               "function toggleTrace() {alert(\"Trace toggle is not yet ready!\");}")       
          , tag("table", list(
            tag("tr", 
                list(
                  tag("TD",
                      list(width=120, style="color: blue",
-                          checkboxInput(inputId="debugButton", 
+                          checkboxInput(inputId="traceButton", 
                                         value=FALSE,
-                                        "debug=" %&% options("shiny.trace")[[1]]
+                                        "trace=" %&% options("shiny.trace")[[1]]
                           ))),
-                 #                             tags$button(type="button", style="color: blue",
-                 #                                                   onclick="\"toggleDebug()\"",
-                 #                                                   "Toggle debugging"))),
                  tag("TD", 
                      list(style="color:\"red\"", actionButton("evalButton", "evalButton"))),
-                 #                       list(checkboxInput(inputId="evalToggle", "evalToggle", value=FALSE))),
                  tag("TD",
                      list(width=10, textInput(inputId="evalString", label="", value="1+1"))),
                  tag("TD", list(style="color:red", HTML("&rarr;"))),
