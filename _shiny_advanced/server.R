@@ -344,10 +344,17 @@ shinyServer(function(input, output) {
   
   output$evalOutput = renderText({
     if(input$evalButton > 0) eval(parse(text=isolate(input$evalString)))
-  })
+  })  ### example:   options(shiny.trace=input$traceButton)[[1]]
+  ### example:   options("shiny.trace")[[1]]
   
-  reactive({options("shiny.trace") <- input$traceButton})
   
+  output$shiny.trace = renderText({
+    options(shiny.trace=input$traceButton)
+    catn("shiny.trace: ", options("shiny.trace")[[1]], 
+         " should equal ", input$traceButton)
+    options("shiny.trace")[[1]]
+  })   #### Not called!!
+
   output$headerOutput = renderUI({
     #    addAttr("html", TRUE,
     list(HTML("<head>\n  <title>Clinical Trial Experiment Platform</title>
