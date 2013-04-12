@@ -143,11 +143,12 @@ shinyServer(function(input, output) {
   #source("tableForCreateOneCT.R")# doesn't work inside a function body?
   
   f.objects_table_for_OneCT = function(){
+    f.changeSelectedRow()
     df = createObjectsTable()
     selectedRow = switch(input$specChoiceOneCT,
-                         PopModelSpecifier=input$PopRow,
-                         OutcomeModelSpecifier=input$OutcomeRow,
-                         DesignSpecifier=input$DesignRow
+                         PopModelSpecifier=values$PopRow,
+                         OutcomeModelSpecifier=values$OutcomeRow,
+                         DesignSpecifier=values$DesignRow
     )
     header_html <- function(table_cell) paste0('<th>', table_cell, '</th>')
     cell_html <- function(table_cell) paste0('<td>', table_cell, '</td>')
@@ -178,6 +179,21 @@ shinyServer(function(input, output) {
   
   output$objects_table_for_OneCT = renderText({f.objects_table_for_OneCT()})
   
+  f.changeSelectedRow = reactive({
+    catn("In f.changeSelectedRow; input$whichRow is ", input$whichRow)
+    if(is.null(values$PopRow)) values$PopRow = 1
+    if(is.null(values$OutcomeRow)) values$OutcomeRow = 1
+    if(is.null(values$DesignRow)) values$DesignRow = 1
+    if(!is.null(input$whichRow)) 
+      switch(input$specChoiceOneCT,
+           PopModelSpecifier=
+             if(input$whichRow != values$PopRow) values$PopRow = input$whichRow,
+           OutcomeModelSpecifier=
+             if(input$whichRow != values$OutcomeRow) values$OutcomeRow = input$whichRow,
+           DesignSpecifier=
+             if(input$whichRow != values$DesignRow) values$DesignRow = input$whichRow
+    )
+  })
   #   highlightObjectsTable = reactive({
   #         
   #   })
@@ -225,7 +241,7 @@ shinyServer(function(input, output) {
   f.isModelFinished = reactive( {
     #updateModelIndices()
     #cat("length(values): ", length(values), "\n") ### always == 1 !!!
-    rowValues = c(input$PopRow, input$OutcomeRow, input$DesignRow)
+    rowValues = c(values$PopRow, values$OutcomeRow, values$DesignRow)
     result = try(
       ! is.null(rowValues)
       & ! any(sapply(rowValues, is.na))
@@ -247,9 +263,9 @@ shinyServer(function(input, output) {
     specLine = function(specName, rowNum) strong(specName)  %&% " = " %&%
       ifelse(is.null(rowNum) | is.na(rowNum), "(not chosen)", 
              objects_tables[[specName]][rowNum, "instance"]) ;
-    line = specLine("PopModelSpecifier", input$PopRow) %&% "<br>" %&%
-      specLine("OutcomeModelSpecifier", input$OutcomeRow) %&% "<br>" %&%
-      specLine("DesignSpecifier", input$DesignRow) 
+    line = specLine("PopModelSpecifier", values$PopRow) %&% "<br>" %&%
+      specLine("OutcomeModelSpecifier", values$OutcomeRow) %&% "<br>" %&%
+      specLine("DesignSpecifier", values$DesignRow) 
     attr(line, "html") = TRUE
     print(line)
     HTML(line)
@@ -261,19 +277,19 @@ shinyServer(function(input, output) {
     components[[1]] = radioButtons("specChoiceOneCT", "choose spec type",
                    specClassNamesForSim1CT)
     components[[2]] = checkboxInput(inputId="toggleDetailTable", "show/hide details", value=FALSE)
-    components[[3]] = conditionalPanel(condition="input.specChoiceOneCT == \"PopModelSpecifier\"",
-                                    numericInput(inputId="PopRow", label="Pop model", 
-                                                 value=values$PopRow, min=1, 
-                                                 max=nrow(objects_tables[["PopModelSpecifier"]]), step=1))
-    components[[4]] = conditionalPanel(condition="input.specChoiceOneCT == \"OutcomeModelSpecifier\"",
-                                    numericInput(inputId="OutcomeRow", label="Outcome model", 
-                                                 value=values$OutcomeRow, min=1, 
-                                                 max=nrow(objects_tables[["OutcomeModelSpecifier"]]), step=1))
-    components[[5]] = conditionalPanel(condition="input.specChoiceOneCT == \"DesignSpecifier\"",
-                                    numericInput(inputId="DesignRow", label="Design", 
-                                                 value=NA, min=1, 
-                                                 max=nrow(objects_tables[["DesignSpecifier"]]), step=1))
-# here is the cause of the error message  
+#     components[[3]] = conditionalPanel(condition="input.specChoiceOneCT == \"PopModelSpecifier\"",
+#                                     numericInput(inputId="PopRow", label="Pop model", 
+#                                                  value=values$PopRow, min=1, 
+#                                                  max=nrow(objects_tables[["PopModelSpecifier"]]), step=1))
+#     components[[4]] = conditionalPanel(condition="input.specChoiceOneCT == \"OutcomeModelSpecifier\"",
+#                                     numericInput(inputId="OutcomeRow", label="Outcome model", 
+#                                                  value=values$OutcomeRow, min=1, 
+#                                                  max=nrow(objects_tables[["OutcomeModelSpecifier"]]), step=1))
+#     components[[5]] = conditionalPanel(condition="input.specChoiceOneCT == \"DesignSpecifier\"",
+#                                     numericInput(inputId="DesignRow", label="Design", 
+#                                                  value=NA, min=1, 
+#                                                  max=nrow(objects_tables[["DesignSpecifier"]]), step=1))
+# # here is the cause of the error message  
     #Error in as.character(value) : 
     #cannot coerce type 'closure' to vector of type 'character'
     #     components[[6]] = conditionalPanel(condition="input.toggleDetailTable",
@@ -328,9 +344,9 @@ shinyServer(function(input, output) {
   f.sim1CTbuttonOutput = function(){
     print("Value of sim1CTbutton is " %&% input$sim1CTbutton %&% "\n")  ## make it reactive to the button.
     if(isolate(f.isModelFinished())) {
-      designSpecName        = objects_tables[["DesignSpecifier"]]$instance[isolate(input$DesignRow)]
-      outcomeModelSpecName  = objects_tables[["OutcomeModelSpecifier"]]$instance[isolate(input$OutcomeRow)]
-      popModelSpecName      = objects_tables[["PopModelSpecifier"]]$instance[isolate(input$PopRow)]
+      designSpecName        = objects_tables[["DesignSpecifier"]]$instance[isolate(values$DesignRow)]
+      outcomeModelSpecName  = objects_tables[["OutcomeModelSpecifier"]]$instance[isolate(values$OutcomeRow)]
+      popModelSpecName      = objects_tables[["PopModelSpecifier"]]$instance[isolate(values$PopRow)]
       catn("sim1CTbuttonAction: Running model!\n" %&% 
              "    designSpec = " %&% designSpecName %&% 
              ",   outcomeModelSpec = " %&% outcomeModelSpecName %&% 
