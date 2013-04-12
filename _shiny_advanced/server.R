@@ -140,6 +140,42 @@ shinyServer(function(input, output) {
   output$objects_table_1 <- renderTable({createObjectsTable()})
   output$objects_table_2 <- renderTable({createObjectsTable()})
   
+  #source("tableForCreateOneCT.R")# doesn't work inside a function body?
+  
+  f.objects_table_for_OneCT = function(){
+    df = createObjectsTable()
+    selectedRow = switch(input$specChoiceOneCT,
+                         PopModelSpecifier=input$PopRow,
+                         OutcomeModelSpecifier=input$OutcomeRow,
+                         DesignSpecifier=input$DesignRow
+    )
+    header_html <- function(table_cell) paste0('<th>', table_cell, '</th>')
+    cell_html <- function(table_cell) paste0('<td>', table_cell, '</td>')
+    radio_html <- function(radio_name, radio_value, radio_text) {
+      paste0('<input type="radio" name="', 
+             radio_name, '" value="', radio_value, '">', radio_text)
+    }    
+    row_html <- function(table_row_num) {
+      table_row = df[table_row_num, ]
+      cells <- sapply(table_row, cell_html)
+      cells <- c(cell_html(radio_html("whichRow", table_row_num==selectedRow, "")), cells)
+      collapse_cells <- paste0(cells, collapse='')
+      selectedRowStyle = "style='color:red; font-weight:bold'"
+      collapse_cells <- paste0('<tr ', 
+                               ifelse(table_row_num == selectedRow, selectedRowStyle, ""),
+                               '>', collapse_cells, '</tr>')
+      collapse_cells 
+    }
+    df_rows <- sapply(1:nrow(df), row_html) 
+    df_header_row <- header_html(c("CHOICE", names(df)))
+    collapse_cells <- paste0(c(df_header_row, df_rows), collapse='')    
+    full_table <- paste0('<table class=\"data table table-bordered table-condensed\">', 
+                         collapse_cells, '</table>')
+    return(full_table)
+  }
+  
+  output$objects_table_for_OneCT = renderText({f.objects_table_for_OneCT()})
+  
   #   highlightObjectsTable = reactive({
   #         
   #   })
@@ -168,7 +204,7 @@ shinyServer(function(input, output) {
     #       shortName(input$specChoiceOneCT)  %&%
     #       " \n(class="    %&%
     #       input$specChoiceOneCT %&% ")" )
-    theTableOutput = tableOutput(outputId="objects_table_2")
+    theTableOutput = tableOutput(outputId="objects_table_for_OneCT")
     ## "<div id=\"objects_table_2\" class=\"shiny-html-output\"></div>"
     # print(theTableOutput)
     ## This should set the value of output$objects_table_2, for use in the text.
