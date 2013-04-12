@@ -9,8 +9,7 @@ require(RBioinf)
 
 options(shiny.trace=TRUE)
 
-source("createCTDEcatalog.R")
-if(! (length(ls(pattern="reloadCatalog")) == 1 && !reloadCatalog) ) createCTDEcatalog()
+#if(length(ls(pattern="CRMSpec1")) == 0 )  RELOAD_CATALOG()
 
 specClassNames = c(`patient attributes`="BaseCharModelSpecifier",
                    `population models`="PopModelSpecifier",
