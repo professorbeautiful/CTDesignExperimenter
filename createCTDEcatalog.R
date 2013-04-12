@@ -1,4 +1,5 @@
 createCTDEcatalog = function() {
+  ### Based on rogerTestsYuanyuanCode.R
   #print(ls())  ### Initially, nothing.
   crm9 <- new("CRMSpecifier",
               InitialProbGuesses=c(0.1,0.2,0.3,0.4,0.5),
@@ -8,11 +9,7 @@ createCTDEcatalog = function() {
               StartingDoseLevel=3,
               TierDoses=1:5,
               InitialStageDoseLevels=NULL)
-  
-  designSpecs <- list(crm9)
-  
-  # PopModelSpecs = list(NULL)  ## incorrect for signature.
-  
+    # PopModelSpecs = list(NULL)  ## incorrect for signature.
   setClass(Class="PKclearanceModel",
            contains="BaseCharModelSpecifier",
            representation=representation(
@@ -72,10 +69,12 @@ createCTDEcatalog = function() {
   efficacyDoseThresholdOutcomeModel <- new("DoseThresholdModelSpecifier",
                                            DoseThresholdName="EfficacyDoseThreshold")
   ### currently the validation allows only these two DoseThresholdName.
+  ### Now, to export the objects to .GlobalEnv!
   print(ls())
   ### the following line works
   temp=function() { xtemp=111; assign("xtemp", get("xtemp"), pos=1)}
   temp()
   ## but this doesn't.  Ahh, now it does. Why?
   for(obj in ls()) assign(obj, get(obj), pos=1)
+  return(ls())
 }
