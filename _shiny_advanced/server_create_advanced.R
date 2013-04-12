@@ -7,7 +7,7 @@ library("shinyIncubator")
 # library(datasets)
 require(RBioinf)
 
-options(shiny.trace=TRUE)
+options(shiny.trace=FALSE)
 
 #if(length(ls(pattern="CRMSpec1")) == 0 )  RELOAD_CATALOG()
 
@@ -151,14 +151,16 @@ shinyServer(function(input, output) {
     )
     header_html <- function(table_cell) paste0('<th>', table_cell, '</th>')
     cell_html <- function(table_cell) paste0('<td>', table_cell, '</td>')
-    radio_html <- function(radio_name, radio_value, radio_text) {
-      paste0('<input type="radio" name="', 
-             radio_name, '" value="', radio_value, '">', radio_text)
+    radio_html <- function(radio_name, radio_value, is_checked, radio_text) {
+      print(paste0('<input type="radio" name="', 
+             radio_name, '" value=', radio_value, 
+                   ifelse(is_checked, " checked ", ""),
+                   '>', radio_text))
     }    
     row_html <- function(table_row_num) {
       table_row = df[table_row_num, ]
       cells <- sapply(table_row, cell_html)
-      cells <- c(cell_html(radio_html("whichRow", table_row_num==selectedRow, "")), cells)
+      cells <- c(cell_html(radio_html("whichRow", table_row_num, table_row_num == selectedRow, "")), cells)
       collapse_cells <- paste0(cells, collapse='')
       selectedRowStyle = "style='color:red; font-weight:bold'"
       collapse_cells <- paste0('<tr ', 
