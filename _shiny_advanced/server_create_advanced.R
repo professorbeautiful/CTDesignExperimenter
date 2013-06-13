@@ -51,7 +51,8 @@ shinyServer(function(input, output) {
       #         if(is.na(buildingModelIndices[f.specChoiceOneCTCleaned()]))  
       #           buildingModelIndices[f.specChoiceOneCTCleaned()] == 1
       ### do we want this? maybe the user wants to leave it undecided?
-      return("Run one clinical trial: results appear here.\n")
+      return("Run one clinical trial: results appear here.\n" %&% 
+               h5(em(uiOutput(outputId="currentModelText_copy"))))
     }
     else return(input$viewChoice %&% ": not yet implemented")
   }
@@ -107,18 +108,19 @@ shinyServer(function(input, output) {
       theSpecChoice = substring(theSpecChoice, 1, regexpr("\\[", theSpecChoice) - 2)
     theObjects = data.frame(instanceNames(theSpecChoice))
     names(theObjects) = "instance"
+    theObjects = theObjects[order(theObjects$instance), , drop=FALSE]
     theObjects$class = 
       sapply(theObjects$instance,
              FUN=function(obName) class(get(obName)))
     theObjects$requirements = 
-      sapply(theObjects[[1]], 
+      sapply(theObjects$instance, 
              FUN=function(theObject){
                req = try(getRequirements(get(theObject)), silent=TRUE)
                if(class(req) == "try-error") return ("")
                return(paste(req, collapse="\n"))}
       )
     theObjects$provisions = 
-      sapply(theObjects[[1]], 
+      sapply(theObjects$instance, 
              FUN=function(theObject){
                prov = try(getProvisions(get(theObject)), silent=TRUE)
                if(class(prov) == "try-error") return ("")
@@ -153,15 +155,16 @@ shinyServer(function(input, output) {
     header_html <- function(table_cell) paste0('<th>', table_cell, '</th>')
     cell_html <- function(table_cell) paste0('<td>', table_cell, '</td>')
     radio_html <- function(radio_name, radio_value, is_checked, radio_text) {
-      print(paste0('<input type="radio" name="', 
+      paste0('<input type="radio" name="', 
              radio_name, '" value=', radio_value, 
                    ifelse(is_checked, " checked ", ""),
-                   '>', radio_text))
+                   '>', radio_text)
     }    
     row_html <- function(table_row_num) {
       table_row = df[table_row_num, ]
       cells <- sapply(table_row, cell_html)
-      cells <- c(cell_html(radio_html("whichRow", table_row_num, table_row_num == selectedRow, "")), cells)
+      cells <- c(cell_html(radio_html("whichRow_" %&% input$specChoiceOneCT, 
+                                      table_row_num, table_row_num == selectedRow, "")), cells)
       collapse_cells <- paste0(cells, collapse='')
       selectedRowStyle = "style='color:red; font-weight:bold'"
       collapse_cells <- paste0('<tr ', 
@@ -180,20 +183,28 @@ shinyServer(function(input, output) {
   output$objects_table_for_OneCT = renderText({f.objects_table_for_OneCT()})
   
   f.changeSelectedRow = reactive({
-    catn("In f.changeSelectedRow; input$whichRow is ", input$whichRow)
-    if(is.null(values$PopRow)) values$PopRow = 1
-    if(is.null(values$OutcomeRow)) values$OutcomeRow = 1
-    if(is.null(values$DesignRow)) values$DesignRow = 1
-    if(!is.null(input$whichRow)) 
+    catn("In f.changeSelectedRow (enter); values are  ", values$PopRow, values$OutcomeRow, values$OutcomeRow)
+    catn(input$specChoiceOneCT)
+    ###  These values should work.
+    if(is.null(values$PopRow)) values$PopRow = which(objects_tables[["PopModelSpecifier"]] == "doseThresholdPopModelSpec")
+    if(is.null(values$OutcomeRow)) values$OutcomeRow = which(objects_tables[["OutcomeModelSpecifier"]] == "toxDoseThresholdOutcomeModel")
+    if(is.null(values$DesignRow)) values$OutcomeRow = which(objects_tables[["DesignSpecifier"]] == "crm9")
+    catn("whichRow_ values: ", paste(
+      input$whichRow_PopModelSpecifier, input$whichRow_OutcomeModelSpecifier, input$whichRow_DesignSpecifier, sep=",")) 
+    whichRow = input[["whichRow_" %&% input$specChoiceOneCT]]
+    if(!is.null(whichRow)) 
       switch(input$specChoiceOneCT,
            PopModelSpecifier=
-             if(input$whichRow != values$PopRow) values$PopRow = input$whichRow,
+             if(whichRow != values$PopRow) values$PopRow = as.numeric(whichRow),
            OutcomeModelSpecifier=
-             if(input$whichRow != values$OutcomeRow) values$OutcomeRow = input$whichRow,
+             if(whichRow != values$OutcomeRow) values$OutcomeRow = as.numeric(whichRow),
            DesignSpecifier=
-             if(input$whichRow != values$DesignRow) values$DesignRow = input$whichRow
+             if(whichRow != values$DesignRow) values$DesignRow = as.numeric(whichRow)
     )
   })
+  
+  #debug(f.changeSelectedRow)
+  
   #   highlightObjectsTable = reactive({
   #         
   #   })
@@ -259,7 +270,7 @@ shinyServer(function(input, output) {
   
 #  output$isModelFinished = reactive({f.isModelFinished()})
   
-  output$currentModelText = renderText({
+  output$currentModelText = output$currentModelText_copy = renderText({
     specLine = function(specName, rowNum) strong(specName)  %&% " = " %&%
       ifelse(is.null(rowNum) | is.na(rowNum), "(not chosen)", 
              objects_tables[[specName]][rowNum, "instance"]) ;
@@ -371,12 +382,17 @@ shinyServer(function(input, output) {
     renderText({f.sim1CTbuttonOutput()})
   
   
-  values = reactiveValues(PopRow=1,OutcomeRow=1, DesignRow=2)
-
+  values = reactiveValues(
+    PopRow=which(objects_tables[["PopModelSpecifier"]] == "doseThresholdPopModelSpec"),
+    OutcomeRow=which(objects_tables[["OutcomeModelSpecifier"]] == "toxDoseThresholdOutcomeModel"),
+    DesignRow=which(objects_tables[["DesignSpecifier"]] == "crm9")
+  )
+  
   ## values  is an S3 class "reactivevalues". Put this in the eval box:
   #   methods(class="reactivevalues")
   #  and this is what you get:
-  # [.reactivevalues [[.reactivevalues [[<-.reactivevalues [<-.reactivevalues $.reactivevalues $<-.reactivevalues as.list.reactivevalues names.reactivevalues names<-.reactivevalues
+  #    [.reactivevalues [[.reactivevalues [[<-.reactivevalues [<-.reactivevalues $.reactivevalues $<-.reactivevalues 
+  #    as.list.reactivevalues names.reactivevalues names<-.reactivevalues
   
 #   updateModelIndices = reactive({
 #     values$PopRow <- input$PopRow
