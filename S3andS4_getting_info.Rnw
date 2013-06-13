@@ -1,0 +1,157 @@
+%%%  From S3,S4_class_method_inquiry.tex, which we can now delete.
+%%%  TexShop is far faster than RStudio for this.
+%%%  I just followed directions from http://stackoverflow.com/questions/4922432/more-efficient-r-sweave-texshop-work-flow
+%%%  to add Sweave capability to TexShop- but careful, a *.tex file will be overwritten.
+%%%  SweaveOpts(concordance=TRUE)  breaks, and is commented out below.
+
+\documentclass[12pt,english]{article}
+
+%% LyX 2.0.6 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+% \documentclass[12pt,english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\pagestyle{empty}
+\setlength{\parskip}{\medskipamount}
+\setlength{\parindent}{0pt}
+\usepackage{array}
+\usepackage{pifont}
+\usepackage{amssymb}
+
+\makeatletter
+% Preview source code
+%      SweaveOpts{concordance=TRUE}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+\AtBeginDocument{
+  \def\labelitemii{\(\blacklozenge\)}
+  \def\labelitemiii{\ding{227}}
+  \def\labelitemiv{\ding{70}}
+}
+
+\makeatother
+
+\usepackage{babel}
+
+\usepackage[margin=0.5in]{geometry}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+
+%\hfill{}%
+
+\section{Finding methods}
+\subsection{Finding method names}
+%\begin{tabular}{|c|c|c|}   %%% OK, but does not respect linebreak
+%\begin{tabular}{|m|m|m}
+\begin{tabular}{|>{\centering}m{1.5cm}|>{\centering}m{6.5cm}|>{\centering}m{9.5cm}|}
+\hline 
+ & S3 & S4\tabularnewline
+\hline 
+Name & methods & showMethods\tabularnewline
+\hline 
+Location & utils & methods\tabularnewline
+\hline 
+Signature & methods(generic.function, class) &
+%%\multirow{1}{*}
+showMethods(f = character(), \linebreak
+where = topenv(parent.frame()), classes
+= NULL\linebreak  ,includeDefs = FALSE, inherited = !includeDefs,
+showEmpty,\linebreak  printTo = stdout(), fdef)
+\tabularnewline
+\hline 
+ & List all available methods for an S3 generic function,\linebreak or all methods
+for a class 
+& Show a summary of the methods for one or more generic functions, possibly restricted to those involving specified classes.
+\tabularnewline
+\hline 
+Example & & \\ 
+\tabularnewline
+\hline 
+\end{tabular}
+
+
+Try also 
+<<>>=
+library('CTDesignExplorer')
+showMethods("sim1CT")
+findMethods("sim1CT")
+findMethodSignatures(methods=findMethods("sim1CT"))
+@
+
+\subsection{Finding method bodies}
+
+\begin{tabular}{|>{\centering}m{1.5cm}|>{\centering}m{6.5cm}|>{\centering}m{9.5cm}|}
+\hline 
+ & S3 & S4\tabularnewline
+\hline 
+Example & print.lm & theMethod = getMethod("sim1CT", signature=signature(designSpec="DesignSpecifier", popModelSpec="OptionalPopModelSpecifier", outcomeModelSpec="OutcomeModelSpecifier"))\\ 
+\tabularnewline
+\hline 
+\end{tabular}
+
+str(theMethod())
+\\
+\begin{verbatim}
+Formal class 'MethodDefinition' [package "methods"] with 4 slots
+  ..@ .Data  :function (designSpec, popModelSpec, outcomeModelSpec)  
+  ..@ target :Formal class 'signature' [package "methods"] with 3 slots
+  .. .. ..@ .Data  : chr [1:3] "DesignSpecifier" "OptionalPopModelSpecifier" "OutcomeModelSpecifier"
+  .. .. ..@ names  : chr [1:3] "designSpec" "popModelSpec" "outcomeModelSpec"
+  .. .. ..@ package: chr [1:3] ".GlobalEnv" ".GlobalEnv" ".GlobalEnv"
+  ..@ defined:Formal class 'signature' [package "methods"] with 3 slots
+  .. .. ..@ .Data  : chr [1:3] "DesignSpecifier" "OptionalPopModelSpecifier" "OutcomeModelSpecifier"
+  .. .. ..@ names  : chr [1:3] "designSpec" "popModelSpec" "outcomeModelSpec"
+  .. .. ..@ package: chr [1:3] ".GlobalEnv" ".GlobalEnv" ".GlobalEnv"
+  ..@ generic: atomic [1:1] sim1CT
+  .. ..- attr(*, "package")= chr ".GlobalEnv"
+\end{verbatim}
+
+\begin{tabular}{|>{\centering}m{1.5cm}|>{\centering}m{6.5cm}|}
+\hline 
+function body & theMethod@.Data\tabularnewline
+\hline 
+signature & theMethod@defined\tabularnewline
+\hline 
+\end{tabular}
+
+\section{Finding slots}
+
+\subsection{Finding slot names for a class}
+
+\begin{tabular}{|>{\centering}m{1.5cm}|>{\centering}m{6.5cm}|}
+\hline 
+ & S4\tabularnewline
+\hline 
+Name  & getSlots\tabularnewline
+\hline 
+Location & methods\tabularnewline
+\hline
+Example & getSlots("CRMSpecifier")\\
+\tabularnewline
+\hline 
+
+\end{tabular}
+
+\subsection{Finding slot values for an object}
+
+\begin{tabular}{|>{\centering}m{1.5cm}|>{\centering}m{10.5cm}|}
+\hline 
+ & S4\tabularnewline
+\hline 
+Example & slot(object=crm9, name="InitialProbGuesses")\\
+crm9@TierDoses\tabularnewline
+\hline 
+\end{tabular}
+
+\section{Defunct}
+
+getAllMethods\\
+getMethods (but not getMethod!)\\
+
+
+\end{document}
