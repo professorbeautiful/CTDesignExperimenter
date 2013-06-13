@@ -83,6 +83,10 @@ findMethods("sim1CT")
 findMethodSignatures(methods=findMethods("sim1CT"))
 @
 
+\subsection{Finding constructor bodies}
+
+
+
 \subsection{Finding method bodies}
 
 \begin{tabular}{|>{\centering}m{1.5cm}|>{\centering}m{6.5cm}|>{\centering}m{9.5cm}|}
