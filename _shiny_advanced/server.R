@@ -278,7 +278,7 @@ shinyServer(function(input, output) {
       specLine("OutcomeModelSpecifier", values$OutcomeRow) %&% "<br>" %&%
       specLine("DesignSpecifier", values$DesignRow) 
     attr(line, "html") = TRUE
-    print(line)
+    #print(line)
     HTML(line)
   })
   
@@ -305,7 +305,7 @@ shinyServer(function(input, output) {
     #cannot coerce type 'closure' to vector of type 'character'
     #     components[[6]] = conditionalPanel(condition="input.toggleDetailTable",
 #                                     renderTable(objects_tables[[input$specChoiceOneCT]]))
-    print("f.componentsForBuildingModel: length(components) = " %&% length(components))
+    #print("f.componentsForBuildingModel: length(components) = " %&% length(components))
     return(components)
   }
   #debug(f.componentsForBuildingModel)
