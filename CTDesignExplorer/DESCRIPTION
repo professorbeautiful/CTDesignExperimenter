@@ -1,10 +1,10 @@
 Package: CTDesignExplorer
 Type: Package
 Title: Clinical Trial Simulation Experiment Platform
-Version: 1.0
-Date: 2010-04-16
-Author: Yuanyuan Wang
-Maintainer: Yuanyuan Wang <ywangpitt@gmail.com>
+Version: 1.2
+Date: 2013-06-14
+Author: Yuanyuan Wang and Roger Day
+Maintainer: Roger Day <day01@pitt.edu>
 Description: This package presents an extendible simulation experiment platform for evaluating
  clinical trial designs. The code base relies on S4 classes and methods. Design, baseline
  characteristic model, population model, outcome model, and evaluation criterion are five key
