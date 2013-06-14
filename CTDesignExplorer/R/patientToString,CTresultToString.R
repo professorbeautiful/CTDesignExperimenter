@@ -9,7 +9,6 @@ patientToString = function(pat) {
                 pat@ConcurrentTrtsDataList[[1]]@Outcomes, sep="=", collapse=",  ")
   ))
 }
-patientToString(oneCTresult@PatsData[[2]])
 
 CTresultToString = function(thisCTresult=oneCTresult, showPatients=TRUE){
   #output = ifelse(!is.null(thisCTresult@CTTimes),  thisCTresult@CTTimes, "") ### NULL
@@ -23,4 +22,5 @@ CTresultToString = function(thisCTresult=oneCTresult, showPatients=TRUE){
                      "\n")
   as.cat(output)
 }
-CTresultToString(oneCTresult)
+###patientToString(oneCTresult@PatsData[[2]])
+### CTresultToString(oneCTresult)
