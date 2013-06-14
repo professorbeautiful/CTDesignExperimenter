@@ -2,7 +2,7 @@
 %%%  TexShop is far faster than RStudio for this.
 %%%  I just followed directions from http://stackoverflow.com/questions/4922432/more-efficient-r-sweave-texshop-work-flow
 %%%  to add Sweave capability to TexShop- but careful, a *.tex file will be overwritten.
-%%%  SweaveOpts(concordance=TRUE)  breaks, and is commented out below.
+%%%  SweaveOpts(concordance=TRUE)  used by Sweave;  breaks LaTex if not Sweaved first.
 
 \documentclass[12pt,english]{article}
 
@@ -17,6 +17,8 @@
 \usepackage{array}
 \usepackage{pifont}
 \usepackage{amssymb}
+\usepackage{url}  % Formatting web addresses  
+
 
 \makeatletter
 % Preview source code
@@ -34,17 +36,39 @@
 
 \makeatother
 
+\usepackage{textcomp}  
+\def\Q{\textquotesingle}
+
 \usepackage{babel}
 
 \usepackage[margin=0.5in]{geometry}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+%\SweaveOpts{concordance=TRUE}
 
 
 %\hfill{}%
 
+\section{Finding classes and class names}
+
+<<>>=
+setClass('TempClass', representation(x='numeric')) ## doesn't work just with contains='numeric'getClass('TempClass')
+tempObj = new('TempClass')
+getClass(tempObj)
+### Does NOT return the class itself:
+identical(getClass('TempClass'), getClass(tempObj))
+#### And this doesn't help:
+getClass(getClass(tempObj))
+#### This is how you do it:
+class(tempObj)
+getClass(class(tempObj))
+### Can you say, 'arcane'?
+@
+
+Note that getClass returns 
 \section{Finding methods}
+
+
 \subsection{Finding method names}
 %\begin{tabular}{|c|c|c|}   %%% OK, but does not respect linebreak
 %\begin{tabular}{|m|m|m}
@@ -83,8 +107,63 @@ findMethods("sim1CT")
 findMethodSignatures(methods=findMethods("sim1CT"))
 @
 
+
 \subsection{Finding constructor bodies}
 
+``Constructors'' are actually methods. 
+
+From \url{https://stat.ethz.ch/pipermail/r-devel/2008-May/049422.html}
+\\
+but many errors.  See instead
+\url{http://www.bioconductor.org/help/course-materials/2011/AdvancedRFeb2011Seattle/S4Overview-slides.pdf}
+
+Note that the documentation says to use ``slots'' and ``contains''
+instead of ``representation'', but Herve's document uses ``representation''.
+
+\begin{verbatim}
+#Oleg Sklyar's points:\\
+#1) validity should return a character in case of errors
+
+# This works:
+getClass("A")@validity
+\\or this\\
+getValidity(getClass("A"))
+
+
+#2) default initializer usually does the job
+#3) define constructors as methods to allow different signatures and 
+#   conversions from other classes
+#4) If you derive your class from numeric, rather than add slots,
+#   the performance will be much better and you will get default
+#   behaviour of numeric, i.e.
+#setClass("A",
+#  representation("numeric", b="numeric")
+
+setClass("A",
+  representation(a="numeric",b="numeric"),
+  validity = function(me) {
+    print('In validity')
+    if (length(me@a)!=length(me@b))
+      return("different lengths of a and b")
+    if (length(me@a)==0) 
+      return("object length is zero")
+    TRUE
+  }
+)
+#### Now, define the constructors:
+setGeneric("A", function(a,b,...) standardGeneric("A"))
+setMethod("A", signature(a="missing",b="missing"),
+  function(a,b,...) A(as.numeric(1:10),...) ## calls the one below
+)
+#setMethod("A", signature(a="A",b="missing"),
+#  function(a,b,...) a)
+setMethod("A", signature(a="ANY",b="ANY"),
+  function(a,b,...) new("A",a=as.numeric(a),b=as.numeric(b),...)
+)
+setMethod("A", signature(a="ANY",b="missing"),
+  function(a,b,...) A(as.numeric(a),as.numeric(a),...) ## Calls the one above
+)
+\end{verbatim}
 
 
 \subsection{Finding method bodies}
@@ -93,7 +172,7 @@ findMethodSignatures(methods=findMethods("sim1CT"))
 \hline 
  & S3 & S4\tabularnewline
 \hline 
-Example & print.lm & theMethod = getMethod("sim1CT", signature=signature(designSpec="DesignSpecifier", popModelSpec="OptionalPopModelSpecifier", outcomeModelSpec="OutcomeModelSpecifier"))\\ 
+Example & print.lm & theMethod = getMethod(\Q sim1CT\Q, signature=signature(designSpec=\Q DesignSpecifier\Q, popModelSpec=\Q OptionalPopModelSpecifier\Q, outcomeModelSpec=\Q OutcomeModelSpecifier\Q))\\ 
 \tabularnewline
 \hline 
 \end{tabular}
@@ -135,7 +214,7 @@ Name  & getSlots\tabularnewline
 \hline 
 Location & methods\tabularnewline
 \hline
-Example & getSlots("CRMSpecifier")\\
+Example & getSlots(\Q CRMSpecifier\Q)\\
 \tabularnewline
 \hline 
 
@@ -147,7 +226,9 @@ Example & getSlots("CRMSpecifier")\\
 \hline 
  & S4\tabularnewline
 \hline 
-Example & slot(object=crm9, name="InitialProbGuesses")\\
+Example &
+slot(object=crm9, name=\Q InitialProbGuesses\Q )
+\\
 crm9@TierDoses\tabularnewline
 \hline 
 \end{tabular}
