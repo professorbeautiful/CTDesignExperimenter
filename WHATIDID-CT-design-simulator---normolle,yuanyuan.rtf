@@ -1,0 +1,469 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf390
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Consolas;\f2\fnil\fcharset0 Consolas-Bold;
+\f3\fnil\fcharset0 HelveticaNeue;\f4\fnil\fcharset0 Georgia;\f5\fmodern\fcharset0 Courier;
+}
+{\colortbl;\red255\green255\blue255;\red217\green11\blue0;\red255\green83\blue8;\red206\green59\blue0;
+\red155\green44\blue1;\red38\green38\blue38;\red0\green135\blue135;\red213\green14\blue52;\red251\green0\blue7;
+\red251\green0\blue7;\red255\green255\blue255;\red61\green52\blue46;\red251\green251\blue249;\red234\green54\blue39;
+\red61\green52\blue46;\red251\green251\blue249;\red234\green54\blue39;\red38\green38\blue38;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 WHATIDID-CT-design-simulator---normolle,yuanyuan\
+\
+\
+2013-01-30\
+The package has an older version of ExpPlatform_ActionQ_v8.R,  71MB\
+The correct file is ExpPlatform_ActionQ_v8_new.R,\
+same as YS_ExpPlatform_ActionQ_v8_new.R,  110MB\
+\
+git commit:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf2 First version of rogerTestsYuanuyanCode.R .  I had this working when Dan visited.  Now it's in a brand-new folder (this project). Using the package doesn't work-- seems to be obsolete- so I'm loading from the file ExpPlatform_ActionQ_v8_new.R.\
+Error message: # Error in getMean(designSpec@BetaPriorSpec) : \
+#   error in evaluating the argument 'distrSpec' in selecting a method \
+# for function 'getMean': \
+# Error: no slot of name "BetaPriorSpec" for this object of class "CRMSpecifier"\
+\
+#This is true.  but I will try CRMExpSpecifier next.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+getting-info-on-classes-and-methods.R  === checked it in.\
+\
+\
+If I load her package (not the v8_new version), and run rogerTestsYuanyuanCode.R,\
+the error is:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf3 Error in sim1CT(designSpec = crm9, popModelSpec = PopModelSpec, outcomeModelSpec = ToxDoseThresholdModelSpec) : \
+  error in evaluating the argument 'popModelSpec' in selecting a method for function 'sim1CT': Error: object 'PopModelSpec' not found\cf0 \
+No big deal-- just mistyping (but why did it work before??)\
+\
+If I add "s", PopModelSpecs, this was set to list(NULL), so it's found.  \
+Now the error is:\
+\cf4 Error in function (classes, fdef, mtable)  : \
+  unable to find an inherited method for function "sim1CT", for signature "CRMSpecifier", "list", "DoseThresholdModelSpecifier"\cf0 \
+Possibly this is a v8_new signature. popModelSpec="OptionalPopModelSpecifier"\
+No!  Old and new versions are the same.\
+So, PopModelSpecs = list(NULL)\
+was just wrong. Can't be a list.\
+\
+If I change the arg to  popModelSpec=NULL, the signature likes it.\
+Then the error is:\
+\cf4 Error in if (TrtAllo > DoseThreshold) ThisPatOutcome <- 1 : \
+  argument is of length zero\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 This is repeatable.\
+\
+Finally, if there is NO popModelSpec, then\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf5 Error in function (classes, fdef, mtable)  : \
+  unable to find an inherited method for function "sim1CT", for signature "CRMSpecifier", "missing", "DoseThresholdModelSpecifier"\cf0 \
+\
+So let's return to popModelSpec=NULL. \cf4 TrtAllo > DoseThreshold\cf0 \
+\
+It seems that this line in generateOutcomes says that you need a PopModelSpec, to set the dose threshold.\
+        DoseThreshold <- thisPatCurrentData@BaseChars[DoseThresholdName]\
+------\
+\
+OK, looking good. Got the PK working nicely as of 4:22 PM 2013-01-30\
+\
+To do:\
+\
+Each Scenario in an experiment object needs structure... and documentation!\
+\
+Convenience methods to save user from needing to understand all that S4 crap.\
+\
+Parameter constants that change only from scenario to scenario.  Automatic generation of the list of spec objects, across a vector of values for the parameter constants.  E.g.  PK parameters.\
+Should not be buried in the spec constructors.\
+\
+Graphical interface, maybe using Shiny at first.\
+----\
+\
+OK, playing with Shiny.  Easy!  runApp() or runApp(dirname).\
+The dir has  server.R and ui.R.  (Or,   www/index.html).\
+\
+options(error=recover)   is appealing!!\
+\
+----\
+\
+\
+2013-02-06\
+\
+I cannot build CTDesignExplorerDevel now, though apparently I could before, because I see the file CTDesignExplorer_1.1.tar.gz.  I can't install that either.\
+The error is:\
+	Error in loadNamespace(package, c(which.lib.loc, lib.loc)) : \
+	  in package \'91CTDesignExplorer\'92 classes EvalProbSuccPhase2Specifier, 	Phase2BryantDaySpecifier were specified for export but not defined\
+\
+Ah, but all of a sudden, I can!!  (Build it, not install it.)\
+\
+I used FileMerge to add the code sections for EvalProbSuccPhase2Specifier and Phase2BryantDaySpecifier into CTDesignExplorerDevel/R/ExpPlatform_ActionQ_devel.R \
+\
+I rebuilt CTDesignExplorer_1.1.tar.gz\
+On tryig to install, now checkRequirements is missing.  It's been renamed to checkInteroperability, so I modify NAMESPACE accordingly, and rebuild.\
+Installation successful.\
+To make sure everything is cleaned up, I restart the RStudio project.\
+----\
+\
+\
+2013-02-10\
+\
+I think that doExperiment (and maybe sim1CT) worked before because I had "v7" loaded.\
+In v8 and devel, the signature for doExperiment requires an arg called userInput. Without v7 it shouldn't have worked before.\
+\
+Currently CTDesignExplorer Version 1.0 (same as v8) is installed and running. The code file is ExpPlatform_ActionQ_v8.R .\
+The new code is Version 1.1, and its name is CTDesignExplorerDevel and the code is ExpPlatform_ActionQ_devel.R\
+\
+The new code has a lot of support for prior distributions.\
+There is a mystery concerning AlphaPriorSpec and BetaPriorSpec. Apparently these are priors for the intercept and slope in the logit model for dose-toxicity.\
+\
+2013-02-11\
+\
+I'm going to begin designing the interface. Starting with 1.0.\
+\
+The code in the setMethod help file doesn't work.\
+Why does setClass("track"...   take so long??? 30 seconds?\
+\
+The errors are in the help file for setClass.  Do NOT assign the setClass return value. Use new() to create an object.\
+Seems to work fine if I rename track to track2.  But not if "track".  I'm restarting.\
+Works fine with track2, as I said.\
+\
+2013-02-12\
+\
+Working on prototype with shiny, going ok, see notes in git.\
+Here's the error message I keep getting:\
+\pard\pardeftab720\sl320
+
+\f1 \cf6 currentContext 
+\f2\b =
+\f1\b0  
+\f2\b function
+\f1\b0 () \{\
+\'a0\'a0\'a0\'a0\'a0\'a0
+\f2\b if
+\f1\b0  (is.null(\cf7 .\cf6 currentContext))\
+\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0stop(\cf8 'Operation not allowed without an active reactive context. '\cf6 ,\
+\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\cf8 '(You tried to do something that can only be done from inside a '\cf6 ,\
+\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\cf8 'reactive function.)'\cf6 )\
+\'a0\'a0\'a0\'a0\'a0\'a0
+\f2\b return
+\f1\b0 (\cf7 .\cf6 currentContext)\
+\'a0\'a0\'a0\'a0\}\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 I thought it was enough to refer to "input" inside, but no.\
+\
+2013-02-13\
+\
+Moved ui, server to _shiny_with_tabs\
+\
+The GUI is now working ( you can select the class, the main panel lists the subclasses.)\
+runApp("_shiny_buttons").\
+\
+Now we have BaseCharModel-- but the PopModel I made of 3 BaseChars is not showing up there.  Spelling?\
+\
+I want the code, RGenFun, to read local slots. Struggling with the method "generateBaseChar" to allow it to do that. If the eval call has only the text arg, it doesn't see the local slots-- which is very strange.  If you add the arg "envir=baseCharModelSpec", then it does--- but then it doesn't find "rnorm"!!\
+\
+OK, problem solved.\
+ \
+2013-02-15\
+\
+TODO:    common data elements.\
+\
+Watch out for duplicate input and output slot names.  They name a JS object. \
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 Sorting out requirements, provisions, CDEs, parameters, and slots.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b0 \cf0 \
+A parameter defines a model spec. PopSpecs do not have parameters, because they are composite, but the others do.\
+A parameter should be a slot.\
+\
+Each provision has an RGenFun equation.\
+(However,  PopSpecs--  get their provisions from the component BaseChars.)\
+Aside from PopSpecs, when there are multiple provisions there must be multiple RGenFuns.\
+Each provision and each requirement should be a CDE in the future.\
+An RGenFun can contain both requirements and parameters.\
+\
+(Added April 11)\
+We should be able to parse the RGenFun.\
+Any inputs should be either parameters or requirements.\
+Any assignments should be provisions.\
+\
+Provisions should be slots, because if it uses a RNG, and if it's retrieved more than once, it should be the same value. So the RGenFun is called only one for every instantiation.\
+\
+\
+getRequirements should not be specially written for each class.\
+\
+CDE repository\
+The main purpose is so that one maximizes interoperability by assuring that variables (CDE usages) meaning the same thing (especially of the same data type) can be hooked together between Specs, and that one does not re-invent a CDE \
+does not invent a new name for one that exists, or re-use the same name for something different-- generating a spurious interoperability.\
+\
+\
+\
+2013-02-16\
+\
+Designing 
+\b \ul sim1CT
+\b0 \ulnone , the method and the interface:\
+\
+For simplicity of the interface, we select ONE of each:  PopSpec, OutcomeSpec, DesignSpec.\
+This is the current signature:\
+	designSpec="DesignSpecifier", popModelSpec="OptionalPopModelSpecifier", 	outcomeModelSpec="OutcomeModelSpecifier"\
+showMethods  also reports a version with signature\
+	designSpec="CRMSpecifier", popModelSpec="PopModelSpecifier", 		outcomeModelSpec="DoseThresholdModelSpecifier"\
+    (inherited from: designSpec="DesignSpecifier", popModelSpec="OptionalPopModelSpecifier", 	outcomeModelSpec="OutcomeModelSpecifier")\
+I can't find a definition for this version. OK, it's inherited.\
+But there are two other subclasses:\
+[1] "APlusBSpecifier"          "CRMSpecifier"             "Phase2BryantDaySpecifier"\
+So I don't know why the other 2 don't show up too.\
+\
+\
+2013-02-18\
+\
+\
+I just checked in the first version that show the main panel for "Define one clinical trial".\
+\
+2013-04-12\
+\
+New insights on parameters, inputs, outputs etc:\
+	We should be able to parse the RGenFun.\
+	Any inputs should be either parameters or requirements.\
+	Any assignments should be provisions.\
+	Instead of RGenFun,\
+		every provision should have a provision function or method.\
+		They should be chain-able, as with OncoTCap.\
+		Extract the inputs from args or introspection.\
+		Extract the outputs from the return() line in body().\
+	Note that the Outcome objects don't use RGenFun.\
+	Stopping rules also have inputs- requirements.\
+\
+I managed to add radio buttons to the table. Called it output$objects_table_for_OneCT\
+Used the method from my question's answer:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/15512510/in-rstudio-shiny-wishing-to-customize-a-table"}}{\fldrslt \cf0 http://stackoverflow.com/questions/15512510/in-rstudio-shiny-wishing-to-customize-a-table}}\
+\
+Probably need to move to the html style, stop ui.R server.R style.\
+\
+Insight:  in calls to renderText etc, the expr arg is turned into a func, \
+which is stored in the  environment\
+of the function returned by the renderXXX call.\
+\
+2013-04-15\
+Some notes on parameters etc.\
+\ul   parameter:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \ulnone 	new() could  use RNG to set parameter.  \
+	RNG parameters are in the class; realizations are in the instance.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \ul \ulc0   Outcomes:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \ulnone Should Outcomes be organized like BasChar and PopModels?\
+Some outcomes may depend on others.\
+You might not know about future Designs air Eval Crits,\
+so any "intermediate" variable might need to be a Provision in the future.\
+So all SHOULD be treated as Provisions.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \ul \ulc0 Inputs, outputs\ulnone \
+Each output has a function. the inputs can be:\
+	requirements pulled from "upstream" spec objects\
+	parameters\
+	other outputs in this instance.\
+To guarantee the latter is correct we need to order function calls for dependence, just a as in oncotcap.\
+\
+\ul Eval Criteria\ulnone \
+eval criteria fall in several categories\
+	Summary stat of a CT "conclusion"\
+	Summary stat of a CT summary stat over patients (special case of "conclusion"?)\
+	CT conclusion statistics compared to the "truth".\
+\
+See spec object relationships.ezdraw\
+\
+\
+2013-06-12\
+\
+With R 3.0.0,  some reintallations are needed.\
+devtools::install_github("shiny-incubator", "rstudio")\
+\
+runApp("_shiny_advanced")\
+\
+2013-06-13\
+\
+I wrote S3andS4_getting_info.Rnw\
+and set up TeXShop to run Sweave---  it works!!  Including a chunk.\
+\
+\
+\
+TODO:  Fix up the whole thing about requirements, provisions, slots, parameters.\
+\
+\
+2013-06-14\
+\
+I removed packages\
+remove.packages("CTDesignExplorer")\
+remove.packages("CTDesignExplorerDevel")\
+and just sourced the file.\
+This starts by removing all objects, so next we have to re-source and run createCTDEcatalog().\
+\
+Now the error is \
+   
+\f3\fs28 \cf9 unable to find an inherited method for function \'91allocateTrts\'92 for signature \'91"CRMSpecifier", "CTData", "numeric", "integer"\'92
+\f0\fs24 \cf0 \
+\
+If I try Bryant-Day,\
+\pard\pardeftab720\sl400
+
+\f3\fs28 \cf10 \cb11   unable to find an inherited method for function \'91generateInitialActions\'92 for signature \'91"Phase2BryantDaySpecifier"\'92
+\f0\fs24 \cf0 \cb1 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+If I try  APlusBSpecifier,\
+\pard\pardeftab720\sl400
+
+\f3\fs28 \cf10 \cb11 could not find function "CTresultToString"
+\f0\fs24 \cf0 \cb1 \
+\
+so it will probably work as soon as I find that function!\
+Ah, there it is, in patientToString,CTresultToString.R\
+But now, \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0    
+\f3\fs28 \cf9 unable to find an inherited method for function \'91allocateTrts\'92 for signature \'91"CRMSpecifier", "CTData", "numeric", "integer"\'92
+\f0\fs24 \cf0 \
+\pard\pardeftab720\sl400
+\cf0 \
+even though it's a different design.\
+-----\
+From 1.1 to 1.2 I changed checkRequirements to checkInteroperability.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 -----\
+Problems installing the package \
+	Warning in getPackageName(where) :\
+		  Created a package name, \'912013-06-14 12:13:36\'92, when none found\
+and\
+	  there is no package called \'9136\'92\
+were due to \
+	 rm(list=ls(all=T))\
+at the top of ExpPlatform_ActionQ_v8.R\
+\
+----\
+\
+Could not commit some changes.  The reason:\
+	I had to remove CTDesignExplorer from .gitignore before I could commit changes to files inside.\
+-----\
+\
+A great book for understanding git is at\
+{\field{\*\fldinst{HYPERLINK "http://git-scm.com/book"}}{\fldrslt http://git-scm.com/book}}\
+\
+"
+\f4\fs28 \cf12 \cb13 If you\'92re familiar with other VCS systems such as Subversion, you\'92ll notice that the command is 
+\f5 \cf14 \cb11 clone
+\f4 \cf12 \cb13  and not 
+\f5 \cf14 \cb11 checkout
+\f4 \cf12 \cb13 ."\
+\
+My students should read it and above all {\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Getting-Started-Installing-Git"}}{\fldrslt http://git-scm.com/book/en/Getting-Started-Installing-Git}}\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf15 \cb16       untracked      ->       staged     ->    modified       ->       staged       ->       committed\
+                            git add              EDITING                git add               git commit\
+\pard\pardeftab720\sl360
+
+\f5 \cf17 \cb1 \
+git config --list
+\f4 \cf12 \cb13 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf12 is worthwhile.\
+\
+Note difference between\
+\pard\pardeftab720\sl360
+
+\f5 \cf14 \cb11 git diff <file>
+\f4 \cf12 \cb13 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf12 and  \
+\pard\pardeftab720\sl360
+
+\f5 \cf14 \cb11 git diff --staged <file>
+\f4 \cf12 \cb13    (or --cached)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf12 \
+"Unlike many other VCS systems, Git doesn\'92t explicitly track file movement. If you rename a file in Git, no metadata is stored in Git that tells it you renamed the file."\
+\
+If I do git mv 
+\f0\fs24 \cf0 \cb1 ExpPlatform_ActionQ_v8.R ExpPlatform.R\
+will I see the differences after editing?\
+\
+\pard\pardeftab720\sl360
+
+\f5\fs28 \cf17 git log -p -2\
+\
+git log --pretty=format:"%h - %an, %ar : %s"\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 \
+\
+"
+\f4\fs28 \cf12 \cb13 If you clone a repository, the command automatically adds that remote repository under the name 
+\i origin
+\i0 . So, 
+\f5 \cf14 \cb11 git fetch origin
+\f4 \cf12 \cb13  fetches any new work that has been pushed to that server since you cloned (or last fetched from) it."\
+\
+"you can use the 
+\f5 \cf14 \cb11 git pull
+\f4 \cf12 \cb13  command to automatically fetch and then merge a remote branch into your current branch."\
+\
+"Creating an annotated tag in Git is simple. The easiest way is to specify 
+\f5 \cf14 \cb11 -a
+\f4 \cf12 \cb13  when you run the 
+\f5 \cf14 \cb11 tag
+\f4 \cf12 \cb13 command:" "The 
+\f5 \cf14 \cb11 -m
+\f4 \cf12 \cb13  specifies a tagging message"\
+\
+{\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Git-Basics-Tips-and-Tricks"}}{\fldrslt http://git-scm.com/book/en/Git-Basics-Tips-and-Tricks}}  for command line shortcuts.\
+\
+{\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Git-Branching-What-a-Branch-Is"}}{\fldrslt http://git-scm.com/book/en/Git-Branching-What-a-Branch-Is}}   "How does Git know what branch you\'92re currently on? It keeps a special pointer called HEAD. Note that this is a lot different than the concept of HEAD in other VCSs you may be used to, such as Subversion or CVS. In Git, this is a pointer to the local branch you\'92re currently on."\
+"To switch to an existing branch, you run the 
+\f5 \cf14 \cb11 git checkout
+\f4 \cf12 \cb13  command."\
+"Git resets your working directory to look like the snapshot of the commit that the branch you check out points to. It adds, removes, and modifies files automatically to make sure your working copy is what the branch looked like on your last commit to it."\
+"when you try to merge one commit with a commit that can be reached by following the first commit\'92s history, Git simplifies things by moving the pointer forward because there is no divergent work to merge together \'97 this is called a "fast forward"."\
+"Git automatically identifies the best common-ancestor merge base for branch merging... Git creates a new snapshot that results from this three-way merge and automatically creates a new commit that points to it. This is referred to as a merge commit and is special in that it has more than one parent."\
+\
+\
+==>
+\b  git could be the ideal medium for a shared resource without requiring maintenance of a single central repository.  
+\b0 \
+\
+\
+--------\
+\
+\pard\pardeftab720\sl400
+
+\f3 \cf10 \cb11 no slot of name "DeltaToxProbForEarlyStop" for this object of class "CRMSpecifier"
+\f4 \cf12 \cb13 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf12 \
+even though 
+\f3\i\b \cf18 \cb11 DesignSpecifier = p2bd\
+
+\f4\i0\b0 \cf12 \cb13   Ahhh, but after clicking the green button, 
+\f3 \cf10 \cb11 unable to find an inherited method for function \'91generateInitialActions\'92 for signature \'91"Phase2BryantDaySpecifier"\
+
+\f4 \cf12 \cb13   \
+
+\f0\fs24 \cf0 \cb1 So that's fixable.\
+\
+\
+2013-06-16\
+\
+OK, everything is now in the git repository.\
+The shiny interface works, with the command run().\
+The catalog is generated automatically, and writes into .GlobalEnv -- so be careful!\
+Both crm9 and threePlusThree_five_tiers work fine.  \
+p2bd does not, because the generateInitialActions  method is not yet written for it.}
