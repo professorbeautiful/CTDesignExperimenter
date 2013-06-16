@@ -411,7 +411,7 @@ setClassUnion("DesignSpecifier")
 # The default object is 3+3 design specification
 setClass("APlusBSpecifier",representation(A="numeric",B="numeric",C="numeric",D="numeric",E="numeric", TierDoses="numeric"),
     contains="DesignSpecifier",
-    prototype=list(A=3,B=3,C=1,D=1,E=1),
+    prototype=list(A=3,B=3,C=1,D=1,E=1,TierDoses=1:5),
     validity=function(object){
         if(!all(Check<-c(object@B>0,object@C>0,object@C<=object@D,object@D<=object@A,object@C<=object@E,object@E<=(object@D+object@B)))){
             Wrongs <- c("B<=0","C<=0","C>D","D>A","C>E","E>D+B")
