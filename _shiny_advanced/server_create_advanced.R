@@ -6,7 +6,8 @@ library("shiny")
 library("shinyIncubator")
 # library(datasets)
 require(RBioinf)
-
+library(CTDesignExplorer)
+createCTDEcatalog()
 options(shiny.trace=FALSE)
 
 #if(length(ls(pattern="CRMSpec1")) == 0 )  RELOAD_CATALOG()
