@@ -18,7 +18,8 @@ CTresultToString = function(thisCTresult=oneCTresult, showPatients=TRUE){
                  ("nPatients:    " %&% length(thisCTresult@PatsData) %&% "\n"))
   if(showPatients==TRUE)
     for(i in 1:length(thisCTresult@PatsData))
-      output = paste(output, paste("  Patient ", i, ": \n", showAPatient(thisCTresult@PatsData[[i]])),
+      output = paste(output, paste("  Patient ", i, ": \n", 
+                                   patientToString(thisCTresult@PatsData[[i]])),
                      "\n")
   as.cat(output)
 }
