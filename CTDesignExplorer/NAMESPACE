@@ -1,7 +1,8 @@
 #exportPattern("^[[:alpha:]]+")
 export(createCTDEcatalog,
 	patientToString,
-	CTresultToString
+	CTresultToString,
+  run
 )
 exportMethods(
     "addAction",
