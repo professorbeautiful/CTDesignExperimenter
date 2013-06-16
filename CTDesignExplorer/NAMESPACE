@@ -1,5 +1,8 @@
-exportPattern("^[[:alpha:]]+")
-export(createCTDEcatalog)
+#exportPattern("^[[:alpha:]]+")
+export(createCTDEcatalog,
+	patientToString,
+	CTresultToString
+)
 exportMethods(
     "addAction",
     "allocateTrts",
