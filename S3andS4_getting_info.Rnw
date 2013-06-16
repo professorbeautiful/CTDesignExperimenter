@@ -52,7 +52,8 @@
 \section{Finding classes and class names}
 
 <<>>=
-setClass('TempClass', representation(x='numeric')) ## doesn't work just with contains='numeric'getClass('TempClass')
+setClass('TempClass', representation(x='numeric')) ## doesn't work just with contains='numeric'
+getClass('TempClass')
 tempObj = new('TempClass')
 getClass(tempObj)
 ### Does NOT return the class itself:
@@ -65,7 +66,9 @@ getClass(class(tempObj))
 ### Can you say, 'arcane'?
 @
 
-Note that getClass returns 
+Note that getClass returns a different object depending on whether
+the argument is a class name or an object.
+
 \section{Finding methods}
 
 
@@ -82,14 +85,13 @@ Location & utils & methods\tabularnewline
 \hline 
 Signature & methods(generic.function, class) &
 %%\multirow{1}{*}
-showMethods(f = character(), \linebreak
-where = topenv(parent.frame()), classes
-= NULL\linebreak  ,includeDefs = FALSE, inherited = !includeDefs,
-showEmpty,\linebreak  printTo = stdout(), fdef)
+showMethods(f = character(), where = topenv(parent.frame()), classes
+= NULL, includeDefs = FALSE, inherited = !includeDefs,
+showEmpty,  printTo = stdout(), fdef)
 \tabularnewline
 \hline 
- & List all available methods for an S3 generic function,\linebreak or all methods
-for a class 
+ & List all available methods for an S3 generic function,\linebreak 
+ or all methods for a class 
 & Show a summary of the methods for one or more generic functions, possibly restricted to those involving specified classes.
 \tabularnewline
 \hline 
