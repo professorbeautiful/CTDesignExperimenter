@@ -90,6 +90,12 @@ createCTDEcatalog = function() {
     p2bd = new("Phase2BryantDaySpecifier", 
                N1Pats=15, NPats=30, Efficacy1LL=2, EfficacyLL=8,
                NonTox1LL=2, NonToxLL=8)
+    ########  
+    
+    evalPctPatsAtEachDose = new("EvalPctPatsAtEachDoseSpecifier")
+    
+    evalNToxsAtEachDose = new("EvalNToxsAtEachDoseSpecifier")
+    
     ### currently the validation allows only these two DoseThresholdName.
     ### Now, to export the objects to .GlobalEnv!
     print(ls())
