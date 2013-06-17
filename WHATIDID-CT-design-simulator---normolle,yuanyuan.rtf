@@ -477,4 +477,65 @@ Tagged this working version:  working-alpha-version\
 TODO:  Define outcome models as combinations of outcome models, just like population models.\
 \
 \
+2013-06-17\
+\
+Why is Specifier a ClassUnion instead of a regular class or virtual class?\
+Awkward... the code file reads from specific to general.\
+\
+setClass("Temp1", contains="Specifier")  FAILS\
+ setClass("Temp1", contains="OutcomeModelSpecifier") SUCCEEDS\
+even though it too is a ClassUnion\
+What's the difference?\
+\
+subClassNames(getClass("Specifier")) --- can't differentiate between direct and all subclasses.\
+although getClass("Specifier")  does know.\
+\
+\
+------\
+Do we need all those "None"s?\
+Replace \
+	c("None") 	by 	character(0) \
+	("None", 	by	( \
+	"None" 	by 	character(0) \
+then see if it works.\
+\
+------\
+checkRequirements needs complete rewriting.\
+First, requirements and provisions should be extracted from the code.\
+(Second thoughts:  doesn't fit well with using CDE's.)\
+Second, there should be a simplest method that takes one Specifier and\
+a list of Specifiers, and checks that each requirement in the first arg\
+is fulfilled by (1) ALL or (2) ANY\
+of the ones in the list.\
+Then build from there.\
+------\
+\
+A Specifier subclass has metadata. Parameters.  And maybe a shortcut name. And descriptor. And author etc.\
+So it can't be a ClassUnion.\
+\
+-------\
+The only use of specifierObjects is as components of an evaluation experiment.\
+A Specifier subclass has to be transformed into something suitable for combining into a CT design evaluation experiment.\
+* Each parameter can take on one value.\
+(Specifier, Parameters, Values) -> specifierObject  (length(parameters) == length(values))\
+* Each parameter can take on a short set of values.\
+(Specifier, Parameter, Values) -> experimentDimension  (length(parameter) == 1)\
+* Each parameter can take on a distribution, as in the Devel version.\
+(Specifier, Parameter, Distribution) -> marginalizing over the parameter in the experiment, for example to get expected utilities.\
+\
+Thus a Specifier parameter is a ClassUnion of:\
+	numeric\
+	vector\
+	distribution\
+-------\
+\
+Experiment designs.\
+* Full factorial\
+* Central + explore-one-dim-at-a-time\
+	\
+-------\
+\
+\
+See    ?dotsMethods\
+and Martin's reply at {\field{\*\fldinst{HYPERLINK "http://r.789695.n4.nabble.com/2-setGeneric-s-same-name-different-method-signatures-td4658570.html"}}{\fldrslt http://r.789695.n4.nabble.com/2-setGeneric-s-same-name-different-method-signatures-td4658570.html}} \
 }
