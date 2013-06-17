@@ -51,18 +51,8 @@ createCTDEcatalog = function() {
                RGenFun="PKclearance * exp(rnorm(baseCharModelSpec@location, sd=baseCharModelSpec@sd))")
     )
     
-    setClass(Class="ToxDoseThresholdModel",
-             contains="BaseCharModelSpecifier",
-             representation=representation(
-               location="numeric", sd="numeric"),
-             prototype=prototype(
-               ConditionBaseCharNames = "PKclearance",
-               location=1, sd=0.02,
-               RGenFun="PKclearance * exp(rnorm(baseCharModelSpec@location, sd=baseCharModelSpec@sd))")
-    )
     standardToxDoseThresholdModel = new("ToxDoseThresholdModel",
                                         BaseCharName = "ToxDoseThreshold") 
-    
     
     setClass(Class="EfficacyDoseThresholdModel",
              contains="BaseCharModelSpecifier",
