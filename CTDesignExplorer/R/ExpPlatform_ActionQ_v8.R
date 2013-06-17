@@ -1,5 +1,7 @@
 rm(list=ls())
 
+setClass("Specifier")
+
 ### Some utility classes and methods
 ## Class Union: OptionalCharacter
 setClassUnion("OptionalCharacter",c("character","NULL"))
@@ -117,7 +119,8 @@ setClass("BaseCharModelSpecifier",
     representation(BaseCharName="character",
                    ConditionBaseCharNames="OptionalCharacter",
                    RGenFun="character"),
-    prototype = list(ConditionBaseCharNames = NULL))
+    prototype = list(ConditionBaseCharNames = NULL),
+         contains="Specifier")
 
 ## Method: generateBaseChar  
 # this method can only be dispatched within the method "generateBaseChars"  
@@ -152,19 +155,20 @@ setGeneric("getRequirements",function(spec) standardGeneric("getRequirements"))
 
 setMethod("getRequirements",signature(spec="BaseCharModelSpecifier"),
     function(spec){
-        if(is.null(spec@ConditionBaseCharNames)) return("None")
+        if(is.null(spec@ConditionBaseCharNames)) return(character(0))
         else return(spec@ConditionBaseCharNames)
     }
 )
     
 ## Class: PopModelSpecifier
 setClass("PopModelSpecifier",representation(PopModelSpec="list"),
+         contains="Specifier",
     validity=function(object){
         PopModelSpec <- object@PopModelSpec
         if(! all(Check<-sapply(PopModelSpec, function(x) is(x,"BaseCharModelSpecifier"))))
             stop("The following elements are not objects of the BaseCharModelSpecifier class:","\n",paste(which(!Check), collapse=","),"\n" )
         # make sure the elements in the popModelSpec are listed in the order of generating baseline characteristics
-        Provisions <- "None"
+        Provisions <- character(0)
         for ( i in 1 : length(PopModelSpec)){
             if(any(is.na(match(getRequirements(PopModelSpec[[i]]),Provisions))))
                 stop("The conditioning baseline characteristics of the baseline characteristic model ",paste(i)," are not
@@ -182,8 +186,8 @@ setClassUnion("OptionalPopModelSpecifier",
 # This method is to get provisions from an "OptionalPopModelSpecifier" object
 setMethod("getProvisions",signature(spec="OptionalPopModelSpecifier"),
     function(spec){
-        if(is.null(spec)) BaseChars="None"
-        else BaseChars <- c("None",sapply(spec@PopModelSpec,function(x) x@BaseCharName))
+        if(is.null(spec)) BaseChars=character(0)
+        else BaseChars <- c(sapply(spec@PopModelSpec,function(x) x@BaseCharName))
         return(list(BaseChars=BaseChars))
     }
 )
@@ -216,7 +220,8 @@ setMethod("generatePatsBaseChars",signature(popModelSpec="OptionalPopModelSpecif
 
 ### Classes and methods for outcome model
 ## Class union: OutcomeModelSpecifier
-setClassUnion("OutcomeModelSpecifier")
+setClass("OutcomeModelSpecifier",
+              contains="Specifier")
 
 ## Class: DoseThresholdModelSpecifier
 setClass("DoseThresholdModelSpecifier",
@@ -233,12 +238,13 @@ setClass("DoseThresholdModelSpecifier",
 )
 
 ## Class: ToxDeathDoseThresholdModelSpecifier
-setClass("ToxDeathDoseThresholdModelSpecifier",representation(DeltaDeath="numeric"), contains="OutcomeModelSpecifier",
-    validity=function(object){
-        if(object@DeltaDeath <=1)
-            stop("DeltaDeath needs to be > 1","\n")
-        else TRUE
-    }
+setClass("ToxDeathDoseThresholdModelSpecifier",representation(DeltaDeath="numeric"), 
+         contains="OutcomeModelSpecifier",
+         validity=function(object){
+           if(object@DeltaDeath <=1)
+             stop("DeltaDeath needs to be > 1","\n")
+           else TRUE
+         }
 )
     
 ## Class: ToxEfficacyDoseThresholdsModelSpecifier
@@ -287,8 +293,8 @@ setMethod("getRequirements",signature(spec="ToxEfficacyDoseThresholdsModelSpecif
 setMethod("getRequirements",signature(spec="NoParamProbModelSpecifier"),
     function(spec){
         Probs <- spec@Probs
-        if(nrow(Probs)==1)  return(list(TrtAllos="Dose",BaseChars="None"))
-        else return(list(TrtAllos="Dose",BaseChars=c("None","SubPopIndex")))
+        if(nrow(Probs)==1)  return(list(TrtAllos="Dose",BaseChars=character(0)))
+        else return(list(TrtAllos="Dose",BaseChars=c("SubPopIndex")))
     }
 )
 
@@ -296,28 +302,28 @@ setMethod("getRequirements",signature(spec="NoParamProbModelSpecifier"),
 # This method is to get the provisions from an "DoseThresholdModelSpecifier" object
 setMethod("getProvisions",signature(spec="DoseThresholdModelSpecifier"),
     function(spec){
-        return(list(Outcomes=c("None","BinaryToxicity"),TimesToOutcomes=c("None")))
+        return(list(Outcomes=c("BinaryToxicity"),TimesToOutcomes=character(0)))
     }
 )
 
 # This method is to get the provisions from an "ToxDeathDoseThresholdModelSpecifier" object
 setMethod("getProvisions",signature(spec="ToxDeathDoseThresholdModelSpecifier"),
     function(spec){
-        return(list(Outcomes=c("None","BinaryToxicity","Death"),TimesToOutcomes=c("None")))
+        return(list(Outcomes=c("BinaryToxicity","Death"),TimesToOutcomes=character(0)))
     }
 )
 
 # This method is to get the provisions from an "ToxEfficacyDoseThresholdsModelSpecifier" object
 setMethod("getProvisions",signature(spec="ToxEfficacyDoseThresholdsModelSpecifier"),
     function(spec){
-        return(list(Outcomes=c("None","BinaryToxicity","Efficacy"),TimesToOutcomes=c("None")))
+        return(list(Outcomes=c("BinaryToxicity","Efficacy"),TimesToOutcomes=character(0)))
     }
 )
 
 # This method is to get the provisions from an "NoParamProbModelSpecifier" object
 setMethod("getProvisions",signature(spec="NoParamProbModelSpecifier"),
     function(spec){
-        return(list(Outcomes=c("None",spec@OutcomeName),TimesToOutcomes=c("None")))
+        return(list(Outcomes=c(spec@OutcomeName),TimesToOutcomes=character(0)))
     }
 )
 
@@ -404,7 +410,8 @@ setMethod("generatePatsOutcomes",signature(outcomeModelSpec="OutcomeModelSpecifi
 
 ### Classes and Methods for design
 ## Class Union: DesignSpecifier
-setClassUnion("DesignSpecifier")
+setClass("DesignSpecifier",
+         contains="Specifier")
 
 ##  Class: APlusBSpecifier
 # "A+B with dose de-escalation" design was described in the article written by Lin in Biostatistics,v2,203-215,2001
@@ -495,13 +502,13 @@ setClass("Phase2BryantDaySpecifier",representation(N1Pats="numeric",NPats="numer
 # This method is to get requirements from an "APlusBSpecifier" object
 setMethod("getRequirements",signature(spec="APlusBSpecifier"),
     function(spec){
-        return(list(Outcomes="BinaryToxicity",TimesToOutcomes="None",BaseChars="None"))
+        return(list(Outcomes="BinaryToxicity",TimesToOutcomes=character(0),BaseChars=character(0)))
     }
 )
 
 setMethod("getRequirements",signature(spec="CRMSpecifier"),
     function(spec){
-        return(list(Outcomes="BinaryToxicity",TimesToOutcomes="None",BaseChars="None"))
+        return(list(Outcomes="BinaryToxicity",TimesToOutcomes=character(0),BaseChars=character(0)))
     }
 )
 
@@ -510,14 +517,14 @@ setMethod("getRequirements",signature(spec="CRMSpecifier"),
 # This method is to get provisions from an "APlusBSpecifier" object
 setMethod("getProvisions",signature(spec="APlusBSpecifier"),
     function(spec){
-        return(list(TrtAllos=c("None","Dose"),CTTimes=c("None"),Conclusions=c("None","RP2D")))
+        return(list(TrtAllos=c("Dose"),CTTimes=character(0),Conclusions=c("RP2D")))
     }
 )
 
 # RP2DL: recommended Phase 2 dose level
 setMethod("getProvisions",signature(spec="CRMSpecifier"),
     function(spec){
-        return(list(TrtAllos=c("None","Dose","Dose Level"),CTTimes=c("None"),Conclusions=c("None","RP2D","RP2DL")))
+        return(list(TrtAllos=c("Dose","Dose Level"),CTTimes=character(0),Conclusions=c("RP2D","RP2DL")))
     }
 )
 
@@ -877,7 +884,8 @@ setMethod("checkSwitchingStageRule",signature(designSpec="CRMSpecifier",currentC
 
 ### Classes and methods for evaluation criteria
 ## Class Union: EvalSpecifier
-setClassUnion("EvalSpecifier")
+setClass("EvalSpecifier",
+         contains="Specifier")
 
 ## Class: EvalSampleSizeSpecifier
 setClass("EvalSampleSizeSpecifier",contains="EvalSpecifier")
@@ -922,56 +930,56 @@ setClass("EvalProbSuccPhase2Specifier",representation(LogToxDoseThresholdMean="n
 # This method is to get requirements from an "EvalSampleSizeSpecifier" object
 setMethod("getRequirements",signature(spec="EvalSampleSizeSpecifier"),
     function(spec){
-        return(list(BaseChars="None",Outcomes="None",CTTimes="None",TrtAllos="None",Conclusions="None"))
+        return(list(BaseChars=character(0),Outcomes=character(0),CTTimes=character(0),TrtAllos=character(0),Conclusions=character(0)))
     }
 )
 
 # This method is to get requirements from an "EvalNToxsSpecifier" object
 setMethod("getRequirements",signature(spec="EvalNToxsSpecifier"),
     function(spec){
-         return(list(BaseChars="None",Outcomes="BinaryToxicity",CTTimes="None",TrtAllos="None",Conclusions="None"))
+         return(list(BaseChars=character(0),Outcomes="BinaryToxicity",CTTimes=character(0),TrtAllos=character(0),Conclusions=character(0)))
     }
 )
 
 # This method is to get requirements from an "EvalRP2DSpecifier" object
 setMethod("getRequirements",signature(spec="EvalRP2DSpecifier"),
     function(spec){
-         return(list(BaseChars="None",Outcomes="None",CTTimes="None",TrtAllos="None",Conclusions="RP2D"))
+         return(list(BaseChars=character(0),Outcomes=character(0),CTTimes=character(0),TrtAllos=character(0),Conclusions="RP2D"))
     }
 )
 
 # This method is to get requirements from an "EvalProbRP2DAtEachDoseSpecifier" object
 setMethod("getRequirements",signature(spec="EvalProbRP2DAtEachDoseSpecifier"),
     function(spec){
-         return(list(BaseChars="None",Outcomes="None",CTTimes="None",TrtAllos="Dose",Conclusions="RP2D"))
+         return(list(BaseChars=character(0),Outcomes=character(0),CTTimes=character(0),TrtAllos="Dose",Conclusions="RP2D"))
     }
 )
 
 # This method is to get requirements from an "EvalNPatsAtEachDoseSpecifier" object
 setMethod("getRequirements",signature(spec="EvalNPatsAtEachDoseSpecifier"),
     function(spec){
-         return(list(BaseChars="None",Outcomes="None",CTTimes="None",TrtAllos="Dose",Conclusions="None"))
+         return(list(BaseChars=character(0),Outcomes=character(0),CTTimes=character(0),TrtAllos="Dose",Conclusions=character(0)))
     }
 )
 
 # This method is to get requirements from an "EvalPctPatsAtEachDoseSpecifier" object
 setMethod("getRequirements",signature(spec="EvalPctPatsAtEachDoseSpecifier"),
     function(spec){
-         return(list(BaseChars="None",Outcomes="None",CTTimes="None",TrtAllos="Dose",Conclusions="None"))
+         return(list(BaseChars=character(0),Outcomes=character(0),CTTimes=character(0),TrtAllos="Dose",Conclusions=character(0)))
     }
 )
 
 # This method is to get requirements from an "EvalNToxsAtEachDoseSpecifier" object
 setMethod("getRequirements",signature(spec="EvalNToxsAtEachDoseSpecifier"),
     function(spec){
-         return(list(BaseChars="None",Outcomes="BinaryToxicity",CTTimes="None",TrtAllos="Dose",Conclusions="None"))
+         return(list(BaseChars=character(0),Outcomes="BinaryToxicity",CTTimes=character(0),TrtAllos="Dose",Conclusions=character(0)))
     }
 )
 
 # This method is to get requirements from an "EvalToxRateSpecifier" object
 setMethod("getRequirements",signature(spec="EvalToxRateSpecifier"),
     function(spec){
-         return(list(BaseChars="None",Outcomes="BinaryToxicity",CTTimes="None",TrtAllos="None",Conclusions="None"))
+         return(list(BaseChars=character(0),Outcomes="BinaryToxicity",CTTimes=character(0),TrtAllos=character(0),Conclusions=character(0)))
     }
 )
 
@@ -1146,7 +1154,48 @@ setMethod("sim1CT",signature(designSpec="DesignSpecifier",popModelSpec="Optional
 )
 
 ## Method: checkRequirements
+
 # This method is to check requirements among designs, population models,outcome models and evaluation criteria
+setGeneric("checkRequirementsNew",
+           function(needy, giver, ...) standardGeneric("checkRequirementsNew"))
+setGeneric("reportInteroperability",
+           function(needy, giver, ...) standardGeneric("reportInteroperability"))
+
+setMethod("checkRequirementsNew", 
+          signature("Specifier", "Specifier"),  ### cannot include ... here
+          function(needy, giver){  
+            #            subx = (substitute(needy))     
+            #             if (is.name(subx)) 
+            #               subx <- deparse(subx)
+            #             print(subx) ### From fix()... but it doesn't work here.
+            req = getRequirements(needy)
+            prov = getProvisions(giver)
+            if(is.list(req))
+              sapply(req, function(r) {
+                print(r)
+              })
+          return(NULL)
+          }
+)
+#checkRequirements(crm9, toxDoseThresholdOutcomeModel)
+setMethod("checkRequirementsNew", 
+          signature("character", "character"),  ### cannot include ... here
+          function(needy, giver){  ### See which of the requirements are provided by ANY of ... 
+            return(checkRequirements(get(needy), get(giver)))
+          }
+)
+# checkRequirements("crm9", "toxDoseThresholdOutcomeModel")
+# setMethod("checkRequirements", signature(needySpec="Specifier", helpfulSpec="Specifier"),
+#           function(needySpec, helpfulSpec){  ### See which of the requirements are provided by ANY of ... 
+#             !is.na(match(getRequirements(needySpec), getProvisions(helpfulSpec)))
+#           }
+# )                                
+# setMethod("checkRequirements", signature(targetSpec="Specifier", anyOrAll=c("any","all"), ...),
+#           function(targetSpec, ...){  ### See which of the requirements are provided by ANY of ... 
+#             
+#           }
+# )                                
+
 setGeneric("checkRequirements",function(designSpecs,popModelSpecs,outcomeModelSpecs,evalSpecs) standardGeneric("checkRequirements"))
 
 setMethod("checkRequirements",signature(designSpecs="list",popModelSpecs="list",outcomeModelSpecs="list",
@@ -1169,19 +1218,19 @@ setMethod("checkRequirements",signature(designSpecs="list",popModelSpecs="list",
                             is.na(match(getRequirements(OutcomeModelSpec)$TrtAllos, getProvisions(DesignSpec)$TrtAllos)),
                             is.na(match(getRequirements(DesignSpec)$Outcomes, getProvisions(OutcomeModelSpec)$Outcomes)),
                             is.na(match(getRequirements(DesignSpec)$TimesToOutcomes, getProvisions(OutcomeModelSpec)$TimesToOutcomes)))){
-                            if(any(is.na(match(getRequirements(OutcomeModelSpec)$BaseChars, getProvisions(PopModelSpec)$BaseChars))))
-                                cat("The population model ",PopMIndex," cannot provide the baseline characteristics the outcome model ", 
-                                        OutcomeMIndex," requires!","\n","\n")
-                            if(any(is.na(match(getRequirements(OutcomeModelSpec)$TrtAllos, getProvisions(DesignSpec)$TrtAllos))))
-                                cat("The design ",DesignIndex," cannot provide the treatment allocations the outcome model ", 
-                                        OutcomeMIndex," requires!","\n","\n")
-                            if(any(is.na(match(getRequirements(DesignSpec)$Outcomes, getProvisions(OutcomeModelSpec)$Outcomes))))
-                                cat("The outcome model ",OutcomeMIndex," cannot provide the outcomes the design ", 
-                                        DesignIndex," requires!","\n","\n")
-                            if(any(is.na(match(getRequirements(DesignSpec)$TimesToOutcomes, getProvisions(OutcomeModelSpec)$TimesToOutcomes))))
-                                cat("The outcome model ",OutcomeMIndex," cannot provide the times to outcomes the design ", 
-                                        DesignIndex," requires!","\n","\n")
-                            next
+                          if(any(is.na(match(getRequirements(OutcomeModelSpec)$BaseChars, getProvisions(PopModelSpec)$BaseChars))))
+                            cat("The population model ",PopMIndex," cannot provide the baseline characteristics the outcome model ", 
+                                OutcomeMIndex," requires!","\n","\n")
+                          if(any(is.na(match(getRequirements(OutcomeModelSpec)$TrtAllos, getProvisions(DesignSpec)$TrtAllos))))
+                            cat("The design ",DesignIndex," cannot provide the treatment allocations the outcome model ", 
+                                OutcomeMIndex," requires!","\n","\n")
+                          if(any(is.na(match(getRequirements(DesignSpec)$Outcomes, getProvisions(OutcomeModelSpec)$Outcomes))))
+                            cat("The outcome model ",OutcomeMIndex," cannot provide the outcomes the design ", 
+                                DesignIndex," requires!","\n","\n")
+                          if(any(is.na(match(getRequirements(DesignSpec)$TimesToOutcomes, getProvisions(OutcomeModelSpec)$TimesToOutcomes))))
+                            cat("The outcome model ",OutcomeMIndex," cannot provide the times to outcomes the design ", 
+                                DesignIndex," requires!","\n","\n")
+                          next
                         }
                         else{
                             for(CriterionIndex in 1:length(evalSpecs)){
@@ -1288,9 +1337,3 @@ instantiateS4Object <- function(className,slots){
     return(Object)
 } 
              
-setClassUnion("Specifier", 
-              c("BaseCharModelSpecifier", "PopModelSpecifier",
-                "OutcomeModelSpecifier",
-                "DesignSpecifier",
-                "EvalSpecifier"))
-
