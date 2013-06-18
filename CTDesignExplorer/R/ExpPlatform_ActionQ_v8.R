@@ -1133,7 +1133,9 @@ setMethod("evalDesign",signature(evalSpec="EvalToxRateSpecifier",simCTsData="lis
 ## Method: sim1CT
 # This method simulates a single CT data under the specified population model (optional, which can be NULL), design, outcome model.            
 setGeneric("sim1CT",function(designSpec,popModelSpec,outcomeModelSpec) standardGeneric("sim1CT"))
-setMethod("sim1CT",signature(designSpec="DesignSpecifier",popModelSpec="OptionalPopModelSpecifier",outcomeModelSpec="OutcomeModelSpecifier"),
+setMethod("sim1CT",signature(designSpec="DesignSpecifier",
+                             popModelSpec="OptionalPopModelSpecifier",
+                             outcomeModelSpec="OutcomeModelSpecifier"),
     function(designSpec,popModelSpec,outcomeModelSpec){
         CurrentCTData <- new("CTData")
         CurrentActionQ <- new("ActionQueue",ActionQ=generateInitialActions(designSpec))
@@ -1158,6 +1160,7 @@ setMethod("sim1CT",signature(designSpec="DesignSpecifier",popModelSpec="Optional
 # This method is to check requirements among designs, population models,outcome models and evaluation criteria
 setGeneric("checkRequirementsNew",
            function(needy, giver, ...) standardGeneric("checkRequirementsNew"))
+
 setGeneric("reportInteroperability",
            function(needy, giver, ...) standardGeneric("reportInteroperability"))
 
@@ -1197,6 +1200,7 @@ setMethod("checkRequirementsNew",
 # )                                
 
 setGeneric("checkRequirements",function(designSpecs,popModelSpecs,outcomeModelSpecs,evalSpecs) standardGeneric("checkRequirements"))
+### Called by doExperiment.
 
 setMethod("checkRequirements",signature(designSpecs="list",popModelSpecs="list",outcomeModelSpecs="list",
     evalSpecs="list"),function(designSpecs,popModelSpecs,outcomeModelSpecs,evalSpecs){
