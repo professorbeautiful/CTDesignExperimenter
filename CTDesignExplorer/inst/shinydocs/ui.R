@@ -20,7 +20,7 @@ shinyUI(pageWithSidebar(
     #tag('font', varArgs=c(size=-2))
     #tags$style(" size=\"-2\" color='red'",
     radioButtons("viewChoice", "Choose a view",
-                 cq("View spec classes", 
+                 c("View spec classes", 
                     "View spec objects",
                     "Define one clinical trial",
                     "Run one clinical trial",
@@ -36,7 +36,6 @@ shinyUI(pageWithSidebar(
                        "Choose spec class to view its objects.",
                        radioButtons("specChoiceModels", "choose spec type", 
                                     specClassNames )
-  #                     specClassNames %except% "BaseCharModelSpecifier")
     )
     , conditionalPanel(condition=
                          "input.viewChoice==\"Define one clinical trial\""
