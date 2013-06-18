@@ -238,7 +238,8 @@ shinyServer(function(input, output) {
     # print(theTableOutput)
     ## This should set the value of output$objects_table_2, for use in the text.
     list( uiOutput(outputId="currentModelText")
-          , HTML("<DIV style='color:blue'> Select model object (by number) to build simulation.</DIV>")
+          , HTML("<DIV style='color:blue'> Select "
+            %&% input$specChoiceOneCT %&% " object to build simulation.</DIV>")
           ###  THIS HTML LINE WORKED!!!
           #           " In this box, type (or arrow to) the row  number for your object.",
           #           numericInput("model_row_num", "model row num",
