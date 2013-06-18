@@ -4,8 +4,7 @@
 }
 {\colortbl;\red255\green255\blue255;\red217\green11\blue0;\red255\green83\blue8;\red206\green59\blue0;
 \red155\green44\blue1;\red38\green38\blue38;\red0\green135\blue135;\red213\green14\blue52;\red251\green0\blue7;
-\red251\green0\blue7;\red255\green255\blue255;\red61\green52\blue46;\red251\green251\blue249;\red234\green54\blue39;
-\red61\green52\blue46;\red251\green251\blue249;\red234\green54\blue39;\red38\green38\blue38;}
+\red61\green52\blue46;\red251\green251\blue249;\red234\green54\blue39;}
 \margl1440\margr1440\vieww10800\viewh8400\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
@@ -253,7 +252,8 @@ of the function returned by the renderXXX call.\
 \
 2013-04-15\
 Some notes on parameters etc.\
-\ul   parameter:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \ul \ulc0   parameter:\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 \cf0 \ulnone 	new() could  use RNG to set parameter.  \
 	RNG parameters are in the class; realizations are in the instance.\
@@ -267,7 +267,7 @@ so any "intermediate" variable might need to be a Provision in the future.\
 So all SHOULD be treated as Provisions.\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
-\cf0 \ul \ulc0 Inputs, outputs\ulnone \
+\cf0 \ul Inputs, outputs\ulnone \
 Each output has a function. the inputs can be:\
 	requirements pulled from "upstream" spec objects\
 	parameters\
@@ -316,15 +316,15 @@ Now the error is \
 If I try Bryant-Day,\
 \pard\pardeftab720\sl400
 
-\f3\fs28 \cf10 \cb11   unable to find an inherited method for function \'91generateInitialActions\'92 for signature \'91"Phase2BryantDaySpecifier"\'92
-\f0\fs24 \cf0 \cb1 \
+\f3\fs28 \cf9   unable to find an inherited method for function \'91generateInitialActions\'92 for signature \'91"Phase2BryantDaySpecifier"\'92
+\f0\fs24 \cf0 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 \cf0 \
 If I try  APlusBSpecifier,\
 \pard\pardeftab720\sl400
 
-\f3\fs28 \cf10 \cb11 could not find function "CTresultToString"
-\f0\fs24 \cf0 \cb1 \
+\f3\fs28 \cf9 could not find function "CTresultToString"
+\f0\fs24 \cf0 \
 \
 so it will probably work as soon as I find that function!\
 Ah, there it is, in patientToString,CTresultToString.R\
@@ -356,41 +356,41 @@ Could not commit some changes.  The reason:\
 -----\
 \
 A great book for understanding git is at\
-{\field{\*\fldinst{HYPERLINK "http://git-scm.com/book"}}{\fldrslt http://git-scm.com/book}}\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+{\field{\*\fldinst{HYPERLINK "http://git-scm.com/book"}}{\fldrslt \cf0 http://git-scm.com/book}}\
 \
 "
-\f4\fs28 \cf12 \cb13 If you\'92re familiar with other VCS systems such as Subversion, you\'92ll notice that the command is 
-\f5 \cf14 \cb11 clone
-\f4 \cf12 \cb13  and not 
-\f5 \cf14 \cb11 checkout
-\f4 \cf12 \cb13 ."\
+\f4\fs28 \cf10 \cb11 If you\'92re familiar with other VCS systems such as Subversion, you\'92ll notice that the command is 
+\f5 \cf12 \cb1 clone
+\f4 \cf10 \cb11  and not 
+\f5 \cf12 \cb1 checkout
+\f4 \cf10 \cb11 ."\
 \
 My students should read it and above all {\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Getting-Started-Installing-Git"}}{\fldrslt http://git-scm.com/book/en/Getting-Started-Installing-Git}}\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
-\cf15 \cb16       untracked      ->       staged     ->    modified       ->       staged       ->       committed\
+      untracked      ->       staged     ->    modified       ->       staged       ->       committed\
                             git add              EDITING                git add               git commit\
 \pard\pardeftab720\sl360
 
-\f5 \cf17 \cb1 \
+\f5 \cf12 \cb1 \
 git config --list
-\f4 \cf12 \cb13 \
+\f4 \cf10 \cb11 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
-\cf12 is worthwhile.\
+\cf10 is worthwhile.\
 \
 Note difference between\
 \pard\pardeftab720\sl360
 
-\f5 \cf14 \cb11 git diff <file>
-\f4 \cf12 \cb13 \
+\f5 \cf12 \cb1 git diff <file>
+\f4 \cf10 \cb11 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
-\cf12 and  \
+\cf10 and  \
 \pard\pardeftab720\sl360
 
-\f5 \cf14 \cb11 git diff --staged <file>
-\f4 \cf12 \cb13    (or --cached)\
+\f5 \cf12 \cb1 git diff --staged <file>
+\f4 \cf10 \cb11    (or --cached)\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
-\cf12 \
+\cf10 \
 "Unlike many other VCS systems, Git doesn\'92t explicitly track file movement. If you rename a file in Git, no metadata is stored in Git that tells it you renamed the file."\
 \
 If I do git mv 
@@ -399,7 +399,7 @@ will I see the differences after editing?\
 \
 \pard\pardeftab720\sl360
 
-\f5\fs28 \cf17 git log -p -2\
+\f5\fs28 \cf12 git log -p -2\
 \
 git log --pretty=format:"%h - %an, %ar : %s"\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
@@ -407,30 +407,31 @@ git log --pretty=format:"%h - %an, %ar : %s"\
 \f0\fs24 \cf0 \
 \
 "
-\f4\fs28 \cf12 \cb13 If you clone a repository, the command automatically adds that remote repository under the name 
+\f4\fs28 \cf10 \cb11 If you clone a repository, the command automatically adds that remote repository under the name 
 \i origin
 \i0 . So, 
-\f5 \cf14 \cb11 git fetch origin
-\f4 \cf12 \cb13  fetches any new work that has been pushed to that server since you cloned (or last fetched from) it."\
+\f5 \cf12 \cb1 git fetch origin
+\f4 \cf10 \cb11  fetches any new work that has been pushed to that server since you cloned (or last fetched from) it."\
 \
 "you can use the 
-\f5 \cf14 \cb11 git pull
-\f4 \cf12 \cb13  command to automatically fetch and then merge a remote branch into your current branch."\
+\f5 \cf12 \cb1 git pull
+\f4 \cf10 \cb11  command to automatically fetch and then merge a remote branch into your current branch."\
 \
 "Creating an annotated tag in Git is simple. The easiest way is to specify 
-\f5 \cf14 \cb11 -a
-\f4 \cf12 \cb13  when you run the 
-\f5 \cf14 \cb11 tag
-\f4 \cf12 \cb13 command:" "The 
-\f5 \cf14 \cb11 -m
-\f4 \cf12 \cb13  specifies a tagging message"\
+\f5 \cf12 \cb1 -a
+\f4 \cf10 \cb11  when you run the 
+\f5 \cf12 \cb1 tag
+\f4 \cf10 \cb11 command:" "The 
+\f5 \cf12 \cb1 -m
+\f4 \cf10 \cb11  specifies a tagging message"\
 \
-{\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Git-Basics-Tips-and-Tricks"}}{\fldrslt http://git-scm.com/book/en/Git-Basics-Tips-and-Tricks}}  for command line shortcuts.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+{\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Git-Basics-Tips-and-Tricks"}}{\fldrslt \cf10 http://git-scm.com/book/en/Git-Basics-Tips-and-Tricks}}  for command line shortcuts.\
 \
 {\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Git-Branching-What-a-Branch-Is"}}{\fldrslt http://git-scm.com/book/en/Git-Branching-What-a-Branch-Is}}   "How does Git know what branch you\'92re currently on? It keeps a special pointer called HEAD. Note that this is a lot different than the concept of HEAD in other VCSs you may be used to, such as Subversion or CVS. In Git, this is a pointer to the local branch you\'92re currently on."\
 "To switch to an existing branch, you run the 
-\f5 \cf14 \cb11 git checkout
-\f4 \cf12 \cb13  command."\
+\f5 \cf12 \cb1 git checkout
+\f4 \cf10 \cb11  command."\
 "Git resets your working directory to look like the snapshot of the commit that the branch you check out points to. It adds, removes, and modifies files automatically to make sure your working copy is what the branch looked like on your last commit to it."\
 "when you try to merge one commit with a commit that can be reached by following the first commit\'92s history, Git simplifies things by moving the pointer forward because there is no divergent work to merge together \'97 this is called a "fast forward"."\
 "Git automatically identifies the best common-ancestor merge base for branch merging... Git creates a new snapshot that results from this three-way merge and automatically creates a new commit that points to it. This is referred to as a merge commit and is special in that it has more than one parent."\
@@ -445,17 +446,18 @@ git log --pretty=format:"%h - %an, %ar : %s"\
 \
 \pard\pardeftab720\sl400
 
-\f3 \cf10 \cb11 no slot of name "DeltaToxProbForEarlyStop" for this object of class "CRMSpecifier"
-\f4 \cf12 \cb13 \
+\f3 \cf9 \cb1 no slot of name "DeltaToxProbForEarlyStop" for this object of class "CRMSpecifier"
+\f4 \cf10 \cb11 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
-\cf12 \
+\cf10 \
 even though 
-\f3\i\b \cf18 \cb11 DesignSpecifier = p2bd\
+\f3\i\b \cf6 \cb1 DesignSpecifier = p2bd\
 
-\f4\i0\b0 \cf12 \cb13   Ahhh, but after clicking the green button, 
-\f3 \cf10 \cb11 unable to find an inherited method for function \'91generateInitialActions\'92 for signature \'91"Phase2BryantDaySpecifier"\
+\f4\i0\b0 \cf10 \cb11   Ahhh, but after clicking the green button, 
+\f3 \cf9 \cb1 unable to find an inherited method for function \'91generateInitialActions\'92 for signature \'91"Phase2BryantDaySpecifier"\
 
-\f4 \cf12 \cb13   \
+\f4 \cf10 \cb11   \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \f0\fs24 \cf0 \cb1 So that's fixable.\
 \
@@ -538,4 +540,42 @@ Experiment designs.\
 \
 See    ?dotsMethods\
 and Martin's reply at {\field{\*\fldinst{HYPERLINK "http://r.789695.n4.nabble.com/2-setGeneric-s-same-name-different-method-signatures-td4658570.html"}}{\fldrslt http://r.789695.n4.nabble.com/2-setGeneric-s-same-name-different-method-signatures-td4658570.html}} \
+\
+\
+2013-06-18\
+\
+Sudden warning message about RJSONIO happens when you add shiny to Depends in DESCRIPTION. From web search and my experience, it's not a problem.\
+I should write the maintainer.\
+\
+If I add slots  \
+	parameters, requirements, provisions \
+to Specifier, now we have an issue.\
+Some subclasses have specific parameters. \
+They are their own slots.\
+How can you handle that?\
+Maybe on initialize, you copy values into the parameters slot.\
+\
+OK, I decided to use that approach.\
+To figure out initialize() was difficult.\
+This example works:\
+\
+	setClass("Temp", representation=representation(x="numeric"))\
+	setMethod("initialize",\
+		signature=signature(.Object="Temp"), \
+		function(.Object, ...)\{\
+			.Object=callNextMethod(.Object, ...)\
+			.Object@x=.Object@x+1;  \
+			.Object\})\
+	new("Temp", x=1)\
+\
+I've incorporated that into BaseCharSpecifier\
+\
+-----\
+\
+{\field{\*\fldinst{HYPERLINK "http://timelyportfolio.github.io/rCharts_rickshaw_gettingstarted/"}}{\fldrslt http://timelyportfolio.github.io/rCharts_rickshaw_gettingstarted/}}\
+looks interesting.\
+\
+----\
+\
+"Failed to create server"  happens when you are already running the App. You have to close the page AND escape the loop.\
 }
