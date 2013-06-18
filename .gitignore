@@ -14,7 +14,6 @@ Plan for development of clinical trial simulation platform.docx
 Screen Shot 2013-02-17 at 7.53.25 PM.png
 Screen Shot 2013-02-17 at 7.53.53 PM.png
 SimCTsData_S1.RData
-WHATIDID-CT-design-simulator---normolle,yuanyuan.rtf
 Yuanyuan Wang
 _shiny_buttons copy/
 _shiny_docs/
@@ -49,3 +48,21 @@ S3andS4_getting_info.tex
 CTDesignExplorer.Rcheck
 CTDesignExplorer_1.2.0.tar.gz
 CTDesignExplorer_1.2.tar.gz
+CTDE-manuscript.aux
+CTDE-manuscript.log
+CTDE-manuscript.out
+CTDE-manuscript.pdf
+CTDE-manuscript.pdfsync
+CTDE-manuscript.synctex.gz
+The shiny INFINITE LOOP problem.rtf
+beamer-doc.aux
+beamer-doc.log
+beamer-doc.nav
+beamer-doc.out
+beamer-doc.pdf
+beamer-doc.snm
+beamer-doc.synctex.gz
+beamer-doc.synctex.gz(busy)
+beamer-doc.tex
+beamer-doc.toc
+ctde
