@@ -52,6 +52,7 @@ exportClasses(
      "PatData",
      "Phase2BryantDaySpecifier",
      "PopModelSpecifier",
+     "Specifier",
      "ToxDeathDoseThresholdModelSpecifier",
      "ToxEfficacyDoseThresholdsModelSpecifier" 
 )
