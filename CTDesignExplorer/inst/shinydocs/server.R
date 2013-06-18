@@ -59,7 +59,7 @@ shinyServer(function(input, output) {
   #  debug(f.mainPanelHeader)
   output$mainPanelHeader = renderText({f.mainPanelHeader()})
   
-  classNames = cq(BaseCharModelSpecifier,PopModelSpecifier,OutcomeModelSpecifier,DesignSpecifier,EvalSpecifier)
+  classNames = c("BaseCharModelSpecifier","PopModelSpecifier","OutcomeModelSpecifier","DesignSpecifier","EvalSpecifier")
   output$classes_table <- 
     renderTable( {
       #  cat("\n==specChoiceClasses Class==\n")
