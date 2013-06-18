@@ -6,6 +6,7 @@ library("shiny")
 library("shinyIncubator")
 # library(datasets)
 require(RBioinf)
+require(RJSONIO)
 
 options(shiny.trace=FALSE)
 
@@ -108,6 +109,7 @@ shinyServer(function(input, output) {
       theSpecChoice = substring(theSpecChoice, 1, regexpr("\\[", theSpecChoice) - 2)
     theObjects = data.frame(instanceNames(theSpecChoice))
     names(theObjects) = "instance"
+    print(theObjects)
     theObjects = theObjects[order(theObjects$instance), , drop=FALSE]
     theObjects$class = 
       sapply(theObjects$instance,
