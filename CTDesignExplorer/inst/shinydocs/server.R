@@ -20,7 +20,7 @@ specClassNames = c(`patient attributes`="BaseCharModelSpecifier",
 shortName = function(specifierName)
   names(specClassNames)[match(specifierName, specClassNames)]
 
-specClassNamesForSim1CT = setdiff(specClassNames, c("BaseCharModelSpecifier", "EvalSpecifier")  ### not the "nice" names
+specClassNamesForSim1CT = setdiff(specClassNames, c("BaseCharModelSpecifier", "EvalSpecifier"))  ### not the "nice" names
 
 instanceNames = function(className) {
   names(which(sapply(.GlobalEnv, is, className )))
