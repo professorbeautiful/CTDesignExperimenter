@@ -2,11 +2,12 @@
 
 # install.packages('shiny')
 # install.packages('RJSONIO')
-library("shiny")
-library("shinyIncubator")
+#library("shiny")
+#library("shinyIncubator")
 # library(datasets)
-require(RBioinf)
-require(RJSONIO)
+#require(RBioinf)
+#require(RJSONIO)
+####  Using Imports in DESCRIPTION, these should not be required.
 
 options(shiny.trace=FALSE)
 

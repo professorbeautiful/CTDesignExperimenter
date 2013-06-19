@@ -12,4 +12,5 @@ Description: This package presents an extendible simulation experiment platform 
  or CT level. The exchange of common data elements provides interoperability among the objects.
 License: GPL (>=2)
 LazyLoad: yes
-Depends: R (>= 2.10.1), methods, shiny, shinyIncubator
+Depends: R (>= 2.10.1), methods
+Imports: shiny, shinyIncubator, RBioinf, RJSONIO
