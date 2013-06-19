@@ -1,4 +1,3 @@
-rm(list=ls())
 
 setClass("Specifier", 
          representation=representation(
