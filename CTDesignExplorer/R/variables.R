@@ -39,6 +39,7 @@ clearanceRate = new("SimpleVariableGenerator",
                     ### But outputName might as well be the object name, right?
     generatorCode=function(Multiplier) {
       #Multiplier = input$Multiplier
+      if(missing(Multiplier)) Multiplier = 1
       exp(rnorm(1,mean=log(location), sd=sdev*Multiplier))
                     }
 )
@@ -47,27 +48,34 @@ evaluateOutput = function(generator, input) {
   ## Make the generatorCode function available.
   if(!is(generator, "SimpleVariableGenerator"))
     stop("evaluateOutput: generator should be a SimpleVariableGenerator")
-  if(!is.list(input)) { ### input is a single variable
-    input = list(input)
-    names(input) = extractRequirements(generator)
-  }
-  print(input)
-  print(sys.call())
   params = as.environment(list(generatorCode=generator@generatorCode))
   ## Make the parameters available.
   params = list2env(generator@parameters, params)
-  ## Make the inputs (requirements) available.
-  params = list2env(input, params)
-  print(ls(env=params))
-  command = paste0("generatorCode(",
-                   paste(names(input), collapse=", "),
-                   ")")
+  if(!missing(input)){
+    ## Make the inputs (requirements) available.
+    if(!is.list(input)) { ### input is a single variable
+      input = list(input)
+      if(length(extractRequirements(generator))==1)
+        names(input) = extractRequirements(generator)
+      else
+        stop("evaluateOutput: input is not a list, but the requirements length is not 1.")
+    }
+    params = list2env(input, params)
+    command = paste0("generatorCode(",
+                     paste(names(input), collapse=", "),
+                     ")")
+  }
+  else
+    command = "generatorCode()"
+  #  print(sys.call())
   print(command)
+  print(ls(env=params))
   eval(parse(text=command),
        envir=params)
 }
 
-evaluateOutput(clearanceRate, 0)
+evaluateOutput(clearanceRate,0)
+evaluateOutput(clearanceRate) ## OK works if no input provided.
 
 # list2env: Since environments are never duplicated, the argument envir is also changed.
 # GOOD get("A", env=as.environment(list(A=10)))
