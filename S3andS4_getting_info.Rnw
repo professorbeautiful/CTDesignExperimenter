@@ -17,7 +17,7 @@
 \usepackage{array}
 \usepackage{pifont}
 \usepackage{amssymb}
-\usepackage{url}  % Formatting web addresses  
+\usepackage{hyper ref}  % Formatting web addresses . Better than package url.
 
 
 \makeatletter
@@ -90,7 +90,7 @@ showMethods(f = character(), where = topenv(parent.frame()), classes
 showEmpty,  printTo = stdout(), fdef)
 \tabularnewline
 \hline 
- & List all available methods for an S3 generic function,\linebreak 
+Purpose & List all available methods for an S3 generic function,\linebreak 
  or all methods for a class 
 & Show a summary of the methods for one or more generic functions, possibly restricted to those involving specified classes.
 \tabularnewline
@@ -105,32 +105,28 @@ Try also
 <<>>=
 library('CTDesignExplorer')
 showMethods("sim1CT")
-findMethods("sim1CT")
+findMethods("sim1CT")  ### Notice how the signatures are represented in the list names.
 findMethodSignatures(methods=findMethods("sim1CT"))
 @
 
 
 \subsection{Finding constructor bodies}
 
-``Constructors'' are actually methods. 
 
-From \url{https://stat.ethz.ch/pipermail/r-devel/2008-May/049422.html}
-\\
-but many errors.  See instead
-\url{http://www.bioconductor.org/help/course-materials/2011/AdvancedRFeb2011Seattle/S4Overview-slides.pdf}
+\href{http://www.bioconductor.org/help/course-materials/2011/AdvancedRFeb2011Seattle/S4Overview-slides.pdf}{\textbf{Herve Pages notes}}.  There, we see referred to as a ``constructor'' the IRanges() function in the IRanges packages-- but that's just a function.
+(Herve's document uses ``representation'' to define classes.)
 
-Note that the documentation says to use ``slots'' and ``contains''
-instead of ``representation'', but Herve's document uses ``representation''.
-
+But also ``Constructors'' are *sometimes* methods. 
+See Oleg Sklyar's message at 
+\url{https://stat.ethz.ch/pipermail/r-devel/2008-May/049422.html}-- 
+but many errors, and examples below.  
+Oleg Sklyar's points:
 \begin{verbatim}
-#Oleg Sklyar's points:\\
 #1) validity should return a character in case of errors
-
 # This works:
 getClass("A")@validity
-\\or this\\
+  or this
 getValidity(getClass("A"))
-
 
 #2) default initializer usually does the job
 #3) define constructors as methods to allow different signatures and 
@@ -167,6 +163,10 @@ setMethod("A", signature(a="ANY",b="missing"),
 )
 \end{verbatim}
 
+Note that the documentation says to use ``slots'' and ``contains''
+instead of ``representation'', but getClasses documentation mostly focuses on slots and contains.
+
+
 
 \subsection{Finding method bodies}
 
@@ -179,24 +179,16 @@ Example & print.lm & theMethod = getMethod(\Q sim1CT\Q, signature=signature(desi
 \hline 
 \end{tabular}
 
-str(theMethod())
-\\
-\begin{verbatim}
-Formal class 'MethodDefinition' [package "methods"] with 4 slots
-  ..@ .Data  :function (designSpec, popModelSpec, outcomeModelSpec)  
-  ..@ target :Formal class 'signature' [package "methods"] with 3 slots
-  .. .. ..@ .Data  : chr [1:3] "DesignSpecifier" "OptionalPopModelSpecifier" "OutcomeModelSpecifier"
-  .. .. ..@ names  : chr [1:3] "designSpec" "popModelSpec" "outcomeModelSpec"
-  .. .. ..@ package: chr [1:3] ".GlobalEnv" ".GlobalEnv" ".GlobalEnv"
-  ..@ defined:Formal class 'signature' [package "methods"] with 3 slots
-  .. .. ..@ .Data  : chr [1:3] "DesignSpecifier" "OptionalPopModelSpecifier" "OutcomeModelSpecifier"
-  .. .. ..@ names  : chr [1:3] "designSpec" "popModelSpec" "outcomeModelSpec"
-  .. .. ..@ package: chr [1:3] ".GlobalEnv" ".GlobalEnv" ".GlobalEnv"
-  ..@ generic: atomic [1:1] sim1CT
-  .. ..- attr(*, "package")= chr ".GlobalEnv"
-\end{verbatim}
+<<>>=
+library("CTDesignExplorer")
+theMethod = getMethod('sim1CT', signature=signature(designSpec='DesignSpecifier', popModelSpec='OptionalPopModelSpecifier', outcomeModelSpec='OutcomeModelSpecifier'))
+str(theMethod)
+theMethod
+@
 
 \begin{tabular}{|>{\centering}m{1.5cm}|>{\centering}m{6.5cm}|}
+\hline 
+To get this... & ...do this.\tabularnewline
 \hline 
 function body & theMethod@.Data\tabularnewline
 \hline 
