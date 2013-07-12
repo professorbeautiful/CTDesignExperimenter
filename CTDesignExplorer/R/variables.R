@@ -32,14 +32,15 @@ setClass("SimpleVariableGenerator", contains="Specifier",
          )
 )
 
+
 clearanceRate = new("SimpleVariableGenerator",
-    parameters=list(location=15, sdev=0.5),
-    outputName="myOutput", 
-          ### But outputName might as well be the object name, right?
+                    parameters=list(location=15, sdev=0.5),
+                    outputName="myOutput", 
+                    ### But outputName might as well be the object name, right?
     generatorCode=function(input) {
       Multiplier = input$Multiplier
       exp(rnorm(1,mean=log(location), sd=sdev*Multiplier))
-    }
+                    }
 )
 
 evaluateOutput = function(generator, input) {
@@ -60,17 +61,29 @@ evaluateOutput(clearanceRate, list(Multiplier=0))
 # GOOD get("A", env=as.environment(list(A=10)))
 # GOOD eval(expression(A), env=as.environment(list(A=10)))
 
-setClass(Class="PKclearanceModel",
-         contains="BaseCharModelSpecifier",
-         representation=representation(
-           location="numeric", sd="numeric"),
-         prototype=prototype(
-           location=15, sd=0.5,
-           RGenFun="exp(rnorm(1,mean=log(baseCharModelSpec@location),
-           sd=baseCharModelSpec@sd))")
-         )
-standardPKclearanceModel = new("PKclearanceModel",
-                               BaseCharName = "PKclearance") 
+extractRequirements = function(generator){
+  formalArgs(generator@generatorCode)
+}
+extractRequirements(clearanceRate)
+
+extractProvisions = function(generator){
+  generator@outputName
+}
+extractProvisions(clearanceRate)
+
+##### ok to here.########
+toxDoseThreshold  = new("SimpleVariableGenerator",
+                        #parameters=list(location=15, sdev=0.5),
+                        outputName="toxDoseThreshold", 
+                        ### But outputName might as well be the object name, right?
+                        generatorCode=function(B) { ## B just to test conditional.
+                          PKclearance * 
+                            exp(rnorm(baseCharModelSpec@location,
+                                      sd=baseCharModelSpec@sd)))
+)))
+                        }
+)
+
 
 setClass(Class="ToxDoseThresholdModel",
          contains="BaseCharModelSpecifier",
@@ -89,4 +102,3 @@ standardToxDoseThresholdModel = new("ToxDoseThresholdModel",
 
 setClass("VariableNetwork", contains="Specifier")
 ###  for combining variables into a patient description model.
-
