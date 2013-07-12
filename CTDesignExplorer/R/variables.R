@@ -33,25 +33,30 @@ setClass("SimpleVariableGenerator", contains="Specifier",
 )
 
 clearanceRate = new("SimpleVariableGenerator",
-    parameters=list(location=15, sd=0.5),
+    parameters=list(location=15, sdev=0.5),
     outputName="myOutput",
-    generatorCode=function(ignoreMe) 
-      exp(rnorm(1,mean=log(location),
-                sd=sd))
+    generatorCode=function(ignoreMe) {
+      exp(rnorm(1,mean=log(location), sd=sdev*B))
+    }
 )
 
 evaluateOutput = function(generator, input) {
-  generatorCode = generator@generatorCode
   params = as.environment(generator@parameters)
-  params = list2env(params, baseenv())
-  print(ls(env=params))
+  cat("location = ", get("location", env=params))
+  cat("sdev = ", get("sdev", env=params))
+  params = list2env(list(generatorCode=generator@generatorCode),
+                    params)
   params = list2env(input, params)
   print(ls(env=params))
-  #   eval(expression(generatorCode(input)),
-  eval(expression(paste(location, B)),
-       envir=params, enclos=baseenv())
+  params = list2env(as.list(params), baseenv())
+#   params = list2env(as.list(params), 
+#                     as.environment("package:stats"))
+  eval(expression(generatorCode(input)),
+       envir=params)
 }
-evaluateOutput(clearanceRate, list(B=20))
+
+evaluateOutput(clearanceRate, list(B=0))
+
 # list2env: Since environments are never duplicated, the argument envir is also changed.
 # GOOD get("A", env=as.environment(list(A=10)))
 # GOOD eval(expression(A), env=as.environment(list(A=10)))
