@@ -41,16 +41,13 @@ clearanceRate = new("SimpleVariableGenerator",
 )
 
 evaluateOutput = function(generator, input) {
-  params = as.environment(generator@parameters)
-  cat("location = ", get("location", env=params))
-  cat("sdev = ", get("sdev", env=params))
-  params = list2env(list(generatorCode=generator@generatorCode),
-                    params)
+  ## Make the generatorCode function available.
+  params = as.environment(list(generatorCode=generator@generatorCode))
+  ## Make the parameters available.
+  params = list2env(generator@parameters, params)
+  ## Make the inputs (requirements) available.
   params = list2env(input, params)
   print(ls(env=params))
-#  params = list2env(as.list(params), baseenv())
-#   params = list2env(as.list(params), 
-#                     as.environment("package:stats"))
   eval(expression(generatorCode(input)),
        envir=params)
 }
