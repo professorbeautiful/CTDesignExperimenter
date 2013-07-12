@@ -1,4 +1,4 @@
-run = function(background=FALSE, createCTDEcatalog=TRUE) {
+run = function(background=FALSE, local=FALSE, createCTDEcatalog=TRUE) {
   if(createCTDEcatalog) createCTDEcatalog()
 #   if(background) { ## Run it in the background outside of this session.
 #     system("echo 'library(CTDesignExplorer); run()' | R --vanilla")
@@ -8,6 +8,9 @@ run = function(background=FALSE, createCTDEcatalog=TRUE) {
   result = tryCatch( error = function(e) e,
     expr=require("shiny"))
   if(class(result) != "try-error")
+    if(local)
+      runApp("CTDesignExplorer/inst/shinydocs")
+  else
     runApp(system.file(
       package="CTDesignExplorer", "shinydocs"))
   ### NOTE that the folder inst/shinydocs 
