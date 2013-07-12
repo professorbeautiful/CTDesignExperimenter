@@ -37,25 +37,37 @@ clearanceRate = new("SimpleVariableGenerator",
                     parameters=list(location=15, sdev=0.5),
                     outputName="myOutput", 
                     ### But outputName might as well be the object name, right?
-    generatorCode=function(input) {
-      Multiplier = input$Multiplier
+    generatorCode=function(Multiplier) {
+      #Multiplier = input$Multiplier
       exp(rnorm(1,mean=log(location), sd=sdev*Multiplier))
                     }
 )
 
 evaluateOutput = function(generator, input) {
   ## Make the generatorCode function available.
+  if(!is(generator, "SimpleVariableGenerator"))
+    stop("evaluateOutput: generator should be a SimpleVariableGenerator")
+  if(!is.list(input)) { ### input is a single variable
+    input = list(input)
+    names(input) = extractRequirements(generator)
+  }
+  print(input)
+  print(sys.call())
   params = as.environment(list(generatorCode=generator@generatorCode))
   ## Make the parameters available.
   params = list2env(generator@parameters, params)
   ## Make the inputs (requirements) available.
-  params = list2env(list(input=input), params)
-  # print(ls(env=params))
-  eval(expression(generatorCode(input)),
+  params = list2env(input, params)
+  print(ls(env=params))
+  command = paste0("generatorCode(",
+                   paste(names(input), collapse=", "),
+                   ")")
+  print(command)
+  eval(parse(text=command),
        envir=params)
 }
 
-evaluateOutput(clearanceRate, list(Multiplier=0))
+evaluateOutput(clearanceRate, 0)
 
 # list2env: Since environments are never duplicated, the argument envir is also changed.
 # GOOD get("A", env=as.environment(list(A=10)))
