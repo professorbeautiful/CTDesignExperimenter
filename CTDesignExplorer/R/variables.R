@@ -48,7 +48,7 @@ evaluateOutput = function(generator, input) {
                     params)
   params = list2env(input, params)
   print(ls(env=params))
-  params = list2env(as.list(params), baseenv())
+#  params = list2env(as.list(params), baseenv())
 #   params = list2env(as.list(params), 
 #                     as.environment("package:stats"))
   eval(expression(generatorCode(input)),
