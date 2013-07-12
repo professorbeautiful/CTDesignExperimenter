@@ -65,7 +65,8 @@ shinyServer(function(input, output) {
   output$classes_table <- 
     renderTable( {
       #  cat("\n==specChoiceClasses Class==\n")
-      theClasses = data.frame(c(input$specChoiceClasses,
+      theClasses = data.frame(stringsAsFactors=FALSE,
+                              c(input$specChoiceClasses,
                                 subClassNames(
                                   input$specChoiceClasses)))
       names(theClasses) = "subClasses of " %&% input$specChoiceClasses
@@ -108,12 +109,12 @@ shinyServer(function(input, output) {
     if(is.null(theSpecChoice)) theSpecChoice = "PopModelSpecifier"
     if(regexpr("\\[", theSpecChoice) > 0)  ### Remove extra characters
       theSpecChoice = substring(theSpecChoice, 1, regexpr("\\[", theSpecChoice) - 2)
-    theObjects = data.frame(instanceNames(theSpecChoice))
+    theObjects = data.frame(stringsAsFactors=FALSE,
+                            instanceNames(theSpecChoice))
     names(theObjects) = "instance"
     print(theObjects)
     theObjects = theObjects[order(theObjects$instance), , drop=FALSE]
-    theObjects$class = 
-      sapply(theObjects$instance,
+    theObjects$class = sapply(theObjects$instance,
              FUN=function(obName) class(get(obName)))
     theObjects$requirements = 
       sapply(theObjects$instance, 
