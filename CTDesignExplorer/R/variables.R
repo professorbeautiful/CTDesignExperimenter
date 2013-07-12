@@ -34,9 +34,11 @@ setClass("SimpleVariableGenerator", contains="Specifier",
 
 clearanceRate = new("SimpleVariableGenerator",
     parameters=list(location=15, sdev=0.5),
-    outputName="myOutput",
-    generatorCode=function(ignoreMe) {
-      exp(rnorm(1,mean=log(location), sd=sdev*B))
+    outputName="myOutput", 
+          ### But outputName might as well be the object name, right?
+    generatorCode=function(input) {
+      Multiplier = input$Multiplier
+      exp(rnorm(1,mean=log(location), sd=sdev*Multiplier))
     }
 )
 
@@ -46,13 +48,13 @@ evaluateOutput = function(generator, input) {
   ## Make the parameters available.
   params = list2env(generator@parameters, params)
   ## Make the inputs (requirements) available.
-  params = list2env(input, params)
-  print(ls(env=params))
+  params = list2env(list(input=input), params)
+  # print(ls(env=params))
   eval(expression(generatorCode(input)),
        envir=params)
 }
 
-evaluateOutput(clearanceRate, list(B=0))
+evaluateOutput(clearanceRate, list(Multiplier=0))
 
 # list2env: Since environments are never duplicated, the argument envir is also changed.
 # GOOD get("A", env=as.environment(list(A=10)))
