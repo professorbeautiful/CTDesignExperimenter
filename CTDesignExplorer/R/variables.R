@@ -1,0 +1,88 @@
+setClass("Variable", contains="character",
+         representation=representation(description="character", dataType="character"),
+         prototype=prototype(description="This is my string variable", dataType="character")
+)
+## This will allow you to access a variable's value like this:
+##   sex = "M"
+###  get(new("Variable", "sex", description="my sex", dataType="factor"))
+
+### Later we can change dataType to a function that validates a value.
+
+sexClass = new("Variable", "sex", description="my sex variable", dataType="character")
+### simpler than subclassing, I think.
+
+setClass("VariableValue", contains="character",
+         representation=representation(variable="Variable", value="ANY"),
+         prototype=prototype(variable=sexClass, value="Male"),
+         validity=function(object){
+           if(is(object@value, object@variable@dataType))
+             return(TRUE)
+           return(paste("Invalid value for variable ", object@variable,
+                        ". Looking for ", object@variable@dataType,
+                        ", found ", typeof(object@value)))
+         }
+)
+# new("VariableValue")
+#  new("VariableValue", variable=ageVariable, value=94)
+
+setClass("SimpleVariableGenerator", contains="Specifier",
+         representation=representation(
+           outputName="character" ### this will be the provision. At first, a string. Later, a Variable.
+           , generatorCode="function" ### arguments are the requirements.
+         )
+)
+
+clearanceRate = new("SimpleVariableGenerator",
+    parameters=list(location=15, sd=0.5),
+    outputName="myOutput",
+    generatorCode=function(ignoreMe) 
+      exp(rnorm(1,mean=log(location),
+                sd=sd))
+)
+
+evaluateOutput = function(generator, input) {
+  generatorCode = generator@generatorCode
+  params = as.environment(generator@parameters)
+  params = list2env(params, baseenv())
+  print(ls(env=params))
+  params = list2env(input, params)
+  print(ls(env=params))
+  #   eval(expression(generatorCode(input)),
+  eval(expression(paste(location, B)),
+       envir=params, enclos=baseenv())
+}
+evaluateOutput(clearanceRate, list(B=20))
+# list2env: Since environments are never duplicated, the argument envir is also changed.
+# GOOD get("A", env=as.environment(list(A=10)))
+# GOOD eval(expression(A), env=as.environment(list(A=10)))
+
+setClass(Class="PKclearanceModel",
+         contains="BaseCharModelSpecifier",
+         representation=representation(
+           location="numeric", sd="numeric"),
+         prototype=prototype(
+           location=15, sd=0.5,
+           RGenFun="exp(rnorm(1,mean=log(baseCharModelSpec@location),
+           sd=baseCharModelSpec@sd))")
+         )
+standardPKclearanceModel = new("PKclearanceModel",
+                               BaseCharName = "PKclearance") 
+
+setClass(Class="ToxDoseThresholdModel",
+         contains="BaseCharModelSpecifier",
+         representation=representation(
+           location="numeric", sd="numeric"),
+         prototype=prototype(
+           ConditionBaseCharNames = "PKclearance",
+           location=1, sd=0.02,
+           RGenFun="PKclearance * exp(rnorm(baseCharModelSpec@location, sd=baseCharModelSpec@sd))")
+)
+
+standardToxDoseThresholdModel = new("ToxDoseThresholdModel",
+                                    BaseCharName = "ToxDoseThreshold") 
+
+
+
+setClass("VariableNetwork", contains="Specifier")
+###  for combining variables into a patient description model.
+
