@@ -13,7 +13,7 @@ clearanceRate = VariableGenerator(
   }
 )
 
-print(evaluateOutput(clearanceRate))
+(evaluateOutput(clearanceRate))
 
 ######################
 
@@ -26,14 +26,14 @@ toxDoseThreshold  = VariableGenerator(
                      description="threshold for a toxicity event",
                      dataType="numeric"),
   generatorCode=function() { 
-    cat("clearanceRate:\n", clearanceRate)
-    cat("\ntoxLoc:\n", toxLoc)
-    cat("\ntoxSD:\n", toxSD)
+#     cat("clearanceRate:\n", clearanceRate)
+#     cat("\ntoxLoc:\n", toxLoc)
+#     cat("\ntoxSD:\n", toxSD, "\n")
     clearanceRate * 
       exp(rnorm(1, toxLoc, toxSD))
   }
 )
 
 
-print(evaluateOutput(toxDoseThreshold))
+(evaluateOutput(toxDoseThreshold))
 
