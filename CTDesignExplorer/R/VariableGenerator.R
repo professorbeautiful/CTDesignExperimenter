@@ -1,3 +1,6 @@
+
+
+
 setClass("VariableGenerator", contains="Specifier",
          slots=list(
            outputVariable="Variable"
@@ -23,6 +26,8 @@ setClass("VariableGenerator", contains="Specifier",
 VariableGenerator = function(parameters=list(), provisions, 
                              requirements=list(),
                              outputVariable, generatorCode) {
+  if(missing(provisions)) provisions=outputVariable
+  if(missing(outputVariable)) outputVariable=provisions
   vg = new("VariableGenerator", 
            parameters=parameters,
            provisions=provisions,
