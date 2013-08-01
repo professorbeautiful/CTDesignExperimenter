@@ -258,7 +258,7 @@ Some notes on parameters etc.\
 \cf0 \ulnone 	new() could  use RNG to set parameter.  \
 	RNG parameters are in the class; realizations are in the instance.\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
-\cf0 \ul \ulc0   Outcomes:\
+\cf0 \ul   Outcomes:\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 \cf0 \ulnone Should Outcomes be organized like BasChar and PopModels?\
 Some outcomes may depend on others.\
@@ -428,7 +428,8 @@ git log --pretty=format:"%h - %an, %ar : %s"\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 {\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Git-Basics-Tips-and-Tricks"}}{\fldrslt \cf10 http://git-scm.com/book/en/Git-Basics-Tips-and-Tricks}}  for command line shortcuts.\
 \
-{\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Git-Branching-What-a-Branch-Is"}}{\fldrslt http://git-scm.com/book/en/Git-Branching-What-a-Branch-Is}}   "How does Git know what branch you\'92re currently on? It keeps a special pointer called HEAD. Note that this is a lot different than the concept of HEAD in other VCSs you may be used to, such as Subversion or CVS. In Git, this is a pointer to the local branch you\'92re currently on."\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+{\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Git-Branching-What-a-Branch-Is"}}{\fldrslt \cf10 http://git-scm.com/book/en/Git-Branching-What-a-Branch-Is}}   "How does Git know what branch you\'92re currently on? It keeps a special pointer called HEAD. Note that this is a lot different than the concept of HEAD in other VCSs you may be used to, such as Subversion or CVS. In Git, this is a pointer to the local branch you\'92re currently on."\
 "To switch to an existing branch, you run the 
 \f5 \cf12 \cb1 git checkout
 \f4 \cf10 \cb11  command."\
@@ -572,10 +573,70 @@ I've incorporated that into BaseCharSpecifier\
 \
 -----\
 \
-{\field{\*\fldinst{HYPERLINK "http://timelyportfolio.github.io/rCharts_rickshaw_gettingstarted/"}}{\fldrslt http://timelyportfolio.github.io/rCharts_rickshaw_gettingstarted/}}\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+{\field{\*\fldinst{HYPERLINK "http://timelyportfolio.github.io/rCharts_rickshaw_gettingstarted/"}}{\fldrslt \cf0 http://timelyportfolio.github.io/rCharts_rickshaw_gettingstarted/}}\
 looks interesting.\
 \
 ----\
 \
 "Failed to create server"  happens when you are already running the App. You have to close the page AND escape the loop.\
+\
+\
+------\
+\
+2013-06-18\
+\
+Talk with Peter Thall\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+{\field{\*\fldinst{HYPERLINK "http://www.bios.unc.edu/~kosorok/"}}{\fldrslt \cf0 http://www.bios.unc.edu/~kosorok/}}\
+\
+"wikipedia of trial design"\
+\
+--------\
+\
+See\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/8637993/better-explanation-of-when-to-use-imports-depends"}}{\fldrslt \cf0 http://stackoverflow.com/questions/8637993/better-explanation-of-when-to-use-imports-depends}}\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/9893791/imports-and-depends"}}{\fldrslt \cf0 http://stackoverflow.com/questions/9893791/imports-and-depends}}\
+\
+and Joe's answer to my question\
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/17181212/r-package-with-dependency-on-shiny-gives-rjsonio-warning"}}{\fldrslt http://stackoverflow.com/questions/17181212/r-package-with-dependency-on-shiny-gives-rjsonio-warning}}\
+\
+\
+\
+\
+\
+\
+2013-07-15\
+\
+Errors in parsing,\
+in the try-reqs-in-generatorCode-args branch of variables.R\
+	Browse[2]> get("location", envir=inputs)\
+	[1] 15\
+	Browse[2]> eval(parse(text="location"), envir=inputs)\
+	[1] 15\
+	Browse[2]> eval(parse(text="generatorCode()"), envir=inputs)\
+	Error in rnorm(1, mean = log(location), sd = sdev) : \
+	  object 'location' not found\
+	Browse[2]> eval(parse(text="rnorm(1, mean = log(location))"), envir=inputs)\
+	Error in eval(expr, envir, enclos) : could not find function "rnorm"\
+\
+\
+2013-07-18\
+\
+Let's get the idea clear.\
+\
+\
+Requirements of VariableGenerators are Variables, not VariableGenerators.\
+The provision of a VariableGenerator is a Variable.\
+The R object name of a VariableGenerator may have nothing to do with the name of the Variable that it provides.\
+A PopModel consists of a bag of VariableGenerators and other PopModels.\
+For each VariableGenerator requirement, which is a Variable,\
+there should be exactly one VariableGenerator providing it.\
+this is the job of checkInteroperability.\
+\
+There should be getProvisions and getRequirements methods.\
+\
 }
