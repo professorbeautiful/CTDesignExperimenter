@@ -1,14 +1,22 @@
 
+setRefClass("Specifier", 
+            fields=list(
+              parameters=function(value){return(list())}, 
+              requirements=function(value){return(list())},
+              provisions=function(value){return(list())})
+)
+getRefClass("Specifier") 
 
-
-setClass("VariableGenerator", contains="Specifier",
-         slots=list(
+setRefClass("VariableGenerator", 
+            contains="Specifier",
+         fields=list(
            outputVariable="Variable"
            ### this will be the provision. At first, a string. Later, a Variable.
            , generatorCode="function" 
            ### Arguments are the requirements,
            ### which are VariableValues.
          ),
+            methods=list(),
          validity=function(object) { # has to be "object"
            if(length(object@requirements)==0) 
              return(TRUE)## For now.

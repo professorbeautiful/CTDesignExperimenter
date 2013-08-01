@@ -1,12 +1,12 @@
 
-setClass("Specifier", 
-         representation=representation(
-           parameters="list", requirements="list",
-           provisions="list"),
-         prototype=list(parameters=list(), 
-                        requirements=list(),
-                        provisions=list())
+setRefClass("Specifier", 
+         fields=list(
+           parameters=function(value){return(list())}, 
+           requirements=function(value){return(list())},
+           provisions=function(value){return(list())})
 )
+getRefClass("Specifier") 
+
 
 ### Some utility classes and methods
 ## Class Union: OptionalCharacter

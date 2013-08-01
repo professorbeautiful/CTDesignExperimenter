@@ -1,21 +1,52 @@
-setClass("Variable", contains="character",
-         slots=list(description="character", 
-                                       dataType="character",
-                                       dataTypeDetail="ANY"),
-         prototype=prototype(description="This is my string variable", 
-                             dataType="character")
+Variable=  
+  setRefClass("Variable", #contains="character",
+         fields=list(
+           name="character",
+           description="character", 
+           dataType="character",
+           dataTypeDetail="ANY")
+#         ,
+#          prototype=prototype(description="This is my string variable", 
+#                              dataType="character")
 )
+Variable$methods(show=
+          function(x)
+            cat("Variable: ", x$name, "  dataType: ", x$dataType, 
+                "  dataType: ", x$dataTypeDetail, "\n"))
+Variable$methods(initialize = 
+                   function(...){
+                     callSuper(...)
+                     if(!exists("variableCatalog"))
+                       variableCatalog = list()
+                     if(length(variableCatalog[[.self$name]]) > 0)
+                       warning(" overriding previous Variable definition")
+                     variableCatalog[[.self$name]] = .self
+                     assign("variableCatalog", variableCatalog, .GlobalEnv)
+                     print(variableCatalog)
+                   }
+)
+Character = setRefClass("Character")
 ## This will allow you to access a variable's value like this:
    sex = "F"
-  get(new("Variable", "sex", description="my sex", dataType="factor"))
+  get(
+  #  new("Variable", "sex", description="my sex", dataType="factor")
+#sexVariable = 
+  
+Variable$new(  name="sex", 
+                  description="my sex", 
+                  dataType="factor",
+         dataTypeDetail=c("Male", "Female")
+  )
+print(sexVariable)
+length(variableCatalog)
 ###  So its "contains" can be a value!  Not what's intended though.
   sex = "theSexVariable"
 ### Potentially very confusing.
 
 ### Later we can change dataType to a function that validates a value.
 
-sexVariable = new("Variable", "sex", 
-                  description="my sex variable, as an unrestricted string", dataType="character")
+# sexVariable = new("Variable", "sex", 
+#                   description="my sex variable, as an unrestricted string", dataType="character")
 ### simpler than subclassing, I think.
 ageVariable = new("Variable", "age", 
                   description="age, as an unrestricted number", dataType="numeric")
