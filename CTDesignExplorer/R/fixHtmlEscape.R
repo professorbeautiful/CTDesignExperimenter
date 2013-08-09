@@ -1,4 +1,13 @@
 
+### to fix a problem where the args text euals character(0).
+
+
+### 2013-08-06
+### See clone at /Users/Roger/Dropbox/_HOME/R-in-Dropbox/shiny/R
+### the output of my investigations using sys.frames() etc. is at 
+### /Users/Roger/Dropbox/_HOME/CT-design-simulator---normolle,yuanyuan/fixHtmlEscape.R
+
+
 assignInNamespace(ns="shiny", x="htmlEscape", 
                   function(text, attribute=TRUE, browse=TRUE) {
   .htmlSpecials <- list(
