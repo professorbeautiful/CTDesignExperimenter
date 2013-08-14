@@ -25,7 +25,7 @@ shinyUI(pageWithSidebar(
                     "Define one clinical trial",
                     "Run one clinical trial",
                     "Do a CT experiment"))
-    , tag('hr', NULL)
+    #, tag('hr', NULL) ###  May cause the chr(0) problem in htmlEscape
     , conditionalPanel(condition=
                          "input.viewChoice==\"View spec classes\"",
                        "Choose spec class to view its subclasses.",
