@@ -1,3 +1,25 @@
+
+setClass("Specifier", 
+         representation=representation(
+           parameters="list", requirements="list",
+           provisions="list"),
+         prototype=list(parameters=list(), 
+                        requirements=list(),
+                        provisions=list())
+)
+
+### Some utility classes and methods
+## Class Union: NumericLogical
+setClassUnion("NumericLogical",c("numeric","logical"))
+
+print(getClass("NumericLogical"))
+## Class Union: OptionalNumeric
+setClassUnion("OptionalNumeric",c("numeric","NULL"))
+print(getClass("OptionalNumeric"))
+
+## Class Union: OptionalCharacter
+setClassUnion("OptionalCharacter",c("character","NULL"))
+
 ### utilities borrowed from mvbutils
 
 `%&%` = function (a, b)
