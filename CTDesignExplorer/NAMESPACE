@@ -1,7 +1,11 @@
 #exportPattern("^[[:alpha:]]+")
-export(createCTDEcatalog,
+exportPattern("^[^\\.]")  #### What martin uses.
+
+
+export(
+	createCTDEcatalog,
   	patientToString,
-	  CTresultToString,
+	CTresultToString,
     run,
     cq,
     "%&%",
@@ -60,5 +64,8 @@ exportClasses(
      "PopModelSpecifier",
      "Specifier",
      "ToxDeathDoseThresholdModelSpecifier",
-     "ToxEfficacyDoseThresholdsModelSpecifier" 
+     "ToxEfficacyDoseThresholdsModelSpecifier" ,
+	"Variable",
+	"VariableGenerator",
+	"VariableValue"
 )
