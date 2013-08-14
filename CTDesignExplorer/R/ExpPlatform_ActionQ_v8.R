@@ -1,23 +1,3 @@
-
-setClass("Specifier", 
-         representation=representation(
-           parameters="list", requirements="list",
-           provisions="list"),
-         prototype=list(parameters=list(), 
-                        requirements=list(),
-                        provisions=list())
-)
-
-### Some utility classes and methods
-## Class Union: OptionalCharacter
-setClassUnion("OptionalCharacter",c("character","NULL"))
-
-## Class Union: OptionalNumeric
-setClassUnion("OptionalNumeric",c("numeric","NULL"))
-
-## Class Union: NumericLogical
-setClassUnion("NumericLogical",c("numeric","logical"))
-
 ## Class:ConcurrentTrtsData
 # This class represents data from a set of concurrent treatments for a patient
 # The number of concurrent treatments is an integer >= 1
