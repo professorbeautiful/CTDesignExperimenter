@@ -9,7 +9,9 @@
 #require(RJSONIO)
 ####  Using Imports in DESCRIPTION, these should not be required.
 
-options(shiny.trace=FALSE)
+source("fixHtmlEscape.R")
+
+options(shiny.trace=TRUE)
 
 #if(length(ls(pattern="CRMSpec1")) == 0 )  RELOAD_CATALOG()
 
@@ -21,44 +23,49 @@ specClassNames = c(`patient attributes`="BaseCharModelSpecifier",
 
 shortName = function(specifierName)
   names(specClassNames)[match(specifierName, specClassNames)]
-
+#debug(shortName)
 specClassNamesForSim1CT = setdiff(specClassNames, c("BaseCharModelSpecifier", "EvalSpecifier"))  ### not the "nice" names
 
 instanceNames = function(className) {
   names(which(sapply(.GlobalEnv, is, className )))
 }
+#debug(instanceNames)
 
-shinyServer(function(input, output) {
-    
-  output$actionChoice = renderText({input$viewChoice})
-  
-  f.mainPanelHeader = function() { 
-    if(input$viewChoice == "View spec classes")
-      return(input$viewChoice %&% " for  " %&% 
-               shortName(input$specChoiceClasses)  %&% 
-               " (class="    %&%
-               input$specChoiceClasses %&% ")")
-    else if(input$viewChoice == "View spec objects")
-      return(input$viewChoice %&% " for  " %&% 
-               shortName(input$specChoiceModels)  %&% 
-               " (class="    %&%
-               input$specChoiceModels %&% ")")
-    else if(input$viewChoice == "Define one clinical trial") { 
-      #         if(is.na(buildingModelIndices[f.specChoiceOneCTCleaned()]))  
-      #           buildingModelIndices[f.specChoiceOneCTCleaned()] == 1
-      ### do we want this? maybe the user wants to leave it undecided?
-      return(HTML("<strong>Define one clinical trial:</strong> <br>pick  population model, outcome model, and design."))
-    }
-    else if(input$viewChoice == "Run one clinical trial") { 
-      #         if(is.na(buildingModelIndices[f.specChoiceOneCTCleaned()]))  
-      #           buildingModelIndices[f.specChoiceOneCTCleaned()] == 1
-      ### do we want this? maybe the user wants to leave it undecided?
-      return("Run one clinical trial: results appear here.\n" %&% 
-               h5(em(uiOutput(outputId="currentModelText_copy"))))
-    }
-    else return(input$viewChoice %&% ": not yet implemented")
+f.mainPanelHeader = function() { 
+  # Error in f.mainPanelHeader() : object 'input' not found
+  if(input$viewChoice == "View spec classes")
+    return(input$viewChoice %&% " for  " %&% 
+             shortName(input$specChoiceClasses)  %&% 
+             " (class="    %&%
+             input$specChoiceClasses %&% ")")
+  else if(input$viewChoice == "View spec objects")
+    return(input$viewChoice %&% " for  " %&% 
+             shortName(input$specChoiceModels)  %&% 
+             " (class="    %&%
+             input$specChoiceModels %&% ")")
+  else if(input$viewChoice == "Define one clinical trial") { 
+    #         if(is.na(buildingModelIndices[f.specChoiceOneCTCleaned()]))  
+    #           buildingModelIndices[f.specChoiceOneCTCleaned()] == 1
+    ### do we want this? maybe the user wants to leave it undecided?
+    return(HTML("<strong>Define one clinical trial:</strong> <br>pick  population model, outcome model, and design."))
   }
-  #  debug(f.mainPanelHeader)
+  else if(input$viewChoice == "Run one clinical trial") { 
+    #         if(is.na(buildingModelIndices[f.specChoiceOneCTCleaned()]))  
+    #           buildingModelIndices[f.specChoiceOneCTCleaned()] == 1
+    ### do we want this? maybe the user wants to leave it undecided?
+    return("Run one clinical trial: results appear here.\n" %&% 
+             h5(em(uiOutput(outputId="currentModelText_copy"))))
+  }
+  else return(input$viewChoice %&% ": not yet implemented")
+}
+# debug(f.mainPanelHeader)
+
+
+myShinyServerFunction = function(input, output) {
+  print("GOT THIS FAR: myShinyServerFunction 1")
+  output$actionChoice = renderText({input$viewChoice})
+  print("GOT THIS FAR: myShinyServerFunction 2")
+  
   output$mainPanelHeader = renderText({f.mainPanelHeader()})
   
   classNames = c("BaseCharModelSpecifier","PopModelSpecifier","OutcomeModelSpecifier","DesignSpecifier","EvalSpecifier")
@@ -466,4 +473,8 @@ shinyServer(function(input, output) {
          #)                             
     )
   })
-})
+}
+#debug(myShinyServerFunction)
+print("GOT THIS FAR: starting shinyServer")
+
+shinyServer(myShinyServerFunction)
