@@ -1,12 +1,4 @@
 
-setClass("Specifier", 
-         representation=representation(
-           parameters="list", requirements="list",
-           provisions="list"),
-         prototype=list(parameters=list(), 
-                        requirements=list(),
-                        provisions=list())
-)
 
 ### Some utility classes and methods
 ## Class Union: NumericLogical

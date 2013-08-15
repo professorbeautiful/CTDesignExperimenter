@@ -1,8 +1,7 @@
 clearanceRate = VariableGenerator(
   parameters=list(clearanceLocation=6,
                   clearanceSD=1),
-  provisions=list("clearanceRate"),
-  outputVariable=clearanceRateVariable,
+  provisions=v_clearanceRateVariable,
   #outputName="clearanceRate", 
   ### Maybe we don't need outputName? Use the object name, right?
   generatorCode=function() {
@@ -13,17 +12,13 @@ clearanceRate = VariableGenerator(
   }
 )
 
-
+evaluateOutput(clearanceRate)
 ######################
 
 responseDoseThreshold  = VariableGenerator(
   parameters=list(responseLoc=0, responseSD=0.01),
-  requirements=list(clearanceRate),
-  provisions=list("responseDoseThreshold"), 
-  outputVariable=new("Variable",
-                     "responseDoseThresholdVariable",
-                     description="threshold for a responseicity event",
-                     dataType="numeric"),
+  requirements=v_clearanceRateVariable,
+  provisions=v_responseDoseThreshold, 
   generatorCode=function() { 
 #     cat("clearanceRate:\n", clearanceRate)
 #     cat("\nresponseLoc:\n", responseLoc)
@@ -32,6 +27,7 @@ responseDoseThreshold  = VariableGenerator(
       exp(rnorm(1, responseLoc, responseSD))
   }
 )
+
 
 
 toxDoseThreshold  = VariableGenerator(
@@ -51,10 +47,3 @@ toxDoseThreshold  = VariableGenerator(
   }
 )
 
-(evaluateOutput(clearanceRate))
-(evaluateOutput(responseDoseThreshold))
-
-(evaluateOutput(toxDoseThreshold))
-
-new("PopModel", requirements=list(responseDoseThreshold, toxDoseThreshold))
-getPopModelOutputs(..())

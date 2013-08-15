@@ -8,25 +8,17 @@ setClass("VariableGenerator", contains="Specifier",
            , generatorCode="function" 
            ### Arguments are the requirements,
            ### which are VariableValues.
-         ),
+         )
+         ,
          validity=function(object) { # has to be "object"
-           if(length(object@requirements)==0) 
-             return(TRUE)## For now.
-           else {
-             for(req in object@requirements){
-               if(!is(req, "VariableGenerator"))
-                 return(paste0("VariableGenerator: error: ",
-                               "req not a VariableGenerator:\n",
-                               req))
-             }
              return(TRUE)
            }
-         }
 )
+
 VariableGenerator = function(parameters=list(), provisions, 
-                             requirements=list(),
+                             requirements=NULL,
                              outputVariable, generatorCode) {
-  if(missing(provisions)) provisions=outputVariable
+  if(missing(provisions)) provisions=list(outputVariable)
   if(missing(outputVariable)) outputVariable=provisions
   vg = new("VariableGenerator", 
            parameters=parameters,
@@ -38,6 +30,12 @@ VariableGenerator = function(parameters=list(), provisions,
   vg
 }
 
-setMethod("print", "VariableValue",
-  function(x)
-    cat("Variable: ", x@variable@.Data, "  Value: ", x@value, "\n"))
+setMethod("print", "VariableGenerator", function(x){
+  cat("    output: ", x@provisions, "\n")
+  for (req in x@requirements) {
+    cat("       req: ", req, "\n") ### Omits all but the Variable name slot.
+  }
+}
+)          
+
+
