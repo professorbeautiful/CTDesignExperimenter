@@ -47,19 +47,21 @@ setMethod("print", "Variable", function(x)
 v_sexAsCharacter = new("Variable", name="sex", description="my sex variable", dataType="character")
 print(sexAsCharacter)
 
-setClass("VariableValue", contains="character",
-         slots=list(variable="Variable", value="ANY"),
-         prototype=prototype(variable=sexAsCharacter, value="Male"),
+setClass("VariableValue", contains="ANY",
+         slots=list(variable="Variable"),
          validity=function(object){
-           if(is(object@value, object@variable@dataType))
+#           print(object)  ### "Data part is undefined for general S4 object" !!!
+           print(is(getDataPart(object), "numeric"))
+           if(is(getDataPart(object), object@variable@dataType))
              return(TRUE)
            return(paste("Invalid value for variable ", object@variable,
                         ". Looking for ", object@variable@dataType,
-                        ", found ", typeof(object@value)))
+                        ", found ", typeof(object)))
          }
 )
 # new("VariableValue")
-  new("VariableValue", variable=ageVariable, value=94)
+
+new("VariableValue", 94, variable=ageVariable)
 
 writeVariableFile = function(name, description, dataType, dataTypeDetail="", 
                              author=system("echo $USER",intern=TRUE),
