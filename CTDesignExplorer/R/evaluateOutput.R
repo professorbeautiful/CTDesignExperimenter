@@ -5,6 +5,8 @@
 #' \param generator A SimpleVariableGenerator 
 #' \param input Input "requirements" list of VariableValue objects.
 
+#setGeneric("evaluateOutput", )
+removeGeneric("evaluateOutput")
 evaluateOutput = function(generator, alreadyDone=list()) {
   ## Make the generatorCode function available.
   if(!is(generator, "VariableGenerator"))
@@ -29,6 +31,6 @@ evaluateOutput = function(generator, alreadyDone=list()) {
   value = generator@generatorCode()
   #thisOutput = new("VariableValue", variable=generator@outputVariable, value=value)
   valueList = c(value, valueList)
-  names(valueList)[[1]] = generator@provisions[[1]]
+  names(valueList)[[1]] = generator@provisions@name
   return(valueList)
 }
