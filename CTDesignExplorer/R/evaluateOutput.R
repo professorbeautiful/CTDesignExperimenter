@@ -65,7 +65,7 @@ evaluateOutput = function(generator, envir=.GlobalEnv, alreadyDone=list()) {
       ###  If we have not already computed the answer,
       ###  don't do it again.
       if( ! (req@name %in% names(alreadyDone))) {
-        gen = findGenerator(req)
+        gen = findGenerator(req, env=envir)
         valueList = c(valueList,
                       evaluateOutput(gen, envir=env, alreadyDone=valueList))
         #       for(vv in genOutput) {
@@ -78,6 +78,9 @@ evaluateOutput = function(generator, envir=.GlobalEnv, alreadyDone=list()) {
   if(length(valueList) > 0)
     environment(generator@generatorCode) = 
     list2env(valueList, environment(generator@generatorCode))
+  if(length(generator@parameters) > 0)
+    environment(generator@generatorCode) = 
+    list2env(generator@parameters, environment(generator@generatorCode))
   print(ls(envir=environment(generator@generatorCode)))
   value = generator@generatorCode()
   #thisOutput = new("VariableValue", variable=generator@outputVariable, value=value)

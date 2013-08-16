@@ -48,10 +48,25 @@ lapply((VariableGeneratorList(clearanceRate)), function(vg) vg@requirements) #OK
 
 PopulationModel(vgList=VariableGeneratorList(clearanceRate))
 
-debug(PopulationModel)
 
 pmTemp = PopulationModel(vgList=VariableGeneratorList(
-  list(clearanceRate, toxDoseThreshold, responseDoseThreshold)))
+  list(clearanceRate=clearanceRate, 
+       toxDoseThreshold=toxDoseThreshold, 
+       responseDoseThreshold=responseDoseThreshold)))
+### The VGs have to be named! (for list2env)
+names(pmTemp@vgList)
+list2env(pmTemp@vgList, new.env())  
+evaluateOutput(responseDoseThreshold)
+pmTemp@vgList[["clearanceRate"]]@parameters$clearanceLocation = 60
+evaluateOutput(responseDoseThreshold, 
+               env=list2env(pmTemp@vgList, new.env())  )
+clearanceRate@parameters$clearanceSD=0
+evaluateOutput(clearanceRate) 
+pmTemp@vgList$clearanceRate@parameters$clearanceSD=0
+evaluateOutput(pmTemp@vgList$clearanceRate, 
+               env=list2env(pmTemp@vgList, new.env())  )
+evaluateOutput(clearanceRate, 
+               env=list2env(pmTemp@vgList, new.env())  )
 
 `@`(clearanceRate, "requirements") ### NULL
 
