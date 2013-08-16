@@ -33,6 +33,17 @@ PopulationModel = function(vgList, popModelList=NULL){
   }
   else if(is(vgList, "VariableGenerator"))
     pm@requirements = vgList@requirements
+  if(is(vgList, "VariableGeneratorList")) {
+    provisions = c(lapply(vgList, function(vg) vg@provisions))
+    provisions = provisions[!sapply(provisions, is.null)]
+    provisions = unique(provisions)
+    provisions = 
+      new("VariableList", provisions)
+    if(length(provisions) == 0) provisions = NULL
+    pm@provisions = provisions
+  }
+  else if(is(vgList, "VariableGenerator"))
+    pm@provisions = vgList@provisions
   pm
 }
 
