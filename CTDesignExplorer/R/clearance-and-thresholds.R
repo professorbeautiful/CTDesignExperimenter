@@ -20,30 +20,25 @@ responseDoseThreshold  = VariableGenerator(
   requirements=v_clearanceRateVariable,
   provisions=v_responseDoseThreshold, 
   generatorCode=function() { 
-#     cat("clearanceRate:\n", clearanceRate)
-#     cat("\nresponseLoc:\n", responseLoc)
-#     cat("\nresponseSD:\n", responseSD, "\n")
-    clearanceRate * 
+    clearanceRateVariable * 
       exp(rnorm(1, responseLoc, responseSD))
   }
 )
 
+evaluateOutput(responseDoseThreshold)
 
-
+v_toxDoseThreshold = new("Variable",
+                         name="toxDoseThresholdVariable",
+                         description="threshold for a toxicity event",
+                         dataType="numeric")
 toxDoseThreshold  = VariableGenerator(
-  parameters=list(toxLoc=0, toxSD=0.01),
-  requirements=list(clearanceRate),
-  provisions=list("toxDoseThreshold"), 
-  outputVariable=new("Variable",
-                     "toxDoseThresholdVariable",
-                     description="threshold for a toxicity event",
-                     dataType="numeric"),
+  parameters=list(toxLoc=0.5, toxSD=0.1),
+  requirements=v_clearanceRateVariable,
+  provisions=v_toxDoseThreshold, 
   generatorCode=function() { 
-    #     cat("clearanceRate:\n", clearanceRate)
-    #     cat("\ntoxLoc:\n", toxLoc)
-    #     cat("\ntoxSD:\n", toxSD, "\n")
-    clearanceRate * 
+    clearanceRateVariable * 
       exp(rnorm(1, toxLoc, toxSD))
   }
 )
 
+evaluateOutput(toxDoseThreshold)
