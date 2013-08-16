@@ -51,17 +51,20 @@ setClass("VariableValue", contains="ANY",
          slots=list(variable="Variable"),
          validity=function(object){
 #           print(object)  ### "Data part is undefined for general S4 object" !!!
-           print(is(getDataPart(object), "numeric"))
-           if(is(getDataPart(object), object@variable@dataType))
+           dataPart = object@.Data
+           print(is(dataPart, "numeric"))
+           if(is(dataPart, object@variable@dataType))
              return(TRUE)
-           return(paste("Invalid value for variable ", object@variable,
+           return(paste("Invalid value for variable ", 
+                        object@variable@name,
                         ". Looking for ", object@variable@dataType,
-                        ", found ", typeof(object)))
+                        ", found ", typeof(dataPart)))
          }
 )
 # new("VariableValue")
 
 new("VariableValue", 94, variable=ageVariable)
+new("VariableValue", "xyz", variable=ageVariable)
 
 writeVariableFile = function(name, description, dataType, dataTypeDetail="", 
                              author=system("echo $USER",intern=TRUE),
