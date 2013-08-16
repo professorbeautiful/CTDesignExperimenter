@@ -17,7 +17,7 @@ sameVar = function(v1, v2) {
   return(TRUE)
 }
 
-sameVar(responseDoseThreshold@requirements, clearanceRateVariable)
+sameVar(responseDoseThreshold@requirements, clearanceRate)
 
 findGeneratorNames = function(var, env=.GlobalEnv, menu=TRUE) {
   # perhaps Variable should be a virtual Class, and 

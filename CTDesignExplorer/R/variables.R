@@ -161,7 +161,7 @@ v_ageCategoryVariable = new("Variable", name="age",
                           description="age, binned by decade", 
                           dataType="factor",
                           dataTypeDetail=paste0("(", 10*(0:9), ",", 10*(1:10), "]"))
-v_clearanceRateVariable = new("Variable", name="clearanceRateVariable", description="generic clearance rate variable",
+v_clearanceRate = new("Variable", name="clearanceRate", description="generic clearance rate variable",
                             dataType="numeric")
 v_toxDoseThreshold = new("Variable", name="toxDoseThreshold", description="dose threshold for binary toxicity event",
                             dataType="numeric")

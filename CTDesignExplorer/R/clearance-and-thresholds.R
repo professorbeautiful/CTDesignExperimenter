@@ -1,7 +1,7 @@
-clearanceRate = VariableGenerator(
+vg_clearanceRate = VariableGenerator(
   parameters=list(clearanceLocation=6,
                   clearanceSD=1),
-  provisions=v_clearanceRateVariable,
+  provisions=v_clearanceRate,
   #outputName="clearanceRate", 
   ### Maybe we don't need outputName? Use the object name, right?
   generatorCode=function() {
@@ -12,35 +12,35 @@ clearanceRate = VariableGenerator(
   }
 )
 
-evaluateOutput(clearanceRate)
+evaluateOutput(vg_clearanceRate)
 ######################
 
-responseDoseThreshold  = VariableGenerator(
+vg_responseDoseThreshold  = VariableGenerator(
   parameters=list(responseLoc=0, responseSD=0.01),
-  requirements=v_clearanceRateVariable,
+  requirements=v_clearanceRate,
   provisions=v_responseDoseThreshold, 
   generatorCode=function() { 
-    cat("clearanceRateVariable=", clearanceRateVariable, "\n")
-    clearanceRateVariable * 
+    cat("clearanceRate=", clearanceRate, "\n")
+    clearanceRate * 
       exp(rnorm(1, responseLoc, responseSD))
   }
 )
 
 
-evaluateOutput(responseDoseThreshold)
+evaluateOutput(vg_responseDoseThreshold)
 
 v_toxDoseThreshold = new("Variable",
-                         name="toxDoseThresholdVariable",
+                         name="toxDoseThreshold",
                          description="threshold for a toxicity event",
                          dataType="numeric")
-toxDoseThreshold  = VariableGenerator(
+vg_toxDoseThreshold  = VariableGenerator(
   parameters=list(toxLoc=0.5, toxSD=0.1),
-  requirements=v_clearanceRateVariable,
+  requirements=v_clearanceRate,
   provisions=v_toxDoseThreshold, 
   generatorCode=function() { 
-    clearanceRateVariable * 
+    clearanceRate * 
       exp(rnorm(1, toxLoc, toxSD))
   }
 )
 
-evaluateOutput(toxDoseThreshold)
+evaluateOutput(vg_toxDoseThreshold)

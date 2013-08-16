@@ -49,34 +49,33 @@ PopulationModel = function(vgList, popModelList=NULL){
 
 new("PopulationModel", vgList=VariableGeneratorList(clearanceRate))
 
-is(list(clearanceRate), "VariableGeneratorList")  #F
-is((clearanceRate), "VariableGenerator")    #T
-is(VariableGeneratorList(clearanceRate), "VariableGeneratorList") #T
+is(list(vg_clearanceRate), "VariableGeneratorList")  #F
+is(vg_clearanceRate, "VariableGenerator")    #T
+is(VariableGeneratorList(vg_clearanceRate), "VariableGeneratorList") #T
 
-clearanceRate@requirements
-`@`(clearanceRate, "requirements")  ### OK
-lapply((VariableGeneratorList(clearanceRate)), function(vg) vg@requirements) #OK
+vg_clearanceRate@requirements
+`@`(vg_clearanceRate, "requirements")  ### OK
+lapply((VariableGeneratorList(vg_clearanceRate)), function(vg) vg@requirements) #OK
 
-PopulationModel(vgList=VariableGeneratorList(clearanceRate))
+PopulationModel(vgList=VariableGeneratorList(vg_clearanceRate))
 
 
 pmTemp = PopulationModel(vgList=VariableGeneratorList(
-  list(clearanceRate=clearanceRate, 
-       toxDoseThreshold=toxDoseThreshold, 
-       responseDoseThreshold=responseDoseThreshold)))
+  list(vg_clearanceRate=vg_clearanceRate, 
+       vg_toxDoseThreshold=vg_toxDoseThreshold, 
+       vg_responseDoseThreshold=vg_responseDoseThreshold)))
 ### The VGs have to be named! (for list2env)
 names(pmTemp@vgList)
-list2env(pmTemp@vgList, new.env())  
-evaluateOutput(responseDoseThreshold)
-pmTemp@vgList[["clearanceRate"]]@parameters$clearanceLocation = 60
-evaluateOutput(responseDoseThreshold, 
+evaluateOutput(vg_responseDoseThreshold)
+pmTemp@vgList[["vg_clearanceRate"]]@parameters$clearanceLocation = 60
+evaluateOutput(vg_responseDoseThreshold, 
                env=list2env(pmTemp@vgList, new.env())  )
-clearanceRate@parameters$clearanceSD=0
-evaluateOutput(clearanceRate) 
-pmTemp@vgList$clearanceRate@parameters$clearanceSD=0
-evaluateOutput(pmTemp@vgList$clearanceRate, 
+vg_clearanceRate@parameters$clearanceSD=0
+evaluateOutput(vg_clearanceRate) 
+pmTemp@vgList$vg_clearanceRate@parameters$clearanceSD=0
+evaluateOutput(pmTemp@vgList$vg_clearanceRate, 
                env=list2env(pmTemp@vgList, new.env())  )
-evaluateOutput(clearanceRate, 
+evaluateOutput(vg_clearanceRate, 
                env=list2env(pmTemp@vgList, new.env())  )
 
 library(gRbase)
