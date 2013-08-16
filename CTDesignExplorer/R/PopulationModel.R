@@ -1,13 +1,15 @@
-setClass("VariableGeneratorList", contains="list",
-         validity=function(object){
-           for(vg in object){
+setClass("VariableGeneratorList", contains="list")
+VariableGeneratorListValidity = function(object){
+           for(vg in object@.Data){
              if(!is(vg, "VariableGenerator"))
                return("VariableGeneratorList: "
                       %&% "validity error: not all "
                       %&% " components are VariableGenerator")
            }
            return(TRUE)
-         })
+         }
+setValidity("VariableGeneratorList", VariableGeneratorListValidity) 
+
 VariableGeneratorList = function(vgList) {
   if(is(vgList, "VariableGenerator"))
     new("VariableGeneratorList", list(vgList))
@@ -18,11 +20,14 @@ setClass("PopulationModel", contains="Specifier",
          slots=list(vgList="VariableGeneratorList")
 )
 PopulationModel = function(vgList, popModelList=NULL){
-  ## TODO:  fold in other PopulationModels
+  ## TODO:  fold in other PopulationModels: 2nd arg
   pm = new("PopulationModel", vgList=vgList)
   if(is(vgList, "VariableGeneratorList")) {
     requirements = c(lapply(vgList, function(vg) vg@requirements))
     requirements = requirements[!sapply(requirements, is.null)]
+    requirements = unique(requirements)
+    requirements = 
+                          new("VariableList", requirements)
     if(length(requirements) == 0) requirements = NULL
     pm@requirements = requirements
   }
@@ -43,19 +48,22 @@ lapply((VariableGeneratorList(clearanceRate)), function(vg) vg@requirements) #OK
 
 PopulationModel(vgList=VariableGeneratorList(clearanceRate))
 
-`@`(clearanceRate, "requirements") ### NULL
+debug(PopulationModel)
+
+pmTemp = PopulationModel(vgList=VariableGeneratorList(
+  list(clearanceRate, toxDoseThreshold, responseDoseThreshold)))
+
 `@`(clearanceRate, "requirements") ### NULL
 
-,
-         validity=function(object) {
-           if(!is.list(object@requirements))
-             return("PopulationModel requirements should be a list.")
-           if(all(
-		sapply(object@requirements, function(req)
-      is(req, "VariableGenerator") | is(req,"PopulationModel"))))
-	     return(TRUE)
-         }
-)
+#          validity=function(object) {
+#            if(!is.list(object@requirements))
+#              return("PopulationModel requirements should be a list.")
+#            if(all(
+# 		sapply(object@requirements, function(req)
+#       is(req, "VariableGenerator") | is(req,"PopulationModel"))))
+# 	     return(TRUE)
+#          }
+# )
 
 setMethod("print", "PopulationModel",
           function(x) {
