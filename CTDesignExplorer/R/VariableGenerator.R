@@ -1,5 +1,4 @@
-
-
+cat("======== VariableGenerator.R ================\n")
 
 setClass("VariableGenerator", contains="Specifier",
          slots=list(

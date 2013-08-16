@@ -1,3 +1,5 @@
+cat("======== Variables.R ================\n")
+
 setClass("Variable", 
          slots=list(name="character", description="character", 
                                        dataType="character",
@@ -45,7 +47,7 @@ setMethod("print", "Variable", function(x)
 )   
 
 v_sexAsCharacter = new("Variable", name="sex", description="my sex variable", dataType="character")
-print(sexAsCharacter)
+print(v_sexAsCharacter)
 
 setClass("VariableValue", contains="ANY",
          slots=list(variable="Variable"),
@@ -63,16 +65,17 @@ setClass("VariableValue", contains="ANY",
 )
 # new("VariableValue")
 
-new("VariableValue", 94, variable=ageVariable)
-new("VariableValue", "xyz", variable=ageVariable)
-
+#### I don't know if we will use this...
 writeVariableFile = function(name, description, dataType, dataTypeDetail="", 
                              author=system("echo $USER",intern=TRUE),
                              time=Sys.time()){
   filename = paste(name, as.numeric(time), "R", sep=".")
-  code = "new('Variable', '" %&% name %&%
-    "'', description='" %&% description %&%
-    "', dataType='" %&% dataType %&%
+  code = "new('Variable',  name='"  %&% 
+    name %&%
+    "', description='" %&% 
+    description %&%
+    "', dataType='" %&% 
+    dataType %&%
     "'" %&% {if(!(dataTypeDetail=="")) 
       ", dataTypeDetail='" %&% dataTypeDetail %&% "'"}  %&%
     ")"
@@ -80,7 +83,7 @@ writeVariableFile = function(name, description, dataType, dataTypeDetail="",
   print(code)
 }
 
-writeVariableFile(name="howSmart", dataType="numeric", description="This is the guy's IQ.")
+writeVariableFile(name="howSmart", dataType="numeric", description="This is the guy-s IQ.")
 ### You can't use dump on S4 objects.
 
 ############################################################
@@ -145,11 +148,6 @@ setClass("VariableNetwork", contains="Specifier")
 
 
 ## This will allow you to access a variable's value like this:
-sex = "F"
-get(new("Variable", "sex", description="my sex", dataType="factor"))
-### "sex" will NOT be the value of this; "F" will.
-###  So its "contains" can be a value!  Not what's intended though.
-### Potentially very confusing.
 
 v_sexVariable = new("Variable", name="sex", 
                   description="my sex variable, as an unrestricted string", dataType="character")
@@ -167,6 +165,11 @@ v_toxDoseThreshold = new("Variable", name="toxDoseThreshold", description="dose 
                             dataType="numeric")
 v_responseDoseThreshold = new("Variable", name="responseDoseThreshold", description="dose threshold for binary response event",
                        dataType="numeric")
+
+new("VariableValue", 94, variable=v_ageVariable)
+try(silent=TRUE,
+    new("VariableValue", "xyz", variable=v_ageVariable)) ### fail
+
 
 setMethod("print", "VariableValue",
           function(x)

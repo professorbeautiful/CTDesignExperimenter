@@ -1,3 +1,4 @@
+cat("======== evaluateOutput.R ================\n")
 
 #' Evaluate a generator expression.
 #' 
@@ -17,7 +18,7 @@ sameVar = function(v1, v2) {
   return(TRUE)
 }
 
-sameVar(responseDoseThreshold@requirements, clearanceRate)
+#  PUT INTO examples... sameVar(vg_responseDoseThreshold@requirements, v_clearanceRate)
 
 findGeneratorNames = function(var, env=.GlobalEnv, menu=TRUE) {
   # perhaps Variable should be a virtual Class, and 
@@ -49,8 +50,8 @@ findGenerator = function(var, env=.GlobalEnv, menu=FALSE) {
     get(findGeneratorName(var, env, menu), envir=env)
 }
       
-findGeneratorName(responseDoseThreshold@requirements)
-findGeneratorName(responseDoseThreshold@provisions)
+##To Examples:  findGeneratorName(vg_responseDoseThreshold@requirements)
+##To Examples:  findGeneratorName(vg_responseDoseThreshold@provisions)
 
 
 evaluateOutput = function(generator, envir=.GlobalEnv, alreadyDone=list()) {
@@ -88,7 +89,6 @@ evaluateOutput = function(generator, envir=.GlobalEnv, alreadyDone=list()) {
   names(valueList)[[1]] = generator@provisions@name
   return(valueList)
 }
-debug(evaluateOutput)
-evaluateOutput(responseDoseThreshold)
-
+#debug(evaluateOutput)
+#To Examples:   evaluateOutput(vg_responseDoseThreshold)
 

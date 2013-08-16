@@ -1,3 +1,5 @@
+cat("======== createCTDEcatalog.R ================\n")
+
 clear = function(){
   answer <- repeat {
     cat("Delete ALL files in .GlobalEnv?\n  (cannot be undone): ")

@@ -1,3 +1,5 @@
+cat("======== PopulationModel.R================\n")
+
 setClass("VariableGeneratorList", contains="list")
 VariableGeneratorListValidity = function(object){
            for(vg in object@.Data){
@@ -47,84 +49,6 @@ PopulationModel = function(vgList, popModelList=NULL){
   pm
 }
 
-new("PopulationModel", vgList=VariableGeneratorList(clearanceRate))
-
-is(list(vg_clearanceRate), "VariableGeneratorList")  #F
-is(vg_clearanceRate, "VariableGenerator")    #T
-is(VariableGeneratorList(vg_clearanceRate), "VariableGeneratorList") #T
-
-vg_clearanceRate@requirements
-`@`(vg_clearanceRate, "requirements")  ### OK
-lapply((VariableGeneratorList(vg_clearanceRate)), function(vg) vg@requirements) #OK
-
-PopulationModel(vgList=VariableGeneratorList(vg_clearanceRate))
-
-
-pmTemp = PopulationModel(vgList=VariableGeneratorList(
-  list(vg_clearanceRate=vg_clearanceRate, 
-       vg_toxDoseThreshold=vg_toxDoseThreshold, 
-       vg_responseDoseThreshold=vg_responseDoseThreshold)))
-### The VGs have to be named! (for list2env)
-names(pmTemp@vgList)
-evaluateOutput(vg_responseDoseThreshold)
-pmTemp@vgList[["vg_clearanceRate"]]@parameters$clearanceLocation = 60
-evaluateOutput(vg_responseDoseThreshold, 
-               env=list2env(pmTemp@vgList, new.env())  )
-vg_clearanceRate@parameters$clearanceSD=0
-evaluateOutput(vg_clearanceRate) 
-pmTemp@vgList$vg_clearanceRate@parameters$clearanceSD=0
-evaluateOutput(pmTemp@vgList$vg_clearanceRate, 
-               env=list2env(pmTemp@vgList, new.env())  )
-evaluateOutput(vg_clearanceRate, 
-               env=list2env(pmTemp@vgList, new.env())  )
-
-library(gRbase)
-
-pmEnv = function(pm) list2env(pm@vgList, new.env())
-pmDAG =   dagList(
-    (unlist(
-      lapply(pmTemp@vgList, function(vg){
-        reqList = if(is(vg@requirements, "Variable")) 
-          list(vg@requirements) else vg@requirements
-        if(length(reqList)>0) {
-          reqNames=sapply(reqList, function(req) req@name) 
-          sapply(FUN=as.formula, 
-                 paste0("~", vg@provisions@name, ":", reqNames))
-        }
-      })
-    ))
-  )
-pmDAG@nodeData  # not helpful
-nodes(pmDAG) # the node names
-shapes = c("circle", "circle", "circle")
-colors = c("red","green","blue")
-fontsize=rep(40,3)
-names(fontsize) = nodes(pmDAG)
-names(shapes) = nodes(pmDAG)
-names(colors) = nodes(pmDAG)
-fontcolors = colors
-plot(new=T,
-     pmDAG,
-     nodeAttrs=list(
-       color=colors,
-       fontcolor=fontcolors,
-       fontsize=fontsize,
-       shape=shapes)
-#     lblString=
-)  
-
-`@`(toxDoseThreshold, "requirements") 
-
-#          validity=function(object) {
-#            if(!is.list(object@requirements))
-#              return("PopulationModel requirements should be a list.")
-#            if(all(
-# 		sapply(object@requirements, function(req)
-#       is(req, "VariableGenerator") | is(req,"PopulationModel"))))
-# 	     return(TRUE)
-#          }
-# )
-
 setMethod("print", "PopulationModel",
           function(x) {
             x = as(object=x, Class="PopulationModel")
@@ -135,7 +59,7 @@ setMethod("print", "PopulationModel",
 )
 # We are only interested in requirements
 
-###3 .... in progress...
+### .... in progress...
 # getPopulationModelOutputs = function(popModel, alreadyDone=list()) {
 #   allVGs = function(pModel) {
 #    
@@ -149,3 +73,4 @@ setMethod("print", "PopulationModel",
 #   }
 #   ####
 # }
+

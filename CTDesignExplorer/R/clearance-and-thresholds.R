@@ -1,3 +1,5 @@
+cat("======== clearance-and-thresholds.R  ================\n")
+
 vg_clearanceRate = VariableGenerator(
   parameters=list(clearanceLocation=6,
                   clearanceSD=1),
@@ -12,7 +14,7 @@ vg_clearanceRate = VariableGenerator(
   }
 )
 
-evaluateOutput(vg_clearanceRate)
+# To Examples: evaluateOutput(vg_clearanceRate)
 ######################
 
 vg_responseDoseThreshold  = VariableGenerator(
@@ -27,7 +29,7 @@ vg_responseDoseThreshold  = VariableGenerator(
 )
 
 
-evaluateOutput(vg_responseDoseThreshold)
+#evaluateOutput(vg_responseDoseThreshold)
 
 v_toxDoseThreshold = new("Variable",
                          name="toxDoseThreshold",
@@ -43,4 +45,4 @@ vg_toxDoseThreshold  = VariableGenerator(
   }
 )
 
-evaluateOutput(vg_toxDoseThreshold)
+#evaluateOutput(vg_toxDoseThreshold)
