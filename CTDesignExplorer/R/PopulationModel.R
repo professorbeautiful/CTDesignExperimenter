@@ -79,7 +79,42 @@ evaluateOutput(pmTemp@vgList$clearanceRate,
 evaluateOutput(clearanceRate, 
                env=list2env(pmTemp@vgList, new.env())  )
 
-`@`(clearanceRate, "requirements") ### NULL
+library(gRbase)
+
+pmEnv = function(pm) list2env(pm@vgList, new.env())
+pmDAG =   dagList(
+    (unlist(
+      lapply(pmTemp@vgList, function(vg){
+        reqList = if(is(vg@requirements, "Variable")) 
+          list(vg@requirements) else vg@requirements
+        if(length(reqList)>0) {
+          reqNames=sapply(reqList, function(req) req@name) 
+          sapply(FUN=as.formula, 
+                 paste0("~", vg@provisions@name, ":", reqNames))
+        }
+      })
+    ))
+  )
+pmDAG@nodeData  # not helpful
+nodes(pmDAG) # the node names
+shapes = c("circle", "circle", "circle")
+colors = c("red","green","blue")
+fontsize=rep(40,3)
+names(fontsize) = nodes(pmDAG)
+names(shapes) = nodes(pmDAG)
+names(colors) = nodes(pmDAG)
+fontcolors = colors
+plot(new=T,
+     pmDAG,
+     nodeAttrs=list(
+       color=colors,
+       fontcolor=fontcolors,
+       fontsize=fontsize,
+       shape=shapes)
+#     lblString=
+)  
+
+`@`(toxDoseThreshold, "requirements") 
 
 #          validity=function(object) {
 #            if(!is.list(object@requirements))
