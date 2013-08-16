@@ -1,0 +1,402 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" /><title>[R] S4: Initialization method called during setClass?? - Grokbase</title>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script><script type="text/javascript" src="/cc/gb2.js"></script>
+<link rel="stylesheet" type="text/css" href="/cc/gb2.css" />
+<link rel="canonical" href="/t/r/r-help/0965643qgt/r-s4-initialization-method-called-during-setclass" /><meta name="description" content="(5 replies) Dear UseRs, A simple class inheritance example: function(.Object,x,...){ print(&quot;Initialization!!!&quot;) callNextMethod(.Object,a=x,...) }) [1] &quot;Initialization!!!&quot; An object of class &quot;test&quot; Slot &quot;a&quot;: [1] 23 [1] &quot;Initialization!!!&quot; Error in .nextMethod(.Object, a = x, ...) : argument &quot;x&quot; is missing, with no default When trying to define a new class &quot;test2&quot; above, &quot;initialize&quot; method for &quot;test&quot; is called (??? looks like a bug to me) and naturally argument &quot;x&quot; is not found. Thus I can not create a" /><link rel="alternate" type="application/rss+xml" title="RSS feed for r-help @ r-project.org" href="http://grokbase.com/g/r/r-help/feed" /><link rel="alternate" type="application/rss+xml" title="RSS feed for this discussion" href="http://grokbase.com/t/r/r-help/0965643qgt/r-s4-initialization-method-called-during-setclass/feed" /><link rel="stylesheet" type="text/css" href="/cc/badges20.css" /><link rel="stylesheet" type="text/css" href="/cc/teambadges20.css" /><script type="text/javascript" src="/cc/jq/p/jquery.hotkeys.js"></script><link rel="stylesheet" type="text/css" href="/cc/jq/qtip2/jquery.qtip2.master.css" />
+<link rel="stylesheet" type="text/css" href="/cc/jq/qtip2/jquery.qtip2.min.css" />
+<script type="text/javascript" src="/cc/jq/qtip2/jquery.qtip2.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('a[href^="/user/"]').each(function() {
+		var url='/ucard/' + $(this).attr('href').split('/')[3] + '/r-help@r-project.org';
+		$(this).qtip({content:{text:'<img class="throbber" src="/cc/img/anim.throbber.gif" alt="Loading..." />',ajax:{url:url}},position:{at:'bottom center',my:'top center',viewport:$(window),effect:false},show:{solo:true},style:{classes:'ui-tooltip-wiki ui-tooltip-light ui-tooltip-shadow'}})
+	})
+});
+</script>
+	</head>
+<body itemscope itemtype="http://schema.org/WebPage"><a name="top"></a>
+<div id="msgbar0" class="msgbar0" style="display:none"><div id="msgbar1" class="msgbar1"></div></div><div style="clear:both;"></div>
+<div id="topbar">
+	<div id="topbar_content">
+		<div id="topbar_message">
+							<div itemprop="breadcrumb"><a href="/">Grokbase</a> <span class="inactive">&rsaquo;</span> <a href="/groups">Groups</a> <span class="inactive">&rsaquo;</span> <a href="/s/r">R</a> <span class="inactive">&rsaquo;</span> <a href="/g/r/r-help">r-help</a> <span class="inactive">&rsaquo;</span> <a href="/g/r/r-help/2009/06">June 2009</a></div>			</div>
+		<div id="topbar_search"><form class="topbar_search" action="/search" method="get"><input onclick="if (this.value=='search'){this.value='';return false;}" onblur="if (this.value==''){this.value='search';return false}" name="q" id="q" class="topbar_search" type="text" value="search" /></form></div>
+				<div id="topbar_navbar"><a class="topbar_nav" href="/faq">FAQ</a> <script type="text/javascript">
+				gbOSch();
+				</script></div>
+	</div>
+</div>
+<div class="main100">
+
+	<div class="sobar">
+		<div class="fr">
+<div class="fb-like" data-href="http://grokbase.com" data-send="false" data-layout="button_count" data-show-faces="true" data-action="recommend"></div>
+<div><g:plusone size="small" href="http://grokbase.com"></g:plusone></div>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+
+	<div class="mainbar_so">
+		<div id="logo"><a href="/"><img src="/cc/img/logo_grokbase_ff.png" /></a></div>
+		<div id="nav0">
+			<div class="nav0">
+				<ul>
+					<li class="youarehere"><a id="nav0_groups" href="/groups">Groups</a></li>
+					<li><a id="nav0_users" href="/users">Users</a></li>
+					<li><a id="nav0_badges" href="/badges">Badges</a></li>
+					<!-- <li><a id="nav0_badges" href="/news">News</a></li> -->
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div style="clear:both;"></div>
+<div id="fb-root"></div>
+	<div class="main">
+	<div class="sup2header"><h1 class="sup2header_text hl_y">[R] S4: Initialization method called during setClass??</h1>
+
+	<div class="sup2buttons"><a href="http://grokbase.com/g/r/r-help/feed" title="RSS feed for r-help @ r-project.org"><img src="/ico/sbj/rss/24" /></a> <a href="/t/r/r-help/0965643qgt/r-s4-initialization-method-called-during-setclass/feed" title="RSS feed for this dicussion"><img src="/ico/sbj/rss/24" /></a></div>
+	</div>
+	<div class="main_1">
+
+						<div itemscope itemtype="http://schema.org/Article" class="highlightable" rel="20090605643qgt3ta2we2seq2nes8et2n0">
+			<div style="padding:0 0 0.5em 0">
+<table style="font-size:100%" border="0"><tr><td style="vertical-align:top" rowspan="2"><a href="/user/Vitalie-S/uXiXmksd46BQkENDYscmqe" title="Vitalie S."><img class="av_md" src="/avatar/uXiXmksd46BQkENDYscmqe/40" alt="Vitalie S." width="40" height="40" /></a></td><td style="padding-left:0.5em;vertical-align:top;white-space:nowrap"><span style="margin-top:-5px"><a href="/user/Vitalie-S/uXiXmksd46BQkENDYscmqe"><span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name" class="hl_y">Vitalie S.</span><meta itemprop="url" content="/user/Vitalie-S/uXiXmksd46BQkENDYscmqe"/></span></a></span></td><td style="width:100%"><div style="width:20px"><a href="/badges/r"><div title="Bronze R badge (59 posts)" class="u_badge badge_tn badge_tn_3_r"></div></a></div></td></tr><tr><td style="padding-left:0.5em" colspan="2"><a class="dt_y4" href="/g/r/r-help/2009/06">Jun 5, 2009 at 4:28 pm</a></td>
+</tr></table>
+			</div>
+			<div style="clear:both"></div>
+			<meta itemprop="name" content=""/>
+			<meta itemprop="interactionCount" content="UserComments:5"/>
+			<div class="m_body m_body_one hl_y" itemprop="articleBody">Dear UseRs,<br /><br />A simple class inheritance example:<br /><div class="ql ql0">setClass(&quot;test&quot;,representation(a=&quot;numeric&quot;))<br />setMethod(&quot;initialize&quot;,&quot;test&quot;,</div>function(.Object,x,...){<br />print(&quot;Initialization!!!&quot;)<br />callNextMethod(.Object,a=x,...)<br />})<br /><div class="ql ql0">new(&quot;test&quot;,x#)</div>[1] &quot;Initialization!!!&quot;<br />An object of class &quot;test&quot;<br />Slot &quot;a&quot;:<br />[1] 23<br /><div class="ql ql0">setClass(&quot;test2&quot;,contains=&quot;test&quot;,representation(b=&quot;integer&quot;))</div>[1] &quot;Initialization!!!&quot;<br />Error in .nextMethod(.Object, a = x, ...) :<br />argument &quot;x&quot; is missing, with no default<br /><br /><br />When trying to define a new class &quot;test2&quot; above, &quot;initialize&quot; method for &quot;test&quot; is called (??? looks like a bug to me) and naturally argument &quot;x&quot; is not found. Thus I can not create a subclass for &quot;test&quot;.<br /><br />I could not find anything in documentation.<br /><br />Thanks,<br />Vitalie.<br /></div>
+			<div style="margin-top:1em"><a href="mailto:r-help%40r-project.org?In-Reply-To=%3Cop.uu172imxdacko8%40tir-070312.staff.few.eur.nl%3E&Subject=%5BR%5D%20S4%3A%20Initialization%20method%20called%20during%20setClass%3F%3F">reply</a></div>
+			<div style="clear:both"></div>
+		</div>
+
+<table border="0" style="margin:0;padding:4px 0 0 0;">
+<tr><td style="text-align:top">
+<div class="fb-like" data-href="http://grokbase.com/p/r/r-help/0965643qgt" data-send="false" data-layout="box_count" data-show-faces="false"></div>
+</td><td style="text-align:top">
+<a href="https://twitter.com/share" class="twitter-share-button" data-count="vertical">Tweet</a>
+</td><td style="padding-left:10px;text-align:top">
+<g:plusone size="tall"></g:plusone>
+</td><td style="padding-left:10px;text-align:top">
+<script type="text/javascript" src="http://www.reddit.com/static/button/button2.js"></script>
+</td></tr>
+</table>
+<script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+
+		
+		<div id="search_discussions" style="margin:0"><h2 class="section">Search Discussions</h2>			<form action="/search" id="gcse_g_search">
+			<div>
+				<input type="text" name="q" id="txtSearch" style="width: 400px;" maxlength="255" value="" />
+				<input type="submit" id="btnSearch" value="Search" />
+			</div>
+			<input id="sch1_gfa" type="radio" name="f" value="aa/site" /> <label for="sch1_gfa">All Groups</label> <input id ="sch1_gf" type="radio" name="f" value="gt/r/r-help" checked="checked" /> <label for="sch1_gf">r-help</label>						</form>
+		</div>
+		<div style="clear:both;height:1em"></div>
+		
+		<a name="responses_tab_top"></a>
+		<div class="subheader">
+			<h2 class="subheader">5 responses</h2>
+			<div id="tabs">
+				<a id="sort_nested" href="/t/r/r-help/0965643qgt/r-s4-initialization-method-called-during-setclass#responses_tab_top" class="sortTab youarehere">Nested</a>
+				<a id="sort_nested" href="/t/r/r-help/0965643qgt/r-s4-initialization-method-called-during-setclass/oldest#responses_tab_top" class="sortTab">Oldest</a>
+			</div>
+		</div><div style="clear:both"></div>
+		<ul id="responses" class="nobullet">
+		
+		<li id="20090605e6w8kb1a48nzggmm5gb1x1m0k0_li" class="responses">
+		<div itemscope itemtype="http://schema.org/Article">
+			<a id="20090605e6w8kb1a48nzggmm5gb1x1m0k0" name="0965e6w8kb" title="20090605e6w8kb1a48nzggmm5gb1x1m0k0,,"></a>
+			<meta itemprop="name" content=""/>
+
+			<table border="0" id="20090605e6w8kb1a48nzggmm5gb1x1m0k0_thinhead" class="tr_head_thin rc_ctl_thin hl_y" style="display:none"><tr><td id="20090605e6w8kb1a48nzggmm5gb1x1m0k0_th_indent" class="indent1 indentd0" style="width:20px;margin:0;padding:0 0 0 0px"><img class="av_sm" src="/avatar/QLBCaaUXJ4tA8R2mFU45z9/20" class="avatar tr_avatar" alt="Martin Morgan" />
+				</td><td class="tr_head_content tr_head_thin_content tr_head_content_right" style="width:647px;overflow:hidden"><div class="tr_head_thin_content">
+				<strong>Martin Morgan</strong> <span itemprop="articleBody">Hi Vitalie -- Vitalie S. wrote: the implicit contract is that the initialize method is written so that new(&quot;test&quot;) works. This contract comes up at several points during class definition and instantiation. You&#39;ve identified one of those points. I&#39;m not sure of the details, but part of the class definition is a coercion method, and in defining this new() is called, without arguments, on the contained classes. Martin</span></div>
+			</td><td><div style="width:20px"><a href="/badges/r"><div title="Silver R badge (860 posts)" class="u_badge badge_tn badge_tn_2_r"></div></a></div></td></tr></table>
+
+			<table id="20090605e6w8kb1a48nzggmm5gb1x1m0k0_fullhead" class="rbody tr_head_full"><tr><td id="20090605e6w8kb1a48nzggmm5gb1x1m0k0_fh_indent" class="indent1 indentd0" style="width:20px;margin:0;padding:0 0 0 0px"><a href="/user/Martin-Morgan/QLBCaaUXJ4tA8R2mFU45z9"><img class="av_sm" src="/avatar/QLBCaaUXJ4tA8R2mFU45z9/20" class="avatar tr_avatar" alt="Martin Morgan" /></a>				</td><td class="tr_head_content tr_head_full_content_user">
+				<strong><span itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="url" content="/user/Martin-Morgan/QLBCaaUXJ4tA8R2mFU45z9"/><a class="tr_head_user" href="/user/Martin-Morgan/QLBCaaUXJ4tA8R2mFU45z9"><span class="hl_y" itemprop="name">Martin Morgan</span></a></span></strong> </td>
+				<td id="20090605e6w8kb1a48nzggmm5gb1x1m0k0_fullhead_ctl" class="tr_head_content tr_head_content_right rc_ctl_full" style='padding-top:2px'> at <span class="dt_y4 relativetime">Jun 5, 2009 at 4:49 pm</span>
+			</td><td>
+			<a href="#top">&#8679;</a></td><td style="margin-top:0px"><a href="#20090605e6w8kb1a48nzggmm5gb1x1m0k0"><img src="/cc/img/nav/icon_anchor_16x16.png" /></a>
+			</td><td><div style="width:20px"><a href="/badges/r"><div title="Silver R badge (860 posts)" class="u_badge badge_tn badge_tn_2_r"></div></a></div></td></tr></table>
+
+			<div id="20090605e6w8kb1a48nzggmm5gb1x1m0k0_content" class="rbody m_body indent2 indentd0 tr_content hl_y" style="padding-left:30px;">
+				Hi Vitalie --<br /><br />Vitalie S. wrote:<br /><div class="ql ql0">Dear UseRs,<br /><br />A simple class inheritance example:<br /><div class="ql ql1">setClass(&quot;test&quot;,representation(a=&quot;numeric&quot;))<br />setMethod(&quot;initialize&quot;,&quot;test&quot;,</div>function(.Object,x,...){<br />print(&quot;Initialization!!!&quot;)<br />callNextMethod(.Object,a=x,...)<br />})<br /><div class="ql ql1">new(&quot;test&quot;,x#)</div>[1] &quot;Initialization!!!&quot;<br />An object of class &quot;test&quot;<br />Slot &quot;a&quot;:<br />[1] 23</div>the implicit contract is that the initialize method is written so that<br />new(&quot;test&quot;) works. This contract comes up at several points during class<br />definition and instantiation. You&#39;ve identified one of those points.<br /><div class="ql ql0"><div class="ql ql1">setClass(&quot;test2&quot;,contains=&quot;test&quot;,representation(b=&quot;integer&quot;))</div>[1] &quot;Initialization!!!&quot;<br />Error in .nextMethod(.Object, a = x, ...) : argument &quot;x&quot; is missing,<br />with no default</div>I&#39;m not sure of the details, but part of the class definition is a<br />coercion method, and in defining this new() is called, without<br />arguments, on the contained classes.<br /><br />Martin<br /><a id="qc_20090605e6w8kb1a48nzggmm5gb1x1m0k0_z__ctl" class="qc_ctl" href="#"></a><div id="qc_20090605e6w8kb1a48nzggmm5gb1x1m0k0_z" class="qc_cnt"><div class="ql ql0"><br />When trying to define a new class &quot;test2&quot; above, &quot;initialize&quot; method for<br />&quot;test&quot; is called (??? looks like a bug to me) and naturally argument &quot;x&quot;<br />is not found. Thus I can not create a subclass for &quot;test&quot;.<br />I could not find anything in documentation.<br />Thanks,<br />Vitalie.<br /><br />______________________________________________<br />R-help at r-project.org mailing list<br /><a href="https://stat.ethz.ch/mailman/listinfo/r-help" rel="nofollow">https://stat.ethz.ch/mailman/listinfo/r-help</a><br />PLEASE do read the posting guide<br /><a href="http://www.R-project.org/posting-guide.html" rel="nofollow">http://www.R-project.org/posting-guide.html</a><br />and provide commented, minimal, self-contained, reproducible code.</div></div>				<div style="margin-top:1em">
+					<a href="mailto:r-help%40r-project.org?In-Reply-To=%3C4A294C91.8010606%40fhcrc.org%3E&Subject=%5BR%5D%20S4%3A%20Initialization%20method%20called%20during%20setClass%3F%3F">reply</a> <span class="inactive">|</span> <a href="/p/r/r-help/0965e6w8kb/r-s4-initialization-method-called-during-setclass">permalink</a>
+				</div>
+			</div>
+
+		</div><!-- so.article -->
+		<div style="clear:both"></div>
+		</li>
+
+		
+		<li id="20090605cjgnmg2nve5aapzncrk4af5xc8_li" class="responses">
+		<div itemscope itemtype="http://schema.org/Article">
+			<a id="20090605cjgnmg2nve5aapzncrk4af5xc8" name="0965cjgnmg" title="20090605cjgnmg2nve5aapzncrk4af5xc8,,"></a>
+			<meta itemprop="name" content=""/>
+
+			<table border="0" id="20090605cjgnmg2nve5aapzncrk4af5xc8_thinhead" class="tr_head_thin rc_ctl_thin hl_y" style="display:none"><tr><td id="20090605cjgnmg2nve5aapzncrk4af5xc8_th_indent" class="indent1 indentd1" style="width:20px;margin:0;padding:0 0 0 16px"><img class="av_sm" src="/avatar/i3iA5zChd8cNGAGpaZZfDy/20" class="avatar tr_avatar" alt="Wacek Kusnierczyk" />
+				</td><td class="tr_head_content tr_head_thin_content tr_head_content_right" style="width:631px;overflow:hidden"><div class="tr_head_thin_content">
+				<strong>Wacek Kusnierczyk</strong> <span itemprop="articleBody">it sounds approximately ok that defining a subclass fails if its initalizer does not provide a value required by the initializer of the superclass. pardon me my ignorance, but here&#39;s an obvious question: what if i *do* want to extend a class that has an initializer with an argument without a default? (it does not seem to be a particularly extravagant idea, does it?) i can&#39;t define the subclass with setClass, because it fails, as above, due to a violation of the contract. but i can&#39;t define an</span></div>
+			</td><td><div style="width:20px"><a href="/badges/r"><div title="Silver R badge (690 posts)" class="u_badge badge_tn badge_tn_2_r"></div></a></div></td></tr></table>
+
+			<table id="20090605cjgnmg2nve5aapzncrk4af5xc8_fullhead" class="rbody tr_head_full"><tr><td id="20090605cjgnmg2nve5aapzncrk4af5xc8_fh_indent" class="indent1 indentd1" style="width:20px;margin:0;padding:0 0 0 16px"><a href="/user/Wacek-Kusnierczyk/i3iA5zChd8cNGAGpaZZfDy"><img class="av_sm" src="/avatar/i3iA5zChd8cNGAGpaZZfDy/20" class="avatar tr_avatar" alt="Wacek Kusnierczyk" /></a>				</td><td class="tr_head_content tr_head_full_content_user">
+				<strong><span itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="url" content="/user/Wacek-Kusnierczyk/i3iA5zChd8cNGAGpaZZfDy"/><a class="tr_head_user" href="/user/Wacek-Kusnierczyk/i3iA5zChd8cNGAGpaZZfDy"><span class="hl_y" itemprop="name">Wacek Kusnierczyk</span></a></span></strong> </td>
+				<td id="20090605cjgnmg2nve5aapzncrk4af5xc8_fullhead_ctl" class="tr_head_content tr_head_content_right rc_ctl_full" style='padding-top:2px'> at <span class="dt_y4 relativetime">Jun 5, 2009 at 9:17 pm</span>
+			</td><td>
+			<a href="#top">&#8679;</a></td><td style="margin-top:0px"><a href="#20090605cjgnmg2nve5aapzncrk4af5xc8"><img src="/cc/img/nav/icon_anchor_16x16.png" /></a>
+			</td><td><div style="width:20px"><a href="/badges/r"><div title="Silver R badge (690 posts)" class="u_badge badge_tn badge_tn_2_r"></div></a></div></td></tr></table>
+
+			<div id="20090605cjgnmg2nve5aapzncrk4af5xc8_content" class="rbody m_body indent2 indentd1 tr_content hl_y" style="padding-left:46px;">
+				<a id="qc_20090605cjgnmg2nve5aapzncrk4af5xc8_a__ctl" class="qc_ctl" href="#"></a><br /><div id="qc_20090605cjgnmg2nve5aapzncrk4af5xc8_a" class="qc_cnt"><div class="ql ql0">Martin Morgan wrote:<br />Hi Vitalie --<br /><br />Vitalie S. wrote:<br /><div class="ql ql1">Dear UseRs,<br /><br />A simple class inheritance example:<br /><br /><div class="ql ql2">setClass(&quot;test&quot;,representation(a=&quot;numeric&quot;))<br />setMethod(&quot;initialize&quot;,&quot;test&quot;,</div>function(.Object,x,...){<br />print(&quot;Initialization!!!&quot;)<br />callNextMethod(.Object,a=x,...)<br />})<br /><br /><div class="ql ql2">new(&quot;test&quot;,x#)</div>[1] &quot;Initialization!!!&quot;<br />An object of class &quot;test&quot;<br />Slot &quot;a&quot;:<br />[1] 23</div>the implicit contract is that the initialize method is written so that<br />new(&quot;test&quot;) works. This contract comes up at several points during class<br />definition and instantiation. You&#39;ve identified one of those points.<br /><br /><div class="ql ql1"><div class="ql ql2">setClass(&quot;test2&quot;,contains=&quot;test&quot;,representation(b=&quot;integer&quot;))</div>[1] &quot;Initialization!!!&quot;<br />Error in .nextMethod(.Object, a = x, ...) : argument &quot;x&quot; is missing,<br />with no default</div>I&#39;m not sure of the details, but part of the class definition is a<br />coercion method, and in defining this new() is called, without<br />arguments, on the contained classes.</div></div>it sounds approximately ok that defining a subclass fails if its<br />initalizer does not provide a value required by the initializer of the<br />superclass.  pardon me my ignorance, but here&#39;s an obvious question:<br />what if i *do* want to extend a class that has an initializer with an<br />argument without a default?  (it does not seem to be a particularly<br />extravagant idea, does it?)  i can&#39;t define the subclass with setClass,<br />because it fails, as above, due to a violation of the contract.  but i<br />can&#39;t define an appropriate initializer for the subclass that would<br />fulfil the contract before i define the subclass itself.  deadlock?<br /><br />there is another quirk here, or -- in case the above is not a quirk --<br />there is a quirk here.  imagine i want to implement a class that counts<br />its instances as they are created, assigning to each a unique identifier<br />from a contiguous sequence of integers, starting at 1 (this doesn&#39;t seem<br />to be a particularly extravagant idea either):<br /><br />setClass(&#39;foo&#39;, representation(id=&#39;integer&#39;))<br />setMethod(&#39;initialize&#39;, &#39;foo&#39;, local({<br />id=0L<br />function(.Object, ...) {<br />id &lt;&lt;- id+1L<br />.Object at id = id<br />return(.Object) } }))<br /><br />foos = replicate(3, new(&#39;foo&#39;))<br />sapply(foos, slot, &#39;id&#39;)<br /># 1 2 3<br /><br />setClass(&#39;bar&#39;, contains=&#39;foo&#39;, representation(name=&#39;character&#39;))<br />setMethod(&#39;initialize&#39;, &#39;bar&#39;, function(.Object, name=&#39;bar&#39;, ...) {<br />.Object at name = name<br />callNextMethod() })<br />bars = replicate(3, new(&#39;bar&#39;))<br />sapply(bars, slot, &#39;id&#39;)<br /># 6 7 8<br /><br />what??  why on earth creating a subclass *calls* (twice!) the<br />superclass&#39;s initializer?  is there no other way for checking the<br />contract without actually calling the initializer, as if an instance<br />(two!) was created?  suppose one creates a package defining a hierarchy<br />of classes with something like &#39;foo&#39; at the top, and a user of the<br />package loads it and creates a new -- the first -- instance which<br />suddenly has 17 as the id -- just imagine the curses.<br /><br />pardon me for the usual harshness, but this is seems irrational, plain<br />and simple.  i can imagine that this is a well-documented behaviour<br />(even if that&#39;s only in fine print), but the motivation...?<br /><br /><br />btw.,<br /><br />sapply(foos, `@`, &#39;id&#39;)<br /># Error in lapply(X, FUN, ...) :<br />#  no slot of name &quot;...&quot; for this object of class &quot;foo&quot;<br /><br />even though<br /><br />`@`(foos[[1]], &#39;id&#39;)<br /># 1<br /><br />`slot`(foos[[1]], &#39;id&#39;)<br /># 1<br /><br />and sapply works fine with slot.  what&#39;s wrong here?<br /><br />deeply confused,<br />vQ<br />				<div style="margin-top:1em">
+					<a href="mailto:r-help%40r-project.org?In-Reply-To=%3C4A298B77.60102%40idi.ntnu.no%3E&Subject=%5BR%5D%20S4%3A%20Initialization%20method%20called%20during%20setClass%3F%3F">reply</a> <span class="inactive">|</span> <a href="/p/r/r-help/0965cjgnmg/r-s4-initialization-method-called-during-setclass">permalink</a>
+				</div>
+			</div>
+
+		</div><!-- so.article -->
+		<div style="clear:both"></div>
+		</li>
+
+		
+		<li id="2009060555rcm3q0at5h37c3v5rb71ht2w_li" class="responses">
+		<div itemscope itemtype="http://schema.org/Article">
+			<a id="2009060555rcm3q0at5h37c3v5rb71ht2w" name="096555rcm3" title="2009060555rcm3q0at5h37c3v5rb71ht2w,,"></a>
+			<meta itemprop="name" content=""/>
+
+			<table border="0" id="2009060555rcm3q0at5h37c3v5rb71ht2w_thinhead" class="tr_head_thin rc_ctl_thin hl_y" style="display:none"><tr><td id="2009060555rcm3q0at5h37c3v5rb71ht2w_th_indent" class="indent1 indentd2" style="width:20px;margin:0;padding:0 0 0 32px"><img class="av_sm" src="/avatar/QLBCaaUXJ4tA8R2mFU45z9/20" class="avatar tr_avatar" alt="Martin Morgan" />
+				</td><td class="tr_head_content tr_head_thin_content tr_head_content_right" style="width:615px;overflow:hidden"><div class="tr_head_thin_content">
+				<strong>Martin Morgan</strong> <span itemprop="articleBody">I&#39;m speaking as a user, so my understanding is not meant to be definitive. I&#39;d say the class with the intializer with an argument without a default is broken, and you should not want to extend it. remembering that R has copy-on-change semantics that are only approximately adhered to (e.g., some copying even without change), this objective would not likely be useful, e.g., it would not be a good identifier to know that you were dealing with the &#39;same&#39; instance, and it would not be the way you&#39;d</span></div>
+			</td><td><div style="width:20px"><a href="/badges/r"><div title="Silver R badge (860 posts)" class="u_badge badge_tn badge_tn_2_r"></div></a></div></td></tr></table>
+
+			<table id="2009060555rcm3q0at5h37c3v5rb71ht2w_fullhead" class="rbody tr_head_full"><tr><td id="2009060555rcm3q0at5h37c3v5rb71ht2w_fh_indent" class="indent1 indentd2" style="width:20px;margin:0;padding:0 0 0 32px"><a href="/user/Martin-Morgan/QLBCaaUXJ4tA8R2mFU45z9"><img class="av_sm" src="/avatar/QLBCaaUXJ4tA8R2mFU45z9/20" class="avatar tr_avatar" alt="Martin Morgan" /></a>				</td><td class="tr_head_content tr_head_full_content_user">
+				<strong><span itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="url" content="/user/Martin-Morgan/QLBCaaUXJ4tA8R2mFU45z9"/><a class="tr_head_user" href="/user/Martin-Morgan/QLBCaaUXJ4tA8R2mFU45z9"><span class="hl_y" itemprop="name">Martin Morgan</span></a></span></strong> </td>
+				<td id="2009060555rcm3q0at5h37c3v5rb71ht2w_fullhead_ctl" class="tr_head_content tr_head_content_right rc_ctl_full" style='padding-top:2px'> at <span class="dt_y4 relativetime">Jun 5, 2009 at 10:55 pm</span>
+			</td><td>
+			<a href="#top">&#8679;</a></td><td style="margin-top:0px"><a href="#2009060555rcm3q0at5h37c3v5rb71ht2w"><img src="/cc/img/nav/icon_anchor_16x16.png" /></a>
+			</td><td><div style="width:20px"><a href="/badges/r"><div title="Silver R badge (860 posts)" class="u_badge badge_tn badge_tn_2_r"></div></a></div></td></tr></table>
+
+			<div id="2009060555rcm3q0at5h37c3v5rb71ht2w_content" class="rbody m_body indent2 indentd2 tr_content hl_y" style="padding-left:62px;">
+				<a id="qc_2009060555rcm3q0at5h37c3v5rb71ht2w_a__ctl" class="qc_ctl" href="#"></a><br /><div id="qc_2009060555rcm3q0at5h37c3v5rb71ht2w_a" class="qc_cnt"><div class="ql ql0">Wacek Kusnierczyk &lt;<span class="m_body_email_addr"><a href="/user/Wacek-Kusnierczyk/i3iA5zChd8cNGAGpaZZfDy">wac...@...no</a></span>&gt; writes:<br /><br />Martin Morgan wrote:<br /><div class="ql ql1">Hi Vitalie --<br /><br />Vitalie S. wrote:<br /><div class="ql ql2">Dear UseRs,<br /><br />A simple class inheritance example:<br /><br /><div class="ql ql3">setClass(&quot;test&quot;,representation(a=&quot;numeric&quot;))<br />setMethod(&quot;initialize&quot;,&quot;test&quot;,</div>function(.Object,x,...){<br />print(&quot;Initialization!!!&quot;)<br />callNextMethod(.Object,a=x,...)<br />})<br /><br /><div class="ql ql3">new(&quot;test&quot;,x#)</div>[1] &quot;Initialization!!!&quot;<br />An object of class &quot;test&quot;<br />Slot &quot;a&quot;:<br />[1] 23</div>the implicit contract is that the initialize method is written so that<br />new(&quot;test&quot;) works. This contract comes up at several points during class<br />definition and instantiation. You&#39;ve identified one of those points.<br /><br /><div class="ql ql2"><div class="ql ql3">setClass(&quot;test2&quot;,contains=&quot;test&quot;,representation(b=&quot;integer&quot;))</div>[1] &quot;Initialization!!!&quot;<br />Error in .nextMethod(.Object, a = x, ...) : argument &quot;x&quot; is missing,<br />with no default</div>I&#39;m not sure of the details, but part of the class definition is a<br />coercion method, and in defining this new() is called, without<br />arguments, on the contained classes.</div>it sounds approximately ok that defining a subclass fails if its<br />initalizer does not provide a value required by the initializer of the<br />superclass.  pardon me my ignorance, but here&#39;s an obvious question:<br />what if i *do* want to extend a class that has an initializer with an<br />argument without a default?  (it does not seem to be a particularly<br />extravagant idea, does it?)  i can&#39;t define the subclass with setClass,<br />because it fails, as above, due to a violation of the contract.  but i</div></div>I&#39;m speaking as a user, so my understanding is not meant to be<br />definitive. I&#39;d say the class with the intializer with an argument<br />without a default is broken, and you should not want to extend it.<br /><div class="ql ql0">can&#39;t define an appropriate initializer for the subclass that would<br />fulfil the contract before i define the subclass itself.  deadlock?<br />there is another quirk here, or -- in case the above is not a quirk --<br />there is a quirk here.  imagine i want to implement a class that counts<br />its instances as they are created, assigning to each a unique identifier</div>remembering that R has copy-on-change semantics that are only<br />approximately adhered to (e.g., some copying even without change),<br />this objective would not likely be useful, e.g., it would not be a<br />good identifier to know that you were dealing with the &#39;same&#39;<br />instance, and it would not be the way you&#39;d want to track references<br />for garbage collection or other clean-up, for instance.<br /><div class="ql ql0">from a contiguous sequence of integers, starting at 1 (this doesn&#39;t seem<br />to be a particularly extravagant idea either):<br /><br />setClass(&#39;foo&#39;, representation(id=&#39;integer&#39;))<br />setMethod(&#39;initialize&#39;, &#39;foo&#39;, local({<br />id=0L<br />function(.Object, ...) {<br />id &lt;&lt;- id+1L<br />.Object at id = id<br />return(.Object) } }))<br /><br />foos = replicate(3, new(&#39;foo&#39;))<br />sapply(foos, slot, &#39;id&#39;)<br /># 1 2 3<br /><br />setClass(&#39;bar&#39;, contains=&#39;foo&#39;, representation(name=&#39;character&#39;))<br />setMethod(&#39;initialize&#39;, &#39;bar&#39;, function(.Object, name=&#39;bar&#39;, ...) {<br />.Object at name = name<br />callNextMethod() })<br />bars = replicate(3, new(&#39;bar&#39;))<br />sapply(bars, slot, &#39;id&#39;)<br /># 6 7 8<br /><br />what??  why on earth creating a subclass *calls* (twice!) the<br />superclass&#39;s initializer?  is there no other way for checking the</div>once when the superclass is instantiated (fair enough!) and once when<br />the validity of the subclass is checked -- the way that valildity<br />checking works is that subclass is validated according to the subclass<br />validity method, then the subclass is coerced to the superclass, and<br />the superclass is checked for validity. The user can define the coerce<br />method, but the default, for class hierarchies where it is<br />appropriate, involves a call to new(), and hence to initialize and<br />validObject.<br /><div class="ql ql0">setClass(&quot;A&quot;) [1] &quot;A&quot;<br />setClass(&quot;B&quot;, contains=&quot;A&quot;, representation(y=&quot;numeric&quot;)) [1] &quot;B&quot;<br />b &lt;- as(new(&quot;B&quot;), &quot;A&quot;)<br />showMethods(coerce, class=&quot;B&quot;, includeDef=TRUE)</div>Function: coerce (package methods)<br />from=&quot;B&quot;, to=&quot;A&quot;<br />function (from, to = &quot;A&quot;, strict = TRUE)<br />if (strict) {<br />value &lt;- new(&quot;A&quot;)<br />for (what in &quot;x&quot;) slot(value, what) &lt;- slot(from, what)<br />value<br />} else from<br /><br />Martin<br /><a id="qc_2009060555rcm3q0at5h37c3v5rb71ht2w_z__ctl" class="qc_ctl" href="#"></a><div id="qc_2009060555rcm3q0at5h37c3v5rb71ht2w_z" class="qc_cnt">--<br />Martin Morgan<br />Computational Biology / Fred Hutchinson Cancer Research Center<br />1100 Fairview Ave. N.<br />PO Box 19024 Seattle, WA 98109<br /><br />Location: Arnold Building M1 B861<br />Phone: (206) 667-2793</div>				<div style="margin-top:1em">
+					<a href="mailto:r-help%40r-project.org?In-Reply-To=%3C6ph7hzq70ka.fsf%40gopher4.fhcrc.org%3E&Subject=%5BR%5D%20S4%3A%20Initialization%20method%20called%20during%20setClass%3F%3F">reply</a> <span class="inactive">|</span> <a href="/p/r/r-help/096555rcm3/r-s4-initialization-method-called-during-setclass">permalink</a>
+				</div>
+			</div>
+
+		</div><!-- so.article -->
+		<div style="clear:both"></div>
+		</li>
+
+		
+		<li id="200906058j3ss215vpaykdky45wtfhqh8m_li" class="responses">
+		<div itemscope itemtype="http://schema.org/Article">
+			<a id="200906058j3ss215vpaykdky45wtfhqh8m" name="09658j3ss2" title="200906058j3ss215vpaykdky45wtfhqh8m,,"></a>
+			<meta itemprop="name" content=""/>
+
+			<table border="0" id="200906058j3ss215vpaykdky45wtfhqh8m_thinhead" class="tr_head_thin rc_ctl_thin hl_y" style="display:none"><tr><td id="200906058j3ss215vpaykdky45wtfhqh8m_th_indent" class="indent1 indentd3" style="width:20px;margin:0;padding:0 0 0 48px"><img class="av_sm" src="/avatar/i3iA5zChd8cNGAGpaZZfDy/20" class="avatar tr_avatar" alt="Wacek Kusnierczyk" />
+				</td><td class="tr_head_content tr_head_thin_content tr_head_content_right" style="width:599px;overflow:hidden"><div class="tr_head_thin_content">
+				<strong>Wacek Kusnierczyk</strong> <span itemprop="articleBody">Martin Morgan wrote: [...] broken? in which sense? do you want to say that it is essential, in an oo system, to provide a default for each parameter in a constructor/initializer for the respective class not to be broken? yes, i&#39;ve visited this issue it in one of my earlier examples posted here. to me, the fact that you can clone an instance of a class without the class&#39;s constructor/initializer being called (and without using low-level memory copy operations) is a candidate to be considered a</span></div>
+			</td><td><div style="width:20px"><a href="/badges/r"><div title="Silver R badge (690 posts)" class="u_badge badge_tn badge_tn_2_r"></div></a></div></td></tr></table>
+
+			<table id="200906058j3ss215vpaykdky45wtfhqh8m_fullhead" class="rbody tr_head_full"><tr><td id="200906058j3ss215vpaykdky45wtfhqh8m_fh_indent" class="indent1 indentd3" style="width:20px;margin:0;padding:0 0 0 48px"><a href="/user/Wacek-Kusnierczyk/i3iA5zChd8cNGAGpaZZfDy"><img class="av_sm" src="/avatar/i3iA5zChd8cNGAGpaZZfDy/20" class="avatar tr_avatar" alt="Wacek Kusnierczyk" /></a>				</td><td class="tr_head_content tr_head_full_content_user">
+				<strong><span itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="url" content="/user/Wacek-Kusnierczyk/i3iA5zChd8cNGAGpaZZfDy"/><a class="tr_head_user" href="/user/Wacek-Kusnierczyk/i3iA5zChd8cNGAGpaZZfDy"><span class="hl_y" itemprop="name">Wacek Kusnierczyk</span></a></span></strong> </td>
+				<td id="200906058j3ss215vpaykdky45wtfhqh8m_fullhead_ctl" class="tr_head_content tr_head_content_right rc_ctl_full" style='padding-top:2px'> at <span class="dt_y4 relativetime">Jun 5, 2009 at 11:49 pm</span>
+			</td><td>
+			<a href="#top">&#8679;</a></td><td style="margin-top:0px"><a href="#200906058j3ss215vpaykdky45wtfhqh8m"><img src="/cc/img/nav/icon_anchor_16x16.png" /></a>
+			</td><td><div style="width:20px"><a href="/badges/r"><div title="Silver R badge (690 posts)" class="u_badge badge_tn badge_tn_2_r"></div></a></div></td></tr></table>
+
+			<div id="200906058j3ss215vpaykdky45wtfhqh8m_content" class="rbody m_body indent2 indentd3 tr_content hl_y" style="padding-left:78px;">
+				Martin Morgan wrote:<br /><br />[...]<br /><div class="ql ql0"><div class="ql ql1">it sounds approximately ok that defining a subclass fails if its<br />initalizer does not provide a value required by the initializer of the<br />superclass.  pardon me my ignorance, but here&#39;s an obvious question:<br />what if i *do* want to extend a class that has an initializer with an<br />argument without a default?  (it does not seem to be a particularly<br />extravagant idea, does it?)  i can&#39;t define the subclass with setClass,<br />because it fails, as above, due to a violation of the contract.  but i</div>I&#39;m speaking as a user, so my understanding is not meant to be<br />definitive. I&#39;d say the class with the intializer with an argument<br />without a default is broken, and you should not want to extend it.</div>broken?  in which sense?  do you want to say that it is essential, in an<br />oo system, to provide a default for each parameter in a<br />constructor/initializer for the respective class not to be broken?<br /><div class="ql ql0"><div class="ql ql1">there is another quirk here, or -- in case the above is not a quirk --<br />there is a quirk here.  imagine i want to implement a class that counts<br />its instances as they are created, assigning to each a unique identifier</div>remembering that R has copy-on-change semantics that are only<br />approximately adhered to (e.g., some copying even without change),<br />this objective would not likely be useful, e.g., it would not be a<br />good identifier to know that you were dealing with the &#39;same&#39;<br />instance, and it would not be the way you&#39;d want to track references<br />for garbage collection or other clean-up, for instance.</div>yes, i&#39;ve visited this issue it in one of my earlier examples posted<br />here.  to me, the fact that you can clone an instance of a class without<br />the class&#39;s constructor/initializer being called (and without using<br />low-level memory copy operations) is a candidate to be considered a flaw<br />in the language.  the fact that it breaks the simple instance-counting<br />pattern (or any similar pattern) is a problem with the language, not the<br />pattern.<br /><br />in c++, for example, you can obtain a copy of the representation of an<br />object, but not without a constructor being called at some point --<br />either before the copy operation or during it (where the copy<br />constructor is called):<br /><br />class Foo {<br />private:<br />static int count;<br />int id;<br />public:<br />Foo() { id = ++count; }<br />Foo(const Foo&amp; foo) { id = ++count; } };<br /><br />Foo foo;  // foo.id is 1<br />Foo bar = foo; // bar.id is 2<br />Foo yee(bar); // yee.id is 3<br />Foo daa; // daa.id is 4<br />Foo.daa = foo; // daa.id is 1<br /><br /><br />i find the r way, where you can create a copy of an instance without the<br />object system being involved, potentially confusing for users.<br /><br /><div class="ql ql0"><div class="ql ql1">from a contiguous sequence of integers, starting at 1 (this doesn&#39;t seem<br />to be a particularly extravagant idea either):<br /><br />setClass(&#39;foo&#39;, representation(id=&#39;integer&#39;))<br />setMethod(&#39;initialize&#39;, &#39;foo&#39;, local({<br />id=0L<br />function(.Object, ...) {<br />id &lt;&lt;- id+1L<br />.Object at id = id<br />return(.Object) } }))<br /><br />foos = replicate(3, new(&#39;foo&#39;))<br />sapply(foos, slot, &#39;id&#39;)<br /># 1 2 3<br /><br />setClass(&#39;bar&#39;, contains=&#39;foo&#39;, representation(name=&#39;character&#39;))<br />setMethod(&#39;initialize&#39;, &#39;bar&#39;, function(.Object, name=&#39;bar&#39;, ...) {<br />.Object at name = name<br />callNextMethod() })<br />bars = replicate(3, new(&#39;bar&#39;))<br />sapply(bars, slot, &#39;id&#39;)<br /># 6 7 8<br /><br />what??  why on earth creating a subclass *calls* (twice!) the<br />superclass&#39;s initializer?  is there no other way for checking the</div>once when the superclass is instantiated (fair enough!)</div>fair?  what&#39;s fair here?  that just creating a subclass involves<br />instantiation of the superclass?  makes little sense to me.<br /><div class="ql ql0">and once when<br />the validity of the subclass is checked -- the way that valildity<br />checking works is that subclass is validated according to the subclass<br />validity method, then the subclass is coerced to the superclass, and<br />the superclass is checked for validity.</div>but you&#39;re talking classes here;  is coercing a *class* to another<br />*class* implying instantiation?  makes little sense to me.<br /><div class="ql ql0">The user can define the coerce<br />method, but the default, for class hierarchies where it is<br />appropriate, involves a call to new(), and hence to initialize and<br />validObject.</div>i consider this a flaw in the object system.  if subclass validation<br />goes on at the instance level, why couldn&#39;t it be postponed until the<br />user actually creates a new instance?  otherwise, why couldn&#39;t it be<br />done without creating two dummy instances just for the purpose of<br />validation?<br /><br /><br /><div class="ql ql0"><div class="ql ql1">setClass(&quot;A&quot;) [1] &quot;A&quot;<br />setClass(&quot;B&quot;, contains=&quot;A&quot;, representation(y=&quot;numeric&quot;)) [1] &quot;B&quot;<br />b &lt;- as(new(&quot;B&quot;), &quot;A&quot;)<br />showMethods(coerce, class=&quot;B&quot;, includeDef=TRUE)</div>Function: coerce (package methods)<br />from=&quot;B&quot;, to=&quot;A&quot;<br />function (from, to = &quot;A&quot;, strict = TRUE)<br />if (strict) {<br />value &lt;- new(&quot;A&quot;)<br />for (what in &quot;x&quot;) slot(value, what) &lt;- slot(from, what)<br />value<br />} else from</div>well, i see i can define a coerce on my own, and that&#39;s fine, but (a)<br />what does it have to do with setClass, and (b) it does not relate to the<br />issue of cloning an instance without the class noticing it has a new kid.<br /><br /><br />btw, what i see trying your example is:<br /><div class="ql ql0">showMethods(coerce, class=&#39;b&#39;, includeDef=TRUE)</div>Function: coerce (package methods)<br />from=&quot;B&quot;, to=&quot;A&quot;<br />function (from, to = &quot;A&quot;, strict = TRUE)<br />from<br /><br /><br /><br />&gt;<br /><br />why the difference?  (and why the empty space?)<br /><br /><br />vQ<br />				<div style="margin-top:1em">
+					<a href="mailto:r-help%40r-project.org?In-Reply-To=%3C4A29AF1F.7010109%40idi.ntnu.no%3E&Subject=%5BR%5D%20S4%3A%20Initialization%20method%20called%20during%20setClass%3F%3F">reply</a> <span class="inactive">|</span> <a href="/p/r/r-help/09658j3ss2/r-s4-initialization-method-called-during-setclass">permalink</a>
+				</div>
+			</div>
+
+		</div><!-- so.article -->
+		<div style="clear:both"></div>
+		</li>
+
+		
+		<li id="20090606gt248514qmy4spc4d32q3y7238_li" class="responses">
+		<div itemscope itemtype="http://schema.org/Article">
+			<a id="20090606gt248514qmy4spc4d32q3y7238" name="0966gt2485" title="20090606gt248514qmy4spc4d32q3y7238,,"></a>
+			<meta itemprop="name" content=""/>
+
+			<table border="0" id="20090606gt248514qmy4spc4d32q3y7238_thinhead" class="tr_head_thin rc_ctl_thin hl_y" style="display:none"><tr><td id="20090606gt248514qmy4spc4d32q3y7238_th_indent" class="indent1 indentd4" style="width:20px;margin:0;padding:0 0 0 64px"><img class="av_sm" src="/avatar/QLBCaaUXJ4tA8R2mFU45z9/20" class="avatar tr_avatar" alt="Martin Morgan" />
+				</td><td class="tr_head_content tr_head_thin_content tr_head_content_right" style="width:583px;overflow:hidden"><div class="tr_head_thin_content">
+				<strong>Martin Morgan</strong> <span itemprop="articleBody">I completely misread your post, sorry. Martin</span></div>
+			</td><td><div style="width:20px"><a href="/badges/r"><div title="Silver R badge (860 posts)" class="u_badge badge_tn badge_tn_2_r"></div></a></div></td></tr></table>
+
+			<table id="20090606gt248514qmy4spc4d32q3y7238_fullhead" class="rbody tr_head_full"><tr><td id="20090606gt248514qmy4spc4d32q3y7238_fh_indent" class="indent1 indentd4" style="width:20px;margin:0;padding:0 0 0 64px"><a href="/user/Martin-Morgan/QLBCaaUXJ4tA8R2mFU45z9"><img class="av_sm" src="/avatar/QLBCaaUXJ4tA8R2mFU45z9/20" class="avatar tr_avatar" alt="Martin Morgan" /></a>				</td><td class="tr_head_content tr_head_full_content_user">
+				<strong><span itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="url" content="/user/Martin-Morgan/QLBCaaUXJ4tA8R2mFU45z9"/><a class="tr_head_user" href="/user/Martin-Morgan/QLBCaaUXJ4tA8R2mFU45z9"><span class="hl_y" itemprop="name">Martin Morgan</span></a></span></strong> </td>
+				<td id="20090606gt248514qmy4spc4d32q3y7238_fullhead_ctl" class="tr_head_content tr_head_content_right rc_ctl_full" style='padding-top:2px'> at <span class="dt_y4 relativetime">Jun 6, 2009 at 1:48 am</span>
+			</td><td>
+			<a href="#top">&#8679;</a></td><td style="margin-top:0px"><a href="#20090606gt248514qmy4spc4d32q3y7238"><img src="/cc/img/nav/icon_anchor_16x16.png" /></a>
+			</td><td><div style="width:20px"><a href="/badges/r"><div title="Silver R badge (860 posts)" class="u_badge badge_tn badge_tn_2_r"></div></a></div></td></tr></table>
+
+			<div id="20090606gt248514qmy4spc4d32q3y7238_content" class="rbody m_body indent2 indentd4 tr_content hl_y" style="padding-left:94px;">
+				<a id="qc_20090606gt248514qmy4spc4d32q3y7238_a__ctl" class="qc_ctl" href="#"></a><br /><div id="qc_20090606gt248514qmy4spc4d32q3y7238_a" class="qc_cnt"><div class="ql ql0">Wacek Kusnierczyk wrote:<br />Martin Morgan wrote:<br /><br />[...]<br /><div class="ql ql1"><div class="ql ql2">from a contiguous sequence of integers, starting at 1 (this doesn&#39;t seem<br />to be a particularly extravagant idea either):<br /><br />setClass(&#39;foo&#39;, representation(id=&#39;integer&#39;))<br />setMethod(&#39;initialize&#39;, &#39;foo&#39;, local({<br />id=0L<br />function(.Object, ...) {<br />id &lt;&lt;- id+1L<br />.Object at id = id<br />return(.Object) } }))<br /><br />foos = replicate(3, new(&#39;foo&#39;))<br />sapply(foos, slot, &#39;id&#39;)<br /># 1 2 3<br /><br />setClass(&#39;bar&#39;, contains=&#39;foo&#39;, representation(name=&#39;character&#39;))<br />setMethod(&#39;initialize&#39;, &#39;bar&#39;, function(.Object, name=&#39;bar&#39;, ...) {<br />.Object at name = name<br />callNextMethod() })<br />bars = replicate(3, new(&#39;bar&#39;))<br />sapply(bars, slot, &#39;id&#39;)<br /># 6 7 8<br /><br />what??  why on earth creating a subclass *calls* (twice!) the<br />superclass&#39;s initializer?  is there no other way for checking the</div>once when the superclass is instantiated (fair enough!)</div>fair?  what&#39;s fair here?  that just creating a subclass involves<br />instantiation of the superclass?  makes little sense to me.</div></div>I completely misread your post, sorry. Martin<br />				<div style="margin-top:1em">
+					<a href="mailto:r-help%40r-project.org?In-Reply-To=%3C4A29CAFE.40103%40fhcrc.org%3E&Subject=%5BR%5D%20S4%3A%20Initialization%20method%20called%20during%20setClass%3F%3F">reply</a> <span class="inactive">|</span> <a href="/p/r/r-help/0966gt2485/r-s4-initialization-method-called-during-setclass">permalink</a>
+				</div>
+			</div>
+
+		</div><!-- so.article -->
+		<div style="clear:both"></div>
+		</li>
+
+		</ul><div style="clear:both"></div><div style="clear:both;height:1em"></div><div><h2>Related Discussions</h2></div><div><div id="related_discussions" style="padding-bottom:1em"><ul class="bullet">				<li style="margin-bottom:0.3em"><span><a class="hl_y" style="font-weight:bold" href="/t/r/r-help/068zr3zpba/r-s4-method-dispatch-for-sealed-classes" title="Hi, I encounter a problem with method dispatch with S4 classes, using the &#39;sealed&#39; parameter in setClass. See that example below: setClass(&quot;X&quot;,representation(x=&quot;numeric&quot;),sealed=TRUE) ...">[R] S4 Method Dispatch for Sealed Classes</a></span></li>
+							<li style="margin-bottom:0.3em"><span><a class="hl_y" style="font-weight:bold" href="/t/r/r-help/0426d3ey6x/r-how-to-remove-method-initialize-package-methods" title="Have defined a new class (by setClass) and added a method initialize (setMethod(&quot;initialize&quot;). setMethod(&quot;initialize&quot; ,signature(.Object=&quot;Massvector&quot;) ,function(.Object,data,info,tcoor,gelcoor) But I ...">[R] How to remove method initialize./package methods</a></span></li>
+							<li style="margin-bottom:0.3em"><span><a class="hl_y" style="font-weight:bold" href="/t/r/r-help/0568agg96z/r-two-ways-to-inherit-in-s4" title="I&#39;m puzzled that it seems possible to specify inheritance via the &quot;representation&quot; and &quot;contains&quot; arguments to setClass. The examples that I&#39;ve seen all seem to use contains only. Is there some ...">[R] Two ways to inherit in S4?</a></span></li>
+							<li style="margin-bottom:0.3em"><span><a class="hl_y" style="font-weight:bold" href="/t/r/r-help/118mb9hhyx/r-best-way-to-setclass-and-setmethod-for-an-r-package" title="Folks: I&#39;m putting together an R package, and I was wondering where, specifically, I put both class definitions (via setClass) as well as setMethod calls? Is there a particular file name I need to ...">[R] Best way to setClass and setMethod for an R package?</a></span></li>
+							<li style="margin-bottom:0.3em"><span><a class="hl_y" style="font-weight:bold" href="/t/r/r-help/10382gbp72/r-setclass-or-setvalidity" title="An embedded and charset-unspecified text was scrubbed... Name: not available URL: &lt;https://stat.ethz.ch/pipermail/r-help/attachments/20100308/0bfe8c71/attachment.pl">[R] setClass or setValidity?</a></span></li>
+							<li style="margin-bottom:0.3em"><span><a class="hl_y" style="font-weight:bold" href="/t/r/r-help/0979htx4t8/r-class-export-in-package-creation-setclass-namespace" title="An embedded and charset-unspecified text was scrubbed... Name: not available URL: &lt;https://stat.ethz.ch/pipermail/r-help/attachments/20090710/bb966c13/attachment.pl">[R] class export in package creation / setClass / namespace?</a></span></li>
+							<li style="margin-bottom:0.3em"><span><a class="hl_y" style="font-weight:bold" href="/t/r/r-help/096weyp6sf/r-defining-class-as-a-member-of-another-class" title="Hi, When I define a new class (through setClass), members defined in representation argument doesn&#39;t seem to like a class. For example, if I do the following ...">[R] Defining class as a member of another class</a></span></li>
+							<li style="margin-bottom:0.3em"><span><a class="hl_y" style="font-weight:bold" href="/t/r/r-help/095d3scqh0/r-question-about-setclass" title="Hi R People: I have a question about setClass please. I&#39;m working thru &quot;R Programming for Bioinformatics&quot;. Actually, I was wondering if there is such a thing as an updateClass, in order to change a ...">[R] question about setClass</a></span></li>
+							<li style="margin-bottom:0.3em"><span><a class="hl_y" style="font-weight:bold" href="/t/r/r-help/0762bqy3ve/r-setclass-with-a-slot-of-rodbc" title="An embedded and charset-unspecified text was scrubbed... Name: not available Url: https://stat.ethz.ch/pipermail/r-help/attachments/20070602/5db9ea74/attachment.pl">[R] setClass with a slot of RODBC</a></span></li>
+							<li style="margin-bottom:0.3em"><span><a class="hl_y" style="font-weight:bold" href="/t/r/r-help/04a6ttm7w1/r-setclass-equvalent-declarations" title="Hi, Why the third declation is not equivalent to the first 2 and gives a Warning #1 setClass(&quot;MVE&quot;,representation(&quot;list&quot;,names=&quot;character&quot;)) #2 setClass( &quot;MVE&quot; ,contains=&quot;list&quot; ,representation( ...">[R] setClass - equvalent declarations?</a></span></li>
+			</ul></div></div>
+			</div><!-- main_1 -->
+	<div class="main_2"><!-- class="main_2"-->
+
+
+		<div class="sb_box">
+			<div class="sb_box_header">Discussion Navigation</div>
+			<table>
+				<tr><td class="sb_tbl_key">view</td><td class="sb_tbl_val"><span class="current">thread</a> <span class="inactive">|</span> <a href="/p/r/r-help/0965643qgt/r-s4-initialization-method-called-during-setclass">post</a></td></tr>
+		</table></div>
+		<div class="sb_box">
+			<div class="sb_box_header">Discussion Overview</div>
+			<table>
+				<tr><td class="sb_tbl_key">group</td><td class="sb_tbl_val"><a href="/g/r/r-help">r-help</a> <a style="display:none" href="/g/r">@<br />
+<b>Notice</b>:  Undefined variable: pl_domain_short in <b>/home/whirl/sites/grokbase/root/www/public_html__www/cc/flow/tpc.php</b> on line <b>1543</b><br />
+</a>
+										</td></tr>
+				<tr><td class="sb_tbl_key">categories</td><td class="sb_tbl_val"><a href="/s/r">r</a></td></tr>				<tr><td class="sb_tbl_key">posted</td><td class="sb_tbl_val"><a class="dt_y2" href="/g/r/r-help/2009/06">Jun 5, '09 at 4:28p</a></td></tr>
+				<tr><td class="sb_tbl_key">active</td><td class="sb_tbl_val"><a class="dt_y2" href="/g/r/r-help/2009/06">Jun 6, '09 at 1:48a</a></td></tr>
+				<tr><td class="sb_tbl_key">posts</td><td class="sb_tbl_val">6</td></tr>
+				<tr><td class="sb_tbl_key">users</td><td class="sb_tbl_val">3</td></tr>
+				<tr><td class="sb_tbl_key">website</td><td class="sb_tbl_val"><a class="external" href="http://r-project.org">r-project.org</a></td></tr>
+							<tr><td class="sb_tbl_key">irc</td><td class="sb_tbl_val"><a class="external" href="irc://irc.freenode.org:8001/r">#r</a></td></tr>
+						</table>
+		</div>
+		<div class="sb_box" id="sb_preferences" style="display:none" style="display:none" onmouseover="$('.sb_pref_hints').css('display','');" onmouseout="$('.sb_pref_hints').css('display','none');">
+			<div class="sb_box_header">Preferences</div>
+		
+			<table style="width:100%">
+				<tr><td class="sb_tbl_key">responses</td>
+					<td class="sb_tbl_val"><a id="ctl_rbody_showhide" href="#" onclick="if ($('div.rbody').css('display') == 'none') {$('.tr_head_thin').css('display','none');$('.rbody').css('display','');$('#ctl_rbody_showhide').html('expanded');setCookie('rbody','s')} else {$('.rbody').css('display','none');$('.tr_head_thin').css('display','');$('#ctl_rbody_showhide').html('collapsed');setCookie('rbody','h')}; return false;">expanded</a>
+				</td>
+				<td class="sb_tbl_val sb_tbl_rt inactive sb_pref_hints" style="display:none">Hotkey:&nbsp;s</td></tr>
+				<tr><td class="sb_tbl_key">font</td>
+					<td class="sb_tbl_val"><a id="ctl_font" href="#" onclick="if ( $('div.m_body').css('font-family').match(/monospace/) ) { $('div.m_body').css('font-family','');$('div.m_body').css('font-size','90%');$('#ctl_font').html('variable');setCookie('font','v') } else { $('div.m_body').css('font-family','DejaVu Sans Mono,Lucida Console,Monaco,courier new,courier,monospace');$('div.m_body').css('font-size','80%');$('#ctl_font').html('fixed');setCookie('font','f') } ;return false;">variable</a>
+				</td>
+				<td class="sb_tbl_val sb_tbl_rt inactive sb_pref_hints" style="display:none">Hotkey:&nbsp;f</td></tr>
+
+
+				<tr><td class="sb_tbl_key">user style</td>
+				<td class="sb_tbl_val"><a id="ctl_ulist_style" href="#" onclick="uPrefs.tog_sb_u_style();return false">avatars</a></td>
+				<td class="sb_tbl_val sb_tbl_rt inactive sb_pref_hints" style="display:none">Hotkey:&nbsp;a</td></tr>
+			</table>
+		</div>
+
+
+		<div id="user_list_content">
+			<h3>3 users in discussion</h3>
+			<div id="user_list_avatars" style="width:100%;padding-left:10px">
+		
+			<a href="/user/Martin-Morgan/QLBCaaUXJ4tA8R2mFU45z9" title="Martin Morgan: 3 posts"><img class="av_40" src="/avatar/QLBCaaUXJ4tA8R2mFU45z9/40" alt="Martin Morgan: 3 posts" width="40" height="40" /></a>
+
+			
+			<a href="/user/Wacek-Kusnierczyk/i3iA5zChd8cNGAGpaZZfDy" title="Wacek Kusnierczyk: 2 posts"><img class="av_40" src="/avatar/i3iA5zChd8cNGAGpaZZfDy/40" alt="Wacek Kusnierczyk: 2 posts" width="40" height="40" /></a>
+
+			
+			<a href="/user/Vitalie-S/uXiXmksd46BQkENDYscmqe" title="Vitalie S.: 1 post"><img class="av_40" src="/avatar/uXiXmksd46BQkENDYscmqe/40" alt="Vitalie S.: 1 post" width="40" height="40" /></a>
+
+						</div><div id="user_list_names" class="hl_y" style="display:none">
+					<a style="margin-top:-3px" href="/user/Martin-Morgan/QLBCaaUXJ4tA8R2mFU45z9" title="Martin Morgan: 3 posts">Martin Morgan (3)</a><br />
+						<a style="margin-top:-3px" href="/user/Wacek-Kusnierczyk/i3iA5zChd8cNGAGpaZZfDy" title="Wacek Kusnierczyk: 2 posts">Wacek Kusnierczyk (2)</a><br />
+						<a style="margin-top:-3px" href="/user/Vitalie-S/uXiXmksd46BQkENDYscmqe" title="Vitalie S.: 1 post">Vitalie S. (1)</a><br />
+						</div><div style="clear:both;height:1em"></div>
+		</div>
+		
+					</div><!-- sb/main_2 -->
+<script type="text/javascript">
+//<![CDATA[
+var dt=new dateTime;dt.init();$('a.dt_y2').each(function(index){var dtl=dt.local_text_for_any($(this).html(),1,1);if(dtl.length)$(this).html(dtl);});
+$('.dt_y4').each(function(index){var dtl=dt.local_text_for_any($(this).html());if(dtl.length)$(this).html(dtl);});
+
+$(document).bind('keydown','s',function(){if ($('div.rbody').css('display') == 'none') {$('.tr_head_thin').css('display','none');$('.rbody').css('display','');$('#ctl_rbody_showhide').html('expanded');setCookie('rbody','s')} else {$('.rbody').css('display','none');$('.tr_head_thin').css('display','');$('#ctl_rbody_showhide').html('collapsed');setCookie('rbody','h')}});
+$(document).bind('keydown','d',function(){uPrefs.tog_sb_u_list()});
+$(document).bind('keydown','a',function(){uPrefs.tog_sb_u_style()});
+$(document).bind('keydown','f',function(){if($('div.m_body').css('font-family').match(/monospace/) ) { $('div.m_body').css('font-family','');$('div.m_body_one').css('font-size','100%');$('div.m_body_resp').css('font-size','90%');$('#ctl_font').html('variable');setCookie('font','v') } else { $('div.m_body').css('font-family','DejaVu Sans Mono,Lucida Console,Monaco,courier new,courier,monospace');$('div.m_body').css('font-size','90%');$('#ctl_font').html('fixed');setCookie('font','f')};});
+
+$('#sb_preferences').css('display','');
+//var tPgFwd    = new pgFwd(,); tPgFwd.init();
+var iRToggler = new rToggler;iRToggler.init();
+var iQToggler = new qToggler;iQToggler.init("t");
+if (getCookie('font')=='f') {$('div.m_body').css('font-family','DejaVu Sans Mono,Lucida Console,Monaco,courier new,courier,monospace');$('div.m_body').css('font-size','80%');$('#ctl_font').html('fixed');};
+var uPrefs = new user_prefs('t');uPrefs.init();
+//if (getCookie('ustyle')=='n')   {$('#user_list_avatars').css('display','none');$('#user_list_names').css('display','');$('#ctl_ulist_style').html('names');};
+//]]>
+</script>
+
+</div><!-- main -->
+<div style="clear:both"></div>
+
+	<div style="clear:both;height:1em"></div>
+
+</div><!-- main -->
+<div id="footer_sep"></div>
+<div id="footer">
+	<div id="footer_content">
+	<div id="footer_col1">
+		<h3>Content</h3>
+		<ul class="bullet">
+			<li><a href="/">Home</a></li>
+			<li><a href="/groups">Groups &amp; Organizations</a></li>
+			<li><a href="/events">Events</a></li>
+		</ul>
+	</div>
+	<div id="footer_col2">
+		<h3>People</h3>
+		<ul class="bullet">
+			<li><a href="/users">Users</a></li>
+			<li><a href="/badges">Badges</a></li>
+		</ul>
+	</div>
+	<div id="footer_col3">
+		<h3>Support</h3>
+		<ul class="bullet">
+			<li><a href="/welcome">Welcome</a></li>
+			<li><a href="/faq">F.A.Q.</a></li>
+			<li><a href="/faq#miscellaneous__contact">Contact Us</a></li>
+		</ul>
+	</div>
+	<div id="footer_coln">
+
+		<h3>Translate</h3>
+
+<div id="google_translate_element"></div><script>
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'auto',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, 'google_translate_element');
+}
+</script><script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+	</div>
+
+	<div style="clear:both"></div>
+
+	<p id="copy">site design / logo &copy; 2013 Grokbase</p>
+	</div>
+</div>
+</div>
+<script type="text/javascript">
+$('.dh').show();
+</script>
+</body></html>
