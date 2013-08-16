@@ -1,0 +1,489 @@
+
+\documentclass[12pt]{amsart}
+\usepackage{geometry} % see geometry.pdf on how to lay out the page. There's lots.
+\geometry{a4paper} % or letter or a5paper or ... etc
+% \geometry{landscape} % rotated page geometry
+
+% See the ``Article customise'' template for come common customisations
+
+
+%% LaTeX Preamble - Common packages
+
+\usepackage[utf8]{inputenc} % Any characters can be typed directly from the keyboard, eg éçñ
+\usepackage{textcomp} % provide lots of new symbols
+\usepackage{graphicx}  % Add graphics capabilities
+%\usepackage{epstopdf} % to include .eps graphics files with pdfLaTeX
+\usepackage{flafter}  % Don't place floats before their definition
+%\usepackage{topcapt}   % Define \topcation for placing captions above tables (not in gwTeX)
+\usepackage{natbib} % use author/date bibliographic citations
+
+\usepackage{amsmath,amssymb}  % Better maths support & more symbols
+\usepackage{bm}  % Define \bm{} to use bold math fonts
+
+\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}  % PDF hyperlinks, with coloured links
+%%% BRoKEN!
+%\definecolor{dullmagenta}{rgb}{0.4,0,0.4}   % #660066
+%\definecolor{darkblue}{rgb}{0,0,0.4}
+%\hypersetup{linkcolor=red,citecolor=blue,filecolor=dullmagenta,urlcolor=darkblue} % coloured links
+%\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black} % black links, for printed output
+
+\usepackage{memhfixc}  % remove conflict between the memoir class & hyperref
+% \usepackage[activate]{pdfcprot}  % Turn on margin kerning (not in gwTeX)
+\usepackage{pdfsync}  % enable tex source and pdf output syncronicity
+
+\def\comment<#1>{\textcolor{red}{$\bigstar$#1$\bigstar$}}
+
+\let\origmaketitle\maketitle
+\def\maketitle{
+  \begingroup
+  \def\uppercasenonmath##1{} % this disables uppercasing title
+  \let\MakeUppercase\relax % this disables uppercasing authors
+  \origmaketitle
+  \endgroup
+}
+
+\def\code<#1>{\textbf{#1}}
+
+%%% BEGIN DOCUMENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+
+
+
+\title{CTDesignExplorer}
+\author{Roger Day}
+\author{Yuanyuan Wang}
+\author{Daniel Normolle}
+
+
+
+\date{} 
+
+\begin{abstract}
+Innovation in clinical trial (CT) design has greatly overrun its utilization in actual clinical trials. To lubricate the flow of innovative designs into real practice, we propose a distributed web-based platform, a kind of social network for CT innovators, connecting the silos in which they tend to work.
+A low barrier to entry achieved by the architecture facilitates a variety of uses for designers without exotic programming skills.  
+\end{abstract}
+
+
+\maketitle
+
+
+\section{Overview}
+
+Innovation in clinical trial (CT) design has had limited  penetration into general use.  A contributing factor is the difficulty in assuring self and colleagues that a new design is superior to others across a spectrum of scenarios for patients and their responses to treatments. Innovative designers in academic research centers and pharmaceutical companies use simulation  to improve the efficiency and accuracy of drug development. Sophisticated commercial software for CT simulations is available for those with resources to cover fees and with design challenges that happen to match the software's capabilities. Academic researchers  usually use locally developed or shared software for study design, mainly due to cost and flexibility considerations. 
+Inspired by the success and immense influence of open-source software development projects, we are building an open-source simulation experiment platform for CTs. 
+We can leverage the power of distributed study design expertise, development talent, and peer review of code,
+to make  clinical trial design innovation far easier. Use cases include:
+\begin{itemize}
+\item A biostatistician designing a trial ...
+\begin{itemize}
+\item ... can compare several designs,
+\item ... can compare several designs on multiple criteria,
+\item ... can test the robustness of a design upon varying assumptions about the patient pool,
+\item ... can test the robustness of a design upon varying assumptions about how the outcome relates to treatment at an individual basis,
+
+\end{itemize}
+\item A design innovator can...	
+\begin{itemize}
+\item ... port the design to this evaluation platform, or encourage a graduate student to do so,
+\item ... make his/her new design easy to evaluate in an unlimited set of contexts,
+\item ... enable and encourage others to extend the new design.
+\end{itemize}
+\end{itemize}
+
+
+The key classes are: population model, CT design, outcome model, and evaluation criterion. The population model and the outcome model classes are envisioned as Bayesian networks, so that complex dependency structures can be simulated.
+Most objects in these classes have requirements for input variables,
+and most provide output variables.
+The variables are matched to check interoperability among the objects. 
+There would be a risk that variables of the same name but different meanings are mistakenly matched,
+Since sharing among researchers is a key goal,
+variables are more elaborate objects;
+they include descriptions and data types, not just unadorned variable names.
+
+The design object guides placement of actions on an action queue, 
+allowing for complex decision-making at the patient or CT level. 
+The design object also assembles outputs from the outcome model and provides conclusions for its output. 
+The criterion objects read conclusions and summarize results over replications.
+
+Extensibility, reuse and sharing come from the class/method architecture, together with automatic object and documentation discovery mechanisms.
+Sharing is obtained by use of git with two primary repositories at github.com,
+one for the 
+R package that provides the functionality,
+and another for the contributions:
+objects of type Variable, VariableGenerator, Design, OutcomeModel, and EvaluationCriterion.
+
+To encourage use and develop a genuine community,
+great attention is paid to hiding arcane details in the construction of the
+subclasses and objects needed.
+The interface uses the \emph{shiny} package to render interactive web pages and hide complications of the code base, which relies on S4 classes and methods within R. 
+
+
+\section{The fundamental classes}
+
+Each simulation of a clinical trial requires the following three elements:
+\begin{description}
+\item[ PopulationModel]
+\item[ ClinicalTrialDesign]
+\item[ OutcomeModel]
+\end{description}
+(EvaluationCriterion objects are discussed later.)
+
+These elements are objects of corresponding classes by these names.
+The PopulationModel provides patient features.
+These provisions are utilized by the ClinicalTrialDesign
+to determine if a patient is eligible
+and to modify the choice of patient management actions
+like assigning a treatment regimen.
+The OutcomeModel reads the provisions generated by the
+PopulationModel and the actions generated by the ClinicalTrialDesign,
+in order to produce one or more individual patient features
+representing outcomes of the trial.
+The ClinicalTrialDesign also has an entirely distinct  responsibility:
+to summarize the experiences of all the patients into
+a conclusion, such as a declaration, a plan for future research,
+or an estimate of some important quantity.
+This part of a ClinicalTrialDesign one can term the
+DataAnalysisPlan.
+
+Together, one PopulationModel,
+one ClinicalTrialDesign and one OutcomeModel
+ form one scenario.
+Looping over replications of one scenario  
+ generates many patient outcomes and clinical trial conclusions.
+ 
+The fourth type of object is the EvaluationCriterion.
+This is the payoff: to compare different designs under
+different sets of assumptions about the patients and
+how they will respond to the treatments under study.
+For each scenario, each selected  EvaluationCriterion object
+guides the calculation of a numerical evaluation criterion
+from the replications.
+Visualizing these criteria summarized over 
+multiple scenarios is a subject for description later in this paper.
+
+
+
+All four classes are subclasses of Specifier, a class with three slots:
+\begin{description}
+\item[constants] A list of data objects to be set when the object is instantiated, 
+and then not subsequently changed. 
+\item[ parameters] A list of data objects to be set when a new clinical trial replication is begun, 
+and then not subsequently changed until that clinical trial is terminated. Parameters may
+be constants, set stochastically, or set by design such as a factorial design. 
+A parameter is  available within scope of any code that generates output variable values  
+\item[ requirements] A list of Variable objects, also immutable. Other Specifier objects  will be queried to determine which ones provide this object's requirements, by matching with the provisions of the other  objects. 
+\item[ provisions] A list of Variable objects, also immutable. This object takes responsibility for calculating values for each of these variables when a simulation is run, and providing them to other objects. 
+\end{description}
+
+
+\subsection{PopulationModel and OutcomeModel: a bag of VariableGenerators}
+
+
+A model of potential CT subjects will stochastically generate a
+vector of characteristics for each subject.
+These features may have a complex dependency structure.
+One way to generate them is via traversing a network 
+representing factorization of the joint distribution into
+one or more marginal distributions followed by  a set
+of conditional distributions in a directed acyclic graph.
+This document will describe this approach. 
+(Another method, not discuss here, is to sample out of a database of actual patient records,
+ possibly adding in variation and of course de-identification. )
+
+
+
+\subsection{Variable and VariableGenerator objects}
+
+\subsubsection{Variables}
+
+Each patient feature or outcome is represented as an object of a ``Variable'' class.
+The slots of a Variable are:
+\begin{description}
+\item[ name] This should be a string which is a legitimate object name in R. (This takes the form of defining Variable as an extension of ``character'' rather than an actual slot, for convenience in writing code using the variable.) 
+\item[ description] This is free text.
+\item[ dataType]  This should be a string which is a legitimate object type in R: numeric, character, logical, factor.
+\item[ dataTypeFacet] This provides additional information to confirm interoperability. If dataType is
+a factor, this will hold the factor levels (category names). If dataType is numeric, This may hold
+restrictions, such as integer between 0 and 5, 
+\end{description}
+
+Notice that the Variable object does not contain a specific value.
+
+To obtain modularity, interoperability and legitimate sharing, 
+a person providing a function computing a variable's value
+should have in mind the same description 
+as a user of this variable in further computations.
+They must agree as to the  components listed above.
+An example of the importance of  dataType would be in representing a patient's age.
+In many cases, it will be generated as a numeric value, but in others it might
+be generated as an ordered category, for example grouped by decades. 
+Code using such a variable should be aware which type of age variable it is.
+
+Interoperability needs routine verification, a process described later.
+
+It is not necessary to specify in a Variable object whether that variable 
+is supposed to be observable.
+A study design where the treatment plan or eligibility depends on a patient
+characteristic will determine what data are supposed to be available in that scenario.
+An outcome model may utilize a variable to determine what outcome occurs,
+whether that variable is  observable to the clinical trial or not;
+it is always ``observable'' to the biology being modeled.
+
+Arguably, a Variable might include slots for author and time stamp.
+One would control editing access to a Variable object to its author.
+However, matching on these variables is not essential.
+At this writing, these slots are not present.
+
+\subsubsection{VariableValues and VariableGenerators}
+
+A \code<Variable> object only describes a data type. 
+In a clinical trial simulation, 
+the result of a calculation is a coupling of
+a Variable with a legitimate value for that Variable, in an object of class VariableValue.
+This object is created in a VariableGenerator object,
+which holds the code whose execution generates the value,
+in a function named \code<generatorCode>.
+The function is a slot in the VariableGenerator class.
+When a generator executes, it couples the Variable with the value generated.
+A VariableValue object comprises this coupling.
+Thus a Variable is not tied to a specific method for generating its value.
+This allows one to swap in alternative ways of computing a feature,
+while maintaining the same meaning.
+An example would be the gene expression levels measured by a microarray.
+Many possible models for simulating gene expression patterns might be used,
+from simple generic to biologically sophisticated based on systems biology modeling.
+
+Thus, Variables belong in a catalog of what would usually be called 
+``common data elements'',
+a phrase to avoid here due to the proximity of the acronym CDE to the package's
+acronym CTDE.
+While one is tempted to rely on existing ontologies and
+vocabularies, our review has not revealed any such resource
+suitable for the purpose. 
+When trial designers using this system pool models,
+they will be pooling instances of Variable as well.
+Usage of CTDE is intended to be distributed,
+free of reliance on a central repository.
+Solutions to resolving conflicts in resources maintained 
+in a \textit{git} repository are well-known.
+
+However, management of the Variables requires much care.
+Some variables depend on others through deterministic or probabilistic dependency.
+For example, consider assigning to each patient two dose thresholds, for toxicity and for response.
+Their variation can result from variation in pharmacodynamics of the
+two processes generating. Those pharmacodynamic variations might reasonably be assumed
+independent, but variation in pharmacokinetics leads to variation in the 
+translation from dose to concentration, which adds a common variation to 
+both thresholds.
+To implement this conditional independence, 
+we can first create a Variable object representing 
+the marginal distribution of a clearance,
+named clearanceVariable,
+then  Variable objects for the two thresholds
+whose \code<requirements>  lists include
+\code<clearanceVariable>. 
+
+\comment<MORE DETAIL>
+
+
+\subsubsection{Specific versus generic variables}
+
+
+In  use cases involving studies of clinical trial designs in the abstract,
+the specificity of a variable is unimportant.
+For example, in studying the effect of patient bimodal heterogeneity,
+the basis of the heterogeneity may be unimportant,
+while the degree of heterogeneity is critical.
+In studying the effect of pharmacokinetics variation on 
+operating characteristics of a study design,
+a general  abstraction of a drug will be sufficient.
+In use cases involving the design of a specific trial,
+the specificity of a variable is important;
+a researcher may want to provide a
+ drug-specific model,
+or more than one,
+for the pharmacokinetics for one drug,
+to be shared with others.
+Then that need mandates creating a Variable specific for that drug.
+The Variable name needs to include a substring expressing the specificity 
+of the intended use.
+To underscore this, there may be more than one drug in the regimens under study.
+
+\subsubsection{SimpleVariableGenerator}
+
+The simplest PopulationModel is a single patient feature with no 
+external ``requirements''. 
+Thus, in a variable dependency graph
+it is an initial node representing a marginal probability distribution.
+The only inputs are the fixed parameters 
+describing the probability distribution of the characteristic generated.
+Such a \code<SimpleVariableGenerator> object
+has a slot to hold a function named ``generatorCode''.
+
+The code in the generatorCode function uses variable names which are actually
+the names of VariableValue objects.
+
+The major work of an author of a population model 
+will be to write the generatorCode function.
+
+decision is this:
+does a SimpleVariableGenerator instance
+
+The next simplest PopulationModel represents a conditional distribution.
+It generates a VariableValue utilizing other VariableValue.
+It can only be used if there is one, and only one, VariableValue component
+generating each of the requirements, the conditioning variables. It
+provides both the newly calculated PatientCharacteristic variable,
+but also carries forward all the inputs. Thus all requirements are 
+automatically provisions.
+
+Typically there are many PatientCharacteristics which are terminal nodes
+in the dependency tree.
+Therefore there has to be a type of PopulationModel which is simply
+a union of PatientCharacteristics, or indeed of any PopulationModels.
+Its output vector concatenates the vectors of outputs from each constituent.
+
+\subsubsection{Generating a patient}
+
+The first step in dealing with a simulated patient in a clinical trial simulation
+is to generate the variable values describing the patient's characteristics.
+These values will initially determine the patient's eligibility for the trial.
+Then if the patient is eligible (and enrolled on study),
+the protocol's treatment plan is initiated,
+and patient outcomes result from the clinical actions in combination with the
+patient characteristics.
+
+This step is accomplished by the call
+
+             \code<new("PatData",BaseChars=generateBaseChars(popModelSpec)))  >
+
+feeding the current simulation's \code<PopulationModel>
+into the function \code<generateBaseChars>
+and storing the variables in an object of class \code<PatData>.
+
+The PopulationModel object popModelSpec contains a list
+of SimpleVariableGenerator objects and other PopulationModel object.
+The method generateBaseChars(PopulationModel)  calls each 
+generatorCode function within its SimpleVariableGenerator objects,
+and generateBaseChars for each of its PopulationModel objects.
+When a SimpleVariableGenerator object
+is encountered that has a non-empty list of \code<requirements>,
+the SimpleVariableGenerator objects listed therein have their own
+generatorCode functions triggered. The return values, which are
+VariableValue objects, are assembled into a list, together with the
+VariableValue returned by this SimpleVariableGenerator object's
+generatorCode.
+
+We would like the R object name of the SimpleVariableGenerator object
+to be usable by other code without change.
+This entails a dilemma, because multiple generators might be swapped in
+to play the same role.
+
+\subsubsection{Use cases in authoring a PopulationModel}
+
+My model should assign each patient a toxDoseThreshold, who Variable type is DoseThreshold.
+The toxDoseThreshold should depend on a pkClearance value and an event-specific 
+pharmacodynamic value.
+The pkClearance value is to be obtained from 
+
+
+\subsection{ CTDesign}
+
+The components of a clinical trial design are:
+\begin{description}
+\item[ Eligibility] Criteria for eligibility read the VariableValues from the PopulationModel to determine if a generated patient can enroll in a trial.
+\item[ TreatmentAssignment] A rule governing assignment to a treatment arm, possibly stratified or based on previous assignments and outcomes.
+\item[ TreatmentPlan]  The initial plan for administering treatments to a patient; dependent on the TreatmentAssignment.
+\item[ TreatmentModification] Responses to observations of the patient.
+\item[ Conclusions] After termination of a clinical trial, this is a summary or list of summaries of all of the patient outcomes. 
+\end{description}
+
+Note that the relationship with \code<OutcomeModel> is a two-way street.
+
+
+\subsection{ OutcomeModels}
+
+Patient outcomes are generated
+by the interplay of patient characteristics and the treatment plan
+dictated by the study design.
+In the simplest case, 
+when a patient goes off-study,
+an outcome  model reads the patient characteristics generated stochastically,
+and the treatment received.
+The outcome is a function (possibly stochastic)
+of these inputs.
+
+
+The structure that we saw for the PopulationModel applies to the OutcomeModel.
+An initial set of outcome variables are generated,
+dependent only on VariableValues (provisions) from the PopulationModel
+and data describing the treatments received.
+Other outcomes can be 
+
+Outcomes are  ``visible'' if they are needed by either
+the study design's 
+
+There are two uses for the patient outcomes.  One is of course to feed into
+evaluation criteria, to assess the success of the clinical trial. The other is to 
+drive decisions in the management of the clinical trial.
+
+Again, the outcome model itself knows nothing about which variables 
+are observable. The observability of an outcome variable only matters   
+if the management of the clinical trial requires it.
+
+
+
+\section{Parameters, Requirements, and Provisions}
+
+
+\subsection{Parameters }
+A parameter is a constant that change only from scenario to scenario.  
+Parameters are held by slots in each class.
+Specification parameters often represent the parameters of a probability distribution,
+from which other values are derived.
+
+When a Specification object is instantiated, the parameter value is set and fixed.
+This is because, in evaluating a clinical trial design in a scenario, 
+the experiment for evaluating clinical trial designs must be well-defined.
+In precise terms, the distribution of
+outcomes should be well-defined.
+
+The experiment consists of repetitions of the simulation.
+The randomness of the outcome distribution comes from the randomness
+in drawing subjects from the PopulationModels, and the randomness in generating outcomes
+from the OutcomeModels.
+The randomness in estimating the outcome distribution comes from
+
+\section{Visualization of clinical trial performance}
+
+\comment<MUCH TO DO HERE. A BIG TOPIC>
+
+
+\subsection{Metaparameters}
+
+One use case involves calculating criteria such as operating characteristics not for a particular population model or outcome model, but rather averaged over a prior distribution for the parameters of those models. The current version of the CTDesignExplorer does not handle this use case, although a development version has some capacity for this.
+
+
+\section{Doing evaluation experiments}
+
+\subsection{Planning an evaluation experiment}
+
+\section{Discussion}
+
+
+\section{references}
+NOT FOR THE MANUSCRIPT--- just some notes to begin bibliography
+\begin{verbatim}
+
+ (Lalonde R, Kowalski K, Hutmacher M, Ewy W, Nichols D, Milligan P, et al. 
+ Model-based drug development. 
+ Clinical Pharmacology & Therapeutics 2007;82(1):21-32; 
+ Kowalski KG, Olson S, Remmers AE, Hutmacher MM. 
+ Modeling and simulation to support dose selection and 
+ clinical development of SC-75416, a selective COX-2 
+ inhibitor for the treatment of acute and chronic pain. 
+ Clinical Pharmacology & Therapeutics 2008;83(6):857-66). 
+\end{verbatim} 
+
+\end{document}
