@@ -21,6 +21,7 @@ setClass("VariableList", contains="list",
 )
 VariableList = function(vList) {
   if(!is(vList, "list")) vList = list(vList)
+  new("VariableList", vList)
 }
 #' Variables
 #' 
