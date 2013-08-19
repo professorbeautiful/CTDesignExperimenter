@@ -25,7 +25,9 @@ VariableGenerator = function(parameters=list(), provisions,
            requirements=requirements,
            generatorCode=generatorCode,
            outputVariable=outputVariable)
-  environment(vg@generatorCode) = list2env(parameters, new.env())
+  environment(vg@generatorCode) = new.env()
+  if(length(parameters) > 0)
+    environment(vg@generatorCode) = list2env(parameters, new.env())
   vg
 }
 

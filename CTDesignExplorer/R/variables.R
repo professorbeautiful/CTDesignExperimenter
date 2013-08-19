@@ -6,7 +6,7 @@ setClass("Variable",
                                        dataTypeDetail="ANY"),
          prototype=prototype(name="variableName", 
                              description="This is my string variable", 
-                             dataType="character")
+                             dataType="character",dataTypeDetail=NULLo
 )
 
 setClass("VariableList", contains="list",
