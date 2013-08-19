@@ -15,9 +15,12 @@ setValidity("VariableGeneratorList", VariableGeneratorListValidity)
 
 VariableGeneratorList = function(vgList) {
   if(is(vgList, "VariableGenerator"))
-    new("VariableGeneratorList", list(vgList))
+    vgList = new("VariableGeneratorList", list(vgList))
   else
-    new("VariableGeneratorList", vgList)
+    vgList = new("VariableGeneratorList", vgList)
+  if(is.null(names(vgList)))
+    names(vgList) = paste0("vg", 1:length(vgList))
+  vgList
 }
 
 setClass("VariableNetwork", contains="Specifier",
@@ -45,7 +48,7 @@ VariableNetwork = function(vgList, varNetworkList=NULL){
   provisions = new("VariableList", provisions)
   if(length(provisions) == 0) provisions = NULL
   network@provisions = provisions
-  vgNames = paste0("vg", 1:length(network@vgList))
+  vgNames = names(vgList)
   #  names(network@vgList) = vgNames ### no such slot
   provisionNames = sapply(network@vgList,
                           function(vg) vg@provisions@name)
@@ -57,18 +60,22 @@ VariableNetwork = function(vgList, varNetworkList=NULL){
   requirementMap = sapply(network@vgList, getReqs)
   ### From VGs to Variables.
   allRequirements = unique(unlist(requirementMap))
+  if(!is.list(allRequirements)) allRequirements = list(allRequirements)
   ## each requirement counted only once.
   allRequirementNames = sapply(allRequirements, function(req)req@name)
   ## but if 2 requirements have the same name, we need to know that. 
+  isRequiredHere = function(vg, req) {
+    if(length(vg@requirements)==1) return(identical(vg@requirements, req))
+    any(sapply(vg@requirements, FUN=identical, y=req))
+  }
+  findReqs = function(req)
+    sapply(network@vgList, isRequiredHere, req=req)
   reverseRequirementMap = 
-    sapply(allRequirements, function(req)
-      sapply(network@vgList, function(vg)
-        any(sapply(vg@requirements, FUN=identical, y=req))
-      ))
+    sapply(allRequirements, findReqs)
   ### From Variables to VGs.
   #   allVariables = union(provisions, unique(allRequirements))
   #   allVariableNames = sapply(allVariables, function(v) v@name)
-  dimnames(reverseRequirementMap) = list(paste0("vg",1:length(network@vgList)), allRequirementNames)
+  dimnames(reverseRequirementMap) = list(vgNames, allRequirementNames)
   print(reverseRequirementMap)
   # We need a check: no req Variable name should be repeated.
   # TODO here.
@@ -91,11 +98,13 @@ VariableNetwork = function(vgList, varNetworkList=NULL){
   network@candidates = candidates
    network
 }
-debug(VariableNetwork)
-vNexample = VariableNetwork(vgList=VariableGeneratorList(vgListExample)) 
-NetworkInteroperability(vNexample)
+#debug(VariableNetwork)
+
+
+
 #' getNetworkConnections
 #' 
+#' NOT USED?
 #' @return A data frame with three columns: vg, prov, req.
 #'  
 getNetworkConnections = function(vgList, verbose=FALSE){
@@ -140,44 +149,22 @@ NetworkInteroperability = function(network) {
               satisfies=names[cc == 1]
   ))
 }
-debug(NetworkInteroperability)
+#debug(NetworkInteroperability)
 vA = new("Variable",name="vA",description="vA",dataType="??")
 vB = new("Variable",name="vB",description="vB",dataType="??")
 vC = new("Variable",name="vC",description="vC",dataType="??")
 vD = new("Variable",name="vD",description="vD",dataType="??")
 vgListExample = list(
-  VariableGenerator(provisions=vA, generatorCode=function(){},
+  vg1=VariableGenerator(provisions=vA, generatorCode=function(){},
                     requirements=VariableList(list(vB,vC))),
-  VariableGenerator(provisions=vB, generatorCode=function(){},
+  vg2=VariableGenerator(provisions=vB, generatorCode=function(){},
                     requirements=VariableList(list(vA))),
-  VariableGenerator(provisions=vA, generatorCode=function(){},
+  vg3=VariableGenerator(provisions=vA, generatorCode=function(){},
                     requirements=VariableList(list(vD))))
 vNexample = VariableNetwork(vgList=VariableGeneratorList(vgListExample)) 
 NetworkInteroperability(vNexample)
 
 
-
-
-varListTempNames = paste0("v",c(1:4,4))
-varListTemp = lapply(varListTempNames, 
-                                      function(x)
-                                        new("Variable", 
-                                            name=x, description=x, dataType="character"))
-names(varListTemp) = varListTempNames
-incidencematrix = matrix(rbinom(25,1,1/2), nrow=5)
-incidencematrix[row(incidencematrix) >= col(incidencematrix)] = 0
-rownames(incidencematrix) = names(varListTemp)
-colnames(incidencematrix) = names(varListTemp)
-vgListTemp = VariableGeneratorList(vgList=lapply(1:5, function(N)
-  VariableGenerator(provisions=varListTemp[[N]], 
-                    requirements=new("VariableList", varListTemp[which(incidencematrix[N, ]==1)]),
-                    generatorCode=function()"hello",
-                    outputVariable=varListTemp[[N]],
-                    parameters=list(m=N) ### You need parameters? fixed, ok now.
-                    )
-))
-            
-vN =  VariableNetwork(vgList=vgListTemp)
 
   
 

@@ -6,8 +6,8 @@ setClass("Variable",
                                        dataTypeDetail="ANY"),
          prototype=prototype(name="variableName", 
                              description="This is my string variable", 
-                             dataType="character",dataTypeDetail=NULLo
-)
+                             dataType="character",dataTypeDetail=NULL
+))
 
 setClass("VariableList", contains="list",
          validity=function(object){
