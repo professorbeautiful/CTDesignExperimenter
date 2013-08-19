@@ -1,10 +1,12 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf390
 \cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Consolas;\f2\fnil\fcharset0 Consolas-Bold;
 \f3\fnil\fcharset0 HelveticaNeue;\f4\fnil\fcharset0 Georgia;\f5\fmodern\fcharset0 Courier;
-}
+\f6\fnil\fcharset0 Monaco;}
 {\colortbl;\red255\green255\blue255;\red217\green11\blue0;\red255\green83\blue8;\red206\green59\blue0;
 \red155\green44\blue1;\red38\green38\blue38;\red0\green135\blue135;\red213\green14\blue52;\red251\green0\blue7;
-\red61\green52\blue46;\red251\green251\blue249;\red234\green54\blue39;}
+\red61\green52\blue46;\red251\green251\blue249;\red234\green54\blue39;\red218\green219\blue223;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker .......}{\leveltext\leveltemplateid1\'07.......;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
 \margl1440\margr1440\vieww10800\viewh8400\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
@@ -258,7 +260,7 @@ Some notes on parameters etc.\
 \cf0 \ulnone 	new() could  use RNG to set parameter.  \
 	RNG parameters are in the class; realizations are in the instance.\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
-\cf0 \ul \ulc0   Outcomes:\
+\cf0 \ul   Outcomes:\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 \cf0 \ulnone Should Outcomes be organized like BasChar and PopModels?\
 Some outcomes may depend on others.\
@@ -428,7 +430,8 @@ git log --pretty=format:"%h - %an, %ar : %s"\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 {\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Git-Basics-Tips-and-Tricks"}}{\fldrslt \cf10 http://git-scm.com/book/en/Git-Basics-Tips-and-Tricks}}  for command line shortcuts.\
 \
-{\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Git-Branching-What-a-Branch-Is"}}{\fldrslt http://git-scm.com/book/en/Git-Branching-What-a-Branch-Is}}   "How does Git know what branch you\'92re currently on? It keeps a special pointer called HEAD. Note that this is a lot different than the concept of HEAD in other VCSs you may be used to, such as Subversion or CVS. In Git, this is a pointer to the local branch you\'92re currently on."\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+{\field{\*\fldinst{HYPERLINK "http://git-scm.com/book/en/Git-Branching-What-a-Branch-Is"}}{\fldrslt \cf10 http://git-scm.com/book/en/Git-Branching-What-a-Branch-Is}}   "How does Git know what branch you\'92re currently on? It keeps a special pointer called HEAD. Note that this is a lot different than the concept of HEAD in other VCSs you may be used to, such as Subversion or CVS. In Git, this is a pointer to the local branch you\'92re currently on."\
 "To switch to an existing branch, you run the 
 \f5 \cf12 \cb1 git checkout
 \f4 \cf10 \cb11  command."\
@@ -572,10 +575,118 @@ I've incorporated that into BaseCharSpecifier\
 \
 -----\
 \
-{\field{\*\fldinst{HYPERLINK "http://timelyportfolio.github.io/rCharts_rickshaw_gettingstarted/"}}{\fldrslt http://timelyportfolio.github.io/rCharts_rickshaw_gettingstarted/}}\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+{\field{\*\fldinst{HYPERLINK "http://timelyportfolio.github.io/rCharts_rickshaw_gettingstarted/"}}{\fldrslt \cf0 http://timelyportfolio.github.io/rCharts_rickshaw_gettingstarted/}}\
 looks interesting.\
 \
 ----\
 \
 "Failed to create server"  happens when you are already running the App. You have to close the page AND escape the loop.\
+\
+\
+2013-08-06\
+\
+In building the package, I got "invalid character" or something like that, because there is now the file classTree-explorations.R\
+which apparently does not terminate with a complete expression.\
+So when I moved files out (into inst/badR), the next one alphabetically then generated the same error.  When I move classTree-explorations.R into inst/badR, these errors go away.\
+\
+I was getting an error upon run() that turned out to be due to calling\
+htmlEscape() with text=character(0).\
+The file fixHtmlEscape.R puts a fixed version into the shiny package using copyInNamespace.\
+This allows the interface to run. Seems OK. But I still don't know the cause.\
+\
+The package builds fine OUTSIDE of RStudio,\
+but using the Build & Reload button, I get this:\
+\
+\pard\pardeftab720
+
+\f6 \cf0 \cb13 Warning: undefined slot classes in definition of "ConcurrentTrtsData": TimesToOutcomes(class "OptionalNumeric")\
+Warning: undefined slot classes in definition of "PatData": ID(class "OptionalNumeric"), BaseChars(class "OptionalNumeric"), PatTimes(class "OptionalNumeric")\
+Warning: undefined slot classes in definition of "CTData": CTTimes(class "OptionalNumeric"), Conclusions(class "NumericLogical")\
+Warning: undefined slot classes in definition of "BaseCharModelSpecifier": ConditionBaseCharNames(class "OptionalCharacter")\
+Error in .walkClassGraph(ClassDef, "contains", where, attr(ext, "conflicts")) : \
+  the 'superClass' list for class \'93NULL\'94, includes an undefined class \'93OptionalCharacter\'94\
+Error in setClassUnion("OptionalPopModelSpecifier", c("PopModelSpecifier",  : \
+  unable to create union class:  could not set members "NULL"\
+Error : unable to load R code in package \'91CTDesignExplorer\'92\
+ERROR: lazy loading failed for package \'91CTDesignExplorer\'92\
+* removing \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \cb1 \
+(The "undefined slot classes" are because I commented out a couple of setClassUnion lines.)\
+\
+The cause is unknown.\
+I've cleared the GlobalEnv and restarted the project, to no avail.\
+The setClassUnion lines run fine in console or in R CMD BUILD.\
+\
+Yes, but R CMD INSTALL gives the same problem.\
+\
+There are numerous discussions with similar problems.   Search walkClassGraph.\
+https://github.com/hadley/devtools/issues/168\
+\
+OK, problem solved.\
+.Rprofile contained library(CTDesignExplorer)\
+and you can't turn off with --vanilla inside RStudio Build&Reload.\
+(I used remove.packages(CTDesignExplorer) to discover this.)\
+\
+Now, we have collating problems.\
+See this useful message:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+{\field{\*\fldinst{HYPERLINK "http://tolstoy.newcastle.edu.au/R/e4/help/08/07/18223.html"}}{\fldrslt \cf0 http://tolstoy.newcastle.edu.au/R/e4/help/08/07/18223.html}}\
+\
+\
+2013-08-14\
+\
+Found the source of the htmlEscape error:    an <hr> tag.  Removed the tag.\
+This was helpful to debug:\
+	sys.calls()\
+	POS=7; sys.call(which=-POS); ls(env=sys.frame(-POS))\
+\
+Upon startup there is an error message that does not interfere with the functionality.\
+But good to try to understand:\
+\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural
+\ls1\ilvl0\cf0 {\listtext	.......	}                          instance\
+{\listtext	.......	}1 efficacyDoseThresholdOutcomeModel\
+{\listtext	.......	}2      toxDoseThresholdOutcomeModel\
+{\listtext	.......	}                   instance\
+{\listtext	.......	}1                      crm9\
+{\listtext	.......	}2 threePlusThree_five_tiers\
+{\listtext	.......	}3                      p2bd\
+{\listtext	.......	}Error in f.mainPanelHeader() : object 'input' not found\
+{\listtext	.......	}                   instance\
+{\listtext	.......	}1 doseThresholdPopModelSpec\
+{\listtext	.......	}Here in f.sim1CTbuttonUI \
+{\listtext	.......	}[1] "Value of sim1CTbutton is \\n"\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+getPopulationModelOutputs in PopulationModel.R is in progress. Very important to complete this stuff.\
+\
+\
+2013-08-17\
+\
+Succeeded in making PopulationModel (VariableNetwork,VN) object and drawing dependency graph.\
+Note distinction between requirements and provisions internal to a PM, and external.\
+internal it's for interoperability checking and ordering the evaluateOuput calls (and storing the results). Externally it's for fitting with other VNs, OMs, designs, etc.\
+There, the only requirements are those not met by the members of the VN.\
+\
+\
+\
+2013-08-18\
+\
+Somehow, v_clearanceRate got the dataTypeDetail set to a VariableValue!  logical(0).\
+Somehow, adding dataTypeDetail=NULL to the prototype made the problem go away.\
+\
+\
+2013-08-19\
+\
+In the code for VariableNetwork constructor,\
+for(slotName in names(getSlots(x=getClass("VariableNetwork"))) )\
+    `@<-`(network, slotName, get(slotName))\
+but when debugging, it's reported as \
+for (slotName in names(getSlots(x = getClass("VariableNetwork")))) `@<-`(network, \
+    "slotName", get(slotName))\
+Where did the quotes come from?\
+\
 }
