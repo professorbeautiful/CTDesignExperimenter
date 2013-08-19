@@ -5,14 +5,9 @@ Version: 1.3.8
 Date: 2013-08-19
 Author: Yuanyuan Wang and Roger Day
 Maintainer: Roger Day <day01@pitt.edu>
-Description: This package presents a highly sharable simulation experiment platform for evaluating
- clinical trial designs. The code base relies on S4 classes and methods, but details are hidden as much as possible. A scenario is a population model, study design, 
- and outcome model.
-In addition there are evaluation criterion  objects.
-  An action queue implements the simulation and allows for complex decision making at the patient level
- or CT level. The exchange of common data elements provides interoperability among the objects.
+Description: This package presents a highly sharable simulation experiment platform for evaluating clinical trial designs. The code base relies on S4 classes and methods, but details are hidden as much as possible. A scenario is a population model, study design, and outcome model.  In addition there are evaluation criterion  objects.  An action queue implements the simulation and allows for complex decision making at the patient level or CT level. The exchange of common data elements provides interoperability among the objects.
 License: GPL (>=2)
 LazyLoad: yes
 Depends: R (>= 2.10.1), methods
 Imports: shiny, shinyIncubator, RBioinf, RJSONIO
-Collate: AAA.R Variables.R VariableGenerator.R evaluateOutput.R clearance-and-thresholds.R NetworkInteroperability.R PopulationModel.R createCTDEcatalog.R graphs-variable-networks.R fixHtmlEscape.R patientToString.R CTresultToString.R expPlatform_ActionQ_v8.R run.R zzz.R smoketest.R
+Collate: AAA.R Variables.R VariableGenerator.R VariableNetwork.R evaluateOutput.R clearance-and-thresholds.R PopulationModel.R createCTDEcatalog.R graphs-variable-networks.R fixHtmlEscape.R patientToString.R CTresultToString.R expPlatform_ActionQ_v8.R run.R zzz.R smoketest.R
