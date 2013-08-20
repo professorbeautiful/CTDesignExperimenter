@@ -84,7 +84,7 @@ writeVariableFile = function(name, description, dataType, dataTypeDetail="",
   print(code)
 }
 
-writeVariableFile(name="howSmart", dataType="numeric", description="This is the guy-s IQ.")
+###  writeVariableFile(name="howSmart", dataType="numeric", description="This is the guy-s IQ.")
 ### You can't use dump on S4 objects.
 
 ############################################################
