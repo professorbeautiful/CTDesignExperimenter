@@ -14,13 +14,18 @@ VariableGeneratorListValidity = function(object){
 setValidity("VariableGeneratorList", VariableGeneratorListValidity) 
 
 VariableGeneratorList = function(vgList) {
+  theNames = names(vgList)
+  print(theNames)
+  if(is.null(theNames))
+    theNames = paste0("vg", 1:length(vgList))
+  print(theNames)
   if(is(vgList, "VariableGenerator"))
-    vgList = new("VariableGeneratorList", list(vgList))
+    vgListObj = new("VariableGeneratorList", list(vgList))
   else
-    vgList = new("VariableGeneratorList", vgList)
-  if(is.null(names(vgList)))
-    names(vgList) = paste0("vg", 1:length(vgList))
-  vgList
+    vgListObj = new("VariableGeneratorList", vgList)
+  print(names(vgListObj))
+  names(vgListObj@.Data) = theNames
+  vgListObj
 }
 
 setClass("VariableNetwork", contains="Specifier",
@@ -28,7 +33,7 @@ setClass("VariableNetwork", contains="Specifier",
                     allRequirements="list",
                     allRequirementNames="character",
                     requirementMap="list",
-                    reverseRequirementMap="matrix",
+                    requirementMatrix="matrix",
                     howManyNeedMe="numeric",
                     candidates="matrix")
 )
@@ -64,22 +69,23 @@ VariableNetwork = function(vgList, varNetworkList=NULL){
   ## each requirement counted only once.
   allRequirementNames = sapply(allRequirements, function(req)req@name)
   ## but if 2 requirements have the same name, we need to know that. 
-  isRequiredHere = function(vg, req) {
-    if(length(vg@requirements)==1) return(identical(vg@requirements, req))
-    any(sapply(vg@requirements, FUN=identical, y=req))
-  }
-  findReqs = function(req)
-    sapply(network@vgList, isRequiredHere, req=req)
-  reverseRequirementMap = 
-    sapply(allRequirements, findReqs)
+  provisionMap = sapply(vN@vgList, function(vg)
+    vg@provisions@name)
+  provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
+                              stringsAsFactors=FALSE)
+  requirementList = sapply(vN@vgList, function(vg)sapply(vg@requirements, slot, name="name"))
+  #  requirementMatrix = outer(vN@vgList, vN@allRequirements, isRequiredHere)
+  requirementMatrix = sapply(names(requirementList), 
+                             function(vg) unlist(requirementList) 
+                             %in% requirementList[[vg]])
+  rownames(requirementMatrix) = unlist(requirementList)
+  
   ### From Variables to VGs.
   #   allVariables = union(provisions, unique(allRequirements))
   #   allVariableNames = sapply(allVariables, function(v) v@name)
-  dimnames(reverseRequirementMap) = list(vgNames, allRequirementNames)
-  print(reverseRequirementMap)
   # We need a check: no req Variable name should be repeated.
   # TODO here.
-  howManyNeedMe = apply(reverseRequirementMap, 2, sum)
+  howManyNeedMe = apply(requirementMap, 1, sum)
   candidates = outer(allRequirementNames, provisionNames, "==")
   dimnames(candidates) = list(allRequirementNames, vgNames)
   candidateCounts = apply(candidates, 1, sum)
@@ -88,12 +94,11 @@ VariableNetwork = function(vgList, varNetworkList=NULL){
 #     eval(parse(text=paste0("`@<-`(network, ", slotName, 
 #                            ", get(\"", slotName, "\"))")))
 #   #`@<-`(network, slotName, get(slotName))
-  network@reverseRequirementMap = reverseRequirementMap
   network@requirements = VariableList(allRequirements[candidateCounts==0])
   network@allRequirements = allRequirements
   network@allRequirementNames = allRequirementNames
   network@requirementMap = requirementMap
-  network@reverseRequirementMap = reverseRequirementMap
+  network@requirementMatrix = requirementMatrix
   network@howManyNeedMe = howManyNeedMe
   network@candidates = candidates
    network
@@ -132,24 +137,6 @@ getNetworkConnections = function(vgList, verbose=FALSE){
 }
 
 
-#' NetworkInteroperability
-#' 
-#' @return A map from VGs to VGsrequirements Logical, TRUE if each req has exactly one vg with that Variable as its prov.
-#' For extra credit... add an attribute that includes the map
-#'  
-NetworkInteroperability = function(network) {
-  if(!is(network, "VariableNetwork"))
-    stop("NetworkInteroperability: ",
-         "network arg should be a VariableNetwork; is",
-         str(network))
-  cc = apply(network@candidates, 1, sum)
-  names = network@allRequirementNames
-  return(list(missing=names[cc == 0],
-              multiple=names[cc > 1],
-              satisfies=names[cc == 1]
-  ))
-}
-#debug(NetworkInteroperability)
 vA = new("Variable",name="vA",description="vA",dataType="??")
 vB = new("Variable",name="vB",description="vB",dataType="??")
 vC = new("Variable",name="vC",description="vC",dataType="??")
@@ -162,6 +149,8 @@ vgListExample = list(
   vg3=VariableGenerator(provisions=vA, generatorCode=function(){},
                     requirements=VariableList(list(vD))))
 vNexample = VariableNetwork(vgList=VariableGeneratorList(vgListExample)) 
+
+# getNetworkConnections(vNexample)
 NetworkInteroperability(vNexample)
 
 
