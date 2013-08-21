@@ -69,11 +69,11 @@ VariableNetwork = function(vgList, varNetworkList=NULL){
   ## each requirement counted only once.
   allRequirementNames = sapply(allRequirements, function(req)req@name)
   ## but if 2 requirements have the same name, we need to know that. 
-  provisionMap = sapply(vN@vgList, function(vg)
+  provisionMap = sapply(network@vgList, function(vg)
     vg@provisions@name)
   provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
                               stringsAsFactors=FALSE)
-  requirementList = sapply(vN@vgList, function(vg)sapply(vg@requirements, slot, name="name"))
+  requirementList = sapply(vgList, function(vg)sapply(vg@requirements, slot, name="name"))
   #  requirementMatrix = outer(vN@vgList, vN@allRequirements, isRequiredHere)
   requirementMatrix = sapply(names(requirementList), 
                              function(vg) unlist(requirementList) 
@@ -85,7 +85,7 @@ VariableNetwork = function(vgList, varNetworkList=NULL){
   #   allVariableNames = sapply(allVariables, function(v) v@name)
   # We need a check: no req Variable name should be repeated.
   # TODO here.
-  howManyNeedMe = apply(requirementMap, 1, sum)
+  howManyNeedMe = apply(requirementMatrix, 1, sum)
   candidates = outer(allRequirementNames, provisionNames, "==")
   dimnames(candidates) = list(allRequirementNames, vgNames)
   candidateCounts = apply(candidates, 1, sum)
