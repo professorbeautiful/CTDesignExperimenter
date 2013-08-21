@@ -20,7 +20,7 @@ sameVar = function(v1, v2) {
 
 #  PUT INTO examples... sameVar(vg_responseDoseThreshold@requirements, v_clearanceRate)
 
-findGeneratorNames = function(var, env=.GlobalEnv, menu=TRUE) {
+findGeneratorNames = function(var, env=parent.frame(), menu=TRUE) {
   # perhaps Variable should be a virtual Class, and 
   # each Variable a subClass.
   # VariableGenerator an instance of a subClass.
@@ -36,7 +36,7 @@ findGeneratorNames = function(var, env=.GlobalEnv, menu=TRUE) {
   return(vgList)
 }
 
-findGeneratorName = function(var, env=.GlobalEnv, menu=TRUE) {
+findGeneratorName = function(var, env=parent.frame(), menu=TRUE) {
   vgList = findGeneratorNames (var, env)
   if(length(vgList)==0) return (NULL)
   if(length(vgList)>1) {
@@ -46,7 +46,7 @@ findGeneratorName = function(var, env=.GlobalEnv, menu=TRUE) {
   return (vgList[[1]])  ### or get(vgList[[1]], envir=env)
 }
 
-findGenerator = function(var, env=.GlobalEnv, menu=FALSE) {
+findGenerator = function(var, env=parent.frame(), menu=FALSE) {
     get(findGeneratorName(var, env, menu), envir=env)
 }
       
@@ -54,7 +54,7 @@ findGenerator = function(var, env=.GlobalEnv, menu=FALSE) {
 ##To Examples:  findGeneratorName(vg_responseDoseThreshold@provisions)
 
 
-evaluateOutput = function(generator, envir=.GlobalEnv, alreadyDone=list()) {
+evaluateOutput = function(generator, envir=parent.frame(), alreadyDone=list()) {
   ## First, make the generatorCode function available.
   if(!is(generator, "VariableGenerator"))
     stop("evaluateOutput: generator should be a VariableGenerator")
