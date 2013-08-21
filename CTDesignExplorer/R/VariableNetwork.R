@@ -44,6 +44,13 @@ setClass("OutcomeModel", contains="VariableNetwork")
 
 setClass("Scenario", contains="VariableNetwork")
 
+requirementNames = function(vg){ 
+  if(is.null(vg@requirements)) return(NULL)
+  if(is(vg@requirements, "Variable"))
+    return(list(vg@requirements))
+  sapply(vg@requirements, slot, name="name")
+}
+
 VariableNetwork = function(vgList, varNetworkList=NULL){
   network = new("VariableNetwork", vgList=vgList)
   if(is(vgList, "VariableGenerator")) vgList = list(vgList)
@@ -73,7 +80,7 @@ VariableNetwork = function(vgList, varNetworkList=NULL){
     vg@provisions@name)
   provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
                               stringsAsFactors=FALSE)
-  requirementList = sapply(vgList, function(vg)sapply(vg@requirements, slot, name="name"))
+  requirementList = sapply(vgList, requirementNames)
   #  requirementMatrix = outer(vN@vgList, vN@allRequirements, isRequiredHere)
   requirementMatrix = sapply(names(requirementList), 
                              function(vg) unlist(requirementList) 
