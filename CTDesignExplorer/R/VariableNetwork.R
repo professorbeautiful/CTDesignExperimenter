@@ -157,8 +157,6 @@ vgListExample = list(
                     requirements=VariableList(list(vD))))
 vNexample = VariableNetwork(vgList=VariableGeneratorList(vgListExample)) 
 
-# getNetworkConnections(vNexample)
-NetworkInteroperability(vNexample)
 
 
 
