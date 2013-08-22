@@ -34,7 +34,7 @@ library(gRbase)
 pmEnv = function(pm) list2env(pm@vgList, new.env())
 
 
-pmTempConn = getPMconnections(pmTemp, verbose=F)
+# pmTempConn = getPMconnections(pmTemp, verbose=F)
 
 isRequiredHere = function(vg, req) {
   if(length(vg@requirements)==1) return(identical(vg@requirements, req))
@@ -184,6 +184,7 @@ library(ggplot2)
 #                           sapply(graph::edges(DAGexample), length),
 #                       ) )
 # edgeNames = apply(edgesAsMatrix[,2:1], 1, paste, sep="~", collapse="~")
+# pmTempConn = getPMconnections(pmTemp, verbose=F)
 # edgeLabels = pmTempConn["vg", ]
 # names(edgeLabels) = edgeNames
 #   
