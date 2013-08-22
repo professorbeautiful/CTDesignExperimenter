@@ -104,8 +104,8 @@ matsum = function(M)eval(parse(text=paste("matpow(M,",
                                  1:nrow(M), ")", collapse="+")))
 hasCycles = function(M) sum(diag(matsum(M))) > 0
 
-M = incidenceMatrix(vN)
-rotateStarts(M)   #### should throw error.
+M = incidenceMatrix(vNexample)
+try(rotateStarts(M))   #### should throw error.
 hasCycles(M)
 
 M["vg2", "vB"] = 0
