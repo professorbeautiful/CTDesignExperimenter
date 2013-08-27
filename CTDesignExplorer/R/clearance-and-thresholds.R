@@ -56,4 +56,11 @@ vNpharm = VariableNetwork(vgList=VariableGeneratorList(
     vg_toxDoseThreshold=vg_toxDoseThreshold))
 )  #### you need the names?
 
-evaluateVNoutputs(vNpharm)
+tempEnv = evaluateVNoutputs(vNpharm)
+printNetworkOutputs = function(networkEnv) {
+  for(v in ls(env=networkEnv)) {
+    vv = get(v, env=networkEnv)
+    catn(paste(v, vv))
+  }   ### Includes parameters.
+}
+printNetworkOutputs(tempEnv)
