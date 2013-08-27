@@ -53,42 +53,60 @@ findGenerator = function(var, env=parent.frame(), menu=FALSE) {
 ##To Examples:  findGeneratorName(vg_responseDoseThreshold@requirements)
 ##To Examples:  findGeneratorName(vg_responseDoseThreshold@provisions)
 
-
-evaluateOutput = function(generator, envir=parent.frame(), alreadyDone=list()) {
+evaluateGeneratorOutput = function(generator, envir=parent.frame(), alreadyDone=list()) {
   ## First, make the generatorCode function available.
   if(!is(generator, "VariableGenerator"))
     stop("evaluateOutput: generator should be a VariableGenerator")
-  valueList = alreadyDone
-  reqs = extractRequirements(generator)
-  if(length(reqs) > 0) {
-    if(is(reqs, "Variable")) reqs = list(reqs)
-    for(req in reqs) {
-      ###  If we have not already computed the answer,
-      ###  don't do it again.
-      if( ! (req@name %in% names(alreadyDone))) {
-        gen = findGenerator(req, env=envir)
-        valueList = c(valueList,
-                      evaluateOutput(gen, envir=env, alreadyDone=valueList))
-        #       for(vv in genOutput) {
-        #         genOutputList = list(vv@value)
-        #        names(genOutputList) = gen@provisions
-        #         names(genOutputList) = gen@provisions
-      }
-    }
-  }
-  if(length(valueList) > 0)
-    environment(generator@generatorCode) = 
-    list2env(valueList, environment(generator@generatorCode))
+  environment(generator@generatorCode) = envir  #function arg
   if(length(generator@parameters) > 0)
     environment(generator@generatorCode) = 
     list2env(generator@parameters, environment(generator@generatorCode))
-  print(ls(envir=environment(generator@generatorCode)))
+  ifVerboseCat("generatorCode_envir", ls(envir=environment(generator@generatorCode)))
   value = generator@generatorCode()
   #thisOutput = new("VariableValue", variable=generator@outputVariable, value=value)
-  valueList = c(value, valueList)
-  names(valueList)[[1]] = generator@provisions@name
-  return(valueList)
+  #  valueList = c(value, valueList)
+  #  names(valueList)[[1]] = generator@provisions@name
+  VariableValue(value, generator@provisions)
 }
+
+
+evaluateVNoutputs = function(vN, alreadyDone=list()) {
+  ## First, make the generatorCode function available.
+  envVariableValues = new.env()
+  if(!is(vN, "VariableNetwork"))
+    stop("evaluateVNoutputs: args should be a VariableNetwork")
+  iM = incidenceMatrix(vN)
+  iM = try(rotateStarts(iM))
+  if(is(iM, "try-error")) {
+    cat("evaluateVNoutputs: iM try-error \n")
+    browser()
+  }
+  for(vName in rownames(iM)) { 
+    ifVerboseCat("Processing node ", vName)
+    ifVerboseCat(union(vN@allRequirementNames, names(vN@provisions)))
+    if(vName %in% union(vN@allRequirementNames, names(vN@provisions))) {
+      ifVerboseCat("Skipping Variable ", vName)
+    }   else {
+      #      vg = findGenerator(vName, env=parent.frame())
+      ifVerboseCat("Processing vg ", vName)
+      vg = vN@vgList[[vName]]
+      value = evaluateGeneratorOutput(generator=vg, envir=envVariableValues)
+      provName = vg@provisions@name
+      ifVerboseCat("Assigning ", value@.Data, " to ", provName)
+      
+      if(length(provName) > 1) stop("more than one provision name")
+      assign(provName, value, envir=envVariableValues, inherits=FALSE)
+    }
+  }
+  ifVerboseCat(ls(envir=envVariableValues))
+  return(envVariableValues)
+}
+#
+
+vNvalueEnv = evaluateVNoutputs(vNexample)
+ls(env=vNvalueEnv)
+
+
 #debug(evaluateOutput)
 #To Examples:   evaluateOutput(vg_responseDoseThreshold)
 
