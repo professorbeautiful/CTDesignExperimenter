@@ -13,7 +13,7 @@ setClass("VariableList", contains="list",
          validity=function(object){
            for(v in object){
 #             print(v)
-             if(!is(v, "Variable"))
+             if(!is(v, "Variable") & !is.null(v))
                return("VariableList is invalid: not a Variable")
            }
            return(TRUE)
@@ -51,19 +51,44 @@ v_sexAsCharacter = new("Variable", name="sex", description="my sex variable", da
 print(v_sexAsCharacter)
 
 setClass("VariableValue", contains="ANY",
-         slots=list(variable="Variable"),
-         validity=function(object){
-#           print(object)  ### "Data part is undefined for general S4 object" !!!
-           dataPart = object@.Data
-           print(is(dataPart, "numeric"))
-           if(is(dataPart, object@variable@dataType))
-             return(TRUE)
-           return(paste("Invalid value for variable ", 
-                        object@variable@name,
-                        ". Looking for ", object@variable@dataType,
-                        ", found ", typeof(dataPart)))
-         }
-)
+         slots=list(variable="Variable"))
+#,         validity=validityVariableValue)
+
+
+VariableValue = function(value, variable) {
+  dataPart = value
+  ifVerboseCat("dataPart", dataPart)
+  ifVerboseCat("variable@dataType", variable@dataType)
+  ifVerboseCat("typeof(dataPart)", typeof(dataPart))
+  #  if( ! is(dataPart, variable@dataType)) ### why is this different??
+  if( ! (typeof(dataPart) == variable@dataType))
+    stop(paste0("Invalid value for variable ", 
+               variable@name,
+               ". Looking for ", variable@dataType,
+               ", found ", typeof(dataPart)))
+  return(new("VariableValue", dataPart, variable=variable))
+}
+
+#VariableValue(123, vA)
+
+#VariableValue("xyz", vA)
+
+
+
+# validityVariableValue = function(object){
+##   confused about dataType somehow.
+# #           print(object)  ### "Data part is undefined for general S4 object" !!!
+#            dataPart = object@.Data
+#            ifVerboseCat("dataPart", dataPart)
+#            ifVerboseCat("object@variable@dataType", object@variable@dataType)
+#            if(is(dataPart, object@variable@dataType))
+#              return(TRUE)
+#            return(paste("Invalid value for variable ", 
+#                         object@variable@name,
+#                         ". Looking for ", object@variable@dataType,
+#                         ", found ", typeof(dataPart)))
+#          }
+# )
 # new("VariableValue")
 
 #### I don't know if we will use this...
@@ -140,39 +165,8 @@ extractRequirements = function(generator){
 
 
 
-
-setClass("VariableNetwork", contains="Specifier")
-###  for combining variables into a patient description model.
-### -- or call it "VariableGeneratorBundle" ???
-# Then PopulationModel can be a subclass of VariableNetwork.
-
-
-
-## This will allow you to access a variable's value like this:
-
-v_sexVariable = new("Variable", name="sex", 
-                  description="my sex variable, as an unrestricted string", dataType="character")
-### simpler than subclassing, I think.
-
-v_ageVariable = new("Variable", name="age", 
-                  description="age, as an unrestricted number", dataType="numeric")
-v_ageCategoryVariable = new("Variable", name="age", 
-                          description="age, binned by decade", 
-                          dataType="factor",
-                          dataTypeDetail=paste0("(", 10*(0:9), ",", 10*(1:10), "]"))
-v_clearanceRate = new("Variable", name="clearanceRate", description="generic clearance rate variable",
-                            dataType="numeric")
-v_toxDoseThreshold = new("Variable", name="toxDoseThreshold", description="dose threshold for binary toxicity event",
-                            dataType="numeric")
-v_responseDoseThreshold = new("Variable", name="responseDoseThreshold", description="dose threshold for binary response event",
-                       dataType="numeric")
-
-new("VariableValue", 94, variable=v_ageVariable)
-try(silent=TRUE,
-    new("VariableValue", "xyz", variable=v_ageVariable)) ### fail
-
-
 setMethod("print", "VariableValue",
           function(x)
             cat("Variable: ", x@variable@.Data, "  Value: ", x@value, "\n"))
 
+setMethod("names", "VariableList", function(x) sapply(x, function(v)v@name))
