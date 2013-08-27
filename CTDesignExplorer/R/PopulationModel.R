@@ -1,5 +1,7 @@
 cat("======== PopulationModel.R================\n")
 
+setClass("PopulationModel", contains="VariableNetwork")
+
 PopulationModel = function(vgList, varNetworkList=NULL) {
   return(as(VariableNetwork(vgList, varNetworkList), "PopulationModel"))
 }
