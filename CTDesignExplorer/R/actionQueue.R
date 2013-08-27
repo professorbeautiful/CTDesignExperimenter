@@ -1,6 +1,5 @@
 cat("======== actionQueue.R  ================\n")
 
-setClass("DesignSpecifier", contains="VariableNetwork")
 
 
 ## Method: generatePatsOutcomes
