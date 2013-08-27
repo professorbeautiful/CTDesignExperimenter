@@ -73,3 +73,14 @@ clear = function(){
   }
 }
 
+
+#' from Yuanyuan
+#' ## Function: instantiateS4Object
+# className is a character 
+# "slots" is a named list with the names corresponding to the slot names
+instantiateS4Object <- function(className,slots){
+  Object <- new(className)
+  for ( SlotName in names(slots))
+    slot(Object,SlotName) <- slots[[SlotName]]
+  return(Object)
+} 
