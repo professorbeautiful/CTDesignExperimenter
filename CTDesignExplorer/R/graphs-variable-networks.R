@@ -14,105 +14,29 @@ pmTemp = PopulationModel(vgList=VariableGeneratorList(
        vg_toxDoseThreshold=vg_toxDoseThreshold, 
        vg_responseDoseThreshold=vg_responseDoseThreshold)))
 ### The VGs have to be named! (for list2env)
+
 names(pmTemp@vgList)
 
-evaluateOutput(vg_responseDoseThreshold)
+evaluateVNoutputs(pmTemp)
+
 pmTemp@vgList[["vg_clearanceRate"]]@parameters$clearanceLocation = 60
-evaluateOutput(vg_responseDoseThreshold, 
+evaluateGeneratorOutput(vg_responseDoseThreshold, 
                env=list2env(pmTemp@vgList, new.env())  )
 vg_clearanceRate@parameters$clearanceSD=0
-evaluateOutput(vg_clearanceRate) 
+evaluateGeneratorOutput(vg_clearanceRate) 
 pmTemp@vgList$vg_clearanceRate@parameters$clearanceSD=0
-evaluateOutput(pmTemp@vgList$vg_clearanceRate, 
+evaluateGeneratorOutput(pmTemp@vgList$vg_clearanceRate, 
                env=list2env(pmTemp@vgList, new.env())  )
-evaluateOutput(vg_clearanceRate, 
+evaluateGeneratorOutput(vg_clearanceRate, 
                env=list2env(pmTemp@vgList, new.env())  )
 
 ########
 library(gRbase)
 
-pmEnv = function(pm) list2env(pm@vgList, new.env())
 
+findGenerator("vA", env=vNexample)
 
-# pmTempConn = getPMconnections(pmTemp, verbose=F)
-
-isRequiredHere = function(vg, req) {
-  if(length(vg@requirements)==1) return(identical(vg@requirements, req))
-  any(sapply(vg@requirements, FUN=identical, y=req))
-}
-
-
-rotateStarts = function(M, whenToStop=3, verbose=F) {
-  isUpperTriangular = function(M) sum(M[row(M)>=col(M)])==0
-  if(isUpperTriangular(M)) return(M)
-  if(verbose) print(colSums(M))
-  startNodes = which(colSums(M)==0)
-  startNodeNames = rownames(M)[startNodes]
-  if(verbose) print(startNodes)
-  if(verbose) print(startNodeNames)
-  if(length(startNodes)==0) stop("Cannot rotate")
-  newOrder = c(startNodes, (1:nrow(M)) %except% startNodes)
-  if(verbose) catn("newOrder=", newOrder)
-  M = M[newOrder, newOrder]
-  if(isUpperTriangular(M)) return(M)
-  lowerRight.in = M[-c(1:length(startNodes)), -c(1:length(startNodes))] 
-  lowerRight = rotateStarts( lowerRight.in, whenToStop=whenToStop,verbose=verbose)
-  if(verbose) print(lowerRight)
-  M = M[c(startNodeNames, rownames(lowerRight)), 
-        c(startNodeNames, rownames(lowerRight))]
-  M
-}
-
-incidenceMatrix =  function(vN) {  ## migrate to VariableNetwork
-  provisionMap = sapply(vN@vgList, function(vg)
-    vg@provisions@name)
-  provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
-                              stringsAsFactors=FALSE)  
-  requirementList = sapply(vN@vgList, function(vg)sapply(vg@requirements, slot, name="name"))
-#  requirementMatrix = outer(vN@vgList, vN@allRequirements, isRequiredHere)
-  requirementMatrix = sapply(names(requirementList), 
-                             function(vg) unlist(requirementList) 
-                             %in% requirementList[[vg]])
-  rownames(requirementMatrix) = unlist(requirementList)
-#   requirementMatrix = sapply(vN@vgList, function(vg) 
-#     sapply(vN@allRequirements, isRequiredHere, vg=vg))
-  pairs = expand.grid(rownames(requirementMatrix), stringsAsFactors=FALSE,
-              colnames(requirementMatrix))
-  reqEdges = pairs[which(c(requirementMatrix)), ]
-  colnames(reqEdges) = c("Variable", "VarGen")
-  
-  allVars = union(reqEdges$Variable, provisionEdges$Variable)
-  nVars = length(allVars)
-  allVGs = union(reqEdges$VarGen, provisionEdges$VarGen)
-  nVG = length(allVGs)
-  allNodes = c(allVars, allVGs)
-  incidenceMatrix = matrix(0, nrow = nVars+nVG, ncol = nVars+nVG)
-  dimnames(incidenceMatrix) = list(allNodes, allNodes)  
-  for(r in 1:nrow(reqEdges)) 
-    incidenceMatrix[reqEdges[r,1], reqEdges[r,2]] = 1
-  for(r in 1:nrow(provisionEdges)) 
-    incidenceMatrix[provisionEdges[r,1], provisionEdges[r,2]] = 1
-  return(incidenceMatrix)
-}
-
-
-
-#### incidenceMatrix looks good!
-  #### fix it up... make it a DAG
-matpow = function(M, p=2) eval(parse(text=paste(rep("M",p),collapse="%*%")))  
-matsum = function(M)eval(parse(text=paste("matpow(M,", 
-                                 1:nrow(M), ")", collapse="+")))
-hasCycles = function(M) sum(diag(matsum(M))) > 0
-
-M = incidenceMatrix(vNexample)
-try(rotateStarts(M))   #### should throw error.
-hasCycles(M)
-
-M["vg2", "vB"] = 0
-M["vg3", "vA"] = 0
-M["vg3", "vC"] = 1
-rotateStarts(M)
-hasCycles(M)
+vNexample@vgList
   
 
 
