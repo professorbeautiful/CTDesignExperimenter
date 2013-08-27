@@ -20,32 +20,22 @@ names(pmTemp@vgList)
 evaluateVNoutputs(pmTemp)
 
 pmTemp@vgList[["vg_clearanceRate"]]@parameters$clearanceLocation = 60
-evaluateGeneratorOutput(vg_responseDoseThreshold, 
-               env=list2env(pmTemp@vgList, new.env())  )
-vg_clearanceRate@parameters$clearanceSD=0
-evaluateGeneratorOutput(vg_clearanceRate) 
-pmTemp@vgList$vg_clearanceRate@parameters$clearanceSD=0
-evaluateGeneratorOutput(pmTemp@vgList$vg_clearanceRate, 
-               env=list2env(pmTemp@vgList, new.env())  )
-evaluateGeneratorOutput(vg_clearanceRate, 
-               env=list2env(pmTemp@vgList, new.env())  )
+
+
+# evaluateGeneratorOutput(vg_responseDoseThreshold, 
+#                env=list2env(pmTemp@vgList, new.env())  )
+# vg_clearanceRate@parameters$clearanceSD=0
+# evaluateGeneratorOutput(vg_clearanceRate) 
+# pmTemp@vgList$vg_clearanceRate@parameters$clearanceSD=0
+# evaluateGeneratorOutput(pmTemp@vgList$vg_clearanceRate, 
+#                env=list2env(pmTemp@vgList, new.env())  )
+# evaluateGeneratorOutput(vg_clearanceRate, 
+#                env=list2env(pmTemp@vgList, new.env())  )
 
 ########
-library(gRbase)
-
-
-findGenerator("vA", env=vNexample)
-
-vNexample@vgList
-  
-
-
+#library(gRbase)
 #######  ### My bipartite graph:
-
-library(ggplot2)
-  
-
-
+#library(ggplot2)
 #library("bipartite")
     
   #### For use wth Rgraphviz--  which seems really limited!! Most 
