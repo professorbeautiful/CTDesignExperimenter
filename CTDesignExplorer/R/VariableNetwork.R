@@ -40,11 +40,6 @@ setClass("VariableNetwork", contains="Specifier",
                     candidates="ANY")
 )
 
-setClass("PopulationModel", contains="VariableNetwork")
-
-setClass("OutcomeModel", contains="VariableNetwork")
-
-setClass("Scenario", contains="VariableNetwork")
 
 getRequirementNames = function(vg){ 
   if(is.null(vg@requirements)) return(NULL)
@@ -54,8 +49,20 @@ getRequirementNames = function(vg){
 }
 
 VariableNetwork = function(vgList, varNetworkList=NULL){
+  if(is(vgList, "VariableGenerator")) vgList = VariableGeneratorList(list(vgList))
+  if(!is.null(varNetworkList)) {
+    if(is(varNetworkList, "VariableNetwork")) varNetworkList = list(varNetworkList)
+    for(vN in varNetworkList) {
+      if(!is(vN, "VariableNetwork")) 
+        stop("varNetworkList should be a list of VariableNetworks")
+      vgList = c(vgList, vN@vgList@.Data)
+    }
+    if(any(duplicated(names(vgList)))) 
+      stop("VariableNetwork: all vg names must be unique")
+    vgList = VariableGeneratorList(vgList=vgList)
+  }
   network = new("VariableNetwork", vgList=vgList)
-  if(is(vgList, "VariableGenerator")) vgList = list(vgList)
+
   provisions = c(lapply(vgList, function(vg) vg@provisions))
   provisions = provisions[!sapply(provisions, is.null)]
   provisions = unique(provisions)   ###### outside view!
@@ -114,7 +121,7 @@ VariableNetwork = function(vgList, varNetworkList=NULL){
     candidates = list()
     candidateCounts = numeric(0)
   }
-  browser()
+#  browser()
      #  ifVerboseCat("candidates for reqs: ", candidateCounts)
      #   for(slotName in names(getSlots(x=getClass("VariableNetwork"))) )
      #     eval(parse(text=paste0("`@<-`(network, ", slotName, 
