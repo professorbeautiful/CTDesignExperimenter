@@ -10,4 +10,4 @@ License: GPL (>=2)
 LazyLoad: yes
 Depends: R (>= 2.10.1), methods
 Imports: shiny, shinyIncubator, RBioinf, RJSONIO
-Collate: AAA.R Variables.R VariableGenerator.R VariableNetwork.R evaluateOutput.R createVariableCatalog.R createCTDEcatalog.R clearance-and-thresholds.R PopulationModel.R graphs-variable-networks.R fixHtmlEscape.R patientToString.R CTresultToString.R expPlatform_ActionQ_v8.R run.R zzz.R smoketest.R
+Collate: AAA.R Variables.R VariableGenerator.R VariableNetwork.R evaluateOutput.R createVariableCatalog.R createCTDEcatalog.R clearance-and-thresholds.R PopulationModel.R graphs-variable-networks.R fixHtmlEscape.R patientToString.R CTresultToString.R outcomeModel.R designs.R scenarios.R criteria.R actionQueue.R run.R zzz.R smoketest.R
