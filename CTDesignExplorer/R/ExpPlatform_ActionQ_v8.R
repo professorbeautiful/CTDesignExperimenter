@@ -1,212 +1,8 @@
-## Class:ConcurrentTrtsData
-# This class represents data from a set of concurrent treatments for a patient
-# The number of concurrent treatments is an integer >= 1
-# TrtAllos is a data frame which may have columns for TrtName, Dose,Dose level, Unit, Route, StartTime and EndTime 
-setClass("ConcurrentTrtsData",
-         representation(TrtAllos="data.frame",Outcomes="numeric",TimesToOutcomes="OptionalNumeric"),
-         prototype=list(TimesToOutcomes=NULL))
 
-## Class: PatData
-# This class represents data from a patient
-# ConcurrentTrtsDataList is a list of data from different sets of concurrent treatments
-# PatTimes may include enrollment time, off-CT time for a patient
-setClass("PatData",
-         representation(ID="OptionalNumeric",BaseChars="OptionalNumeric",ConcurrentTrtsDataList="list",
-                        PatTimes="OptionalNumeric"),
-         prototype=list(ID=NULL,BaseChars=NULL,PatTimes=NULL),
-         validity=function(object){
-           if (length(object@ConcurrentTrtsDataList)==0) TRUE
-           else{
-             if(! all(Check<-sapply(object@ConcurrentTrtsDataList, function(x) is(x,"ConcurrentTrtsData"))))
-               stop("The following elements are not objects of the ConcurrentTrtsData class:","\n",paste(which(!Check), collapse=","),"\n" )
-             else TRUE
-           }
-         }
-)
-    
-## Class: CTData
-# This class represents data from a single CT (clinical trial).
-# CTTimes may include switching-stage time and stopping-CT time.
-setClass("CTData",
-         representation(PatsData="list",CTTimes="OptionalNumeric",Conclusions="NumericLogical"),
-         prototype=list(CTTimes=NULL),
-         validity=function(object){
-           if (length(object@PatsData)==0) TRUE
-           else{
-             if(! all(Check<-sapply(object@PatsData, function(x) is(x,"PatData"))))
-               stop("The following elements are not objects of the PatData class:","\n",paste(which(!Check), collapse=","),"\n" )
-             else TRUE
-           }
-         }
-)
-        
-### Classes and Methods for Action Queue
-## Class: Action
-# OtherArgs:the arguments whose values are obtained from the method call within which this action is generated; 
-# OtherArgs is a named list 
-# GlobalTime in an "Action" object refers to the time when the action method is called.
-# In an action queue, all GlobalTime's should have the same reference time point.
-# If no time specificBaseCharModelSpecifieration is available in the design specification, GlobalTime can be 1,2,3...for
-# first action, second action, third action, etc in an action queue and when a new action is added to
-# the queue, its GlobalTime is (GlobalTime of the last action in a queue + 1)
-setClass("Action",representation(MethodCall="character",OtherArgs="list",GlobalTime="numeric"))
-    
-## Method: getOtherArgs
-setGeneric("getOtherArgs",function(action) standardGeneric("getOtherArgs"))
-
-setMethod("getOtherArgs",signature(action="Action"),
-    function(action){
-        OtherArgs <- action@OtherArgs 
-        NArgs <- length(OtherArgs)
-        if (NArgs != 0){
-            for ( i in 1:length(OtherArgs))
-                assign(names(OtherArgs)[i],OtherArgs[[i]],envir=parent.frame())
-        }
-    }
-)
-    
-## Class: ActionQueue
-# An Action Queque is in the ascending temproal order of dispatching actions
-setClass("ActionQueue",representation(ActionQ="list"),
-    validity=function(object){
-        if (length(object@ActionQ)!=0){
-            if(! all(Check<-sapply(object@ActionQ, function(x) is(x,"Action"))))
-            stop("The following elements are not objects of the Action class:","\n",paste(which(!Check), collapse=","),"\n" )
-            else TRUE
-        }
-        else TRUE
-    }
-)    
-
-## Method: addAction
-setGeneric("addAction",function(currentActionQ,newAction) standardGeneric("addAction"))
-
-setMethod("addAction",signature(currentActionQ="ActionQueue",newAction="Action"),
-    function(currentActionQ,newAction){
-        # Number of Actions in the current action queue
-        NActions <- length(currentActionQ@ActionQ)
-        if (NActions == 0)
-            currentActionQ@ActionQ <- c(currentActionQ@ActionQ, newAction)
-        else { 
-            CurrentGlobalTimes <- sapply(currentActionQ@ActionQ,function(x) x@GlobalTime)
-            NewGlobalTime <- newAction@GlobalTime
-            # New action will be the last one to be dispatched among the actions that have the same 
-            # GlobalTime as newGlobalTime
-            if (CurrentGlobalTimes[NActions] <= NewGlobalTime) currentActionQ@ActionQ <- c(currentActionQ@ActionQ, newAction)
-            else{
-                IndexAfterNewAction <- min((1:NActions)[CurrentGlobalTimes > NewGlobalTime])
-                currentActionQ@ActionQ[IndexAfterNewAction:(NActions+1)] <- c(newAction, currentActionQ@ActionQ[IndexAfterNewAction:NActions])
-            }
-        }
-        return(currentActionQ)
-    }
-) # It returns a new action queue
-        
-### Classes and Methods for population model
-## Class: BaseCharModelSpecifier
-setClass("BaseCharModelSpecifier",
-         contains="Specifier",
-    representation(BaseCharName="character",
-                   ConditionBaseCharNames="OptionalCharacter",
-                   RGenFun="character"),
-    prototype = list(BaseCharName="noName", 
-                     ConditionBaseCharNames = NULL,
-                     RGenFun="NA")
-)
-setMethod("initialize", signature=signature("BaseCharModelSpecifier"),
-          function(.Object, ...) {
-            .Object=callNextMethod(.Object, ...)
-            .Object@parameters$BaseCharName = .Object@BaseCharName
-#            .Object@requirements = c(.Object@requirements, .Object@ConditionBaseCharNames)
-            .Object@provisions = c(.Object@provisions, .Object@BaseCharName)  
-            .Object
-  })
-## Method: generateBaseChar  
-# this method can only be dispatched within the method "generateBaseChars"  
-setGeneric("generateBaseChar",
-           function(baseCharModelSpec) 
-             standardGeneric("generateBaseChar"))
-setMethod("generateBaseChar",
-          signature(baseCharModelSpec="BaseCharModelSpecifier"),
-    function(baseCharModelSpec){       
-        BaseChar <- eval(parse(
-          text=baseCharModelSpec@RGenFun) 
-             # , envir=baseCharModelSpec # you can find slots but not package:stats.
-              #           ,enclos="package:stats" ### error.
-          ) ## sad. you have to prepend slots with "baseCharModelSpec@"
-        ### .self@ doesnt work,  with(baseCharModelSpec,... doesnt work.
-        names(BaseChar) <- baseCharModelSpec@BaseCharName
-        return(BaseChar)
-    }
-)
-
-## Method: getProvisions
-setGeneric("getProvisions",function(spec) standardGeneric("getProvisions"))
-
-setMethod("getProvisions",signature(spec="BaseCharModelSpecifier"),
-    function(spec){
-        return(spec@BaseCharName)
-    }
-)
-
-## Method: getRequirements
-setGeneric("getRequirements",function(spec) standardGeneric("getRequirements"))
-
-setMethod("getRequirements",signature(spec="BaseCharModelSpecifier"),
-    function(spec){
-        if(is.null(spec@ConditionBaseCharNames)) return(character(0))
-        else return(spec@ConditionBaseCharNames)
-    }
-)
-    
-## Class: PopModelSpecifier
-setClass("PopModelSpecifier",representation(PopModelSpec="list"),
-         contains="Specifier",
-    validity=function(object){
-        PopModelSpec <- object@PopModelSpec
-        if(! all(Check<-sapply(PopModelSpec, function(x) is(x,"BaseCharModelSpecifier"))))
-            stop("The following elements are not objects of the BaseCharModelSpecifier class:","\n",paste(which(!Check), collapse=","),"\n" )
-        # make sure the elements in the popModelSpec are listed in the order of generating baseline characteristics
-        Provisions <- character(0)
-        for ( i in 1 : length(PopModelSpec)){
-            if(any(is.na(match(getRequirements(PopModelSpec[[i]]),Provisions))))
-                stop("The conditioning baseline characteristics of the baseline characteristic model ",paste(i)," are not
-                    generated in the previous ones of the list")
-            Provisions <- c(Provisions, getProvisions(PopModelSpec[[i]]))
-        }     
-        return (TRUE)
-    }
-)
-    
-## Class: OptionalPopModelSpecifier
-setClassUnion("OptionalPopModelSpecifier",
-              c("PopModelSpecifier","NULL"))
-
-# This method is to get provisions from an "OptionalPopModelSpecifier" object
-setMethod("getProvisions",signature(spec="OptionalPopModelSpecifier"),
-    function(spec){
-        if(is.null(spec)) BaseChars=character(0)
-        else BaseChars <- c(sapply(spec@PopModelSpec,function(x) x@BaseCharName))
-        return(list(BaseChars=BaseChars))
-    }
-)
-    
-## Method: generateBaseChars
-setGeneric("generateBaseChars",function(popModelSpec) standardGeneric("generateBaseChars"))
-setMethod("generateBaseChars",signature(popModelSpec="PopModelSpecifier"),
-    function(popModelSpec){ 
-        BaseChars <- sapply(popModelSpec@PopModelSpec,function(object) assign(object@BaseCharName, generateBaseChar(object),pos=1))
-        sapply(popModelSpec@PopModelSpec,function(object) rm(list=object@BaseCharName,pos=1))
-        return(BaseChars)
-    }
-) # It returns a named numeric vector for baseline characteristics
-    
-## Method: generatePatsBaseChars
+#' generatePatientsForAccrual
 # Assume generating patient baseline charatceristics is the first action that occurs on a patient 
 # nPats: number of patients
-setGeneric("generatePatsBaseChars",function(popModelSpec,nPats,currentCTData) standardGeneric("generatePatsBaseChars"))
-setMethod("generatePatsBaseChars",signature(popModelSpec="OptionalPopModelSpecifier",nPats="numeric",currentCTData="CTData"),
-    function(popModelSpec,nPats,currentCTData){ 
+generatePatientsForAccrualfunction(popModelSpec,nPats,currentCTData){ 
         if (!is.null(popModelSpec))
            NPatsData <- sapply(1:nPats,function(x) new("PatData",BaseChars=generateBaseChars(popModelSpec)))  
         else 
@@ -535,7 +331,7 @@ setGeneric("generateInitialActions", function(designSpec) standardGeneric("gener
 setMethod("generateInitialActions",signature(designSpec="APlusBSpecifier"),
     function(designSpec){
         A <- designSpec@A
-        Action1 <- new("Action",MethodCall="generatePatsBaseChars(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
+        Action1 <- new("Action",MethodCall="generatePatientsForAccrual(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
             OtherArgs=list(NPats=A),GlobalTime=0)
         Action2 <- new("Action",MethodCall="allocateTrts(designSpec=designSpec,currentCTData=CurrentCTData,currentGlobalTime=CurrentGlobalTime,
                     patsIndices=PatsIndices)",
@@ -552,7 +348,7 @@ setMethod("generateInitialActions",signature(designSpec="CRMSpecifier"),
         sapply(slotNames("CRMSpecifier"),function(x) assign(x,slot(designSpec,x),pos=1))
         if(OutcomeModelType=="Exponential") assign("ScaledDoses",InitialProbGuesses,pos=1)
         else assign("ScaledDoses",log(InitialProbGuesses/(1-InitialProbGuesses))-InterceptLogitModel,pos=1)
-        Action1 <- new("Action",MethodCall="generatePatsBaseChars(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
+        Action1 <- new("Action",MethodCall="generatePatientsForAccrual(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
             OtherArgs=list(NPats=NPatsPerCohort),GlobalTime=0)
         Action2 <- new("Action",MethodCall="allocateTrts(designSpec=designSpec,currentCTData=CurrentCTData,currentGlobalTime=CurrentGlobalTime,
                     patsIndices=PatsIndices)",
@@ -772,7 +568,7 @@ setMethod("checkStoppingRule",signature(designSpec="APlusBSpecifier",currentCTDa
                     return (list(NewCTData=currentCTData))
                 }
                 else{
-                    NewAction1 <- new("Action",MethodCall="generatePatsBaseChars(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
+                    NewAction1 <- new("Action",MethodCall="generatePatientsForAccrual(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
                         OtherArgs=list(NPats=B),GlobalTime=currentGlobalTime + 1)
                     NewAction2 <- new("Action",MethodCall="allocateTrts(designSpec=designSpec,currentCTData=CurrentCTData,currentGlobalTime=CurrentGlobalTime,patsIndices=PatsIndices)",
                         OtherArgs=list(PatsIndices=(NPats+1):(NPats+B)),GlobalTime=currentGlobalTime + 2)
@@ -788,7 +584,7 @@ setMethod("checkStoppingRule",signature(designSpec="APlusBSpecifier",currentCTDa
                     return (list(NewCTData=currentCTData))
                 }
                 else{
-                    NewAction1 <- new("Action",MethodCall="generatePatsBaseChars(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
+                    NewAction1 <- new("Action",MethodCall="generatePatientsForAccrual(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
                         OtherArgs=list(NPats=A),GlobalTime=currentGlobalTime + 1)
                     NewAction2 <- new("Action",MethodCall="allocateTrts(designSpec=designSpec,currentCTData=CurrentCTData,currentGlobalTime=CurrentGlobalTime,patsIndices=PatsIndices)",
                         OtherArgs=list(PatsIndices=(NPats+1):(NPats+A)),GlobalTime=currentGlobalTime + 2)
@@ -808,7 +604,7 @@ setMethod("checkStoppingRule",signature(designSpec="APlusBSpecifier",currentCTDa
                 return (list(NewCTData=currentCTData))
             }
             else{
-                NewAction1 <- new("Action",MethodCall="generatePatsBaseChars(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
+                NewAction1 <- new("Action",MethodCall="generatePatientsForAccrual(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
                     OtherArgs=list(NPats=A),GlobalTime=currentGlobalTime + 1)
                 NewAction2 <- new("Action",MethodCall="allocateTrts(designSpec=designSpec,currentCTData=CurrentCTData,currentGlobalTime=CurrentGlobalTime,patsIndices=PatsIndices)",
                     OtherArgs=list(PatsIndices=(NPats+1):(NPats+A)),GlobalTime=currentGlobalTime + 2)
@@ -816,7 +612,7 @@ setMethod("checkStoppingRule",signature(designSpec="APlusBSpecifier",currentCTDa
             }
         }
         else {
-            NewAction1 <- new("Action",MethodCall="generatePatsBaseChars(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
+            NewAction1 <- new("Action",MethodCall="generatePatientsForAccrual(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
                 OtherArgs=list(NPats=B),GlobalTime=currentGlobalTime + 1)
             NewAction2 <- new("Action",MethodCall="allocateTrts(designSpec=designSpec,currentCTData=CurrentCTData,currentGlobalTime=CurrentGlobalTime,patsIndices=PatsIndices)",
                 OtherArgs=list(PatsIndices=(NPats+1):(NPats+B)),GlobalTime=currentGlobalTime + 2)
@@ -848,14 +644,14 @@ setMethod("checkStoppingRule",signature(designSpec="CRMSpecifier",currentCTData=
         else if(!is.null(InitialStageDoseLevels) & is.null(currentCTData@CTTimes)){
             NewAction1 <- new("Action",MethodCall="checkSwitchingStageRule(designSpec=designSpec,currentCTData=CurrentCTData,currentGlobalTime=CurrentGlobalTime)",
                 OtherArgs=list(),GlobalTime=currentGlobalTime+1)
-            NewAction2 <- new("Action",MethodCall="generatePatsBaseChars(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
+            NewAction2 <- new("Action",MethodCall="generatePatientsForAccrual(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
                 OtherArgs=list(NPats=NPatsPerCohort),GlobalTime=currentGlobalTime + 2)
             NewAction3 <- new("Action",MethodCall="allocateTrts(designSpec=designSpec,currentCTData=CurrentCTData,currentGlobalTime=CurrentGlobalTime,patsIndices=PatsIndices)",
                 OtherArgs=list(PatsIndices=(NPats+1):(NPats+NPatsPerCohort)),GlobalTime=currentGlobalTime + 3)
             return (list(NewActions=c(NewAction1,NewAction2,NewAction3)))
         }
         else{
-            NewAction1 <- new("Action",MethodCall="generatePatsBaseChars(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
+            NewAction1 <- new("Action",MethodCall="generatePatientsForAccrual(popModelSpec=popModelSpec,nPats=NPats,currentCTData=CurrentCTData)",
                 OtherArgs=list(NPats=NPatsPerCohort),GlobalTime=currentGlobalTime + 1)
             NewAction2 <- new("Action",MethodCall="allocateTrts(designSpec=designSpec,currentCTData=CurrentCTData,currentGlobalTime=CurrentGlobalTime,patsIndices=PatsIndices)",
                 OtherArgs=list(PatsIndices=(NPats+1):(NPats+NPatsPerCohort)),GlobalTime=currentGlobalTime + 2)
@@ -1179,99 +975,6 @@ setMethod("checkRequirementsNew",
           return(NULL)
           }
 )
-#checkRequirements(crm9, toxDoseThresholdOutcomeModel)
-setMethod("checkRequirementsNew", 
-          signature("character", "character"),  ### cannot include ... here
-          function(needy, giver){  ### See which of the requirements are provided by ANY of ... 
-            return(checkRequirements(get(needy), get(giver)))
-          }
-)
-# checkRequirements("crm9", "toxDoseThresholdOutcomeModel")
-# setMethod("checkRequirements", signature(needySpec="Specifier", helpfulSpec="Specifier"),
-#           function(needySpec, helpfulSpec){  ### See which of the requirements are provided by ANY of ... 
-#             !is.na(match(getRequirements(needySpec), getProvisions(helpfulSpec)))
-#           }
-# )                                
-# setMethod("checkRequirements", signature(targetSpec="Specifier", anyOrAll=c("any","all"), ...),
-#           function(targetSpec, ...){  ### See which of the requirements are provided by ANY of ... 
-#             
-#           }
-# )                                
-
-setGeneric("checkRequirements",function(designSpecs,popModelSpecs,outcomeModelSpecs,evalSpecs) standardGeneric("checkRequirements"))
-### Called by doExperiment.
-
-setMethod("checkRequirements",signature(designSpecs="list",popModelSpecs="list",outcomeModelSpecs="list",
-    evalSpecs="list"),function(designSpecs,popModelSpecs,outcomeModelSpecs,evalSpecs){
-        ValidSetsMatrix <- NULL
-        for ( DesignIndex in 1:length(designSpecs)){
-            DesignSpec <- designSpecs[[DesignIndex]] 
-            for ( PopMIndex in 1:length(popModelSpecs)){
-                PopModelSpec <- popModelSpecs[[PopMIndex]]
-                if(any(is.na(match(getRequirements(DesignSpec)$BaseChars, getProvisions(PopModelSpec)$BaseChars)))){
-                    cat("The population model ",PopMIndex," cannot provide the baseline characteristics the design ", 
-                        DesignIndex," requires!","\n","\n")
-                    next
-                }
-                else{
-                    for(OutcomeMIndex in 1:length(outcomeModelSpecs)){
-                        OutcomeModelSpec <- outcomeModelSpecs[[OutcomeMIndex]]
-                        if(any(
-                            is.na(match(getRequirements(OutcomeModelSpec)$BaseChars, getProvisions(PopModelSpec)$BaseChars)),
-                            is.na(match(getRequirements(OutcomeModelSpec)$TrtAllos, getProvisions(DesignSpec)$TrtAllos)),
-                            is.na(match(getRequirements(DesignSpec)$Outcomes, getProvisions(OutcomeModelSpec)$Outcomes)),
-                            is.na(match(getRequirements(DesignSpec)$TimesToOutcomes, getProvisions(OutcomeModelSpec)$TimesToOutcomes)))){
-                          if(any(is.na(match(getRequirements(OutcomeModelSpec)$BaseChars, getProvisions(PopModelSpec)$BaseChars))))
-                            cat("The population model ",PopMIndex," cannot provide the baseline characteristics the outcome model ", 
-                                OutcomeMIndex," requires!","\n","\n")
-                          if(any(is.na(match(getRequirements(OutcomeModelSpec)$TrtAllos, getProvisions(DesignSpec)$TrtAllos))))
-                            cat("The design ",DesignIndex," cannot provide the treatment allocations the outcome model ", 
-                                OutcomeMIndex," requires!","\n","\n")
-                          if(any(is.na(match(getRequirements(DesignSpec)$Outcomes, getProvisions(OutcomeModelSpec)$Outcomes))))
-                            cat("The outcome model ",OutcomeMIndex," cannot provide the outcomes the design ", 
-                                DesignIndex," requires!","\n","\n")
-                          if(any(is.na(match(getRequirements(DesignSpec)$TimesToOutcomes, getProvisions(OutcomeModelSpec)$TimesToOutcomes))))
-                            cat("The outcome model ",OutcomeMIndex," cannot provide the times to outcomes the design ", 
-                                DesignIndex," requires!","\n","\n")
-                          next
-                        }
-                        else{
-                            for(CriterionIndex in 1:length(evalSpecs)){
-                                EvalSpec <- evalSpecs[[CriterionIndex]]
-                                if(any(
-                                    is.na(match(getRequirements(EvalSpec)$BaseChars, getProvisions(PopModelSpec)$BaseChars)),
-                                    is.na(match(getRequirements(EvalSpec)$Outcomes, getProvisions(OutcomeModelSpec)$Outcomes)),
-                                    is.na(match(getRequirements(EvalSpec)$CTTimes, getProvisions(DesignSpec)$CTTimes)),
-                                    is.na(match(getRequirements(EvalSpec)$Conclusions, getProvisions(DesignSpec)$Conclusions)),
-                                    is.na(match(getRequirements(EvalSpec)$TrtAllos, getProvisions(DesignSpec)$TrtAllos)))){
-                                    if(any(is.na(match(getRequirements(EvalSpec)$BaseChars, getProvisions(PopModelSpec)$BaseChars))))
-                                    cat("The population model ",PopMIndex," cannot provide the baseline characteristics the criterion ", 
-                                        CriterionIndex," requires!","\n","\n") 
-                                    if(any(is.na(match(getRequirements(EvalSpec)$Outcomes, getProvisions(OutcomeModelSpec)$Outcomes))))
-                                    cat("The outcome model ",OutcomeMIndex," cannot provide the outcomes the criterion ", 
-                                        CriterionIndex," requires!","\n","\n")   
-                                    if(any(is.na(match(getRequirements(EvalSpec)$CTTimes, getProvisions(DesignSpec)$CTTimes))))
-                                    cat("The design ",DesignIndex," cannot provide the CT level event times the criterion ", 
-                                        CriterionIndex," requires!","\n","\n") 
-                                    if(any(is.na(match(getRequirements(EvalSpec)$Conclusions, getProvisions(DesignSpec)$Conclusions))))
-                                    cat("The design ",DesignIndex," cannot provide the conclusions the criterion ", 
-                                        CriterionIndex," requires!","\n","\n")   
-                                    if(any(is.na(match(getRequirements(EvalSpec)$TrtAllos, getProvisions(DesignSpec)$TrtAllos))))
-                                    cat("The design ",DesignIndex," cannot provide the treatment allocations the criterion ", 
-                                        CriterionIndex," requires!","\n","\n")     
-                                    next
-                                }
-                                else ValidSetsMatrix <- rbind(ValidSetsMatrix,c(DesignIndex,PopMIndex,OutcomeMIndex,CriterionIndex))
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if(!is.null(ValidSetsMatrix)) colnames(ValidSetsMatrix) <- c("Design","PopM","OutcomeM","Criterion")
-        return(ValidSetsMatrix)
-    }
-)
 
 ## Method: doExperiment
 # nReps: number of clinical trial replications to simulate
@@ -1330,13 +1033,5 @@ setMethod("doExperiment",signature(designSpecs="list",popModelSpecs="list",outco
     }
 )
         
-## Function: instantiateS4Object
-# className is a character 
-# "slots" is a named list with the names corresponding to the slot names
-instantiateS4Object <- function(className,slots){
-    Object <- new(className)
-    for ( SlotName in names(slots))
-        slot(Object,SlotName) <- slots[[SlotName]]
-    return(Object)
-} 
+
              
