@@ -56,3 +56,20 @@ ifVerboseCat = function(...){
     catn(f, ": ", ...)
   invisible(NULL)
 }
+
+clear = function(){
+  answer <- repeat {
+    cat("Delete ALL files in .GlobalEnv?\n  (cannot be undone): ")
+    answer <- readline()
+    answer <- gsub("(\\w)", "\\U\\1", answer, perl=T)
+    answer <- pmatch(answer, c("YES",  "NO", "N"))
+      if (!is.na(answer)) {
+        if(answer %in% 1)  
+        rm(list=ls(all=T, pos=1), pos=1)
+      else
+        cat("Aborted. No objects deleted.\n")
+      return(invisible(NULL))
+    }
+  }
+}
+

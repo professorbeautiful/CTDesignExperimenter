@@ -1,21 +1,5 @@
 cat("======== createCTDEcatalog.R ================\n")
 
-clear = function(){
-  answer <- repeat {
-    cat("Delete ALL files in .GlobalEnv?\n  (cannot be undone): ")
-    answer <- readline()
-    answer <- gsub("(\\w)", "\\U\\1", answer, perl=T)
-    answer <- pmatch(answer, c("YES",  "NO", "N"))
-      if (!is.na(answer)) {
-        if(answer %in% 1)  
-        rm(list=ls(all=T, pos=1), pos=1)
-      else
-        cat("Aborted. No objects deleted.\n")
-      return(invisible(NULL))
-    }
-  }
-}
-
 createVariableCatalog = function() {
   v_sexVariable = new("Variable", name="sex", 
                       description="my sex variable, as an unrestricted string", dataType="character")  
