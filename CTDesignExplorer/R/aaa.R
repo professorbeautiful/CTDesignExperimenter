@@ -41,3 +41,18 @@ withNames =
                   n = temp$n;
                   names(x) <- n; 
                   x}
+
+ifVerboseCat = function(...){
+  #print(paste0("ifVerboseCat: sys.call(-1)=", sys.call(-1)))
+  f=try(as.character(parse(text=sys.call(-1)))[1] )
+  if(class(f) == "try-error") return(invisible(NULL))
+  if(!exists("verboseOptions")) verboseOptions = logical(0)
+  if(is.na(verboseOptions[f])) {
+    verboseOptions[f] <- TRUE
+    assign("verboseOptions", verboseOptions, pos=1, immediate=TRUE)
+    #ifVerboseCat(verboseOptions)
+  }
+  if(verboseOptions[f]) 
+    catn(f, ": ", ...)
+  invisible(NULL)
+}
