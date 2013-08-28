@@ -238,9 +238,9 @@ isRequiredHere = function(vg, req) {
 }
 
 
-rotateStarts = function(M, whenToStop=3, verbose=F) {
+permuteToUpperTriangular = function(M, whenToStop=3, verbose=F) {
   if(! is.matrix(M)) {catn("M"); print(M);
-                      warning("rotateStarts: M is not a matrix")
+                      warning("permuteToUpperTriangular: M is not a matrix")
                       return(M)
   }
   isUpperTriangular = function(M) sum(M[row(M)>=col(M)])==0
@@ -256,7 +256,7 @@ rotateStarts = function(M, whenToStop=3, verbose=F) {
   M = M[newOrder, newOrder]
   if(isUpperTriangular(M)) return(M)
   lowerRight.in = M[-c(1:length(startNodes)), -c(1:length(startNodes))] 
-  lowerRight = rotateStarts( lowerRight.in, whenToStop=whenToStop,verbose=verbose)
+  lowerRight = permuteToUpperTriangular( lowerRight.in, whenToStop=whenToStop,verbose=verbose)
   if(verbose) print(lowerRight)
   M = M[c(startNodeNames, rownames(lowerRight)), 
         c(startNodeNames, rownames(lowerRight))]
@@ -307,8 +307,8 @@ hasCycles = function(M) sum(diag(matsum(M))) > 0
 #     vg1=VariableGenerator(provisions=vA, requirements=VariableList(
 #       new("Variable", ))), )
 # M = incidenceMatrix(vNexampleWithCycles)
-# try(rotateStarts(M))   #### should throw error.
+# try(permuteToUpperTriangular(M))   #### should throw error.
 # hasCycles(M)
 
-# rotateStarts(M)
+# permuteToUpperTriangular(M)
 # hasCycles(M)

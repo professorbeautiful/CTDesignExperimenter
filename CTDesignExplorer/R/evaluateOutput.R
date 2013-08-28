@@ -76,7 +76,7 @@ evaluateVNoutputs = function(vN, alreadyDone=list()) {
   if(!is(vN, "VariableNetwork"))
     stop("evaluateVNoutputs: args should be a VariableNetwork")
   iM = incidenceMatrix(vN)
-  iM = try(rotateStarts(iM))
+  iM = try(permuteToUpperTriangular(iM))
   if(is(iM, "try-error")) {
     cat("evaluateVNoutputs: iM try-error \n")
     browser()
@@ -105,7 +105,7 @@ evaluateVNoutputs = function(vN, alreadyDone=list()) {
 
 
 incidenceMatrix(vNexample)
-rotateStarts(..())
+permuteToUpperTriangular(..())  ### permute to upper triangular.
 vNvalueEnv = evaluateVNoutputs(vNexample)
 ls(env=vNvalueEnv)
 
@@ -115,6 +115,7 @@ printVVenv = function(env) {
     catn(vv@variable@dataType, ": ", vv@variable@name, "=", vv)
   }
 }
+
 printVVenv(vNvalueEnv)
 
 
