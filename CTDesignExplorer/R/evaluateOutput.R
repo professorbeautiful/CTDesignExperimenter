@@ -106,7 +106,11 @@ evaluateVNoutputs = function(vN, alreadyDone=list()) {
 vNvalueEnv = evaluateVNoutputs(vNexample)
 ls(env=vNvalueEnv)
 
-
-#debug(evaluateOutput)
-#To Examples:   evaluateOutput(vg_responseDoseThreshold)
+printVVenv = function(env) {
+  for(vv in ls(env=env)) {
+    vv = get(vv, env=env)
+    catn(vv@variable@dataType, ": ", vv@variable@name, "=", vv)
+  }
+}
+printVVenv(vNvalueEnv)
 
