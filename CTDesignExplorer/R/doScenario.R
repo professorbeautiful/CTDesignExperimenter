@@ -1,5 +1,9 @@
 cat("======== doScenario.R  ================\n")
 
+setClass("Scenario", contains="VariableNetwork",
+         slots=list(popModel="PopulationModel", design="Design", 
+                    outcomeModel="OutcomeModel"))
+
 ####  Loop over sim1CT, collecting information to feed into the criteria ####
 
 
