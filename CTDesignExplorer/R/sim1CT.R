@@ -26,8 +26,14 @@ generatePatientsForAccrual = function(popModelSpec,nPats,currentCTData){
 
 ## Method: sim1CT
 # This method simulates a single CT data under the specified population model (optional, which can be NULL), design, outcome model.            
-setGeneric("sim1CT",function(designSpec,popModelSpec,outcomeModelSpec) standardGeneric("sim1CT"))
-setMethod("sim1CT",signature(designSpec="DesignSpecifier",
+
+sim1CT = function(scenario){
+         if(missing(scenario))
+          stop("sim1CT: scenario is missing")
+         
+}
+                             
+setMethod("sim1CT", signature(designSpec="DesignSpecifier",
                              popModelSpec="OptionalPopModelSpecifier",
                              outcomeModelSpec="OutcomeModelSpecifier"),
           function(designSpec,popModelSpec,outcomeModelSpec){
