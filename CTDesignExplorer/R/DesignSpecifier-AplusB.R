@@ -160,3 +160,55 @@ setMethod("checkStoppingRule",
             }
           }
 ) 
+
+
+# It returns a list consisting of a new CT data and a list of new actions
+setMethod("allocateTrts",signature(designSpec="APlusBSpecifier",currentCTData="CTData",currentGlobalTime="numeric",
+                                   patsIndices="numeric"),
+          function(designSpec,currentCTData,currentGlobalTime,patsIndices){
+            # Total Number of patients in the current CT data
+            NPats <- length(currentCTData@PatsData)
+            # Number of current patients
+            NCurrentPats <- length(patsIndices)
+            TierDoses <- designSpec@TierDoses
+            # Design parameters
+            A <- designSpec@A
+            B <- designSpec@B
+            C <- designSpec@C 
+            D <- designSpec@D 
+            E <- designSpec@E
+            APlusB <- A+B
+            # When only first A patients have been enrolled to CT
+            if (NPats == A)
+              ThisPatConcurrentTrtsDataList <- list(new("ConcurrentTrtsData",TrtAllos=data.frame(Dose=TierDoses[1])))
+            # When >A patients have been enrolled to CT
+            else{
+              # Dose vector for each patient that has been treated, in the ascending order of treatement times/enrollment times
+              PreviousDoses <- sapply(currentCTData@PatsData[1:(NPats-NCurrentPats)],function(x) x@ConcurrentTrtsDataList[[1]]@TrtAllos$Dose)
+              # Previous dose
+              PreviousDose <- PreviousDoses[NPats-NCurrentPats]
+              # Previous dose level
+              PreviousDoseLevel <- which(TierDoses==PreviousDose)
+              # Indices for patients who are on previous dose
+              PatsIndicesOnPreviousDose <- (1:(NPats-NCurrentPats))[PreviousDoses==PreviousDose]
+              # Number of patients on previous dose, which can be either A or (A+B)
+              NPatsOnPreviousDose <- length(PatsIndicesOnPreviousDose)
+              # Number of toxicity outcomes observed on previous dose
+              NToxsOnPreviousDose <- sum(rep(1,NPatsOnPreviousDose)[sapply(PatsIndicesOnPreviousDose,function(x)
+                currentCTData@PatsData[[x]]@ConcurrentTrtsDataList[[1]]@Outcomes == 1)])
+              if ((NPatsOnPreviousDose == A & NToxsOnPreviousDose < C )|(NPatsOnPreviousDose == APlusB  & NToxsOnPreviousDose <= E))
+                ThisPatConcurrentTrtsDataList <- list(new("ConcurrentTrtsData",TrtAllos=data.frame(Dose=TierDoses[PreviousDoseLevel+1])))
+              else if (NPatsOnPreviousDose == A & NToxsOnPreviousDose >= C & NToxsOnPreviousDose <= D)
+                ThisPatConcurrentTrtsDataList <- list(new("ConcurrentTrtsData",TrtAllos=data.frame(Dose=PreviousDose)))
+              else ThisPatConcurrentTrtsDataList <- list(new("ConcurrentTrtsData",TrtAllos=data.frame(Dose=TierDoses[PreviousDoseLevel-1])))
+            }
+            for ( i in patsIndices)
+              currentCTData@PatsData[[i]]@ConcurrentTrtsDataList <- ThisPatConcurrentTrtsDataList
+            NewAction1 <- new("Action",MethodCall="generatePatsOutcomes(outcomeModelSpec=outcomeModelSpec,patsIndices=PatsIndices,currentCTData=CurrentCTData)",
+                              OtherArgs=list(PatsIndices=patsIndices),GlobalTime=currentGlobalTime+1)
+            NewAction2 <- new("Action",MethodCall="checkStoppingRule(designSpec=designSpec,currentCTData=CurrentCTData,currentGlobalTime=CurrentGlobalTime)",
+                              OtherArgs=list(),GlobalTime=currentGlobalTime+2)
+            return(list(NewCTData=currentCTData,NewActions=c(NewAction1,NewAction2)))
+          }
+)
+
