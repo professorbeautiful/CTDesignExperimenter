@@ -103,6 +103,9 @@ evaluateVNoutputs = function(vN, alreadyDone=list()) {
 }
 #
 
+
+incidenceMatrix(vNexample)
+rotateStarts(..())
 vNvalueEnv = evaluateVNoutputs(vNexample)
 ls(env=vNvalueEnv)
 
@@ -113,4 +116,5 @@ printVVenv = function(env) {
   }
 }
 printVVenv(vNvalueEnv)
+
 
