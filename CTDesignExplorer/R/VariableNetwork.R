@@ -3,18 +3,19 @@ cat("=========== VariableNetwork.R ===========\n")
 
 setClass("VariableGeneratorList", contains="list")
 
-VariableGeneratorListValidity = function(object){
-  for(vg in object@.Data){
-    if(!is(vg, "VariableGenerator"))
-      return("VariableGeneratorList: "
-             %&% "validity error: not all "
-             %&% " components are VariableGenerator")
-  }
-  return(TRUE)
-}
-setValidity("VariableGeneratorList", VariableGeneratorListValidity) 
+# VariableGeneratorListValidity = function(object){
+#   for(vg in object@.Data){
+#     if(!is(vg, "VariableGenerator"))
+#       return("VariableGeneratorList: "
+#              %&% "validity error: not all "
+#              %&% " components are VariableGenerator")
+#   }
+#   return(TRUE)
+# }
+# setValidity("VariableGeneratorList", VariableGeneratorListValidity) 
 
-VariableGeneratorList = function(vgList) {
+VariableGeneratorList = function(vgList=NULL) {
+  if(is.null(vgList)) return(new("VariableGeneratorList", list()))
   theNames = names(vgList)
   if(is.null(theNames))
     theNames = paste0("vg", 1:length(vgList))
@@ -24,6 +25,13 @@ VariableGeneratorList = function(vgList) {
     vgListObj = new("VariableGeneratorList", vgList)
   print(names(vgListObj))
   names(vgListObj@.Data) = theNames
+  ### validity
+  for(vg in vgListObj@.Data){
+    if(!is(vg, "VariableGenerator"))
+      stop("VariableGeneratorList: "
+             %&% "validity error: not all "
+             %&% " components are VariableGenerator")
+  }
   vgListObj
 }
 
@@ -48,8 +56,9 @@ getRequirementNames = function(vg){
   sapply(vg@requirements, slot, name="name")
 }
 
-VariableNetwork = function(vgList, varNetworkList=NULL){
-  if(is(vgList, "VariableGenerator")) vgList = VariableGeneratorList(list(vgList))
+VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
+  if(is.null(vgList)) vgList = list()
+  if(is(vgList, "VariableGenerator")) vgList = list(vgList)
   if(!is.null(varNetworkList)) {
     if(is(varNetworkList, "VariableNetwork")) varNetworkList = list(varNetworkList)
     for(vN in varNetworkList) {
@@ -186,9 +195,7 @@ vB = new("Variable",name="vB",description="vB",dataType="double")
 vC = new("Variable",name="vC",description="vC",dataType="double")
 vD = new("Variable",name="vD",description="vD",dataType="double")
 vE = new("Variable",name="vE",description="vE",dataType="double")
-# > is(as(7, "double"), "double")
-# [1] FALSE
-# OBOY
+
 
 vgListExample = list(
   vg1=VariableGenerator(provisions=vA, generatorCode=function(){vB * vC},
