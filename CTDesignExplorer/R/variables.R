@@ -2,12 +2,10 @@ cat("======== Variables.R ================\n")
 
 setClass("Variable", 
          slots=list(name="character", description="character", 
-                                       dataType="character",
-                                       dataTypeDetail="ANY"),
+                                       checkDataType="function"),
          prototype=prototype(name="variableName", 
                              description="This is my string variable", 
-                             dataType="character",dataTypeDetail=NULL
-))
+                             checkDataType=function()TRUE))
 
 setClass("VariableList", contains="list",
          validity=function(object){
@@ -43,11 +41,17 @@ setClass("Specifier",
                         provisions=NULL)
 )
 
+printFunctionBody = function(f) attributes(attributes(f)$srcref)$srcfile$lines
+
 setMethod("print", "Variable", function(x)
-  cat(" ", x@name, " (", x@dataType, ")\n")  ### Omits description.
+  cat(" ", x@name, " (", printFunctionBody(x@checkDataType), ")\n")  ### Omits description.
 )   
 
-v_sexAsCharacter = new("Variable", name="sex", description="my sex variable", dataType="character")
+is.nonnegative.vector = function(x) { is.numeric(x) & all(x>=0)}
+is.nonnegative.number = function(x) { is.numeric(x) & (x>=0)}
+
+v_sexAsCharacter = new("Variable", name="sex", description="my sex variable", 
+                       checkDataType=function(x) is(x,"character"))
 print(v_sexAsCharacter)
 
 setClass("VariableValue", contains="ANY",
@@ -58,14 +62,16 @@ setClass("VariableValue", contains="ANY",
 VariableValue = function(value, variable) {
   dataPart = value
   ifVerboseCat("dataPart", dataPart)
-  ifVerboseCat("variable@dataType", variable@dataType)
+  # ifVerboseCat("variable@checkDataType", variable@checkDataType)
   ifVerboseCat("typeof(dataPart)", typeof(dataPart))
-  #  if( ! is(dataPart, variable@dataType)) ### why is this different??
-  if( ! (typeof(dataPart) == variable@dataType))
+  #  if( ! is(dataPart, variable@checkDataType)) ### why is this different??
+  if( ! ( variable@checkDataType(dataPart)))
     stop(paste0("Invalid value for variable ", 
                variable@name,
-               ". Looking for ", variable@dataType,
-               ", found ", typeof(dataPart)))
+               ", found ", typeof(dataPart),
+         "but failed checkDataType():\n\t", 
+         printFunctionBody( variable@checkDataType)
+))
   return(new("VariableValue", dataPart, variable=variable))
 }
 
@@ -76,23 +82,23 @@ VariableValue = function(value, variable) {
 
 
 # validityVariableValue = function(object){
-##   confused about dataType somehow.
+##   confused about checkDataType somehow.
 # #           print(object)  ### "Data part is undefined for general S4 object" !!!
 #            dataPart = object@.Data
 #            ifVerboseCat("dataPart", dataPart)
-#            ifVerboseCat("object@variable@dataType", object@variable@dataType)
-#            if(is(dataPart, object@variable@dataType))
+#            ifVerboseCat("object@variable@checkDataType", object@variable@checkDataType)
+#            if(is(dataPart, object@variable@checkDataType))
 #              return(TRUE)
 #            return(paste("Invalid value for variable ", 
 #                         object@variable@name,
-#                         ". Looking for ", object@variable@dataType,
+#                         ". Looking for ", object@variable@checkDataType,
 #                         ", found ", typeof(dataPart)))
 #          }
 # )
 # new("VariableValue")
 
 #### I don't know if we will use this...
-writeVariableFile = function(name, description, dataType, dataTypeDetail="", 
+writeVariableFile = function(name, description, checkDataType, checkDataTypeDetail="", 
                              author=system("echo $USER",intern=TRUE),
                              time=Sys.time()){
   filename = paste(name, as.numeric(time), "R", sep=".")
@@ -100,16 +106,16 @@ writeVariableFile = function(name, description, dataType, dataTypeDetail="",
     name %&%
     "', description='" %&% 
     description %&%
-    "', dataType='" %&% 
-    dataType %&%
-    "'" %&% {if(!(dataTypeDetail=="")) 
-      ", dataTypeDetail='" %&% dataTypeDetail %&% "'"}  %&%
+    "', checkDataType='" %&% 
+    checkDataType %&%
+    "'" %&% {if(!(checkDataTypeDetail=="")) 
+      ", checkDataTypeDetail='" %&% checkDataTypeDetail %&% "'"}  %&%
     ")"
   write(code, filename)
   print(code)
 }
 
-###  writeVariableFile(name="howSmart", dataType="numeric", description="This is the guy-s IQ.")
+###  writeVariableFile(name="howSmart", checkDataType="numeric", description="This is the guy-s IQ.")
 ### You can't use dump on S4 objects.
 
 ############################################################

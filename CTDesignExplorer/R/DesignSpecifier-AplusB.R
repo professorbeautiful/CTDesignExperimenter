@@ -14,11 +14,11 @@ setClass("APlusBSpecifier",
           provisions=list(
             new("Variable", name="TrtAllos", 
                 description="treatment assignments for all patients",
-                dataType="numeric"),
+                checkDataType=is.nonnegative.vector),
             new("Variable", name="CTTimes", description="Times of important events in the life of the CT",
-                dataType="numeric"),
+                dataType=is.nonnegative.vector),
             new("Variable", name="Conclusions", description="Recommended Phase2 dose",
-                dataType="numeric"))
+                dataType=is.nonnegative.number))
          ,
          validity=function(object){
            if(!all(Check<-c(object@B>0,object@C>0,object@C<=object@D,

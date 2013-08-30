@@ -190,11 +190,11 @@ getNetworkConnections = function(vgList, verbose=FALSE){
 }
 
 
-vA = new("Variable",name="vA",description="vA",dataType="double")
-vB = new("Variable",name="vB",description="vB",dataType="double")
-vC = new("Variable",name="vC",description="vC",dataType="double")
-vD = new("Variable",name="vD",description="vD",dataType="double")
-vE = new("Variable",name="vE",description="vE",dataType="double")
+vA = new("Variable",name="vA",description="vA",checkDataType=is.double)
+vB = new("Variable",name="vB",description="vB",checkDataType=is.double)
+vC = new("Variable",name="vC",description="vC",checkDataType=is.double)
+vD = new("Variable",name="vD",description="vD",checkDataType=is.double)
+vE = new("Variable",name="vE",description="vE",checkDataType=is.double)
 
 
 vgListExample = list(
