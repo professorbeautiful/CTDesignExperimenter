@@ -4,9 +4,17 @@ setClass("Variable",
          slots=list(name="character", description="character", 
                                        checkDataType="function"),
          prototype=prototype(name="variableName", 
-                             description="This is my string variable", 
+                             description="This is my  variable's description", 
                              checkDataType=function()TRUE))
-
+Variable = function(name="variableName", 
+                    description="This is my string variable", 
+                    checkDataType=function()TRUE){
+                      if(!is.function(checkDataType))
+                        stop("Variable: checkDataType should be a function.")
+                      return(new("Variable", name=name,
+                                 description = description,
+                                 checkDataType=checkDataType))
+                    }
 setClass("VariableList", contains="list",
          validity=function(object){
            for(v in object){
