@@ -14,7 +14,7 @@ sameVar = function(v1, v2) {
   if(!is(v2, "Variable")) stop(paste0("sameVar: v2 should be a Variable", v2))
   if(v1@name != v2@name) return(FALSE)
   if(v1@description != v2@description) return(FALSE)
-  if(v1@dataType != v2@dataType) return(FALSE)
+  if(v1@checkDataType != v2@checkDataType) return(FALSE)
   return(TRUE)
 }
 
@@ -112,7 +112,7 @@ ls(env=vNvalueEnv)
 printVVenv = function(env) {
   for(vv in ls(env=env)) {
     vv = get(vv, env=env)
-    catn(vv@variable@dataType, ": ", vv@variable@name, "=", vv)
+    catn(vv@variable@name, "=", vv)
   }
 }
 
