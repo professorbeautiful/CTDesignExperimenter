@@ -21,8 +21,8 @@ createDesignCatalog = function() {
 }
 # list2env(as.list(), .GlobalEnv) # fails
 #for(obj i
-head(ls(envir=createDesignCatalog()))
-envTemp=createDesignCatalog()
-ls(envir=envTemp)
+# head(ls(envir=createDesignCatalog()))
+# envTemp=createDesignCatalog()
+# ls(envir=envTemp)
 # ) 
 #   assign(obj, get(obj, envir=createDesignCatalog()), pos=1)
