@@ -1,16 +1,43 @@
 ##  Class: APlusBSpecifier
-# "A+B with dose de-escalation" design was described in the article written by Lin in Biostatistics,v2,203-215,2001
+# "A+B with dose de-escalation" design was described in the article 
+# written by Lin in Biostatistics,v2,203-215,2001
 # The default object is 3+3 design specification
-setClass("APlusBSpecifier",
-         representation(A="numeric",B="numeric",C="numeric",D="numeric",E="numeric", 
-                        TierDoses="numeric"),
-         contains="DesignSpecifier",
-         ## Method: getRequirements
-         # This method is to get requirements from an "APlusBSpecifier" object
-         #          requirements=VariableList(
-         #                      Outcomes="BinaryToxicity",TimesToOutcomes=character(0),BaseChars=character(0)))
-         
-         prototype=list(A=3,B=3,C=1,D=1,E=1,TierDoses=1:5),
+# We use the notation A/B to mean A toxicity incidences out of B patients 
+# and >A/B to mean more than A toxicity incidences out of B patients. 
+# Similarly the notation A/B + <= C/D means that 
+# A toxicity incidences in the first cohort of B patients 
+# and no more than C toxicity incidences in the second cohort 
+# or both cohorts of D patients (depending on the specific design). 
+Add A pts. 
+if(nTox < C) tryToEscalate()
+else if (nTox > D) endTrial()
+else {
+  Add B pts
+  if(nTox <= E) tryToEscalate()
+  else endTrial()
+}
+
+tryToEscalate = function(CTdata) {
+  if(currentTier == max(doseTiers) ) endTrial()
+  else escalate()
+}
+
+ABCDEdesign = new("DesignSpecifier")
+
+ABCDEdesign@parameters = list(
+  A=3,B=3,C=1,D=1,E=1, 
+  tierDoses=1:5)
+
+A3plusB3design = ABCDEdesign
+
+v_BinaryToxicity = new("Variable",
+                       name="hadToxicity",
+                       description="boolean; TRUE== experienced toxicity",
+                       checkDataType=is.logical)
+
+APlusBdesign@requirements =
+  VariableList(v_BinaryToxicity,
+               TimesToOutcomes=character(0),BaseChars=character(0)))
           provisions=list(
             new("Variable", name="TrtAllos", 
                 description="treatment assignments for all patients",
