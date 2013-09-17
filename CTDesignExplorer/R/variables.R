@@ -105,10 +105,13 @@ VariableValue = function(value, variable) {
 # )
 # new("VariableValue")
 
-#### I don't know if we will use this...
-writeVariableFile = function(name, description, checkDataType, checkDataTypeDetail="", 
+#writeVariableFile = function(name, description, checkDataType, checkDataTypeDetail="", 
+writeVariableFile = function(variable, 
                              author=system("echo $USER",intern=TRUE),
                              time=Sys.time()){
+  name = variable@name
+  description = variable@description
+  checkDataType = variable@checkDataType
   filename = paste(name, as.numeric(time), "R", sep=".")
   code = "new('Variable',  name='"  %&% 
     name %&%
