@@ -14,7 +14,7 @@ createVariableCatalog = function() {
                            checkDataType=function(x)is.double(x)&(x>=0))
   v_responseDoseThreshold = new("Variable", name="responseDoseThreshold", description="dose threshold for binary response event",
                                 checkDataType=function(x)is.double(x)&(x>=0))
-  for(v in ls()) assign(v, get(v), pos=1)
+  return(sys.frame(sys.nframe()))
 }
 
 #createVariableCatalog()
