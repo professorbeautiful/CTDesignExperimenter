@@ -12,3 +12,6 @@ for(f in collateOrder()) {
   source(paste0("CTDesignExplorer/R/",f), keep.source=TRUE)
   ### keep.source does nothing useful for trace()
 }
+
+# setdiff(collateOrder(), dir(path="CTDesignExplorer/R"))
+# setdiff(y=collateOrder(), dir(path="CTDesignExplorer/R"))
