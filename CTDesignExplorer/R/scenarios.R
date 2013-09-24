@@ -2,7 +2,7 @@ cat("======== scenarios.R  ================\n")
 
 setClass("Scenario", contains="VariableNetwork",
          slots=list(popModel="PopulationModel",
-                    design="Design",
+                    design="DesignSpecifier",
                     outcomeModel="OutcomeModel"))
 
 ### sim1CT

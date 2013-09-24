@@ -7,9 +7,12 @@ cat("======== designs.R  ================\n")
 #'    Recruit patients. All at once? By cohort? At staggered/random times?
 #' For each patient:
 #'  (1) populationModel:  generate patient features/characteristics.
+#'  The parameters of the populationModel are the collection of parameters for 
+#'  its VariableGenerators.
 #'  (0+) (optionally) checkEligibility
 #'      provides eligibilityStatus. default=TRUE
 #'  (1, fixed) enrollPatient
+#'  Write initial patient data into the 
 #'  (1) Initiate treatment plan;  optionally, stratified on popModel.
 #'  (1) Initiate generation of outcomes.
 #'  (0+) Read interim outcomes, activate outcome-dependent treatment modifications, off-study etc.
@@ -26,7 +29,7 @@ setClass("EligibilityRule", contains="DesignComponent")
 EligibilityRule = function(eligRuleFunction) {
   eligRule = new("EligibilityRule")
   eligRule@vgList = VariableGeneratorList(
-    new("VariableGenerator", ) 
+    new("VariableGenerator") 
   eligRule
 }
 setClass("DesignSpecifier", contains="DesignComponent",
