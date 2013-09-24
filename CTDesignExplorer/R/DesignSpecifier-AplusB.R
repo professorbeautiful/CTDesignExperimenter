@@ -1,14 +1,15 @@
-##  Class: APlusBSpecifier
-# "A+B with dose de-escalation" design was described in the article 
-# written by Lin in Biostatistics,v2,203-215,2001
-# The default object is 3+3 design specification
-# We use the notation A/B to mean A toxicity incidences out of B patients 
-# and >A/B to mean more than A toxicity incidences out of B patients. 
-# Similarly the notation A/B + <= C/D means that 
-# A toxicity incidences in the first cohort of B patients 
-# and no more than C toxicity incidences in the second cohort 
-# or both cohorts of D patients (depending on the specific design). 
-Add A pts. 
+#'  Class: APlusBSpecifier
+#' "A+B with dose de-escalation" design was described in the article 
+#' written by Lin in Biostatistics,v2,203-215,2001
+#' The default object is 3+3 design specification
+#' We use the notation A/B to mean A toxicity incidences out of B patients 
+#' and >A/B to mean more than A toxicity incidences out of B patients. 
+#' Similarly the notation A/B + <= C/D means that 
+#' A toxicity incidences in the first cohort of B patients 
+#' and no more than C toxicity incidences in the second cohort 
+#' or both cohorts of D patients (depending on the specific design). 
+#' 
+#' Add A pts. 
 if(nTox < C) tryToEscalate()
 else if (nTox > D) endTrial()
 else {
@@ -58,7 +59,12 @@ APlusBdesign@requirements =
 
 
 
-# patsIndices: in the ascending order
+#' generateInitialActions
+#' Place initial actions on the queue forto start the CT.
+#' patsIndices: in the ascending order
+#' We should be able to skip OtherArgs stuff if the environment is set right,
+#' carrying the VariableGenerator approach over to ActionGenerator.
+#' but for now we keep it.
 setMethod("generateInitialActions",signature(designSpec="APlusBSpecifier"),
           function(designSpec){
             A <- designSpec@A
@@ -78,7 +84,8 @@ setMethod("generateInitialActions",signature(designSpec="APlusBSpecifier"),
           }
 )# it returns a list of initial actions in the order of the times they are executed
 
-# Method "checkStoppingRule" for the "A+B" design
+#' checkStoppingRule
+#'  Method "checkStoppingRule" for the "A+B" design
 setMethod("checkStoppingRule",
           signature(designSpec="APlusBSpecifier",
                     currentCTData="CTData",
