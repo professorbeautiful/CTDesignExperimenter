@@ -30,7 +30,7 @@ generatePatientsForAccrual = function(popModelSpec,nPats,currentCTData){
 sim1CT = function(scenario){
          if(missing(scenario))
           stop("sim1CT: scenario is missing")
-         
+         sim1CT(scenario@designSpec, scenario@popModelSpec,outcomeModelSpec)
 }
                              
 setMethod("sim1CT", signature(designSpec="DesignSpecifier",
@@ -38,16 +38,19 @@ setMethod("sim1CT", signature(designSpec="DesignSpecifier",
                              outcomeModelSpec="OutcomeModelSpecifier"),
           function(designSpec,popModelSpec,outcomeModelSpec){
             CurrentCTData <- new("CTData")
-            CurrentActionQ <- new("ActionQueue",ActionQ=generateInitialActions(designSpec))
+            CurrentActionQ <- new("ActionQueue",
+                                  ActionQ=generateInitialActions(designSpec))
             while(length(CurrentActionQ@ActionQ) != 0){
               CurrentAction <- CurrentActionQ@ActionQ[[1]] 
               getOtherArgs(CurrentAction)
               CurrentGlobalTime <- CurrentAction@GlobalTime
               Output <- eval(parse(text=CurrentAction@MethodCall))
+                      ### note similarity to generatorCode. What's the environment?
               if (!is.null(Output$NewCTData)) CurrentCTData <- Output$NewCTData
               if (!is.null(Output$NewActions)) {
                 for ( i in 1:length(Output$NewActions)) 
-                  CurrentActionQ <- addAction(currentActionQ=CurrentActionQ,newAction=Output$NewActions[[i]])
+                  CurrentActionQ <- addAction(currentActionQ=CurrentActionQ,
+                                              newAction=Output$NewActions[[i]])
               }
               CurrentActionQ@ActionQ <- CurrentActionQ@ActionQ[-1]
             }
