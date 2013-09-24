@@ -84,3 +84,7 @@ instantiateS4Object <- function(className,slots){
     slot(Object,SlotName) <- slots[[SlotName]]
   return(Object)
 } 
+
+### other utilities
+### inclusive , includes the endpoints
+"%between%" = function(x, range) { (x<=range[2] & x>=range[1])}
