@@ -2,19 +2,25 @@ cat("======== Variables.R ================\n")
 
 setClass("Variable", 
          slots=list(name="character", description="character", 
-                                       checkDataType="function"),
-         prototype=prototype(name="variableName", 
-                             description="This is my  variable's description", 
-                             checkDataType=function()TRUE))
+                                       checkDataType="function"))
 Variable = function(name="variableName", 
                     description="This is my string variable", 
-                    checkDataType=function()TRUE){
-                      if(!is.function(checkDataType))
-                        stop("Variable: checkDataType should be a function.")
-                      return(new("Variable", name=name,
-                                 description = description,
-                                 checkDataType=checkDataType))
-                    }
+                    checkDataType=function(x)TRUE,
+                    gitAction)
+{
+  if(!is.function(checkDataType))
+    stop("Variable: checkDataType should be a function.")
+  if(!identical(args(checkDataType), args(function(x)TRUE)))
+    stop("Variable: checkDataType args list should be \"x\"")
+  newVariable = new("Variable", name=name,
+             description = description,
+             checkDataType=checkDataType)
+  if(!missing(gitAction)){
+    writeVariableFile(newVariable) # use default folder swapmeet.
+    if(gitAction=="push") pushVariables()
+  }
+  return(newVariable)
+}
 setClass("VariableList", contains="list",
          validity=function(object){
            for(v in object){
@@ -107,25 +113,28 @@ VariableValue = function(value, variable) {
 
 #writeVariableFile = function(name, description, checkDataType, checkDataTypeDetail="", 
 writeVariableFile = function(variable, 
+                             dir="swapmeet",
                              author=system("echo $USER",intern=TRUE),
-                             time=Sys.time()){
+                             time=Sys.time()
+                             ){
   name = variable@name
   description = variable@description
   checkDataType = variable@checkDataType
-  filename = paste(name, as.numeric(time), "R", sep=".")
-  code = "new('Variable',  name='"  %&% 
-    name %&%
-    "', description='" %&% 
-    description %&%
-    "', checkDataType='" %&% 
-    checkDataType %&%
-    "'" %&% {if(!(checkDataTypeDetail=="")) 
-      ", checkDataTypeDetail='" %&% checkDataTypeDetail %&% "'"}  %&%
-    ")"
-  write(code, filename)
-  print(code)
+  filename = paste0(dir, "/", 
+                    paste("v_", name, ".", as.numeric(time), ".R", sep=""))
+  dput(variable, file=filename)
 }
 
+commitVariableFile = function(fileName, dir="swapmeet", comment) {
+  if(missing(comment))
+    comment = readline("Please write a comment for git (one line only): ")
+  system(paste0("cd ", dir, "; git add ", fileName, 
+                "; git commit ", fileName, " -m'", comment, "'"))
+}
+
+pushVariables = function(dir="swapmeet") {
+  system(paste0("cd ", dir, "; git push"))
+}
 ###  writeVariableFile(name="howSmart", checkDataType="numeric", description="This is the guy-s IQ.")
 ### You can't use dump on S4 objects.
 
