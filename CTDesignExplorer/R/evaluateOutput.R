@@ -70,7 +70,7 @@ evaluateGeneratorOutput = function(generator, envir=parent.frame(), alreadyDone=
 }
 
 
-evaluateVNoutputs = function(vN, alreadyDone=list()) {
+evaluateVNoutputs = function(vN) {
   ## First, make the generatorCode function available.
   envVariableValues = new.env()
   if(!is(vN, "VariableNetwork"))
