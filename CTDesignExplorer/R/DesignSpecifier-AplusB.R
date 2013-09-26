@@ -10,13 +10,38 @@
 #' or both cohorts of D patients (depending on the specific design). 
 #' 
 #' Add A pts. 
-if(nTox < C) tryToEscalate()
-else if (nTox > D) endTrial()
-else {
-  Add B pts
-  if(nTox <= E) tryToEscalate()
-  else endTrial()
-}
+#' 
+
+vg_initialDoseThisPatient = 
+  VariableGenerator(parameters=list(doseTiers=1:5, doses=c(1,2,3,5,8)),
+                  requirements=VariableList(vList=list(
+                    Variable(name="A", desc="initial cohort size", check=function(x) is.integer(x) & x>0),
+                    Variable(name="B", desc="additional cohort size", check=function(x) is.integer(x) & x>0),
+                    Variable(name="C", desc="escalate if < C/A tox", check=function(x) is.integer(x) & x>0),
+                    Variable(name="D", desc="MTD if > D/A tox", check=function(x) is.integer(x) & x>0),
+                    Variable(name="E", desc="MTD if > E/(A+B) tox", check=function(x) is.integer(x) & x>0)
+                    )),
+                    provisions=VariableList(vList=list(
+                      Variable(name="initialDoseThisPatient",
+                               description="initial dose for this patient",
+                               checkDataType=function(x){
+                                 x %in% parameters$doses
+                               }
+                      ))), 
+                      generatorCode=function(){
+                        # Must access currentCTData
+                        nTox = sum(sapply(currentCTData, patientHadToxicity))
+                        if(currentTierSize==A){
+                          if(nTox < C) tryToEscalate()
+                          else if (nTox > D) endTrial()
+                          else addEvent("generateNewPatient")
+                        }
+                        else {  #currentTierSize==A+B
+                          if(nTox <= E) tryToEscalate()
+                          else endTrial()
+                        },
+                      }
+  )
 
 tryToEscalate = function(CTdata) {
   if(currentTier == max(doseTiers) ) endTrial()
