@@ -1,0 +1,3 @@
+createOutcomeModelCatalog = function(){
+  # TODO
+}
