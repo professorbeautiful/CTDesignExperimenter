@@ -1,3 +1,0 @@
-createPopulationModelCatalog = function(){
-  # TODO
-}

@@ -1,3 +1,0 @@
-#exportPattern("^[[:alpha:]]+")
-exportPattern("^[^\\.]")  #### What martin uses.
-
