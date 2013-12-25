@@ -1,7 +1,8 @@
 
 require(RBioinf)
 require(RJSONIO)
-specClassNames = c(`patient attributes`="VariableGenerator",
+specClassNames = c(`Variables`="Variable",
+                   `patient attributes`="VariableGenerator",
                    `population models`="PopulationModel",
                    `outcome models`="OutcomeModelSpecifier",
                    designs="DesignSpecifier",

@@ -15,8 +15,9 @@ options(shiny.trace=TRUE)
 
 #if(length(ls(pattern="CRMSpec1")) == 0 )  RELOAD_CATALOG()
 
-specClassNames = c(`patient attributes`="BaseCharModelSpecifier",
-                   `population models`="PopModelSpecifier",
+specClassNames = c(`Variables`="Variable",
+                   `patient attributes`="VariableGenerator",
+                   `population models`="PopulationModel",
                    `outcome models`="OutcomeModelSpecifier",
                    designs="DesignSpecifier",
                    `evaluation criteria`="EvalSpecifier")
