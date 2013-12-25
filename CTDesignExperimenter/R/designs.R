@@ -29,7 +29,7 @@ setClass("EligibilityRule", contains="DesignComponent")
 EligibilityRule = function(eligRuleFunction) {
   eligRule = new("EligibilityRule")
   eligRule@vgList = VariableGeneratorList(
-    new("VariableGenerator") 
+    new("VariableGenerator") )
   eligRule
 }
 setClass("DesignSpecifier", contains="DesignComponent",
