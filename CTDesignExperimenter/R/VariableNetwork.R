@@ -1,7 +1,14 @@
 cat("=========== VariableNetwork.R ===========\n")
 
-
+#' VariableGeneratorList.class, a class extending "list".
+#' 
+#' 
 setClass("VariableGeneratorList", contains="list")
+# We could assign the return value of setClass to a constructor,
+# and define Validity, as in the following commented-out code.
+# However, we prefer to handle it so that a call to the
+# constructor with an args that is a single VG *not* in a list
+# will not fail.
 
 # VariableGeneratorListValidity = function(object){
 #   for(vg in object@.Data){
@@ -14,6 +21,10 @@ setClass("VariableGeneratorList", contains="list")
 # }
 # setValidity("VariableGeneratorList", VariableGeneratorListValidity) 
 
+#' VariableGeneratorList.constructor
+#' 
+#' @param vgList  A list of VariableGenerator objects, or a single VariableGenerator. 
+#' @return  A VariableGeneratorList, validated as to the components
 VariableGeneratorList = function(vgList=NULL) {
   if(is.null(vgList)) return(new("VariableGeneratorList", list()))
   theNames = names(vgList)
