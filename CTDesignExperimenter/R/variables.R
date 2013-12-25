@@ -6,7 +6,7 @@ setClass("Variable",
 Variable = function(name="variableName", 
                     description="This is my string variable", 
                     checkDataType=function(x)TRUE,
-                    gitAction)
+                    gitAction=c("none","local","push")[1])
 {
   if(!is.function(checkDataType))
     stop("Variable: checkDataType should be a function.")
@@ -15,9 +15,11 @@ Variable = function(name="variableName",
   newVariable = new("Variable", name=name,
              description = description,
              checkDataType=checkDataType)
-  if(!missing(gitAction)){
+  if(gitAction=="write")
     writeVariableFile(newVariable) # use default folder swapmeet.
-    if(gitAction=="push") pushVariables()
+  if(gitAction=="push") {
+    writeVariableFile(newVariable)
+    pushVariables()
   }
   return(newVariable)
 }
