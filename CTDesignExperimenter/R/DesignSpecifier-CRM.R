@@ -1,3 +1,6 @@
+cat("======== DesignSpecifier-CRM.R  ================\n")
+
+
 ## Class: CRMSpecifier
 # Patients in the same cohort refer to those enrolled before the next model-based update 
 # Assumed outcome models are either exponential or logit with one free parameter
@@ -81,7 +84,7 @@ setMethod("getProvisions",signature(spec="CRMSpecifier"),
 
 
 
-s they are executed
+# ???? s they are executed
 # This method will also globalize the slots of the "CRMSpecifier" object and some relevant variables as well
 setMethod("generateInitialActions",signature(designSpec="CRMSpecifier"),
           function(designSpec){

@@ -1,3 +1,6 @@
+cat("======== run  ================\n")
+
+
 run = function(background=FALSE, local=FALSE, createCTDEcatalog=TRUE) {
   if(createCTDEcatalog) createCTDEcatalog()
 #   if(background) { ## Run it in the background outside of this session.

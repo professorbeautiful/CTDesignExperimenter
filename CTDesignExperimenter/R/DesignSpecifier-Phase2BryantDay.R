@@ -1,3 +1,4 @@
+cat("======== DesignSpecifier-Phase2BryantDay.R  ================\n")
 
 ## Class: Phase2BryantDaySpecifier
 # Bryant and Day Phase II trial design is described in the article, Biometrics, v51, 1372-1383, 1995

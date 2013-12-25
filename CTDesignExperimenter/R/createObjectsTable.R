@@ -1,3 +1,6 @@
+cat("======== createObjectsTable.R  ================\n")
+
+
 createObjectsTable = function(theSpecChoice) {
   if(missing(theSpecChoice))
     theSpecChoice = switch((input$viewChoice),
