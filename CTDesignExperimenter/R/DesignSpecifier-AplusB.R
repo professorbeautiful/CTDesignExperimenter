@@ -1,3 +1,7 @@
+cat("======== DesignSpecifier-AplusB.R  ================\n")
+
+#####
+
 #'  Class: APlusBSpecifier
 #' "A+B with dose de-escalation" design was described in the article 
 #' written by Lin in Biostatistics,v2,203-215,2001
