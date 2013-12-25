@@ -17,4 +17,6 @@ createVariableCatalog = function() {
   return(sys.frame(sys.nframe()))
 }
 
-#createVariableCatalog()
+
+vc = createVariableCatalog()
+for(v in ls(env=vc)) assign(v, value=get(v, env=vc), pos=1)
