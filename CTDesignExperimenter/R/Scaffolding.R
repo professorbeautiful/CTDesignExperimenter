@@ -6,7 +6,7 @@ setClass("ScaffoldEvent",
                     successor="character",  #ScaffoldEvent
                     eventInsertType="character",
                     eventInsertSubType="character",
-                    timeToNextEvent="numeric"))
+                    timeToNextEvent="function"))
 scaffoldObjectNames =
     cq(BeginClinicalTrial, GeneratePatient, CheckEligibility, 
        EnrollPatient, AssignTreatmentPlan, GenerateOutcomes,
@@ -14,15 +14,15 @@ scaffoldObjectNames =
        SummarizePatient, CheckStoppingRules, SummarizeTrial)
 scaffoldInsertSubTypes = cq(
   ,
-  patientAttribute,
-  eligibilityCriterion,
+  PatientAttribute,
+  EligibilityCriterion,
   ,
-  scheduleTreatment,
-  patientAttribute,
-  offStudyCriterion,
-  modificationRule,
-  patientSummary,
-  stoppingCriterion,
+  ScheduleTreatment,
+  PatientAttribute,
+  OffStudyCriterion,
+  ModificationRule,
+  PatientSummary,
+  StoppingCriterion,
   
 )
 scaffoldObjects = data.frame(stringsAsFactors=FALSE,
@@ -31,17 +31,17 @@ scaffoldObjects = data.frame(stringsAsFactors=FALSE,
   insertSubType=scaffoldInsertSubTypes
 )
 scaffoldObjects$insertType = 
-  ifelse(scaffoldObjects$insertSubType %in% cq(scheduleTreatment, modificationRule),
+  ifelse(scaffoldObjects$insertSubType %in% cq(ScheduleTreatment, ModificationRule),
          "Event", "Variable")
 scaffoldObjects$insertType[scaffoldObjects$insertSubType==""] = ""
-scaffoldObjects$revertIf = "FALSE"
-scaffoldObjects$revertTo = ""
-scaffoldObjects["CheckEligibility", "revertTo"] = "GeneratePatient"
-scaffoldObjects["CheckEligibility", "revertIf"] = "inEligible"
-scaffoldObjects["CheckOffStudy", "revertTo"] = "AssignTreatmentPlan"
-scaffoldObjects["CheckOffStudy", "revertIf"] = "notOffStudy"
-scaffoldObjects["CheckOffStudy", "revertTo"] = "AssignTreatmentPlan"
-scaffoldObjects["CheckOffStudy", "revertIf"] = "notOffStudy"
+scaffoldObjects$loopBackIf = "FALSE"
+scaffoldObjects$loopBackTo = ""
+scaffoldObjects["CheckEligibility", "loopBackTo"] = "GeneratePatient"
+scaffoldObjects["CheckEligibility", "loopBackIf"] = "inEligible"
+scaffoldObjects["CheckOffStudy", "loopBackTo"] = "AssignTreatmentPlan"
+scaffoldObjects["CheckOffStudy", "loopBackIf"] = "notOffStudy"
+scaffoldObjects["CheckOffStudy", "loopBackTo"] = "AssignTreatmentPlan"
+scaffoldObjects["CheckOffStudy", "loopBackIf"] = "notOffStudy"
 
 
 scafSize = nrow(scaffoldObjects)
@@ -60,18 +60,6 @@ for(scaf in 1:scafSize) {
     ), pos=1))
 }
 
-setClass("UserSpec", contains="VariableNetwork")
-         
-setClass("EligibilityCriterion", contains="UserSpec",
-  validity=function(object) {
-    provision = slot(object, name="provisions")
-    if(!is(provision, "Variable"))
-      return("eligibilityCriterion provision is not a Variable")
-     if(identical(slot(object, provision)@checkDataType, is.logical))
-       return("checkDataType should be is.logical")
-    return(TRUE)
-  }
-)
 
 ### Context = Evaluation or scenario or CT or patient.
 ### Thus, hierarchical, with 4 levels.
@@ -79,7 +67,8 @@ setClass("EligibilityCriterion", contains="UserSpec",
 setGeneric("doEvent", function(event, ...) standardGeneric("doEvent"))
 
 
-defaultScenario = new("Scenario", )
+defaultScenario = new("Scenario", 
+                      new("ListOfInserts"))
 
 setMethod("doEvent", signature=list("ScaffoldEvent", "Scenario"),
           function(event, scenario=defaultScenario, ...) {
@@ -89,10 +78,17 @@ setMethod("doEvent", signature=list("ScaffoldEvent", "Scenario"),
               assign("CTdata", new.env(), pos=1)
             }
             if(event@name == "GeneratePatient") {
-              cat("Must generate a patient now;  gather VG's.\n")
+              cat("Must generate a patient now;  
+                  gather VG's and evaluate.\n")
             }
-            if(event@name == "GeneratePatient") {
-              cat("Must generate a patient now;  gather VG's.\n")
+            if(event@name == "CheckEligibility") {
+              cat("Gather eligibilityCriterion objects from scenario.",
+               "Form a Variable Network. \n",
+                  "Retrieve all VariableValues,
+                  and return the conjunction with all().\n")
+            }
+            if(event@name == "EnrollPatient") {
+              cat("Enrolling the patient; copy patient info.\n")
             }
             if(event@insertSubType != "") {
               cat("Must generate a patient\n")
