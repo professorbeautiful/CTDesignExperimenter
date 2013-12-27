@@ -13,7 +13,7 @@ setClass("EventGenerator",    ### Like a VariableGenerator
            , generatorCode="function" 
            ### Arguments are the requirements,
            ### which are VariableValues.
-           ### Calculates boolean; if TRUE, places the Event on the queue 
+           ### Calculates boolean; if TRUE, places the Event on the queue, 
          )
          ,
          validity=function(object) { # has to be "object"
@@ -21,6 +21,23 @@ setClass("EventGenerator",    ### Like a VariableGenerator
            return(TRUE)
          }
 )
+EventGenerator = function(parameters=list(), provisions, 
+                             requirements=NULL,
+                             outputEvent, generatorCode) {
+  if(missing(provisions)) provisions=list(outputVariable)
+  if(missing(outputVariable)) outputVariable=provisions
+  vg = new("VariableGenerator", 
+           parameters=parameters,
+           provisions=provisions,
+           requirements=requirements,
+           generatorCode=generatorCode,
+           outputVariable=outputVariable)
+  if(is(requirements, "Variable"))requirements=list(requirements)
+  environment(vg@generatorCode) = new.env()
+  if(length(parameters) > 0)
+    environment(vg@generatorCode) = list2env(parameters, new.env())
+  vg
+}
 
 setValidity(Class="EligibilityCriterion", 
          method=function(object) {
