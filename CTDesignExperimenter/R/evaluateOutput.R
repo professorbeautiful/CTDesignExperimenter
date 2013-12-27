@@ -1,10 +1,5 @@
 cat("======== evaluateOutput.R ================\n")
 
-#' Evaluate a generator expression.
-#' 
-#' \code{evaluateOutput} 
-#' \param generator A SimpleVariableGenerator 
-#' \param input Input "requirements" list of VariableValue objects.
 
 #setGeneric("evaluateOutput", )
 #removeGeneric("evaluateOutput")
@@ -14,7 +9,7 @@ sameVar = function(v1, v2) {
   if(!is(v2, "Variable")) stop(paste0("sameVar: v2 should be a Variable", v2))
   if(v1@name != v2@name) return(FALSE)
   if(v1@description != v2@description) return(FALSE)
-  if(v1@checkDataType != v2@checkDataType) return(FALSE)
+  if(! identical(v1@checkDataType, v2@checkDataType)) return(FALSE)
   return(TRUE)
 }
 
@@ -52,6 +47,12 @@ findGenerator = function(var, env=parent.frame(), menu=FALSE) {
       
 ##To Examples:  findGeneratorName(vg_responseDoseThreshold@requirements)
 ##To Examples:  findGeneratorName(vg_responseDoseThreshold@provisions)
+
+#' Evaluate a generator expression.
+#' 
+#' \code{evaluateGeneratorOutput} 
+#' \param generator A SimpleVariableGenerator 
+#' \param input Input "requirements" list of VariableValue objects.
 
 evaluateGeneratorOutput = function(generator, envir=parent.frame(), alreadyDone=list()) {
   ## First, make the generatorCode function available.
