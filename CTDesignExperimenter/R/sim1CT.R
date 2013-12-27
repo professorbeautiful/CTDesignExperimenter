@@ -13,7 +13,7 @@ generatePatientsForAccrual = function(popModelSpec,nPats,currentCTData){
   currentCTData@PatsData <- c(currentCTData@PatsData,NPatsData)  
   return (list(NewCTData=currentCTData))
 }
-)# It returns a list with one element for NewCTData
+# It returns a list with one element for NewCTData
 
 
 
