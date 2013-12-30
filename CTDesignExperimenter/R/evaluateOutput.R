@@ -1,8 +1,11 @@
 cat("======== evaluateOutput.R ================\n")
 
-
-#setGeneric("evaluateOutput", )
-#removeGeneric("evaluateOutput")
+##' sameVar A function comparing two Variable objects.
+##' 
+##' @param v1 A Variable object (otherwise, throws error).
+##' @param v2 A Variable object (otherwise, throws error).
+##' @return TRUE if identical, FALSE if not. 
+##' @example sameVar(vg_responseDoseThreshold@requirements, v_clearanceRate)
 
 sameVar = function(v1, v2) {
   if(!is(v1, "Variable")) stop(paste0("sameVar: v1 should be a Variable", v1))
@@ -13,7 +16,6 @@ sameVar = function(v1, v2) {
   return(TRUE)
 }
 
-#  PUT INTO examples... sameVar(vg_responseDoseThreshold@requirements, v_clearanceRate)
 
 findGeneratorNames = function(var, env=parent.frame(), menu=TRUE) {
   # perhaps Variable should be a virtual Class, and 
@@ -45,19 +47,19 @@ findGenerator = function(var, env=parent.frame(), menu=FALSE) {
     get(findGeneratorName(var, env, menu), envir=env)
 }
       
-##To Examples:  findGeneratorName(vg_responseDoseThreshold@requirements)
-##To Examples:  findGeneratorName(vg_responseDoseThreshold@provisions)
 
-#' Evaluate a generator expression.
-#' 
-#' \code{evaluateGeneratorOutput} 
-#' \param generator A SimpleVariableGenerator 
-#' \param input Input "requirements" list of VariableValue objects.
+##' 
+##' @name evaluateGeneratorOutput
+##' @description Evaluate a generator expression.
+##' @param generator A SimpleVariableGenerator 
+##' @param input Input "requirements" list of VariableValue objects.
+##' @example findGeneratorName(vg_responseDoseThreshold@requirements)
+##' @example findGeneratorName(vg_responseDoseThreshold@provisions
 
 evaluateGeneratorOutput = function(generator, envir=parent.frame(), alreadyDone=list()) {
   ## First, make the generatorCode function available.
   if(!is(generator, "VariableGenerator"))
-    stop("evaluateOutput: generator should be a VariableGenerator")
+    stop("evaluateGeneratorOutput: generator should be a VariableGenerator")
   environment(generator@generatorCode) = envir  #function arg
   if(length(generator@parameters) > 0)
     environment(generator@generatorCode) = 
@@ -71,6 +73,14 @@ evaluateGeneratorOutput = function(generator, envir=parent.frame(), alreadyDone=
 }
 
 
+##' evaluateVNoutputs
+##' 
+##' Evaluate the output variables for all the VGs in a network.
+##' @example incidenceMatrix(vNexample)
+##' @example permuteToUpperTriangular(incidenceMatrix(vNexample))  ### permute to upper triangular.
+##' @example vNvalueEnv = evaluateVNoutputs(vNexample)
+##' @example ls(env=vNvalueEnv)
+
 evaluateVNoutputs = function(vN) {
   ## First, make the generatorCode function available.
   envVariableValues = new.env()
@@ -80,7 +90,7 @@ evaluateVNoutputs = function(vN) {
   iM = try(permuteToUpperTriangular(iM))
   if(is(iM, "try-error")) {
     cat("evaluateVNoutputs: iM try-error \n")
-    browser()
+    browser()  ### TODO: improve this.
   }
   for(vName in rownames(iM)) { 
     ifVerboseCat("Processing node ", vName)
@@ -105,10 +115,8 @@ evaluateVNoutputs = function(vN) {
 #
 
 
-incidenceMatrix(vNexample)
-permuteToUpperTriangular(..())  ### permute to upper triangular.
-vNvalueEnv = evaluateVNoutputs(vNexample)
-ls(env=vNvalueEnv)
+##' printVVenv
+##' @example printVVenv(vNvalueEnv)
 
 printVVenv = function(env) {
   for(vv in ls(env=env)) {
@@ -117,6 +125,5 @@ printVVenv = function(env) {
   }
 }
 
-printVVenv(vNvalueEnv)
 
 
