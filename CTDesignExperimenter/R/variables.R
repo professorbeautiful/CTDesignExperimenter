@@ -37,15 +37,15 @@ VariableList = function(vList) {
   if(!is(vList, "list")) vList = list(vList)
   new("VariableList", vList)
 }
-#' Variables
-#' 
-#' Allows VariableGenerators to use either one Variable or a list of them in provisions and requirements.
-#' 
+###' Variables
+###' 
+###' Allows VariableGenerators to use either one Variable or a list of them in provisions and requirements.
+###' 
 setClassUnion("Variables", c("Variable", "VariableList", "NULL"))
 
-#' Specifier
-#' 
-#' Superclass of VariableGenerator, PatientModelSpecifier, Design, OutcomeModelSpecifier, Criterion
+##' Specifier
+##' 
+##' Superclass of VariableGenerator, PatientModelSpecifier, Design, OutcomeModelSpecifier, Criterion
 setClass("Specifier", 
   #       contains="character", ### maybe a name will be desired.
          slots=list(
@@ -68,7 +68,7 @@ is.nonnegative.number = function(x) { is.numeric(x) & (x>=0)}
 
 v_sexAsCharacter = new("Variable", name="sex", description="my sex variable", 
                        checkDataType=function(x) is(x,"character"))
-print(v_sexAsCharacter)
+#print(v_sexAsCharacter)
 
 setClass("VariableValue", contains="ANY",
          slots=list(variable="Variable"))
@@ -115,42 +115,47 @@ VariableValue = function(value, variable) {
 
 #writeVariableFile = function(name, description, checkDataType, checkDataTypeDetail="", 
 writeVariableFile = function(variable, 
-                             dir="swapmeet",
+                             dir="../CTDEswapmeet",
                              author=system("echo $USER",intern=TRUE),
                              time=Sys.time()
                              ){
   name = variable@name
   description = variable@description
   checkDataType = variable@checkDataType
-  filename = paste0(dir, "/", 
-                    paste("v_", name, ".", as.numeric(time), ".R", sep=""))
-  dput(variable, file=filename)
+  filename = paste("v_", name, ".", as.numeric(time), ".R", sep="")
+  dput(variable, file=paste0(dir, "/",filename))
+  commitVariableFile(filename, dir)
 }
 
-commitVariableFile = function(fileName, dir="swapmeet", comment) {
+commitVariableFile = function(fileName, dir="../CTDEswapmeet", comment) {
   if(missing(comment))
     comment = readline("Please write a comment for git (one line only): ")
   system(paste0("cd ", dir, "; git add ", fileName, 
                 "; git commit ", fileName, " -m'", comment, "'"))
 }
 
-pushVariables = function(dir="swapmeet") {
+pushVariables = function(dir="../CTDEswapmeet") {
   system(paste0("cd ", dir, "; git push"))
 }
+
+v_liverVariable = Variable(name="liverFunction", desc="Liver function",
+                           gitAction="push",
+                           checkDataType=function(x) is.numeric(x))
+
 ###  writeVariableFile(name="howSmart", checkDataType="numeric", description="This is the guy-s IQ.")
 ### You can't use dump on S4 objects.
 
 ############################################################
-#' @title   A component of a PatientModelSpecifier, generating just one variable value.
-#' 
-#' \code{SimpleVariableGenerator} S4 class for a component of a PatientModelSpecifier, 
-#' generating just one variable value
-#' , and adding it to the values of the inputs.
-#'  \section{Slots} {
-#'   \describe{
-#'   \item{\code{outputVariable}:}{An object of class \code{Variable}}
-#'   \item{\code{generatorCode}:}{A function calculating the value for the variable.}
-#'   }}
+##' @title   A component of a PatientModelSpecifier, generating just one variable value.
+##' 
+##' \code{SimpleVariableGenerator} S4 class for a component of a PatientModelSpecifier, 
+##' generating just one variable value
+##' , and adding it to the values of the inputs.
+##'  \section{Slots} {
+##'   \describe{
+##'   \item{\code{outputVariable}:}{An object of class \code{Variable}}
+##'   \item{\code{generatorCode}:}{A function calculating the value for the variable.}
+##'   }}
 # getVariableValues = function(generator){
 #   if(is.null(generator@requirements))
 #     return(list(evaluateOutput(generator)))
