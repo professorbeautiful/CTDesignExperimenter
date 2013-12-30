@@ -222,7 +222,6 @@ vgListExample = list(
 )
 
 vNexample = VariableNetwork(vgList=VariableGeneratorList(vgListExample)) 
-
 ### .... in progress...
 # getPopulationModelOutputs = function(popModel, alreadyDone=list()) {
 #   allVGs = function(pModel) {
@@ -276,7 +275,8 @@ permuteToUpperTriangular = function(M, whenToStop=3, verbose=F) {
 
 
 incidenceMatrix =  function(vN) {  ## migrate to VariableNetwork
-  if(length(vN@allRequirements) == 0) return(NULL) ## or matrix(nrow=0,ncol=0))
+  #if(length(vN@allRequirements) == 0) 
+  #  return(NULL) ## or matrix(nrow=0,ncol=0))
   allProvisionNames = vN@allProvisionNames
   provisionEdges = data.frame(VarGen=names(allProvisionNames), 
                               Variable=allProvisionNames,
@@ -288,7 +288,8 @@ incidenceMatrix =  function(vN) {  ## migrate to VariableNetwork
   pairs = expand.grid(rownames(requirementMatrix), stringsAsFactors=FALSE,
                       colnames(requirementMatrix))
   reqEdges = pairs[which(c(requirementMatrix)), ]
-  colnames(reqEdges) = c("Variable", "VarGen")
+  if(ncol(reqEdges) == 2)
+    colnames(reqEdges) = c("Variable", "VarGen")
   
   allVars = union(reqEdges$Variable, provisionEdges$Variable)
   nVars = length(allVars)
