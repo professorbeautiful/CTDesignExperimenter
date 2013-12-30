@@ -17,7 +17,7 @@ setClass("VariableGenerator", contains="Specifier",
 VariableGenerator = function(parameters=list(), provisions, 
                              requirements=NULL,
                              outputVariable, generatorCode) {
-  if(missing(provisions)) provisions=list(outputVariable)
+  if(missing(provisions)) provisions=outputVariable
   if(missing(outputVariable)) outputVariable=provisions
   vg = new("VariableGenerator", 
            parameters=parameters,
