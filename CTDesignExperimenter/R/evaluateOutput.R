@@ -119,9 +119,12 @@ evaluateVNoutputs = function(vN) {
 ##' @example printVVenv(vNvalueEnv)
 
 printVVenv = function(env) {
-  for(vv in ls(env=env)) {
-    vv = get(vv, env=env)
-    catn(vv@variable@name, "=", vv)
+  for(vvname in ls(env=env)) {
+    vv = get(vvname, env=env)
+    if(is(vv, "VariableValue"))
+      catn(vv@variable@name, "=", vv, " (variable value)")
+    else
+      catn(vvname, "=", vv, " (parameter)")
   }
 }
 
