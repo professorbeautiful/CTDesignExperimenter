@@ -10,7 +10,6 @@ cat("======== ActionGenerator.R ================\n")
 #' Class: Action
 #' 
 
-setClass("Action", contains="Variable")
 ## Just a name, description, and possibly an EventLevel, patient or CT
 ## which governs if it finds its variables in a patient's data repository 
 ## or in the CT record.
@@ -62,19 +61,7 @@ Action = function(label, description, actionGenerator, OtherArgs, GlobalTime,
 
 
 ## Method: getOtherArgs
-setGeneric("getOtherArgs",
-           function(action) standardGeneric("getOtherArgs"))
 
-setMethod("getOtherArgs",signature(action="Action"),
-          function(action){
-            OtherArgs <- action@OtherArgs 
-            NArgs <- length(OtherArgs)
-            if (NArgs != 0){
-              for ( i in 1:length(OtherArgs))
-                assign(names(OtherArgs)[i],OtherArgs[[i]],envir=parent.frame())
-            }
-          }
-)
 
 setClass("ActionList", contains="list")
 
@@ -108,7 +95,7 @@ ActionGenerator = function(parameters=list(), provisions,
            requirements=requirements,
            generatorCode=generatorCode,
            outputVariable=outputVariable)
-  if(is(requirements, "Variable"))requirements=list(requirements)
+  if(is(requirements, "Variable")) requirements=list(requirements)
   environment(vg@generatorCode) = new.env()
   if(length(parameters) > 0)
     environment(vg@generatorCode) = list2env(parameters, new.env())
