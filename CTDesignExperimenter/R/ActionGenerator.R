@@ -2,19 +2,22 @@ cat("======== ActionGenerator.R ================\n")
 
   ### NOT completed!!!
 
-#' Classes and Methods for Action Queue
+# An Event is like a Variable.
+# An EventGenerator is like a VariableGenerator, except:
+#    - generatorCode can cause events to go on the queue
+#' Classes and Methods for Event Queue
 
 #' Class: Action
 #' 
-# OtherArgs:the arguments whose values are obtained from the method call within which this action is generated; 
-# OtherArgs is a named list 
-# GlobalTime in an "Action" object refers to the time when the action method is called.
-# In an action queue, all GlobalTime's should have the same reference time point.
-# If no time is available in the design specification, GlobalTime can be 1,2,3...for
-# first action, second action, third action, etc in an action queue and when a new action is added to
-# the queue, its GlobalTime is (GlobalTime of the last action in a queue + 1)
-setClass("Action", contains="VariableGenerator",
-         slots=list(
+
+setClass("Action", contains="Variable")
+## Just a name, description, and possibly an EventLevel, patient or CT
+## which governs if it finds its variables in a patient's data repository 
+## or in the CT record.
+##  EventLevel in c("patient", "clinicaltrial")
+
+setClass("ActionGenerator", contains="VariableGenerator",
+                  slots=list(
            label="character",
            description="character", ### For easy reference. 
            actionGenerator="function",
@@ -22,9 +25,6 @@ setClass("Action", contains="VariableGenerator",
            GlobalTime="numeric"))
 
 #Generate a new patient. -> schedule event NewPatient (now)
-new("Action", label="check eligibility"
-      actionGenerator=function() )
-
 Action = function(label, description, actionGenerator, OtherArgs, GlobalTime, 
                   outputVariable, generatorCode, 
                   parameters, requirements, provisions){
@@ -35,15 +35,19 @@ Action = function(label, description, actionGenerator, OtherArgs, GlobalTime,
       parameters=parameters, requirements=requirements, provisions=provisions)
 }
 
-ac_newPatient = Action(label="generate new patient",
-                       description="Generate a new patient.", 
-                       actionGenerator
-                       
+# ac_newPatient = Action(label="generate new patient",
+#                        description="Generate a new patient.", 
+#                        actionGenerator=new("ActionGenerator",
+#                                            function()))
 
-myDesign = ActionList(list=list(
-  ac_newPatient, ac_compute_eligibility, ac_enrollPatient,
-  ac_scheduleTreatments, 
-                        )
+# new("Action", label="check eligibility",
+#         actionGenerator=function() {})
+#                        
+# 
+# myDesign = ActionList(list=list(
+#   ac_newPatient, ac_compute_eligibility, ac_enrollPatient,
+#   ac_scheduleTreatments
+# ))
 
 # New patient event (N)  ->  check eligibility (N) -> variable value
 # -> event if(eligible) accrue event (N)
@@ -58,7 +62,8 @@ myDesign = ActionList(list=list(
 
 
 ## Method: getOtherArgs
-setGeneric("getOtherArgs",function(action) standardGeneric("getOtherArgs"))
+setGeneric("getOtherArgs",
+           function(action) standardGeneric("getOtherArgs"))
 
 setMethod("getOtherArgs",signature(action="Action"),
           function(action){
@@ -70,7 +75,6 @@ setMethod("getOtherArgs",signature(action="Action"),
             }
           }
 )
-
 
 setClass("ActionList", contains="list")
 
@@ -92,15 +96,6 @@ setClass("ScheduleRepeatedEventAction",
          delay="numeric",
          timeInterval="numeric"))
 
-setClass("ActionGenerator", contains="Specifier",
-         slots=list(
-           outputActions="ActionList", generatorCode="function" 
-         )
-         ,
-         validity=function(object) { # has to be "object"
-             return(TRUE)
-           }
-)
 
 ActionGenerator = function(parameters=list(), provisions, 
                              requirements=NULL,
@@ -119,6 +114,8 @@ ActionGenerator = function(parameters=list(), provisions,
     environment(vg@generatorCode) = list2env(parameters, new.env())
   vg
 }
+
+
 
 
 setMethod("print", "VariableGenerator", function(x){
