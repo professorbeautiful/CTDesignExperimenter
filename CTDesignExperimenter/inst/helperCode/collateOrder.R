@@ -14,5 +14,5 @@ for(f in collateOrder()) {
 }
 
 setdiff = function(In, notIn) { base:::setdiff(x=In, y=notIn)} ## so we know what's what.
-setdiff(In=collateOrder(), notIn=dir(path="CTDesignExplorer/R")) 
-setdiff(notIn=collateOrder(), In=dir(path="CTDesignExplorer/R"))
+setdiff(In=collateOrder(), notIn=dir(path="CTDesignExperimenter/R")) 
+setdiff(notIn=collateOrder(), In=dir(path="CTDesignExperimenter/R"))
