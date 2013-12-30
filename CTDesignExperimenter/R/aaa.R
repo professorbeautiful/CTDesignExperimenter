@@ -1,18 +1,17 @@
+cat("======== AAA.R  ================\n")
 
 
-### Some utility classes and methods
+### Some utility classes and methods.  These may no longer be necessary.
 ## Class Union: NumericLogical
 setClassUnion("NumericLogical",c("numeric","logical"))
 
-print(getClass("NumericLogical"))
 ## Class Union: OptionalNumeric
 setClassUnion("OptionalNumeric",c("numeric","NULL"))
-print(getClass("OptionalNumeric"))
 
 ## Class Union: OptionalCharacter
 setClassUnion("OptionalCharacter",c("character","NULL"))
 
-### utilities borrowed from mvbutils
+### Convenience utilities borrowed from mvbutils
 
 `%&%` = function (a, b)
         paste(a, b, sep = "")
