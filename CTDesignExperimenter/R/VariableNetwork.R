@@ -68,7 +68,7 @@ getRequirementNames = function(vg){
 }
 
 VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
-  if(is.null(vgList)) vgList = list()
+  if(is.null(vgList)) vgList = VariableGeneratorList()
   if(is(vgList, "VariableGenerator")) vgList = list(vgList)
   if(!is.null(varNetworkList)) {
     if(is(varNetworkList, "VariableNetwork")) varNetworkList = list(varNetworkList)
