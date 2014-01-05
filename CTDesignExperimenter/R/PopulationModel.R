@@ -2,4 +2,4 @@
 #' 
 #' @seealso VariableNetwork, sim1CT
 
-PopulationModel = setClass("PopulationModel", contains="VariableNetwork")
+#PopulationModel = setClass("PopulationModel", contains="VariableNetwork")
