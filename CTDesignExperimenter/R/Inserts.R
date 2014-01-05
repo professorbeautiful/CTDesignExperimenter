@@ -119,14 +119,13 @@ vg_liver = as(Class="PatientAttribute",
                               },
                               provisions=v_liverVariable
             ))
-ec_liver = as(Class="EligibilityCriterion", 
-              VariableGenerator( parameters=list(cutoff=1.5),
+ec_liver = EligibilityCriterion( parameters=list(cutoff=1.5),
                                  requirements=VariableList(v_liverVariable),
                                  outputVariable=Variable(name="liverOK",
                                                          description="Patient has sufficient liver function.",
                                                          checkDataType=is.logical),
                                  generatorCode=function()  { liverFunction <= cutoff}
-              ))  #### OK.
+              )  #### OK.
 
 #  TODO 
 # st_oneDose = as(Class="ScheduleTreatment",
