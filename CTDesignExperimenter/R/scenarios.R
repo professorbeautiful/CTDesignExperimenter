@@ -30,7 +30,19 @@ cat("======== scenarios.R  ================\n")
 setClass("Scenario", contains="ListOfInserts")
 #####
 
-setClass("CTSimulation", slots=list(
-    scenario="Scenario",
-    scenarioEnv="environment"))
+extractParameters = function(obj){
+  if(is(obj, "list"))
+    lapply(obj, slot, name="parameters")
+  else
+    slot(obj, "parameters" )
+}
+
+# TODO
+#setGeneric("extractParameters", extractParameters)
+
+#extractParameters(defaultScenario)
+# 
+# setClass("CTSimulation", slots=list(
+#     scenario="Scenario",
+#     scenarioEnv="environment"))
 
