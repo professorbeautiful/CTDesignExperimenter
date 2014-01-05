@@ -1,7 +1,7 @@
 cat("==========  gitUtilities =========\n")
 
 #####
-writeVariable = function(variable, 
+writeVariableFile = function(variable, 
                              dir="../CTDEswapmeet",
                              author=system("echo $USER",intern=TRUE),
                              time=Sys.time()
