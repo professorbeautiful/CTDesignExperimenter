@@ -1,5 +1,7 @@
 cat("======== Inserts.R  ================\n")
 
+
+
 #####
 #' Event
 setClass("Event",    ### Like a Variable
@@ -13,7 +15,7 @@ setClass("EventGenerator",    ### Like a VariableGenerator
          slots=list(
            outputEvent="Event"
            ### this will be the Event caused.
-           , generatorCode="function" 
+           , conditionCode="function" 
            ### Arguments are the requirements,
            ### which are VariableValues.
            ### Calculates boolean; if TRUE, places the Event on the queue, 
@@ -25,56 +27,61 @@ setClass("EventGenerator",    ### Like a VariableGenerator
          }
 )
 #####
+setClassUnion("Insert", c("VariableGenerator", "EventGenerator"))
+#setClass("InsertVariable", contains=c("Insert", "VariableGenerator"))
+#setClass("InsertEvent", contains=c("Insert", "EventGenerator"))
+
 #' function EventGenerator
 EventGenerator = function(parameters=list(), provisions, 
                              requirements=NULL,
                              outputEvent, generatorCode) {
   if(missing(provisions)) provisions=list(outputVariable)
   if(missing(outputVariable)) outputVariable=provisions
-  vg = new("VariableGenerator", 
+  eg = new("EventGenerator", 
            parameters=parameters,
            provisions=provisions,
            requirements=requirements,
            generatorCode=generatorCode,
-           outputVariable=outputVariable)
-  if(is(requirements, "Variable"))requirements=list(requirements)
-  environment(vg@generatorCode) = new.env()
+           outputEvent=outputEvent)
+  if(is(requirements, "Variable"))
+    requirements=list(requirements)
+  environment(eg@generatorCode) = new.env()
   if(length(parameters) > 0)
-    environment(vg@generatorCode) = list2env(parameters, new.env())
-  vg
+    environment(eg@generatorCode) = list2env(parameters, new.env())
+  eg
 }
 
+setClass("EventAtTime", contains="Event", slots=list(eventTime="numeric"))
+###  we are not currently using EventAtTime.
+
 setClassUnion("Action", c("Event", "Variable"))
-setClassUnion("ActionGenerator", c("EventGenerator", "VariableGenerator"))
+
+setClassUnion("Insert", c("EventGenerator", "VariableGenerator"))
 
 
-setClass("Insert", contains="Specifier")
-setClass("InsertVariable", contains=c("Insert", "VariableGenerator"))
-setClass("InsertEvent", contains=c("Insert", "EventGenerator"))
 
-
-setClass("PatientAttribute",      contains="InsertVariable")
-setClass("EligibilityCriterion",  contains="InsertVariable")
-setClass("ScheduleTreatment",     contains="InsertEvent")
-setClass("OffStudyCriterion",     contains="InsertVariable")
-setClass("ModificationRule",      contains="InsertEvent")
-setClass("PatientSummary",        contains="InsertVariable")
-setClass("StoppingCriterion",     contains="InsertEvent")
-setClass("TrialSummary",          contains="InsertVariable")
+setClass("PatientAttribute",      contains="VariableGenerator")
+setClass("EligibilityCriterion",  contains="VariableGenerator")
+setClass("ScheduleTreatment",     contains="EventGenerator")
+setClass("OffStudyCriterion",     contains="VariableGenerator")
+setClass("ModificationRule",      contains="EventGenerator")
+setClass("PatientSummary",        contains="VariableGenerator")
+setClass("StoppingCriterion",     contains="VariableGenerator")
+setClass("TrialSummary",          contains="VariableGenerator")
 
 #' ListOfInserts
 #' 
 #' A list of Insert objects.
 #' Generally the parameters are the defaults.
 #' When a new Scenario is defined, the parameters may be changed.
-setClass("ListOfInserts", contains="list",
-         validity=function(object) {
-           if(length(object)==0) return(TRUE)
-           whichAreInserts = sapply(object, is, "Insert")
-           if(all(whichAreInserts)) return(TRUE)
-           return(paste("ERROR in ListOfInserts: ", which(!whichAreInserts)))
-         })
-
+setClass("ListOfInserts", contains="list")
+validity_ListOfInserts = function(object) {
+  if(length(object)==0) return(TRUE)
+  whichAreInserts = sapply(object, is, "Insert")
+  if(all(whichAreInserts)) return(TRUE)
+  return(paste("ERROR in ListOfInserts: ", which(!whichAreInserts)))
+}
+setValidity(Class="ListOfInserts", validity_ListOfInserts)
 
 ##### EligibilityCriteria ##### 
 setValidity(Class="EligibilityCriterion", 
@@ -87,7 +94,7 @@ setValidity(Class="EligibilityCriterion",
            return(TRUE)
          }
 )
-v_ageVariable
+ 
 vg_age = as(Class="PatientAttribute",
             VariableGenerator(parameters=list(ageMean=50, ageSD=10),
                               generatorCode=function(){
@@ -103,7 +110,7 @@ ec_age = as(Class="EligibilityCriterion", VariableGenerator( parameters=list(cut
                   generatorCode=function()  { age >= cutoff}
 ))  #### OK.
 v_liverVariable = Variable(name="liverFunction", desc="Liver function", 
-                           gitAction="push",
+                           gitAction="none",
                            checkDataType=function(x) is.numeric(x))
 vg_liver = as(Class="PatientAttribute",
             VariableGenerator(parameters=list(liverMean=1, liverSD=0.2),
@@ -121,3 +128,7 @@ ec_liver = as(Class="EligibilityCriterion",
                                  generatorCode=function()  { liverFunction <= cutoff}
               ))  #### OK.
 
+#  TODO 
+# st_oneDose = as(Class="ScheduleTreatment",
+#                 EventGenerator(parameters=list(theDose),
+#                                generatorCode=))
