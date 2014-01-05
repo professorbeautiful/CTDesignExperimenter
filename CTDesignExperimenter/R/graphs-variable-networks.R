@@ -1,25 +1,25 @@
 cat("=============  graphs-variable-networks.R ============\n")
 
-new("PopulationModel", vgList=VariableGeneratorList(vg_clearanceRate))
-is(list(vg_clearanceRate), "VariableGeneratorList")  #F
-is(vg_clearanceRate, "VariableGenerator")    #T
-is(VariableGeneratorList(vg_clearanceRate), "VariableGeneratorList") #T
-
-vg_clearanceRate@requirements
-`@`(vg_clearanceRate, "requirements")  ### OK
-lapply((VariableGeneratorList(vg_clearanceRate)), function(vg) vg@requirements) #OK
-
-pmTemp = PopulationModel(vgList=VariableGeneratorList(
-  list(vg_clearanceRate=vg_clearanceRate, 
-       vg_toxDoseThreshold=vg_toxDoseThreshold, 
-       vg_responseDoseThreshold=vg_responseDoseThreshold)))
-### The VGs have to be named! (for list2env)
-
-names(pmTemp@vgList)
-
-evaluateVNoutputs(pmTemp)
-
-pmTemp@vgList[["vg_clearanceRate"]]@parameters$clearanceLocation = 60
+# new("PopulationModel", vgList=VariableGeneratorList(vg_clearanceRate))
+# is(list(vg_clearanceRate), "VariableGeneratorList")  #F
+# is(vg_clearanceRate, "VariableGenerator")    #T
+# is(VariableGeneratorList(vg_clearanceRate), "VariableGeneratorList") #T
+# 
+# vg_clearanceRate@requirements
+# `@`(vg_clearanceRate, "requirements")  ### OK
+# lapply((VariableGeneratorList(vg_clearanceRate)), function(vg) vg@requirements) #OK
+# 
+# pmTemp = PopulationModel(vgList=VariableGeneratorList(
+#   list(vg_clearanceRate=vg_clearanceRate, 
+#        vg_toxDoseThreshold=vg_toxDoseThreshold, 
+#        vg_responseDoseThreshold=vg_responseDoseThreshold)))
+# ### The VGs have to be named! (for list2env)
+# 
+# names(pmTemp@vgList)
+# 
+# evaluateVNoutputs(pmTemp)
+# 
+# pmTemp@vgList[["vg_clearanceRate"]]@parameters$clearanceLocation = 60
 
 
 # evaluateGeneratorOutput(vg_responseDoseThreshold, 
