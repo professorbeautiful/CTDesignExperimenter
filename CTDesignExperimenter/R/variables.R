@@ -114,11 +114,11 @@ VariableValue = function(value, variable) {
 # new("VariableValue")
 
 
-v_liverVariable = Variable(name="liverFunction", desc="Liver function",
-                           gitAction="push",
-                           checkDataType=function(x) is.numeric(x))
+# v_liverVariable = Variable(name="liverFunction", desc="Liver function",
+#                            gitAction="write",
+#                            checkDataType=function(x) is.numeric(x))
 
-###  writeVariableFile(name="howSmart", checkDataType="numeric", description="This is the guy-s IQ.")
+###  writeVariableFile(name="howSmart", checkDataType="is.numeric", description="This is the guy-s IQ.")
 ### You can't use dump on S4 objects.
 
 ############################################################
