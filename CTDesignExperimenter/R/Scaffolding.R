@@ -48,21 +48,7 @@ scaffoldObjectNames =
        CheckOffStudy, CheckModifications, 
        SummarizePatient, CheckStoppingRules, SummarizeTrial,
        SummarizeSimulation)
-scaffoldInsertSubTypes = cq(
-  DesignParameter,
-  ,
-  PatientAttribute,
-  EligibilityCriterion,
-  ,
-  ScheduleTreatment,
-  PatientAttribute,
-  OffStudyCriterion,
-  ModificationRule,
-  PatientSummary,
-  StoppingCriterion,
-  TrialSummary,
-  SimulationSummary  ## Same as evaluation criterion?
-)
+
 scaffoldObjects = data.frame(stringsAsFactors=FALSE,
   row.names=scaffoldObjectNames,
   name=scaffoldObjectNames,
