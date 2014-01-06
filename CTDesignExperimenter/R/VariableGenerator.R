@@ -2,6 +2,7 @@ cat("======== VariableGenerator.R ================\n")
 
 setClass("VariableGenerator", contains="Specifier",
          slots=list(
+           insertSubType="character",
            outputVariable="Variable"
            ### this will be the provision. At first, a string. Later, a Variable.
            , generatorCode="function" 
@@ -10,16 +11,21 @@ setClass("VariableGenerator", contains="Specifier",
          )
          ,
          validity=function(object) { # has to be "object"
-             return(TRUE)
+           if( ! (object@insertSubType %in% scaffoldInsertSubTypes))
+             return(paste0("Invalid insertSubType: ", object@insertSubType))
+           return(TRUE)
            }
 )
 
-VariableGenerator = function(parameters=list(), provisions, 
+VariableGenerator = function(insertSubType="PatientAttribute",
+                             parameters=list(),
+                             provisions, 
                              requirements=NULL,
                              outputVariable, generatorCode) {
   if(missing(provisions)) provisions=outputVariable
   if(missing(outputVariable)) outputVariable=provisions
   vg = new("VariableGenerator", 
+           insertSubType=insertSubType,
            parameters=parameters,
            provisions=provisions,
            requirements=requirements,
@@ -31,6 +37,14 @@ VariableGenerator = function(parameters=list(), provisions,
     environment(vg@generatorCode) = list2env(parameters, new.env())
   vg
 }
+
+for(insertSubType in scaffoldInsertSubTypes) {
+  if(insertSubType != "")
+  assign(insertSubType, function(...) 
+    VariableGenerator(insertSubType=insertSubType, ...)
+  )
+}
+
 
 setMethod("print", "VariableGenerator", function(x){
   cat("    output: ", x@provisions, "\n")
