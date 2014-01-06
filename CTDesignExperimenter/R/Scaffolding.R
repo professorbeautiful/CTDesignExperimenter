@@ -42,6 +42,7 @@ setClass("ScaffoldEvent", contains="Event",
                     timeToNextEvent="function"))
 
 ##' scaffoldObjectNames ####
+##' 
 scaffoldObjectNames = 
     cq(BeginSimulation, BeginClinicalTrial, GeneratePatient, CheckEligibility, 
        EnrollPatient, AssignTreatmentPlan, GenerateOutcomes,
@@ -71,20 +72,26 @@ scaffoldObjects["CheckOffStudy", "jumpIf"] = "notOffStudy"
 scafSize = nrow(scaffoldObjects)
 
 ### Create the scaffold objects #####
-for(scaf in 1:scafSize) {
-  with(scaffoldObjects[scaf, ], 
-    assign(print(name), new("ScaffoldEvent",
-                     name=name,
-                     predecessor=ifelse(scaf>1, scaffoldObjects$name[scaf-1], ""),
-                     successor=ifelse(scaf<scafSize, scaffoldObjects$name[scaf+1], ""),
-                     eventInsertType=scaffoldObjects$eventInsertType[scaf],
-                     eventInsertSubType=scaffoldObjects$eventInsertSubType[scaf],
-                     jumpIf=scaffoldObjects$jumpIf[scaf],
-                     jumpTo=scaffoldObjects$jumpTo[scaf],
-                     timeToNextEvent=increment
-    ), pos=1))
+makeScaffoldObjects <- function () {
+  for(scaf in 1:scafSize) {
+    with(scaffoldObjects[scaf, ], 
+         assign(
+           #assignInMyNamespace( # fails: Error in bindingIsLocked(x, ns)
+             pos=1, #works for BUILD, but then objects are lost.
+        print(name), new("ScaffoldEvent",
+                       name=name,
+                       predecessor=ifelse(scaf>1, scaffoldObjects$name[scaf-1], ""),
+                       successor=ifelse(scaf<scafSize, scaffoldObjects$name[scaf+1], ""),
+                       eventInsertType=scaffoldObjects$eventInsertType[scaf],
+                       eventInsertSubType=scaffoldObjects$eventInsertSubType[scaf],
+                       jumpIf=scaffoldObjects$jumpIf[scaf],
+                       jumpTo=scaffoldObjects$jumpTo[scaf],
+                       timeToNextEvent=increment
+      )))
+  }
 }
 
+makeScaffoldObjects() # For building the package.
 
 ### Context = Evaluation or scenario or CT or patient.#####
 ### Thus, hierarchical, with 4 levels.
