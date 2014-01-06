@@ -918,4 +918,18 @@ As usual, install_github did not work. This did not work:\
 The INSTALL_opts was "unused argument", despite what documentation says about ...\
 \
 \
+2014-01-05\
+\
+It did not work to have the different insert subtypes as subclasses of VariableGenerator.\
+In particular this cast fails:     as("DesignParameter", VariableGenerator(...)\
+Now, there's a new slot in a VG called insertSubType.\
+Also automatic creation of constructors that set the insertSubType, e.g.\
+	DesignParameter = function(...) \
+	    VariableGenerator(insertSubType=insertSubType, ...)\
+	<environment: namespace:CTDesignExperimenter>\
+No arg prompting though, so for now for convenience, type \
+	VariableGenerator(   <TAB> \
+to get arg names, then replace VariableGenerator with the insertSubType name.\
+\
+Later, I'd like to replace "insertSubType" by "context" throughout.\
 }
