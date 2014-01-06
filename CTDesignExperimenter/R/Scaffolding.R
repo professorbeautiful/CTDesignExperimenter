@@ -91,10 +91,6 @@ for(scaf in 1:scafSize) {
 
 ## Creating a default scenario #####
 
-vg_clearanceRate = as(object=vg_clearanceRate, "PatientAttribute")
-vg_responseDoseThreshold = as(object=vg_responseDoseThreshold, "PatientAttribute")
-vg_toxDoseThreshold = as(object=vg_toxDoseThreshold, "PatientAttribute")
-
 defaultScenario =  #as("Scenario",
   new("ListOfInserts", list(
     vg_liver, vg_age, ec_liver, ec_age,

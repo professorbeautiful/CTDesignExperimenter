@@ -60,14 +60,6 @@ setClassUnion("Insert", c("EventGenerator", "VariableGenerator"))
 
 
 
-setClass("PatientAttribute",      contains="VariableGenerator")
-setClass("EligibilityCriterion",  contains="VariableGenerator")
-setClass("ScheduleTreatment",     contains="EventGenerator")
-setClass("OffStudyCriterion",     contains="VariableGenerator")
-setClass("ModificationRule",      contains="EventGenerator")
-setClass("PatientSummary",        contains="VariableGenerator")
-setClass("StoppingCriterion",     contains="VariableGenerator")
-setClass("TrialSummary",          contains="VariableGenerator")
 
 #' ListOfInserts
 #' 
