@@ -39,15 +39,17 @@ VariableGenerator = function(insertSubType="PatientAttribute",
 }
 
 for(insertSubType in scaffoldInsertSubTypes) {
-  if(insertSubType != "")
-  assign(insertSubType, function(...) 
-    VariableGenerator(insertSubType=insertSubType, ...)
-  )
+  if(insertSubType != "") {
+    text = print(paste0("assign(insertSubType, function(...)
+        VariableGenerator(insertSubType='", insertSubType,
+                 "', ...), pos=1)"))
+    eval(parse(text=text))
+  }
 }
 
 
 setMethod("print", "VariableGenerator", function(x){
-  cat("    output: ", x@provisions, "\n")
+  cat("   VG: output: ", x@provisions, "\n")
   for (req in x@requirements) {
     cat("       req: ", req, "\n") ### Omits all but the Variable name slot.
   }
