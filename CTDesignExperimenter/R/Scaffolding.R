@@ -105,7 +105,7 @@ defaultScenario =  #as("Scenario",
   )# )
 
 getVGs = function(scenario, subType) {
-  whichOnes = sapply(scenario, is, subType)
+  whichOnes = (sapply(scenario, slot, name="insertSubType") == subType)
   return(scenario[whichOnes])
 }
 length(getVGs(scenario=defaultScenario, subType="PatientAttribute"))
