@@ -315,7 +315,7 @@ doThisAction_SummarizeTrial = function(scenario=defaultScenario) {
 
 runTrial = function(scenario=defaultScenario) {
   initializeQueue()
-  doAction(actionQueue$actions[[1]], scenario)
+  executeQueue()
 }
 
 runTrial()
