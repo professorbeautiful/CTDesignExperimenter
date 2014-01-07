@@ -100,8 +100,11 @@ makeScaffoldObjects() # For building the package.
 
 defaultScenario =  #as("Scenario",
   new("ListOfInserts", list(
-    vg_liver, vg_age, ec_liver, ec_age,
-    vg_clearanceRate, vg_responseDoseThreshold, vg_toxDoseThreshold)
+    vg_liver=vg_liver, vg_age=vg_age, 
+    ec_liver=ec_liver, ec_age=ec_age,
+    vg_clearanceRate=vg_clearanceRate, 
+    vg_responseDoseThreshold=vg_responseDoseThreshold,
+    vg_toxDoseThreshold=vg_toxDoseThreshold)
   )# )
 
 getVGs = function(scenario, subType) {
@@ -214,7 +217,7 @@ debug(addToQueue_)
 #####
 
 #setClassUnion("Scenario", members=c("ListOfInserts"))
-# FUCK!! Fails with doAction(actionQueue$actions[[1]], scenario)
+# F__k!! Fails with doAction(actionQueue$actions[[1]], scenario)
 # Error in (function (classes, fdef, mtable)  : 
 #             unable to find an inherited method for function ‘doAction’ for signature ‘"ScaffoldEvent", "ListOfInserts"’ 
 # I'd prefer that Scenario extend ListOfInserts, but that doesn't work either.
@@ -224,25 +227,24 @@ debug(addToQueue_)
 setMethod("doAction", signature=list("Event", "ListOfInserts"), ######
           function(event, scenario=defaultScenario, ...) {
             cat("Event ", event@name , "is happening\n")
-            cat("Event ", event@name , "is happening\n")
-            cat("Event ", event@name , "is happening\n")
           }
 )
 
 ####
+doActionEvent = function(event, scenario=defaultScenario, ...){
+  doAction(as(object=event, "Event"), scenario=defaultScenario, ...)
+  doThisAction(event, scenario)
+  shouldIjump = eval(parse(text=event@jumpIf))
+  cat("doAction.ScaffoldEvent: shouldIjump=", shouldIjump, "\n")
+  ## TODO: handle getting the value from the patient or CT VN.
+  if(shouldIjump)
+    addToQueue(get(event@jumpTo), 
+               time=now())
+  else 
+    addToQueue(get(event@successor))
+}
 setMethod("doAction", signature=list("ScaffoldEvent", "ListOfInserts"),
-          function(event, scenario=defaultScenario, ...){
-            doAction(as(object=event, "Event"), scenario=defaultScenario, ...)
-            doThisAction(event, scenario)
-            shouldIjump = eval(parse(text=event@jumpIf))
-            cat("doAction.ScaffoldEvent: shouldIjump=", shouldIjump, "\n")
-            ## TODO: handle getting the value from the patient or CT VN.
-            if(shouldIjump)
-              addToQueue(get(event@jumpTo), 
-                         time=now())
-            else 
-              addToQueue(get(event@successor))
-          }
+          doActionEvent
 )
 
 doThisAction = function(event, scenario=defaultScenario)
