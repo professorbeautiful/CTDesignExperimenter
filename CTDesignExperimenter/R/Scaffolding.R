@@ -143,21 +143,28 @@ initializeQueue = function(firstaction=BeginClinicalTrial) {
   ### of the same length. The event time is not packaged with the event.
   ### So we are not currently using EventAtTime.
 }
-executeQueue = function(){
-  environment(executeQueue_) = actionQueue
-  executeQueue_()
-}
-executeQueue_ = function(verbose=TRUE){
-  while(queuePointer <= length(actionQueue)) {
-    doAction(actions[queuePointer])
-    increment(queuePointer)
+# executeQueue = function(){
+#   executeQueue_()
+# }
+
+executeQueue = function(verbose=TRUE, scenario=defaultScenario){
+  nActions <<- length(actionQueue$actions)
+  if(verbose) cat("executeQueue_: nActions = ", nActions, "\n")
+  while(actionQueue$queuePointer <= nActions) {
+    doAction(actionQueue$actions[[actionQueue$queuePointer]], scenario)
+    increment(ENV=actionQueue, queuePointer)
+    nActions <<-length(actionQueue$actions)
+    if(verbose) cat("executeQueue_: nActions = ", nActions,
+                    "queuePointer=", actionQueue$queuePointer, 
+                   actionQueue$actions[[actionQueue$queuePointer]]@name, "\n")
   }
   if(verbose) cat("FINISHED executeQueue_")
 }
-    
+#environment(executeQueue) = actionQueue
+
 addToQueue = function(event, time=now()) {
   environment(addToQueue_) = actionQueue
-  ## This was to allow debug(addToQueue), but it didn't work.
+  ## This was to allow debug(addToQueue_), but it didn't work.
   addToQueue_(event, time)
   cat("actionQueue$queueTimes=", actionQueue$queueTimes, "\n")
 }  
