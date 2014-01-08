@@ -77,9 +77,10 @@ setClass("VariableValue", contains="ANY",
 
 VariableValue = function(value, variable) {
   dataPart = value
-  ifVerboseCat("dataPart", dataPart)
+  ifVerboseCat(paste(variable@name, "dataPart  = ", dataPart, 
+                     ";  typeof(dataPart)", typeof(dataPart))
+  )
   # ifVerboseCat("variable@checkDataType", variable@checkDataType)
-  ifVerboseCat("typeof(dataPart)", typeof(dataPart))
   #  if( ! is(dataPart, variable@checkDataType)) ### why is this different??
   if( ! ( variable@checkDataType(dataPart)))
     stop(paste0("Invalid value for variable ", 
@@ -87,7 +88,7 @@ VariableValue = function(value, variable) {
                ", found ", typeof(dataPart),
          "but failed checkDataType():\n\t", 
          printFunctionBody( variable@checkDataType)
-))
+    ))
   return(new("VariableValue", dataPart, variable=variable))
 }
 
