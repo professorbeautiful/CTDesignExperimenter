@@ -277,12 +277,40 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
       "Form a Variable Network. ",
       "Retrieve all VariableValues,
                   and return the conjunction with all().\n")
-  candidateVN = VariableNetwork(vgList=VariableGeneratorList(vgList=list(
+  eligibilityVariables = VariableList(
+    sapply(getVGs(scenario, "EligibilityCriterion"),
+         slot, "provisions"))
+  v_notEligibleVariable = Variable(name="notEligible", 
+                                   description="whether patient is not eligible; used in doThisAction_CheckEligibility",
+                                   checkDataType=is.logical,
+                                   gitAction="none")
+  # cat("....... ", eligibilityVariables)   ###   OK
+  vg_notEligible = VariableGenerator(insertSubType="EligibilityCriterion",
+                                    parameters=list(iAmAParameter=TRUE),
+                                    requirements=eligibilityVariables,
+                                    provisions=v_notEligibleVariable,
+                                    generatorCode=function(){} # body is filled in below.
+  )
+  criteriaNames = names(eligibilityVariables)
+  body(vg_notEligible@generatorCode) = parse(text=paste("{
+        criteriaValues = c(", paste(criteriaNames, collapse=",") ,")
+        names(criteriaValues) = criteriaNames
+        print(criteriaValues)
+        whichViolated = which(criteriaValues == FALSE)
+        notEligible = any(whichViolated)
+        if(notEligible) 
+          cat('Eligibility violation(s): ', names(criteriaValues[whichViolated]))
+        return(notEligible)
+    }")
+   )
+  candidateVN = VariableNetwork(vgList=VariableGeneratorList(vgList=c(
     getVGs(scenario, "PatientAttribute"),
-    getVGs(scenario, "EligibilityCriterion")
+    getVGs(scenario, "EligibilityCriterion"),
+    vg_notEligible=vg_notEligible
   )))
   VVenv = evaluateVNoutputs(candidateVN)
-  printVVenv(VVenv)              
+#  printVVenv(VVenv)    
+  print(sapply(names(which(sapply(VVenv, is.logical))), get, env=VVenv))
 }
 doThisAction_EnrollPatient = function(scenario=defaultScenario) {
   cat("Enrolling the patient; copy patient info.\n")
@@ -318,4 +346,4 @@ runTrial = function(scenario=defaultScenario) {
   executeQueue()
 }
 
-runTrial()
+if(interactive()) runTrial()  ## skip when building.
