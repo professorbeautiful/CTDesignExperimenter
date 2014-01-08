@@ -63,8 +63,9 @@ evaluateGeneratorOutput = function(generator, envir=parent.frame(), alreadyDone=
   environment(generator@generatorCode) = envir  #function arg
   if(length(generator@parameters) > 0)
     environment(generator@generatorCode) = 
-    list2env(generator@parameters, environment(generator@generatorCode))
-  ifVerboseCat("generatorCode_envir", ls(envir=environment(generator@generatorCode)))
+      list2env(generator@parameters, environment(generator@generatorCode))
+  ifVerboseCat("generatorCode_envir: ", 
+               ls(envir=environment(generator@generatorCode)))
   value = generator@generatorCode()
   #thisOutput = new("VariableValue", variable=generator@outputVariable, value=value)
   #  valueList = c(value, valueList)
