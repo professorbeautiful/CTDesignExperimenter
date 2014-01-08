@@ -318,4 +318,4 @@ runTrial = function(scenario=defaultScenario) {
   executeQueue()
 }
 
-#runTrial()
+runTrial()
