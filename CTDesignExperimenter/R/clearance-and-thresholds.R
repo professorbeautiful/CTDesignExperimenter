@@ -28,7 +28,6 @@ vg_responseDoseThreshold  = VariableGenerator(
   requirements=VariableList(v_clearanceRate),
   provisions=v_responseDoseThreshold, 
   generatorCode=function() { 
-    cat("clearanceRate=", clearanceRate, "\n")
     clearanceRate * 
       exp(rnorm(1, responseLoc, responseSD))
   }
