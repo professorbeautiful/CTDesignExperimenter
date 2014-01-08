@@ -27,7 +27,7 @@ setClass("VariableGeneratorList", contains="list")
 #' @return  A VariableGeneratorList, validated as to the components
 VariableGeneratorList = function(vgList=NULL) {
   if(is.null(vgList)) return(new("VariableGeneratorList", list()))
-  theNames = names(vgList)
+  theNames = names(vgList) ## You must assign names to the list.
   if(is.null(theNames))
     theNames = paste0("vg", 1:length(vgList))
   if(is(vgList, "VariableGenerator"))
