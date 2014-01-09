@@ -62,7 +62,7 @@ scaffoldObjects$eventInsertType[scaffoldObjects$eventInsertSubType==""] = ""
 scaffoldObjects$jumpIf = "FALSE"
 scaffoldObjects$jumpTo = ""
 scaffoldObjects["CheckEligibility", "jumpTo"] = "GeneratePatient"
-scaffoldObjects["CheckEligibility", "jumpIf"] = "notEligible"
+scaffoldObjects["CheckEligibility", "jumpIf"] = "trialData$candidatePatient$VVenv$notEligible"
 scaffoldObjects["CheckOffStudy", "jumpTo"] = "AssignTreatmentPlan"
 scaffoldObjects["CheckOffStudy", "jumpIf"] = "notOffStudy"
 scaffoldObjects["CheckOffStudy", "jumpTo"] = "AssignTreatmentPlan"
@@ -230,7 +230,6 @@ setMethod("doAction", signature=list("Event", "ListOfInserts"), ######
           }
 )
 
-####
 doActionEvent = function(event, scenario=defaultScenario, ...){
   doAction(as(object=event, "Event"), scenario=defaultScenario, ...)
   doThisAction(event, scenario)
@@ -268,6 +267,7 @@ doThisAction_GeneratePatient = function(scenario=defaultScenario) {
     ###  Includes parameters as well as VV's.
     ## You can use a VV name in an expression as its value, e.g. numeric!  Nice!
     printVVenv(VVenv)
+    trialData$candidatePatient$VVenv = VVenv
   }
   environment(makeCandidate) <- trialData$candidatePatient
   makeCandidate()
@@ -292,14 +292,19 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
                                     generatorCode=function(){} # body is filled in below.
   )
   criteriaNames = names(eligibilityVariables)
+  criteriaValueVectorText = 
+    paste0("c(", paste(criteriaNames, collapse=", "), ")")
+  criteriaNameVectorText = 
+    paste0("c('", paste(criteriaNames, collapse="', '"), "')")
   body(vg_notEligible@generatorCode) = parse(text=paste("{
-        criteriaValues = c(", paste(criteriaNames, collapse=",") ,")
-        names(criteriaValues) = criteriaNames
+        criteriaValues = ", criteriaValueVectorText, "
+        names(criteriaValues) = ", criteriaNameVectorText, "
         print(criteriaValues)
         whichViolated = which(criteriaValues == FALSE)
         notEligible = any(whichViolated)
         if(notEligible) 
-          cat('Eligibility violation(s): ', names(criteriaValues[whichViolated]))
+          cat('Eligibility violation(s): ', 
+            names(criteriaValues[whichViolated]), '\n')
         return(notEligible)
     }")
    )
@@ -311,6 +316,8 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
   VVenv = evaluateVNoutputs(candidateVN)
 #  printVVenv(VVenv)    
   print(sapply(names(which(sapply(VVenv, is.logical))), get, env=VVenv))
+  trialData$candidatePatient$VVenv = VVenv
+  #print(VVenv)
 }
 doThisAction_EnrollPatient = function(scenario=defaultScenario) {
   cat("Enrolling the patient; copy patient info.\n")
