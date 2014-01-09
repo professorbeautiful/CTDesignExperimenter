@@ -285,6 +285,7 @@ doThisAction_GeneratePatient = function(scenario=defaultScenario) {
   environment(makeCandidate) <- trialData$candidatePatient
   makeCandidate()
 }
+
 doThisAction_CheckEligibility = function(scenario=defaultScenario) {
   cat("Gather eligibilityCriterion objects from scenario.",
       "Form a Variable Network. ",
@@ -321,15 +322,16 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
         return(notEligible)
     }")
    )
-  candidateVN = VariableNetwork(vgList=VariableGeneratorList(vgList=c(
+  eg_VN = VariableNetwork(vgList=VariableGeneratorList(vgList=c(
     getVGs(scenario, "PatientAttribute"),
     getVGs(scenario, "EligibilityCriterion"),
     vg_notEligible=vg_notEligible
   )))
-  VVenv = evaluateVNoutputs(candidateVN)
+  VVenv = evaluateVNoutputs(eg_VN, 
+                            trialData$patientData[[trialData$NpatientsEnrolled]]$VVenv)
 #  printVVenv(VVenv)    
   print(sapply(names(which(sapply(VVenv, is.logical))), get, env=VVenv))
-  trialData$candidatePatient$VVenv = VVenv
+  trialData$patientData[[trialData$NpatientsEnrolled]]$VVenv = VVenv
   #print(VVenv)
 }
 doThisAction_EnrollPatient = function(scenario=defaultScenario) {
@@ -386,7 +388,8 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
     getVGs(scenario, "OffStudyCriterion"),
     vg_notOffStudy=vg_notOffStudy
   )))
-  VVenv = evaluateVNoutputs(candidateVN)
+  VVenv = evaluateVNoutputs(offStudyVN, currentPatient)
+  ## TODO: in checkEligibility, also don't re-do initial variables.
 #  printVVenv(VVenv)    
   print(sapply(names(which(sapply(VVenv, is.logical))), get, env=VVenv))
   trialData$candidatePatient$VVenv = VVenv

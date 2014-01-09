@@ -77,21 +77,23 @@ evaluateGeneratorOutput = function(generator, envir=parent.frame(), alreadyDone=
 ##' evaluateVNoutputs
 ##' 
 ##' Evaluate the output variables for all the VGs in a network.
+##' @param VN A VariableNetwork object.
+##' @param envVariableValues Previously calculated values.
 ##' @example incidenceMatrix(vNexample)
 ##' @example permuteToUpperTriangular(incidenceMatrix(vNexample))  ### permute to upper triangular.
 ##' @example vNvalueEnv = evaluateVNoutputs(vNexample)
 ##' @example ls(env=vNvalueEnv)
 
-evaluateVNoutputs = function(vN) {
+evaluateVNoutputs = function(vN, envVariableValues = new.env()) {
   ## First, make the generatorCode function available.
-  envVariableValues = new.env()
+  
   if(!is(vN, "VariableNetwork"))
     stop("evaluateVNoutputs: args should be a VariableNetwork")
   iM = incidenceMatrix(vN)
   iM = try(permuteToUpperTriangular(iM))
   if(is(iM, "try-error")) {
     cat("evaluateVNoutputs: iM try-error \n")
-    browser()  ### TODO: improve this.
+    browser()  ### TODO: improve this error-handling.
   }
   for(vName in rownames(iM)) { 
     ifVerboseCat("Processing node ", vName)
