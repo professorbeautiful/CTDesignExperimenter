@@ -148,6 +148,7 @@ setGeneric("doAction", function(event, scenario, ...) standardGeneric("doAction"
 ##' 
 initializeQueue = function(firstaction=BeginClinicalTrial) {
   assign("actionQueue", new.env(), pos=1)
+  
   assign("queuePointer", 1, env=actionQueue)
   assign("queueTimes", 0, env=actionQueue)
   assign("actions", list(firstaction), env=actionQueue)
@@ -246,7 +247,7 @@ doActionEvent = function(event, scenario=defaultScenario, ...){
   doThisAction(event, scenario)
   jumpIfString = event@jumpIf   ## To see it in Environment tab.
   browser("Stopping for jumpIf", expr=(jumpIfString!="FALSE"))
-  shouldIjump = eval(parse(text=event@jumpIf))
+  shouldIjump = eval(parse(text=event@jumpIf))@.Data
   cat("doAction.ScaffoldEvent: shouldIjump=", shouldIjump, "\n")
   ## TODO: handle getting the value from the patient or CT VN.
   if(shouldIjump)
@@ -283,6 +284,8 @@ doThisAction_GeneratePatient = function(scenario=defaultScenario) {
     trialData$candidatePatient$VVenv = VVenv
   }
   environment(makeCandidate) <- trialData$candidatePatient
+  trialData$NcurrentPatient = NULL
+  trialData$currentPatient = NULL
   makeCandidate()
 }
 
@@ -328,16 +331,20 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
     vg_notEligible=vg_notEligible
   )))
   VVenv = evaluateVNoutputs(eg_VN, 
-                            trialData$patientData[[trialData$NpatientsEnrolled]]$VVenv)
+                            trialData$candidatePatient$VVenv)
 #  printVVenv(VVenv)    
   print(sapply(names(which(sapply(VVenv, is.logical))), get, env=VVenv))
-  trialData$patientData[[trialData$NpatientsEnrolled]]$VVenv = VVenv
+  trialData$candidatePatient$VVenv = VVenv
   #print(VVenv)
 }
 doThisAction_EnrollPatient = function(scenario=defaultScenario) {
   cat("Enrolling the patient; copying patient info.\n")
-  increment(NpatientsEnrolled, trialData)
-  trialData$patientData[[trialData$NpatientsEnrolled]]$VVenv = trialData$candidatePatient$VVenv
+  increment(NpatientsEnrolled, ENV=trialData)
+  trialData$NcurrentPatient = trialData$NpatientsEnrolled
+  trialData$currentPatient =
+    trialData$patientData[[trialData$NpatientsEnrolled]] =
+    new.env()
+  trialData$currentPatient$VVenv = trialData$candidatePatient$VVenv
 }
 doThisAction_AssignTreatmentPlan = function(scenario=defaultScenario) {
   cat("doThisAction_AssignTreatmentPlan", " not yet implemented\n")
@@ -371,20 +378,24 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
     paste0("c(", paste(criteriaNames, collapse=", "), ")")
   criteriaNameVectorText = 
     paste0("c('", paste(criteriaNames, collapse="', '"), "')")
-  body(vg_notOffStudy@generatorCode) = parse(text=paste("{
-                                                        criteriaValues = ", criteriaValueVectorText, "
-                                                        names(criteriaValues) = ", criteriaNameVectorText, "
-                                                        print(criteriaValues)
-                                                        whichViolated = which(criteriaValues == FALSE)
-                                                        notOffStudy = any(whichViolated)
-                                                        if(notOffStudy) 
-                                                        cat('offStudy violation(s): ', 
-                                                        names(criteriaValues[whichViolated]), '\n')
-                                                        return(notOffStudy)
-}")
-   )
-  patientVN = VariableNetwork(vgList=VariableGeneratorList(vgList=c(
-    getVGs(scenario, "PatientAttribute"),
+  if(length(criteriaNames) == 0) theGeneratorBody =
+    'return(TRUE)' ## if no criteria, the patient is off-study automatically.
+  # TODO make checkEligibility like this too, in case no criteria.
+  else
+    theGeneratorBody = paste(
+    "{
+        criteriaValues = ", criteriaValueVectorText, "
+        names(criteriaValues) = ", criteriaNameVectorText, "
+        print(criteriaValues)
+        whichViolated = which(criteriaValues == FALSE)
+        notOffStudy = any(whichViolated)
+        if(notOffStudy) 
+          cat('offStudy violation(s): ', 
+          names(criteriaValues[whichViolated]), '\n')
+        return(notOffStudy)
+    }")
+  body(vg_notOffStudy@generatorCode) = parse(text=paste(theGeneratorBody))
+  offStudyVN = VariableNetwork(vgList=VariableGeneratorList(vgList=c(
     getVGs(scenario, "OffStudyCriterion"),
     vg_notOffStudy=vg_notOffStudy
   )))
@@ -392,24 +403,29 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
   ## TODO: in checkEligibility, also don't re-do initial variables.
 #  printVVenv(VVenv)    
   print(sapply(names(which(sapply(VVenv, is.logical))), get, env=VVenv))
-  trialData$candidatePatient$VVenv = VVenv
+  trialData$currentPatient$VVenv = VVenv
   #print(VVenv)
 }
+
 doThisAction_CheckModifications = function(scenario=defaultScenario) {
   cat("doThisAction_CheckModifications", " not yet implemented\n")
 }
+
 doThisAction_SummarizePatient = function(scenario=defaultScenario) {
   cat("doThisAction_SummarizePatient", " not yet implemented\n")
 }
+
 doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
   cat("doThisAction_CheckStoppingRules", " not yet implemented\n")
 }
+
 doThisAction_SummarizeTrial = function(scenario=defaultScenario) {
   cat("doThisAction_SummarizeTrial", " not yet implemented\n")
 }
 
 
 runTrial = function(scenario=defaultScenario) {
+  makeScaffoldObjects()
   initializeQueue()
   executeQueue()
 }
