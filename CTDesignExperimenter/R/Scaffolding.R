@@ -344,19 +344,21 @@ doThisAction_GenerateOutcomes = function(scenario=defaultScenario) {
   cat("doThisAction_GenerateOutcomes", " not yet implemented\n")
 }
 doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
+  ###  CAUTION: we do not want to regenerate the patient values.
+  ###  Just add new VGs to the VVenv, and process them.
   cat("Gather offStudyCriterion objects from scenario.",
       "Form a Variable Network. ",
       "Retrieve all VariableValues,
-      and return the conjunction with all().\n")
+      and return the conjunction with any().\n")
   offStudyVariables = VariableList(
     sapply(getVGs(scenario, "offStudyCriterion"),
            slot, "provisions"))
-  v_notEligibleVariable = Variable(name="notEligible", 
+  v_notOffStudyVariable = Variable(name="notOffStudy", 
                                    description="whether patient is offStudy; used in doThisAction_CheckoffStudy",
                                    checkDataType=is.logical,
                                    gitAction="none")
   # cat("....... ", offStudyVariables)   ###   OK
-  vg_notEligible = VariableGenerator(insertSubType="OffStudyCriterion",
+  vg_notOffStudy = VariableGenerator(insertSubType="OffStudyCriterion",
                                      parameters=list(iAmAParameter=TRUE),
                                      requirements=offStudyVariables,
                                      provisions=v_notOffStudyVariable,
