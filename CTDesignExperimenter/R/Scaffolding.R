@@ -61,12 +61,21 @@ scaffoldObjects$eventInsertType =
 scaffoldObjects$eventInsertType[scaffoldObjects$eventInsertSubType==""] = ""
 scaffoldObjects$jumpIf = "FALSE"
 scaffoldObjects$jumpTo = ""
+# If the candidate patient is notEligible jump back to GeneratePatient
+# Otherwise continue to EnrollPatient
 scaffoldObjects["CheckEligibility", "jumpTo"] = "GeneratePatient"
 scaffoldObjects["CheckEligibility", "jumpIf"] = "trialData$candidatePatient$VVenv$notEligible"
-scaffoldObjects["CheckOffStudy", "jumpTo"] = "AssignTreatmentPlan"
-scaffoldObjects["CheckOffStudy", "jumpIf"] = "trialData$patientData[[trialData$NpatientsEnrolled]]$VVenv$notOffStudy"
-scaffoldObjects["CheckOffStudy", "jumpTo"] = "AssignTreatmentPlan"
-scaffoldObjects["CheckOffStudy", "jumpIf"] = "notOffStudy"
+# If the current patient is offStudy jump forward to SummarizePatient
+# Otherwise continue to CheckModifications
+scaffoldObjects["CheckOffStudy", "jumpIf"] = "trialData$patientData[[trialData$NpatientsEnrolled]]$VVenv$offStudy"
+scaffoldObjects["CheckOffStudy", "jumpTo"] = "SummarizePatient"
+# CheckModifications makes the modifications, then always returns to GenerateOutcomes
+# After SummarizePatient, we do CheckStoppingRules
+# continueAccrual is TRUE if all stopping rules are FALSE.
+# If continueAccrual, jump back to GeneratePatient
+# Otherwise continue to SummarizeTrial
+scaffoldObjects["CheckStoppingRules", "jumpIf"] = "trialData$continueAccrual"
+scaffoldObjects["CheckOffStudy", "jumpTo"] = "GeneratePatient"
 
 
 scafSize = nrow(scaffoldObjects)
