@@ -64,7 +64,7 @@ scaffoldObjects$jumpTo = ""
 scaffoldObjects["CheckEligibility", "jumpTo"] = "GeneratePatient"
 scaffoldObjects["CheckEligibility", "jumpIf"] = "trialData$candidatePatient$VVenv$notEligible"
 scaffoldObjects["CheckOffStudy", "jumpTo"] = "AssignTreatmentPlan"
-scaffoldObjects["CheckOffStudy", "jumpIf"] = "notOffStudy"
+scaffoldObjects["CheckOffStudy", "jumpIf"] = "trialData$patientData[[trialData$NpatientsEnrolled]]$VVenv$notOffStudy"
 scaffoldObjects["CheckOffStudy", "jumpTo"] = "AssignTreatmentPlan"
 scaffoldObjects["CheckOffStudy", "jumpIf"] = "notOffStudy"
 
@@ -230,9 +230,13 @@ setMethod("doAction", signature=list("Event", "ListOfInserts"), ######
           }
 )
 
+####debug
 doActionEvent = function(event, scenario=defaultScenario, ...){
+  eventName = event@name  ## To see it in Environment tab.
   doAction(as(object=event, "Event"), scenario=defaultScenario, ...)
   doThisAction(event, scenario)
+  jumpIfString = event@jumpIf   ## To see it in Environment tab.
+  browser("Stopping for jumpIf", expr=(jumpIfString!="FALSE"))
   shouldIjump = eval(parse(text=event@jumpIf))
   cat("doAction.ScaffoldEvent: shouldIjump=", shouldIjump, "\n")
   ## TODO: handle getting the value from the patient or CT VN.
@@ -320,10 +324,9 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
   #print(VVenv)
 }
 doThisAction_EnrollPatient = function(scenario=defaultScenario) {
-  cat("Enrolling the patient; copy patient info.\n")
+  cat("Enrolling the patient; copying patient info.\n")
   increment(NpatientsEnrolled, trialData)
-  trialData$patientData[trialData$NpatientsEnrolled] = trialData$candidateVN
-  theCurrentPatient = trialData$patientData[trialData$NpatientsEnrolled] 
+  trialData$patientData[[trialData$NpatientsEnrolled]] = trialData$candidateVN
 }
 doThisAction_AssignTreatmentPlan = function(scenario=defaultScenario) {
   cat("doThisAction_AssignTreatmentPlan", " not yet implemented\n")
@@ -332,7 +335,51 @@ doThisAction_GenerateOutcomes = function(scenario=defaultScenario) {
   cat("doThisAction_GenerateOutcomes", " not yet implemented\n")
 }
 doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
-  cat("doThisAction_CheckOffStudy", " not yet implemented\n")
+  cat("Gather offStudyCriterion objects from scenario.",
+      "Form a Variable Network. ",
+      "Retrieve all VariableValues,
+      and return the conjunction with all().\n")
+  offStudyVariables = VariableList(
+    sapply(getVGs(scenario, "offStudyCriterion"),
+           slot, "provisions"))
+  v_notEligibleVariable = Variable(name="notEligible", 
+                                   description="whether patient is offStudy; used in doThisAction_CheckoffStudy",
+                                   checkDataType=is.logical,
+                                   gitAction="none")
+  # cat("....... ", offStudyVariables)   ###   OK
+  vg_notEligible = VariableGenerator(insertSubType="OffStudyCriterion",
+                                     parameters=list(iAmAParameter=TRUE),
+                                     requirements=offStudyVariables,
+                                     provisions=v_notOffStudyVariable,
+                                     generatorCode=function(){} # body is filled in below.
+  )
+  criteriaNames = names(offStudyVariables)
+  criteriaValueVectorText = 
+    paste0("c(", paste(criteriaNames, collapse=", "), ")")
+  criteriaNameVectorText = 
+    paste0("c('", paste(criteriaNames, collapse="', '"), "')")
+  body(vg_notOffStudy@generatorCode) = parse(text=paste("{
+                                                        criteriaValues = ", criteriaValueVectorText, "
+                                                        names(criteriaValues) = ", criteriaNameVectorText, "
+                                                        print(criteriaValues)
+                                                        whichViolated = which(criteriaValues == FALSE)
+                                                        notOffStudy = any(whichViolated)
+                                                        if(notOffStudy) 
+                                                        cat('offStudy violation(s): ', 
+                                                        names(criteriaValues[whichViolated]), '\n')
+                                                        return(notOffStudy)
+}")
+   )
+  patientVN = VariableNetwork(vgList=VariableGeneratorList(vgList=c(
+    getVGs(scenario, "PatientAttribute"),
+    getVGs(scenario, "OffStudyCriterion"),
+    vg_notOffStudy=vg_notOffStudy
+  )))
+  VVenv = evaluateVNoutputs(candidateVN)
+#  printVVenv(VVenv)    
+  print(sapply(names(which(sapply(VVenv, is.logical))), get, env=VVenv))
+  trialData$candidatePatient$VVenv = VVenv
+  #print(VVenv)
 }
 doThisAction_CheckModifications = function(scenario=defaultScenario) {
   cat("doThisAction_CheckModifications", " not yet implemented\n")
@@ -352,5 +399,7 @@ runTrial = function(scenario=defaultScenario) {
   initializeQueue()
   executeQueue()
 }
+
+scenarioNoElig = getVGs(defaultScenario, "PatientAttribute")
 
 if(interactive()) runTrial()  ## skip when building.
