@@ -335,7 +335,7 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
 doThisAction_EnrollPatient = function(scenario=defaultScenario) {
   cat("Enrolling the patient; copying patient info.\n")
   increment(NpatientsEnrolled, trialData)
-  trialData$patientData[[trialData$NpatientsEnrolled]] = trialData$candidateVN
+  trialData$patientData[[trialData$NpatientsEnrolled]]$VVenv = trialData$candidatePatient$VVenv
 }
 doThisAction_AssignTreatmentPlan = function(scenario=defaultScenario) {
   cat("doThisAction_AssignTreatmentPlan", " not yet implemented\n")
