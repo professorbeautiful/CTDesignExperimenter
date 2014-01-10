@@ -385,7 +385,7 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
   criteriaNameVectorText = 
     paste0("c('", paste(criteriaNames, collapse="', '"), "')")
   if(length(criteriaNames) == 0) theGeneratorBody =
-    'return(TRUE)' ## if no criteria, the patient is off-study automatically.
+    'return(FALSE)' ## if no criteria, the patient is off-study automatically.
   # TODO make checkEligibility like this too, in case no criteria.
   else
     theGeneratorBody = paste(
