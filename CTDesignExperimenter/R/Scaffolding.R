@@ -86,17 +86,17 @@ makeScaffoldObjects <- function () {
     with(scaffoldObjects[scaf, ], 
          assign(
            #assignInMyNamespace( # fails: Error in bindingIsLocked(x, ns)
-             pos=1, #works for BUILD, but then objects are lost.
-        print(name), new("ScaffoldEvent",
-                       name=name,
-                       predecessor=ifelse(scaf>1, scaffoldObjects$name[scaf-1], ""),
-                       successor=ifelse(scaf<scafSize, scaffoldObjects$name[scaf+1], ""),
-                       eventInsertType=scaffoldObjects$eventInsertType[scaf],
-                       eventInsertSubType=scaffoldObjects$eventInsertSubType[scaf],
-                       jumpIf=scaffoldObjects$jumpIf[scaf],
-                       jumpTo=scaffoldObjects$jumpTo[scaf],
-                       timeToNextEvent=increment
-      )))
+           pos=1, #works for BUILD, but then objects are lost.
+           print(name), new("ScaffoldEvent",
+                            name=name,
+                            predecessor=ifelse(scaf>1, scaffoldObjects$name[scaf-1], ""),
+                            successor=ifelse(scaf<scafSize, scaffoldObjects$name[scaf+1], ""),
+                            eventInsertType=scaffoldObjects$eventInsertType[scaf],
+                            eventInsertSubType=scaffoldObjects$eventInsertSubType[scaf],
+                            jumpIf=scaffoldObjects$jumpIf[scaf],
+                            jumpTo=scaffoldObjects$jumpTo[scaf],
+                            timeToNextEvent=increment
+           )))
   }
 }
 
@@ -169,7 +169,7 @@ executeQueue = function(verbose=TRUE, scenario=defaultScenario){
     nActions <<-length(actionQueue$actions)
     if(verbose) cat("executeQueue_: nActions = ", nActions,
                     "queuePointer=", actionQueue$queuePointer, 
-                   actionQueue$actions[[actionQueue$queuePointer]]@name, "\n")
+                    actionQueue$actions[[actionQueue$queuePointer]]@name, "\n")
   }
   if(verbose) cat("FINISHED executeQueue_")
 }
@@ -192,7 +192,7 @@ addToQueue_ = function(event, time) {
   else {
     while(time < queueTimes[sortposition-1]) 
       sortposition = sortposition - 1  ## should never be < 1 though.
- #   cat("sortposition=", sortposition, "\n")
+    #   cat("sortposition=", sortposition, "\n")
     if(sortposition==1) {
       actions <<- c(event, actions)
       queueTimes <<- c(time, queueTimes)
@@ -203,13 +203,19 @@ addToQueue_ = function(event, time) {
     }  
     else {
       actions <<- c(actions[1:(sortposition-1)],
-                event, actions[sortposition:length(actions)])
+                    event, actions[sortposition:length(actions)])
       queueTimes <<- c(queueTimes[1:(sortposition-1)],
                        time, queueTimes[sortposition:length(queueTimes)])
     } 
   }
-#  cat("length of actions is now ", length(actions), "\n")
-#  cat("actions saved correctly? ", identical(actions, actionQueue$actions), "\n")
+  #  cat("length of actions is now ", length(actions), "\n")
+  #  cat("actions saved correctly? ", identical(actions, actionQueue$actions), "\n")
+}
+
+viewQueue=function(){
+  data.frame( 
+    event=sapply(1:10, function(i)actionQueue$actions[[i]]@name),  
+    time=sapply(1:10, function(i)actionQueue$queueTimes[[i]]))
 }
 
 debug(addToQueue_)
@@ -264,14 +270,14 @@ doThisAction = function(event, scenario=defaultScenario)
   do.call(paste0("doThisAction_", event@name), list(scenario=scenario))
 
 doThisAction_BeginClinicalTrial = function(scenario=defaultScenario) {
-    cat("Must now initializeCTdata()\n")
-    assign("trialData", new.env(), pos=1) #where is best?
-    trialData$NpatientsEnrolled = 0
-    trialData$patientData = list() ## This will hold enrolled patients.
-  }
+  cat("Must now initializeCTdata()\n")
+  assign("trialData", new.env(), pos=1) #where is best?
+  trialData$NpatientsEnrolled = 0
+  trialData$patientData = list() ## This will hold enrolled patients.
+}
 doThisAction_GeneratePatient = function(scenario=defaultScenario) {
   cat("Must generate a candidate patient now;  
-                  gather VG's and evaluate.\n")
+      gather VG's and evaluate.\n")
   assign("candidatePatient", new.env(), env=trialData)
   makeCandidate = function() {
     vgList = VariableGeneratorList(getVGs(scenario, 
@@ -293,20 +299,20 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
   cat("Gather eligibilityCriterion objects from scenario.",
       "Form a Variable Network. ",
       "Retrieve all VariableValues,
-                  and return the conjunction with all().\n")
+      and return the conjunction with all().\n")
   eligibilityVariables = VariableList(
     sapply(getVGs(scenario, "EligibilityCriterion"),
-         slot, "provisions"))
+           slot, "provisions"))
   v_notEligibleVariable = Variable(name="notEligible", 
                                    description="whether patient is not eligible; used in doThisAction_CheckEligibility",
                                    checkDataType=is.logical,
                                    gitAction="none")
   # cat("....... ", eligibilityVariables)   ###   OK
   vg_notEligible = VariableGenerator(insertSubType="EligibilityCriterion",
-                                    parameters=list(iAmAParameter=TRUE),
-                                    requirements=eligibilityVariables,
-                                    provisions=v_notEligibleVariable,
-                                    generatorCode=function(){} # body is filled in below.
+                                     parameters=list(iAmAParameter=TRUE),
+                                     requirements=eligibilityVariables,
+                                     provisions=v_notEligibleVariable,
+                                     generatorCode=function(){} # body is filled in below.
   )
   criteriaNames = names(eligibilityVariables)
   criteriaValueVectorText = 
@@ -314,16 +320,16 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
   criteriaNameVectorText = 
     paste0("c('", paste(criteriaNames, collapse="', '"), "')")
   body(vg_notEligible@generatorCode) = parse(text=paste("{
-        criteriaValues = ", criteriaValueVectorText, "
-        names(criteriaValues) = ", criteriaNameVectorText, "
-        print(criteriaValues)
-        whichViolated = which(criteriaValues == FALSE)
-        notEligible = any(whichViolated)
-        if(notEligible) 
-          cat('Eligibility violation(s): ', 
-            names(criteriaValues[whichViolated]), '\n')
-        return(notEligible)
-    }")
+                                                        criteriaValues = ", criteriaValueVectorText, "
+                                                        names(criteriaValues) = ", criteriaNameVectorText, "
+                                                        print(criteriaValues)
+                                                        whichViolated = which(criteriaValues == FALSE)
+                                                        notEligible = any(whichViolated)
+                                                        if(notEligible) 
+                                                        cat('Eligibility violation(s): ', 
+                                                        names(criteriaValues[whichViolated]), '\n')
+                                                        return(notEligible)
+}")
    )
   eg_VN = VariableNetwork(vgList=VariableGeneratorList(vgList=c(
     getVGs(scenario, "PatientAttribute"),
@@ -332,11 +338,11 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
   )))
   VVenv = evaluateVNoutputs(eg_VN, 
                             trialData$candidatePatient$VVenv)
-#  printVVenv(VVenv)    
+  #  printVVenv(VVenv)    
   print(sapply(names(which(sapply(VVenv, is.logical))), get, env=VVenv))
   trialData$candidatePatient$VVenv = VVenv
   #print(VVenv)
-}
+  }
 doThisAction_EnrollPatient = function(scenario=defaultScenario) {
   cat("Enrolling the patient; copying patient info.\n")
   increment(NpatientsEnrolled, ENV=trialData)
@@ -401,7 +407,7 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
   )))
   VVenv = evaluateVNoutputs(offStudyVN, currentPatient)
   ## TODO: in checkEligibility, also don't re-do initial variables.
-#  printVVenv(VVenv)    
+  #  printVVenv(VVenv)    
   print(sapply(names(which(sapply(VVenv, is.logical))), get, env=VVenv))
   trialData$currentPatient$VVenv = VVenv
   #print(VVenv)
