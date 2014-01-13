@@ -106,11 +106,11 @@ ActionGenerator = function(parameters=list(), provisions,
 
 
 setMethod("print", "VariableGenerator", function(x){
-  cat("    output: ", x@provisions, "\n")
+  cat("    output: ", x@outputVariable@name, "\n")
   for (req in x@requirements) {
-    cat("       req: ", req, "\n") ### Omits all but the Variable name slot.
+    cat("       req: ", req@name, "\n") ### Omits all but the Variable name slot.
   }
 }
-)          
+)         
 
 
