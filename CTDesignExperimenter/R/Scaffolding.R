@@ -69,7 +69,7 @@ scaffoldObjects["CheckEligibility", "jumpIf"] = "trialData$candidatePatient$VVen
 
 # If the current patient is offStudy jump forward to SummarizePatient
 # Otherwise continue to CheckModifications
-scaffoldObjects["CheckOffStudy", "jumpIf"] = "trialData$patientData[[trialData$NpatientsEnrolled]]$VVenv$offStudy"
+scaffoldObjects["CheckOffStudy", "jumpIf"] = "trialData$currentPatient$VVenv$notOffStudy"
 scaffoldObjects["CheckOffStudy", "jumpTo"] = "SummarizePatient"
 # CheckModifications makes the modifications, then always returns to GenerateOutcomes
 
@@ -117,6 +117,33 @@ makeScaffoldObjects() # For building the package.
 ### Context = Evaluation or scenario or CT or patient.#####
 ### Thus, hierarchical, with 4 levels.
 
+v_SampleSizeMax = Variable(name="SampleSizeMax", 
+         description='Upper bound for sample size', 
+         checkDataType=is.numeric)
+
+createVG_FixedSampleSizeMax = function(Nmax = 3) {
+  VariableGenerator(insertSubType="DesignParameter", 
+                    parameters=list(SampleSizeMax=Nmax),
+                    provisions=v_SampleSizeMax, 
+                    generatorCode=function(){
+                      SampleSizeMax
+                    }
+  )
+}
+
+v_SampleSizeMaxIsReached = Variable(name="SampleSizeMaxIsReached", 
+                           description='Upper bound for sample size has been reached.', 
+                           checkDataType=is.logical)
+vg_SampleSizeMaxIsReached = VariableGenerator(insertSubType="StoppingCriterion", 
+                  requirements=VariableList(v_SampleSizeMax),
+                  provisions=v_SampleSizeMaxIsReached, 
+                  generatorCode=function(){
+                    SampleSizeMax <= trialData$NpatientsEnrolled
+                  }
+)
+
+
+
 ## Creating a default scenario #####
 
 defaultScenario =  #as("Scenario",
@@ -125,7 +152,9 @@ defaultScenario =  #as("Scenario",
     ec_liver=ec_liver, ec_age=ec_age,
     vg_clearanceRate=vg_clearanceRate, 
     vg_responseDoseThreshold=vg_responseDoseThreshold,
-    vg_toxDoseThreshold=vg_toxDoseThreshold)
+    vg_toxDoseThreshold=vg_toxDoseThreshold,
+    vg_SampleSizeMax = createVG_FixedSampleSizeMax(2),
+    vg_SampleSizeMaxIsReached = vg_SampleSizeMaxIsReached)
   )# )
 
 getVGs = function(scenario, subType) {
@@ -294,9 +323,15 @@ doThisAction = function(event, scenario=defaultScenario)
 doThisAction_BeginClinicalTrial = function(scenario=defaultScenario) {
   cat("Must now initializeCTdata()\n")
   assign("trialData", new.env(), pos=1) #where is best?
+  vgList = VariableGeneratorList(getVGs(scenario, 
+                                        "DesignParameter"))
+  designVN = VariableNetwork(vgList=vgList)
+  envCopy(evaluateVNoutputs(designVN), trialData)
   trialData$NpatientsEnrolled = 0
   trialData$patientData = list() ## This will hold enrolled patients.
 }
+## TODO:  where do we put the accrual pattern? 
+# Currently in scaffoldObjects$timeToNextEvent
 doThisAction_GeneratePatient = function(scenario=defaultScenario) {
   cat("Must generate a candidate patient now;  
       gather VG's and evaluate.\n")
@@ -341,18 +376,19 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
     paste0("c(", paste(criteriaNames, collapse=", "), ")")
   criteriaNameVectorText = 
     paste0("c('", paste(criteriaNames, collapse="', '"), "')")
-  body(vg_notEligible@generatorCode) = parse(text=paste("{
-                                                        criteriaValues = ", criteriaValueVectorText, "
-                                                        names(criteriaValues) = ", criteriaNameVectorText, "
-                                                        print(criteriaValues)
-                                                        whichViolated = which(criteriaValues == FALSE)
-                                                        notEligible = any(whichViolated)
-                                                        if(notEligible) 
-                                                        cat('Eligibility violation(s): ', 
-                                                        names(criteriaValues[whichViolated]), '\n')
-                                                        return(notEligible)
-}")
-   )
+  body(vg_notEligible@generatorCode) = parse(text=paste(
+    "{
+    criteriaValues = ", criteriaValueVectorText, "
+    names(criteriaValues) = ", criteriaNameVectorText, "
+    print(criteriaValues)
+    whichViolated = which(criteriaValues == FALSE)
+    notEligible = any(whichViolated)
+    if(notEligible) 
+      cat('Eligibility violation(s): ', 
+        names(criteriaValues[whichViolated]), '\n')
+    return(notEligible)
+    }")
+  )
   eg_VN = VariableNetwork(vgList=VariableGeneratorList(vgList=c(
     getVGs(scenario, "PatientAttribute"),
     getVGs(scenario, "EligibilityCriterion"),
@@ -386,7 +422,7 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
   cat("Gather offStudyCriterion objects from scenario.",
       "Form a Variable Network. ",
       "Retrieve all VariableValues,
-      and return the conjunction with any().\n")
+      and return the disjunction (union) with any().\n")
   offStudyVariables = VariableList(
     sapply(getVGs(scenario, "offStudyCriterion"),
            slot, "provisions"))
@@ -415,24 +451,30 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
         criteriaValues = ", criteriaValueVectorText, "
         names(criteriaValues) = ", criteriaNameVectorText, "
         print(criteriaValues)
-        whichViolated = which(criteriaValues == FALSE)
-        notOffStudy = any(whichViolated)
-        if(notOffStudy) 
-          cat('offStudy violation(s): ', 
-          names(criteriaValues[whichViolated]), '\n')
+        whichTriggered = which(criteriaValues == FALSE)
+        offStudy = any(whichTriggered)
+        if(offStudy) 
+          cat('offStudy rule(s) triggered: ', 
+          names(criteriaValues[whichTriggered]), '\n')
+        notOffStudy = ! offStudy
         return(notOffStudy)
     }")
   body(vg_notOffStudy@generatorCode) = parse(text=paste(theGeneratorBody))
   offStudyVN = VariableNetwork(vgList=VariableGeneratorList(vgList=c(
     getVGs(scenario, "OffStudyCriterion"),
-    vg_notOffStudy=vg_notOffStudy
+    vg_notOffStudy=vg_notOffStudy  ### Adding the final assessment.
   )))
-  VVenv = evaluateVNoutputs(offStudyVN, currentPatient)
-  ## TODO: in checkEligibility, also don't re-do initial variables.
-  #  printVVenv(VVenv)    
-  print(sapply(names(which(sapply(VVenv, is.logical))), get, env=VVenv))
-  trialData$currentPatient$VVenv = VVenv
-  #print(VVenv)
+  currentPatient = trialData$currentPatient
+  cat(" CHECKING: in checkEligibility, make sure we don't re-do initial variables.\n")
+  cat("BEFORE\n")
+  printVVenv(currentPatient$VVenv)    
+  currentPatient$VVenv = evaluateVNoutputs(offStudyVN, currentPatient$VVenv)
+  ## TODO: in checkEligibility, make sure we don't re-do initial variables.
+  cat("AFTER\n")
+  printVVenv(currentPatient$VVenv)    
+#   > trialData$currentPatient$temp = "current"
+#   > trialData$patientData[[1]]$temp
+#   [1] "current"
 }
 
 doThisAction_CheckModifications = function(scenario=defaultScenario) {
@@ -441,18 +483,86 @@ doThisAction_CheckModifications = function(scenario=defaultScenario) {
 
 doThisAction_SummarizePatient = function(scenario=defaultScenario) {
   cat("doThisAction_SummarizePatient", " not yet implemented\n")
+  ## TODO: implement updating trial summaries in trialData.
 }
 
+doThisAction_SummarizeSimulation = function(scenario=defaultScenario) {
+  cat("doThisAction_SummarizeSimulation", " not yet implemented\n")
+  ## TODO: implement updating trial summaries in trialData.
+}
+
+
 doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
-  cat("doThisAction_CheckStoppingRules", " not yet implemented\n")
+  ###  CAUTION: we do not want to regenerate the patient values.
+  ###  Just add new VGs to the VVenv, and process them.
+  cat("Gather StoppingRule objects from scenario.",
+      "Form a Variable Network. ",
+      "Retrieve all VariableValues,
+      and return the conjunction with any().\n")
+  stoppingRuleVariables = VariableList(
+    sapply(getVGs(scenario, "StoppingCriterion"),
+           slot, "provisions"))
+  v_notStoppingVariable = Variable(name="continueAccrual", 
+                                   description="whether study is NOT stopping",
+                                   checkDataType=is.logical,
+                                   gitAction="none")
+  vg_notStopping = VariableGenerator(insertSubType="StoppingCriterion",
+                                     parameters=list(iAmAParameter=TRUE),
+                                     requirements=stoppingRuleVariables,
+                                     provisions=v_notStoppingVariable,
+                                     generatorCode=function(){} # body is filled in below.
+  )
+  criteriaNames = names(stoppingRuleVariables)
+  criteriaValueVectorText = 
+    paste0("c(", paste(criteriaNames, collapse=", "), ")")
+  assign("criteriaValueVectorText", criteriaValueVectorText, pos=1)
+  criteriaNameVectorText = 
+    paste0("c('", paste(criteriaNames, collapse="', '"), "')")
+  if(length(criteriaNames) == 0) theGeneratorBody =
+    'return(TRUE)' ## if no criteria, the study stops automatically (N=1).
+  else
+    theGeneratorBody = paste(
+      "{
+      criteriaValues = ", criteriaValueVectorText, "
+      names(criteriaValues) = ", criteriaNameVectorText, "
+      print(criteriaValues)
+      whichTriggered = which(criteriaValues == TRUE)
+      cat('whichTriggered: ', whichTriggered, '\n')
+      stopping = any(whichTriggered)
+      continueAccrual = ! stopping
+      # if(stopping) 
+        cat(' Stopping rules(s): ', 
+          names(criteriaValues[whichTriggered]), '\n')
+      return(continueAccrual)
+  }")
+  body(vg_notStopping@generatorCode) = parse(text=paste(theGeneratorBody))
+  assign("vg_notStopping", vg_notStopping, pos=1)
+  stoppingVN = VariableNetwork(
+    vgList=VariableGeneratorList(vgList=c(
+      getVGs(scenario, "StoppingCriterion"),
+      vg_notStopping=vg_notStopping
+  )))
+  envStopping = new.env()
+  envCopy(trialData, envStopping, 
+          clear=TRUE, copySubEnvironments=FALSE) # These are the defaults anyway.
+  trialDataAugmented = 
+    evaluateVNoutputs(stoppingVN, envVariableValues=envStopping)
+  cat("trialDataAugmented:\n")
+  printENV(trialDataAugmented)
+  envCopy(trialDataAugmented, trialData, clear=FALSE)
+  
+  #   > trialData$currentPatient$temp = "current"
+  #   > trialData$patientData[[1]]$temp
+  #   [1] "current"   # So it works!
 }
 
 doThisAction_SummarizeTrial = function(scenario=defaultScenario) {
-  cat("doThisAction_SummarizeTrial", " not yet implemented\n")
+  cat("doThisAction_SummarizeTrial", 
+      " #patients = ", trialData$NpatientsEnrolled, "\n")
 }
 
-
 runTrial = function(scenario=defaultScenario) {
+  options(error=recover)
   makeScaffoldObjects()
   initializeQueue()
   executeQueue()
