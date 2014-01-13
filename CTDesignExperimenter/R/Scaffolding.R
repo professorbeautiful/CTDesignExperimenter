@@ -305,15 +305,20 @@ doActionEvent = function(event, scenario=defaultScenario, ...){
   doAction(as(object=event, "Event"), scenario=defaultScenario, ...)
   doThisAction(event, scenario)
   jumpIfString = event@jumpIf   ## To see it in Environment tab.
-  browser("Stopping for jumpIf", expr=(jumpIfString!="FALSE"))
+  #browser("Stopping for jumpIf", expr=(jumpIfString!="FALSE"))
   shouldIjump = eval(parse(text=event@jumpIf))@.Data
   cat("doAction.ScaffoldEvent: shouldIjump=", shouldIjump, "\n")
   ## TODO: handle getting the value from the patient or CT VN.
-  if(shouldIjump)
-    addToQueue(get(event@jumpTo), 
-               time=now())
-  else 
-    addToQueue(get(event@successor))
+  if(event@successor != "") {
+    if(shouldIjump)
+      nextEvent = get(event@jumpTo)
+    else
+      nextEvent = get(event@successor)
+    addToQueue(nextEvent,     
+             time=eval(parse(text=nextEvent@timeToNextEvent)),
+             who=eval(parse(text=nextEvent@who))
+    )
+  }
 }
 setMethod("doAction", signature=list("ScaffoldEvent", "ListOfInserts"),
           doActionEvent
@@ -337,7 +342,11 @@ doThisAction_BeginClinicalTrial = function(scenario=defaultScenario) {
 doThisAction_GeneratePatient = function(scenario=defaultScenario) {
   cat("Must generate a candidate patient now;  
       gather VG's and evaluate.\n")
-  assign("candidatePatient", new.env(), env=trialData)
+  if(is.null(trialData$candidatePatient))
+    assign("candidatePatient", new.env(), env=trialData)
+  else
+    rm(list=ls(envir=trialData$candidatePatient), envir=trialData$candidatePatient)
+  
   makeCandidate = function() {
     vgList = VariableGeneratorList(getVGs(scenario, 
                                           "PatientAttribute"))
@@ -349,7 +358,7 @@ doThisAction_GeneratePatient = function(scenario=defaultScenario) {
     trialData$candidatePatient$VVenv = VVenv
   }
   environment(makeCandidate) <- trialData$candidatePatient
-  trialData$NcurrentPatient = NULL
+  trialData$NcurrentPatient = 0
   trialData$currentPatient = NULL
   makeCandidate()
 }
@@ -402,16 +411,33 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
   print(sapply(names(which(sapply(VVenv, is.logical))), get, env=VVenv))
   trialData$candidatePatient$VVenv = VVenv
   #print(VVenv)
-  }
+}
+
 doThisAction_EnrollPatient = function(scenario=defaultScenario) {
   cat("Enrolling the patient; copying patient info.\n")
   increment(NpatientsEnrolled, ENV=trialData)
   trialData$NcurrentPatient = trialData$NpatientsEnrolled
   trialData$currentPatient =
     trialData$patientData[[trialData$NpatientsEnrolled]] =
-    new.env()
-  trialData$currentPatient$VVenv = trialData$candidatePatient$VVenv
+      new.env()
+  trialData$currentPatient$VVenv = new.env()
+  ## Clone, not reference here! VVenv is an environment
+#   for(vv in ls(env=trialData$candidatePatient$VVenv))
+#       assign(vv, env=trialData$currentPatient$VVenv,
+#         get(vv, env=trialData$candidatePatient$VVenv)
+#   )
+  envCopy(trialData$candidatePatient$VVenv, trialData$currentPatient$VVenv)
 }
+
+envCopy = function(envFrom, envTo, clear=TRUE, 
+                   excluded=character(0), copySubEnvironments=FALSE) {
+  for(vv in ls(env=envFrom) %except% excluded) {
+    obj = get(vv, env=envFrom)
+    if( ! (class(vv) == "environment"))
+      assign(vv, env=envTo, obj)
+  }
+}  
+
 doThisAction_AssignTreatmentPlan = function(scenario=defaultScenario) {
   cat("doThisAction_AssignTreatmentPlan", " not yet implemented\n")
 }
