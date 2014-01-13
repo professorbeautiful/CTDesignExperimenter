@@ -67,6 +67,7 @@ setClassUnion("Insert", c("EventGenerator", "VariableGenerator"))
 #' Generally the parameters are the defaults.
 #' When a new Scenario is defined, the parameters may be changed.
 setClass("ListOfInserts", contains="list")
+
 validity_ListOfInserts = function(object) {
   if(length(object)==0) return(TRUE)
   whichAreInserts = sapply(object, is, "Insert")
@@ -88,12 +89,18 @@ setValidity(Class="ListOfInserts", validity_ListOfInserts)
 #          }
 # )
  
-vg_age = PatientAttribute(parameters=list(ageMean=50, ageSD=10),
+rlognorm = function(n=1, Mean=50, CV=0.5) {
+  uv = FromNormalToLognormal(mean=Mean, cv=CV)
+  exp(rnorm(n=n, mean=uv["uStar"], sd=sqrt(uv["vStar"])))
+}
+
+vg_age = PatientAttribute(parameters=list(ageMean=50, ageCV=0.5),
                               generatorCode=function(){
-                                rnorm(1, ageMean, ageSD)
+                                rlognorm(1, ageMean, ageCV)
                               },
                               provisions=v_ageVariable
 )
+
 ec_age = EligibilityCriterion( parameters=list(cutoff=50),
                   requirements=VariableList(v_ageVariable),
                   outputVariable=Variable(name="isOldEnough",
@@ -104,9 +111,9 @@ ec_age = EligibilityCriterion( parameters=list(cutoff=50),
 v_liverVariable = Variable(name="liverFunction", desc="Liver function", 
                            gitAction="none",
                            checkDataType=function(x) is.numeric(x))
-vg_liver = PatientAttribute(parameters=list(liverMean=1, liverSD=0.2),
+vg_liver = PatientAttribute(parameters=list(liverMean=1, liverCV=0.2),
                               generatorCode=function(){
-                                rnorm(1, liverMean, liverSD)
+                                rlognorm(1, liverMean, liverCV)
                               },
                               provisions=v_liverVariable
             )
