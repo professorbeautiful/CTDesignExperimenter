@@ -209,7 +209,8 @@ executeQueue = function(verbose=TRUE, scenario=defaultScenario){
     doAction(actionQueue$actions[[actionQueue$queuePointer]], scenario)
     increment(ENV=actionQueue, queuePointer)
     nActions <<-length(actionQueue$actions)
-    if(verbose) cat("executeQueue_: nActions = ", nActions,
+    if(verbose & (actionQueue$queuePointer <= nActions)) 
+      cat("executeQueue_: nActions = ", nActions,
                     "queuePointer=", actionQueue$queuePointer, 
                     actionQueue$actions[[actionQueue$queuePointer]]@name, "\n")
   }
@@ -263,6 +264,7 @@ addToQueue_ = function(event, time, who) {
 }
 
 viewQueue=function(){
+  cat("actionQueue$queuePointer = ", actionQueue$queuePointer, "\n")
   data.frame( 
     event=sapply(1:length(actionQueue$actions), function(i)actionQueue$actions[[i]]@name),  
     time=actionQueue$queueTimes,
