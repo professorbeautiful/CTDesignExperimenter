@@ -64,7 +64,8 @@ getRequirementNames = function(vg){
   if(is.null(vg@requirements)) return(NULL)
   if(is(vg@requirements, "Variable"))
     return(list(vg@requirements))
-  sapply(vg@requirements, slot, name="name")
+  ## Why as.vector() is SOMETIMES needed (to strip the name(s)) is a huge puzzle.
+  as.vector(sapply(vg@requirements, slot, name="name"))
 }
 
 VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
