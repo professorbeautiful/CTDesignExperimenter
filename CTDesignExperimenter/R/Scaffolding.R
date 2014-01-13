@@ -75,7 +75,7 @@ scaffoldObjects["CheckOffStudy", "jumpTo"] = "SummarizePatient"
 # If continueAccrual, jump back to GeneratePatient
 # Otherwise continue to SummarizeTrial
 scaffoldObjects["CheckStoppingRules", "jumpIf"] = "trialData$continueAccrual"
-scaffoldObjects["CheckOffStudy", "jumpTo"] = "GeneratePatient"
+scaffoldObjects["CheckStoppingRules", "jumpTo"] = "GeneratePatient"
 
 
 scafSize = nrow(scaffoldObjects)
