@@ -3,7 +3,7 @@ cat("=========    AAobjects  ============")
 
 scaffoldInsertSubTypes = cq(
   DesignParameter,
-  ,
+  DesignParameter,
   PatientAttribute,
   EligibilityCriterion,
   ,
