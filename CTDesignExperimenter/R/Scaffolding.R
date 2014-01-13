@@ -39,7 +39,8 @@ setClass("ScaffoldEvent", contains="Event",
                     eventInsertSubType="character",
                     jumpIf="character", # boolean; condition for alternative
                     jumpTo="character", # alternative destination
-                    timeToNextEvent="function"))
+                    timeToNextEvent="character", #expression
+                    who="character")) #expression
 
 ##' scaffoldObjectNames ####
 ##' 
@@ -65,11 +66,13 @@ scaffoldObjects$jumpTo = ""
 # Otherwise continue to EnrollPatient
 scaffoldObjects["CheckEligibility", "jumpTo"] = "GeneratePatient"
 scaffoldObjects["CheckEligibility", "jumpIf"] = "trialData$candidatePatient$VVenv$notEligible"
+
 # If the current patient is offStudy jump forward to SummarizePatient
 # Otherwise continue to CheckModifications
 scaffoldObjects["CheckOffStudy", "jumpIf"] = "trialData$patientData[[trialData$NpatientsEnrolled]]$VVenv$offStudy"
 scaffoldObjects["CheckOffStudy", "jumpTo"] = "SummarizePatient"
 # CheckModifications makes the modifications, then always returns to GenerateOutcomes
+
 # After SummarizePatient, we do CheckStoppingRules
 # continueAccrual is TRUE if all stopping rules are FALSE.
 # If continueAccrual, jump back to GeneratePatient
@@ -77,7 +80,15 @@ scaffoldObjects["CheckOffStudy", "jumpTo"] = "SummarizePatient"
 scaffoldObjects["CheckStoppingRules", "jumpIf"] = "trialData$continueAccrual"
 scaffoldObjects["CheckStoppingRules", "jumpTo"] = "GeneratePatient"
 
+scaffoldObjects$timeToNextEvent = "incrementNow()"
+scaffoldObjects$who = "paste('Patient #', trialData$NcurrentPatient)"
+scaffoldObjects["BeginClinicalTrial", "who"] = "'Trial'"
+scaffoldObjects["GeneratePatient", "who"] = "'Candidate'"
+scaffoldObjects["CheckEligibility", "who"] = "'Candidate'"
+scaffoldObjects["SummarizeTrial", "who"] = "'Trial'"
+scaffoldObjects["SummarizeSimulation", "who"] = "'Summarize'"
 
+  
 scafSize = nrow(scaffoldObjects)
 
 ### Create the scaffold objects #####
@@ -95,7 +106,8 @@ makeScaffoldObjects <- function () {
                             eventInsertSubType=scaffoldObjects$eventInsertSubType[scaf],
                             jumpIf=scaffoldObjects$jumpIf[scaf],
                             jumpTo=scaffoldObjects$jumpTo[scaf],
-                            timeToNextEvent=increment
+                            timeToNextEvent=scaffoldObjects$timeToNextEvent[scaf],
+                            who=scaffoldObjects$who[scaf]                
            )))
   }
 }
@@ -152,6 +164,7 @@ initializeQueue = function(firstaction=BeginClinicalTrial) {
   assign("queuePointer", 1, env=actionQueue)
   assign("queueTimes", 0, env=actionQueue)
   assign("actions", list(firstaction), env=actionQueue)
+  assign("actionIDs", eval(parse(text=firstaction@who)), env=actionQueue)
   ### With this design, the times and the actions are vectors
   ### of the same length. The event time is not packaged with the event.
   ### So we are not currently using EventAtTime.
@@ -175,19 +188,23 @@ executeQueue = function(verbose=TRUE, scenario=defaultScenario){
 }
 #environment(executeQueue) = actionQueue
 
-addToQueue = function(event, time=now()) {
+addToQueue = function(event, 
+                      time=eval(parse(text=event@timeToNextEvent)),
+                      who=eval(parse(text=event@who))) {
   environment(addToQueue_) = actionQueue
   ## This was to allow debug(addToQueue_), but it didn't work.
-  addToQueue_(event, time)
+  addToQueue_(event, time, who)
   cat("actionQueue$queueTimes=", actionQueue$queueTimes, "\n")
 }  
-addToQueue_ = function(event, time) {
+
+addToQueue_ = function(event, time, who) {
   #temp = ls()  ##OK
   #print(temp)
   sortposition = length(queueTimes) + 1
   if(sortposition == 1) {
     queueTimes <<- 0
     actions[[1]] <<- event
+    actionIDs[[1]] <<- who
   }
   else {
     while(time < queueTimes[sortposition-1]) 
@@ -196,16 +213,20 @@ addToQueue_ = function(event, time) {
     if(sortposition==1) {
       actions <<- c(event, actions)
       queueTimes <<- c(time, queueTimes)
+      actionIDs <<- c(who, actionIDs)
     }
     else if (sortposition==(length(actions)+1)) {
       actions <<- c(actions, event)
       queueTimes <<- c(queueTimes, time)
+      actionIDs <<- c(actionIDs, who)
     }  
     else {
       actions <<- c(actions[1:(sortposition-1)],
                     event, actions[sortposition:length(actions)])
       queueTimes <<- c(queueTimes[1:(sortposition-1)],
                        time, queueTimes[sortposition:length(queueTimes)])
+      actionIDs <<- c(actionIDs[1:(sortposition-1)],
+                       who, actionIDs[sortposition:length(actionIDs)])
     } 
   }
   #  cat("length of actions is now ", length(actions), "\n")
@@ -214,8 +235,9 @@ addToQueue_ = function(event, time) {
 
 viewQueue=function(){
   data.frame( 
-    event=sapply(1:10, function(i)actionQueue$actions[[i]]@name),  
-    time=sapply(1:10, function(i)actionQueue$queueTimes[[i]]))
+    event=sapply(1:length(actionQueue$actions), function(i)actionQueue$actions[[i]]@name),  
+    time=actionQueue$queueTimes,
+    who=actionQueue$actionIDs)
 }
 
 debug(addToQueue_)
