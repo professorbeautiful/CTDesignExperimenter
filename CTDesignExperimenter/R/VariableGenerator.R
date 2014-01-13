@@ -38,15 +38,18 @@ VariableGenerator = function(insertSubType="PatientAttribute",
   vg
 }
 
-for(insertSubType in scaffoldInsertSubTypes) {
-  if(insertSubType != "") {
-    text = print(paste0("assign(insertSubType, function(...)
-        VariableGenerator(insertSubType='", insertSubType,
-                 "', ...), pos=1)"))
-    eval(parse(text=text))
+makeVariableGeneratorConstructors <- function () {
+  for(insertSubType in scaffoldInsertSubTypes) {
+    if(insertSubType != "") {
+      text = (paste0("assign(insertSubType, function(...)
+          VariableGenerator(insertSubType='", insertSubType,
+                   "', ...), pos=1)"))
+      eval(parse(text=text))
+    }
   }
 }
 
+makeVariableGeneratorConstructors()
 
 setMethod("print", "VariableGenerator", function(x){
   cat("   VG: output: ", x@provisions, "\n")
