@@ -1,7 +1,7 @@
 cat("======== Scaffolding.R  ================\n")
 
-library(pryr)  ## Hadley Wickham utilities for S4
-library(RBioinf);  help(p="RBioinf")
+if(interactive()) library(pryr)  ## Hadley Wickham utilities for S4
+if(interactive()) library(RBioinf);  help(p="RBioinf")
 
 ### First, some utility functions #####
 className = function(obj) {
@@ -9,6 +9,17 @@ className = function(obj) {
   # is(class2="Class", obj)  returns FALSE !!
   return(class(obj))
 }
+
+#' increment - add to a variable, generally a counter or time.
+#' 
+#' increment - add to a variable, generally a counter or time.
+#' @param X Variable to increment. Unquoted name.
+#' @param ENV Environment where X is located. Default = parent.frame().
+#' @param delta increment. Default = 1.
+#' @param verbose Print detail? Default = FALSE.
+#' 
+#'  @details Increments and assigns new value to X.
+#'   
 increment = function(X, ENV=parent.frame(), delta=1, verbose=F) {
   nameX = as.character(substitute(X))
   if(verbose) cat("nameX", str(nameX), "\n")
