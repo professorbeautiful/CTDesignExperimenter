@@ -5,7 +5,7 @@ cat("======== evaluateOutput.R ================\n")
 ##' @param v1 A Variable object (otherwise, throws error).
 ##' @param v2 A Variable object (otherwise, throws error).
 ##' @return TRUE if identical, FALSE if not. 
-##' @example sameVar(vg_responseDoseThreshold@requirements, v_clearanceRate)
+##' @examples sameVar(vg_responseDoseThreshold@requirements, v_clearanceRate)
 
 sameVar = function(v1, v2) {
   if(!is(v1, "Variable")) stop(paste0("sameVar: v1 should be a Variable", v1))
@@ -53,8 +53,8 @@ findGenerator = function(var, env=parent.frame(), menu=FALSE) {
 ##' @description Evaluate a generator expression.
 ##' @param generator A SimpleVariableGenerator 
 ##' @param input Input "requirements" list of VariableValue objects.
-##' @example findGeneratorName(vg_responseDoseThreshold@requirements)
-##' @example findGeneratorName(vg_responseDoseThreshold@provisions
+##' @examples findGeneratorName(vg_responseDoseThreshold@requirements)
+##' @examples findGeneratorName(vg_responseDoseThreshold@provisions
 
 evaluateGeneratorOutput = function(generator, envir=parent.frame(), alreadyDone=list()) {
   ## First, make the generatorCode function available.
@@ -79,10 +79,10 @@ evaluateGeneratorOutput = function(generator, envir=parent.frame(), alreadyDone=
 ##' Evaluate the output variables for all the VGs in a network.
 ##' @param VN A VariableNetwork object.
 ##' @param envVariableValues Previously calculated values.
-##' @example incidenceMatrix(vNexample)
-##' @example permuteToUpperTriangular(incidenceMatrix(vNexample))  ### permute to upper triangular.
-##' @example vNvalueEnv = evaluateVNoutputs(vNexample)
-##' @example ls(env=vNvalueEnv)
+##' @examples incidenceMatrix(vNexample)
+##' @examples permuteToUpperTriangular(incidenceMatrix(vNexample))  ### permute to upper triangular.
+##' @examples vNvalueEnv = evaluateVNoutputs(vNexample)
+##' @examples ls(env=vNvalueEnv)
 
 evaluateVNoutputs = function(vN, envVariableValues = new.env()) {
   ## First, make the generatorCode function available.
@@ -119,7 +119,7 @@ evaluateVNoutputs = function(vN, envVariableValues = new.env()) {
 
 
 ##' printVVenv
-##' @example printVVenv(vNvalueEnv)
+##' @examples printVVenv(vNvalueEnv)
 
 printVVenv = function(env) {
   for(vvname in ls(env=env)) {
