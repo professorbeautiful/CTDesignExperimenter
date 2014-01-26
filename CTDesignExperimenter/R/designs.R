@@ -22,7 +22,10 @@ cat("======== designs.R  ================\n")
 #' (1+) Generate conclusions of the trial
 #' (1+) Generate summaries of the trial
 
-
+#' DesignComponent
+#'
+#' DesignComponent class containing VariableNetwork
+#' @slot actions ActionList
 setClass("DesignComponent", contains="VariableNetwork",
          slots=list(actions="ActionList"))
 setClass("EligibilityRule", contains="DesignComponent")
