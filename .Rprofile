@@ -1,15 +1,43 @@
 ### In RStudio,  .Rprofile does work. .First does not.
 #sink("/dev/null")
-#cat("Running .Rprofile from the CTDE project.\n")
+cat("Running .Rprofile from the CTDE project.\n")
 #theStartingTime = date()
 #cat(theStartingTime)
 #cat("Before loading the package, the search path is:\n")
 #print(search())
 ##[1] ".GlobalEnv"      "package:methods" "Autoloads"       "package:base"  
-#attach("~/Dropbox/_HOME/R-in-Dropbox/R-utilities/.Rdata")
-#library("utils")
-##library("CTDesignExplorer")
+library("mvbutils")
+attach("~/Dropbox/_HOME/R-in-Dropbox/R-utilities/.Rdata")
+library("utils")
+##library("CTDesignExperimenter")
 ## error: could not find function "packageDescription" because utils was not attached.
+## But, do we really want to attach the package?
+
+	options(repos="http://cran.r-project.org")
+	options(texi2dvi="pdflatex")
+	options(stringsAsFactors = FALSE)
+
+	if(Sys.getenv("R_USER") ==  "")
+	  Sys.setenv(R_USER=Sys.getenv("HOME"))
+
+	library(mvbutils)
+	options(program.editor = function(name, fname) paste("open ", 
+	    fname, "", sep = ""), edit.scratchdir = "/Users/Roger/R.scratch", 
+	    backup.fix = c(2L, 2L))
+	autoedit( TRUE)
+	options( mlazy.index=TRUE)
+	options(program.editor = function(name, fname)
+	  paste("open ", fname, "", sep = ""),
+		edit.scratchdir = "~/R.scratch", backup.fix = 2:3)
+	options(menu.graphics = TRUE)
+	options(write.mvb.tasks = TRUE)
+	#NO LONGER NEEDED!  assign.to.base("help", base.help, override.env = FALSE)
+	Sys.setenv(DISPLAY = ":0")
+	abbreviate.cdprompt = 3
+	Sys.setlocale("LC_COLLATE", "en_US.UTF-8")
+
+
+
 #
 ## createCTDEcatalog()
 ## run()
