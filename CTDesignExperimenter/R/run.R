@@ -12,10 +12,10 @@ run = function(background=FALSE, local=FALSE, createCTDEcatalog=TRUE) {
     expr=require("shiny"))
   if(class(result) != "try-error")
     if(local)
-      runApp("CTDesignExplorer/inst/shinydocs")
+      runApp("CTDesignExperimenter/inst/shinydocs")
   else
     runApp(system.file(
-      package="CTDesignExplorer", "shinydocs"))
+      package="CTDesignExperimenter", "shinydocs"))
   ### NOTE that the folder inst/shinydocs 
   ### becomes just shinydocs after building.
   return(invisible(NULL))
