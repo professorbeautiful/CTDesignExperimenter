@@ -973,4 +973,12 @@ The action queue  seems ok all the way to the bottom.  Look for "TODO" sections.
 Some day, get to the bottom of "puzzling-bug-getRequirementNames.rtf".\
 \
 Doing a push and a label.\
-}
+\
+\
+2014-02-25\
+\
+To install from github, if encountering the multi-arch sub-architecture problem described above,\
+library(devtools)\
+install_github("testthat", args="--no-multiarch")\
+Note use of "args" instead of "INSTALL_opts".  \
+(I had to chase down the ... args until encountering devtools:::install.)}
