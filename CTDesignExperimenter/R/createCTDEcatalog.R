@@ -4,7 +4,8 @@ createCTDEcatalog = function() {
   createVariableCatalog() 
   createVariableGeneratorCatalog() 
   createPopulationModelCatalog() 
-  createDesignCatalog()
+  #createDesignCatalog()  # no longer relevant
   createOutcomeModelCatalog() 
 }
+
 
