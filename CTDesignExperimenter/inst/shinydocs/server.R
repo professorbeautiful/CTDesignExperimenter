@@ -15,18 +15,16 @@ options(shiny.trace=TRUE)
 
 #if(length(ls(pattern="CRMSpec1")) == 0 )  RELOAD_CATALOG()
 
-specClassNames = c(`Variables`="Variable",
-                   `patient attributes`="VariableGenerator",
-                   `population models`="PopulationModel",
-                   `outcome models`="OutcomeModelSpecifier",
-                   designs="DesignSpecifier",
-                   `evaluation criteria`="EvalSpecifier")
+specClassNames <<- c(`Variables`="Variable",
+                     `Variable Generators`="VariableGenerator",
+                     `Inserts`="Insert",
+                     `Scenarios`="ListOfInserts")
 
 shortName = function(specifierName)
   names(specClassNames)[match(specifierName, specClassNames)]
 #debug(shortName)
-specClassNamesForSim1CT = setdiff(specClassNames, c("BaseCharModelSpecifier", "EvalSpecifier"))  ### not the "nice" names
-
+#specClassNamesForSim1CT = setdiff(specClassNames, c("BaseCharModelSpecifier", "EvalSpecifier"))  ### not the "nice" names
+specClassNamesForSim1CT = 
 
 f.mainPanelHeader = function() { 
   # Error in f.mainPanelHeader() : object 'input' not found
@@ -105,22 +103,20 @@ myShinyServerFunction = function(input, output) {
     })
   
   
-  objects_tables = list(
-    PopModelSpecifier=createObjectsTable("PopModelSpecifier"),
-    OutcomeModelSpecifier=createObjectsTable("OutcomeModelSpecifier"),
-    DesignSpecifier=createObjectsTable("DesignSpecifier"))
+  inserts_tables = lapply(unique(scaffoldInsertSubTypes),
+    createInsertsTable,
   
   
-  #  debug(createObjectsTable)
-  output$objects_table <- renderTable({createObjectsTable()})
-  output$objects_table_1 <- renderTable({createObjectsTable()})
-  output$objects_table_2 <- renderTable({createObjectsTable()})
+  #  debug(createInsertsTable)
+  output$objects_table <- renderTable({createInsertsTable()})
+  output$objects_table_1 <- renderTable({createInsertsTable()})
+  output$objects_table_2 <- renderTable({createInsertsTable()})
   
   #source("tableForCreateOneCT.R")# doesn't work inside a function body?
   
   f.objects_table_for_OneCT = function(){
     f.changeSelectedRow()
-    df = createObjectsTable()
+    df = createInsertsTable()
     selectedRow = switch(input$specChoiceOneCT,
                          PopModelSpecifier=values$PopRow,
                          OutcomeModelSpecifier=values$OutcomeRow,
@@ -160,9 +156,9 @@ myShinyServerFunction = function(input, output) {
     catn("In f.changeSelectedRow (enter); values are  ", values$PopRow, values$OutcomeRow, values$OutcomeRow)
     catn(input$specChoiceOneCT)
     ###  These values should work.
-    if(is.null(values$PopRow)) values$PopRow = which(objects_tables[["PopModelSpecifier"]] == "doseThresholdPopModelSpec")
-    if(is.null(values$OutcomeRow)) values$OutcomeRow = which(objects_tables[["OutcomeModelSpecifier"]] == "toxDoseThresholdOutcomeModel")
-    if(is.null(values$DesignRow)) values$OutcomeRow = which(objects_tables[["DesignSpecifier"]] == "crm9")
+    if(is.null(values$PopRow)) values$PopRow = which(inserts_tables[["PopModelSpecifier"]] == "doseThresholdPopModelSpec")
+    if(is.null(values$OutcomeRow)) values$OutcomeRow = which(inserts_tables[["OutcomeModelSpecifier"]] == "toxDoseThresholdOutcomeModel")
+    if(is.null(values$DesignRow)) values$OutcomeRow = which(inserts_tables[["DesignSpecifier"]] == "crm9")
     catn("whichRow_ values: ", paste(
       input$whichRow_PopModelSpecifier, input$whichRow_OutcomeModelSpecifier, input$whichRow_DesignSpecifier, sep=",")) 
     whichRow = input[["whichRow_" %&% input$specChoiceOneCT]]
@@ -248,7 +244,7 @@ myShinyServerFunction = function(input, output) {
   output$currentModelText = output$currentModelText_copy = renderText({
     specLine = function(specName, rowNum) strong(specName)  %&% " = " %&%
       ifelse(is.null(rowNum) | is.na(rowNum), "(not chosen)", 
-             objects_tables[[specName]][rowNum, "instance"]) ;
+             inserts_tables[[specName]][rowNum, "instance"]) ;
     line = specLine("PopModelSpecifier", values$PopRow) %&% "<br>" %&%
       specLine("OutcomeModelSpecifier", values$OutcomeRow) %&% "<br>" %&%
       specLine("DesignSpecifier", values$DesignRow) 
@@ -266,20 +262,20 @@ myShinyServerFunction = function(input, output) {
 #     components[[3]] = conditionalPanel(condition="input.specChoiceOneCT == \"PopModelSpecifier\"",
 #                                     numericInput(inputId="PopRow", label="Pop model", 
 #                                                  value=values$PopRow, min=1, 
-#                                                  max=nrow(objects_tables[["PopModelSpecifier"]]), step=1))
+#                                                  max=nrow(inserts_tables[["PopModelSpecifier"]]), step=1))
 #     components[[4]] = conditionalPanel(condition="input.specChoiceOneCT == \"OutcomeModelSpecifier\"",
 #                                     numericInput(inputId="OutcomeRow", label="Outcome model", 
 #                                                  value=values$OutcomeRow, min=1, 
-#                                                  max=nrow(objects_tables[["OutcomeModelSpecifier"]]), step=1))
+#                                                  max=nrow(inserts_tables[["OutcomeModelSpecifier"]]), step=1))
 #     components[[5]] = conditionalPanel(condition="input.specChoiceOneCT == \"DesignSpecifier\"",
 #                                     numericInput(inputId="DesignRow", label="Design", 
 #                                                  value=NA, min=1, 
-#                                                  max=nrow(objects_tables[["DesignSpecifier"]]), step=1))
+#                                                  max=nrow(inserts_tables[["DesignSpecifier"]]), step=1))
 # # here is the cause of the error message  
     #Error in as.character(value) : 
     #cannot coerce type 'closure' to vector of type 'character'
     #     components[[6]] = conditionalPanel(condition="input.toggleDetailTable",
-#                                     renderTable(objects_tables[[input$specChoiceOneCT]]))
+#                                     renderTable(inserts_tables[[input$specChoiceOneCT]]))
     #print("f.componentsForBuildingModel: length(components) = " %&% length(components))
     return(components)
   }
@@ -330,20 +326,16 @@ myShinyServerFunction = function(input, output) {
   f.sim1CTbuttonOutput = function(){
     print("Value of sim1CTbutton is " %&% input$sim1CTbutton %&% "\n")  ## make it reactive to the button.
     if(isolate(f.isModelFinished())) {
-      designSpecName        = objects_tables[["DesignSpecifier"]]$instance[isolate(values$DesignRow)]
-      outcomeModelSpecName  = objects_tables[["OutcomeModelSpecifier"]]$instance[isolate(values$OutcomeRow)]
-      popModelSpecName      = objects_tables[["PopModelSpecifier"]]$instance[isolate(values$PopRow)]
+      designSpecName        = inserts_tables[["DesignSpecifier"]]$instance[isolate(values$DesignRow)]
+      outcomeModelSpecName  = inserts_tables[["OutcomeModelSpecifier"]]$instance[isolate(values$OutcomeRow)]
+      popModelSpecName      = inserts_tables[["PopModelSpecifier"]]$instance[isolate(values$PopRow)]
       catn("sim1CTbuttonAction: Running model!\n" %&% 
              "    designSpec = " %&% designSpecName %&% 
              ",   outcomeModelSpec = " %&% outcomeModelSpecName %&% 
              ",   popModelSpec = " %&% popModelSpecName
       )
-      ###  TODO:  Check interoperability
-      sim1CToutcome = sim1CT(
-        popModelSpec=get(popModelSpecName),
-        designSpec=get(designSpecName),
-        outcomeModelSpec=get(outcomeModelSpecName)
-      )
+      ###  TODO:  ANY scenario
+      sim1CToutcome = runTrial(defaultScenario)
       assign("sim1CToutcome." %&% input$sim1CTbutton, sim1CToutcome)
       return(HTML(gsub("\n", "<br>", CTresultToString(sim1CToutcome))))
       ### This HTML(gsub()) works great!
@@ -352,15 +344,12 @@ myShinyServerFunction = function(input, output) {
     }
   }
   #debug(f.sim1CTbuttonOutput)
-  
   output$resultsSim1CTModelMain = 
-    renderText({f.sim1CTbuttonOutput()})
-  
-  
+    renderText({f.sim1CTbuttonOutput()})  
   values = reactiveValues(
-    PopRow=which(objects_tables[["PopModelSpecifier"]] == "doseThresholdPopModelSpec"),
-    OutcomeRow=which(objects_tables[["OutcomeModelSpecifier"]] == "toxDoseThresholdOutcomeModel"),
-    DesignRow=which(objects_tables[["DesignSpecifier"]] == "crm9")
+    PopRow=which(inserts_tables[["PopModelSpecifier"]] == "doseThresholdPopModelSpec"),
+    OutcomeRow=which(inserts_tables[["OutcomeModelSpecifier"]] == "toxDoseThresholdOutcomeModel"),
+    DesignRow=which(inserts_tables[["DesignSpecifier"]] == "crm9")
   )
   
   ## values  is an S3 class "reactivevalues". Put this in the eval box:
@@ -368,26 +357,6 @@ myShinyServerFunction = function(input, output) {
   #  and this is what you get:
   #    [.reactivevalues [[.reactivevalues [[<-.reactivevalues [<-.reactivevalues $.reactivevalues $<-.reactivevalues 
   #    as.list.reactivevalues names.reactivevalues names<-.reactivevalues
-  
-#   updateModelIndices = reactive({
-#     values$PopRow <- input$PopRow
-#     values$OutcomeRow <- input$OutcomeRow
-#     values$DesignRow <- input$DesignRow
-#     if(is.null(values$PopRow)) values$PopRow = NA
-#     if(is.null(values$OutcomRow)) values$OutcomeRow = NA
-#     if(is.null(values$DesignRow)) values$DesignRow = NA
-#   })
-  
-  #   output$objects_table_nrows <- 
-  #     renderTable(function() {
-  #       nrow(output$objects_table)
-  #     })
-  #   output$CurrentCT <- 
-  #     renderTable(function() {
-  #       specChoiceObjects      model_row_num
-  #       nrow(output$objects_table)
-  #     })
-  #   
   
   output$evalOutput = renderText({
     if(input$evalButton > 0) eval(parse(text=isolate(input$evalString)))

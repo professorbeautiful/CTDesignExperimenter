@@ -1,12 +1,10 @@
 
 require(RBioinf)
 require(RJSONIO)
-specClassNames = c(`Variables`="Variable",
-                   `patient attributes`="VariableGenerator",
-                   `population models`="PopulationModel",
-                   `outcome models`="OutcomeModelSpecifier",
-                   designs="DesignSpecifier",
-                   `evaluation criteria`="EvalSpecifier")
+specClassNames <<- c(`Variables`="Variable",
+                   `Variable Generators`="VariableGenerator",
+                   `Inserts`="Insert",
+                   `Scenarios`="ListOfInserts")
 shortName = function(specifierName)
   names(classNames)[match(specifierName, classNames)]
 
