@@ -19,7 +19,7 @@ Variable = function(name="variableName",
     writeVariableFile(newVariable) # use default folder swapmeet.
   if(gitAction=="push") {
     writeVariableFile(newVariable)
-    pushVariables()
+    pushSwapMeetFiles()
   }
   return(newVariable)
 }
