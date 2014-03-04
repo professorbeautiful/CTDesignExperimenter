@@ -30,7 +30,7 @@ student to do so,
 contexts,
 * ... enable and encourage others to extend the new design.
 
-This package is under development, with two active branches. The commit with tag v0.5, from August 2013, demonstrated viewing classes and instances within a browser using [shiny](http://www.rstudio.org/shiny), and running and displaying one clinical trial. The package name was CTDesignExplorer. 
+This package is under development, with two active branches. The commit with tag v0.5, from August 2013, demonstrated viewing classes and instances within a browser using [shiny](http://www.rstudio.org/shiny), and running and displaying one clinical trial. The package name was CTDesignExplorer at that time. 
 
 The organization of the user-selectable elements has undergone a major refactoring in the period Sept 2013 - Jan 2014. Further information on the previous version is later in this README.
 
@@ -53,7 +53,11 @@ The development version provides scaffolding for the event queue that drives the
 
 For each of these, users can insert  *insert* objects in the form of ActionGenerators or VariableGenerators. Each scaffolding event knows how to handle its inserts. The order of events allows conditional returning and branching. The collection of inserts is the new concept of a scenario. Unlike v0.5, there is no longer a rigid division between PopulationModel, Design, and OutcomeModel.
 
-To check out (and test, please!) the current state of the development program, install the package, and call runTrial().
+As of 2014-03-04, the version is v0.7. A new webpage view based on shiny is available.
+To check out (and test, please!) the current state of the development program, please install the package. Then call runTrial() to simulate a very simple trial. Also try
+ runApp(system.file(package="CTDesignExperimenter", "shinyScenario")) to view the default scenario.   
+ 
+CAUTION:  this is still a long way from a release version.
 
 **ACCOMPLISHED**
 * Highly flexible scaffolding of events in clinical trials simulation.
