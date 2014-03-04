@@ -44,6 +44,7 @@
 \usepackage[margin=0.5in]{geometry}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 %\SweaveOpts{concordance=TRUE}
 
 
@@ -63,11 +64,27 @@ getClass(getClass(tempObj))
 #### This is how you do it:
 class(tempObj)
 getClass(class(tempObj))
-### Can you say, 'arcane'?
 @
 
-Note that getClass returns a different object depending on whether
+Thus that getClass returns a different object depending on whether
 the argument is a class name or an object.
+Can you say 'arcane'?
+
+And this is interesting:
+<<>>=
+identical(tempObj, getClass(tempObj))
+@
+So getClass does not return a class; it returns the object itself.
+
+Here is another fascinating piece of nonsense:
+<<>>=
+is(object=as("double", object=7.0), "double")
+@
+Why?  Here's the start of "as()":
+<<>>=
+args(as)
+as.cat(deparse(body(as))[1:3])
+@
 
 \section{Finding methods}
 
@@ -227,10 +244,25 @@ crm9@TierDoses\tabularnewline
 \hline 
 \end{tabular}
 
+\subsection{Finding slot names for an object}
+
+Note that this fails: 
+<<>>=
+try(getSlots(tempObj))
+@
+and of course there is no getSlotNames(). But this works.
+<<>>=
+getSlots(class(tempObj))
+@
+Of course we already know (from above) that this fails:
+<<>>=
+try(getSlots(getClass(tempObj)))
+@
+
 \section{Defunct}
 
 getAllMethods\\
-getMethods (but not getMethod!)\\
+getMethods (but  getMethod with no "s" is OK!)\\
 
 
 \end{document}
