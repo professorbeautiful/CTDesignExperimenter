@@ -981,4 +981,23 @@ To install from github, if encountering the multi-arch sub-architecture problem 
 library(devtools)\
 install_github("testthat", args="--no-multiarch")\
 Note use of "args" instead of "INSTALL_opts".  \
-(I had to chase down the ... args until encountering devtools:::install.)}
+(I had to chase down the ... args until encountering devtools:::install.)\
+\
+2014-02-28\
+\
+install_github("shiny", args="--no-multiarch")\
+Brings in vesion 0.8.99.\
+The warnings like\
+	In FUN(X[[2L]], ...) :\
+	  Created a package name, \'912014-02-28 22:36:00\'92, when none found\
+	36: In FUN(X[[2L]], ...) :\
+can be ignored.\
+help did not work until Idid an R session restart.	\
+\
+\
+2014-03-02\
+This looks useful.\
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/21133475/return-a-functions-code"}}{\fldrslt http://stackoverflow.com/questions/21133475/return-a-functions-code}}\
+\
+\
+}
