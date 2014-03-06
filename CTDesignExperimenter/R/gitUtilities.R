@@ -54,9 +54,10 @@ pushSwapMeetFiles = function(dir="../CTDEswapmeet") {
   system(paste0("cd ", dir, "; git push"))
 }
 
-writeScenarioFile(defaultScenario, comment="Write inserts from defaultScenario")
-pushSwapMeetFiles()
-
+if(interactive()) {
+ writeScenarioFile(defaultScenario, comment="Write inserts from defaultScenario")
+ pushSwapMeetFiles()
+}
 
 
 ##################################
