@@ -56,7 +56,7 @@ ifVerboseCat = function(...){
   invisible(NULL)
 }
 
-clear = function(){
+clear = function(skip=c(".ctde", "verboseOptions", "clear")){
   answer <- repeat {
     cat("Delete ALL files in .GlobalEnv?\n  (cannot be undone): ")
     answer <- readline()
