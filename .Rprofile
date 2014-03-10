@@ -1,3 +1,7 @@
+if(! interactive()){
+	cat("Skipping .Rprofile...\n")
+}
+if(interactive()){
 ### In RStudio,  .Rprofile does work. .First does not.
 #sink("/dev/null")
 cat("Running .Rprofile from the CTDE project.\n")
@@ -60,3 +64,4 @@ library("utils")
 #print(search())
 #
 #sink()
+}
