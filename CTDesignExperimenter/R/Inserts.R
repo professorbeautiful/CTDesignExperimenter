@@ -33,8 +33,8 @@ setClassUnion("Insert", c("VariableGenerator", "EventGenerator"))
 
 #' function EventGenerator
 EventGenerator = function(parameters=list(), provisions, 
-                             requirements=NULL,
-                             outputEvent, generatorCode) {
+                          requirements=NULL,
+                          outputEvent, generatorCode) {
   if(missing(provisions)) provisions=list(outputVariable)
   if(missing(outputVariable)) outputVariable=provisions
   eg = new("EventGenerator", 
@@ -88,44 +88,9 @@ setValidity(Class="ListOfInserts", validity_ListOfInserts)
 #            return(TRUE)
 #          }
 # )
- 
+
 rlognorm = function(n=1, Mean=50, CV=0.5) {
   uv = FromNormalToLognormal(mean=Mean, cv=CV)
   exp(rnorm(n=n, mean=uv["uStar"], sd=sqrt(uv["vStar"])))
 }
 
-vg_age = PatientAttribute(parameters=list(ageMean=50, ageCV=0.5),
-                              generatorCode=function(){
-                                rlognorm(1, ageMean, ageCV)
-                              },
-                              provisions=v_ageVariable
-)
-
-ec_age = EligibilityCriterion( parameters=list(cutoff=50),
-                  requirements=VariableList(v_ageVariable),
-                  outputVariable=Variable(name="isOldEnough",
-                                          description="Patient is old enough",
-                                          checkDataType=is.logical),
-                  generatorCode=function()  { age >= cutoff}
-)  #### OK.
-v_liverVariable = Variable(name="liverFunction", desc="Liver function", 
-                           gitAction="none",
-                           checkDataType=function(x) is.numeric(x))
-vg_liver = PatientAttribute(parameters=list(liverMean=1, liverCV=0.2),
-                              generatorCode=function(){
-                                rlognorm(1, liverMean, liverCV)
-                              },
-                              provisions=v_liverVariable
-            )
-ec_liver = EligibilityCriterion( parameters=list(cutoff=1.5),
-                                 requirements=VariableList(v_liverVariable),
-                                 outputVariable=Variable(name="liverOK",
-                                                         description="Patient has sufficient liver function.",
-                                                         checkDataType=is.logical),
-                                 generatorCode=function()  { liverFunction <= cutoff}
-              )  #### OK.
-
-#  TODO 
-# st_oneDose = as(Class="ScheduleTreatment",
-#                 EventGenerator(parameters=list(theDose),
-#                                generatorCode=))

@@ -49,8 +49,6 @@ makeVariableGeneratorConstructors <- function () {
   }
 }
 
-makeVariableGeneratorConstructors()
-
 setMethod("print", "VariableGenerator", function(x){
   cat("   VG: output: ", x@provisions, "\n")
   for (req in x@requirements) {

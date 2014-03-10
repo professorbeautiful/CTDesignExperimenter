@@ -40,8 +40,8 @@ VariableGeneratorList = function(vgList=NULL) {
   for(vg in vgListObj@.Data){
     if(!is(vg, "VariableGenerator"))
       stop("VariableGeneratorList: "
-             %&% "validity error: not all "
-             %&% " components are VariableGenerator")
+           %&% "validity error: not all "
+           %&% " components are VariableGenerator")
   }
   vgListObj
 }
@@ -83,7 +83,7 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
     vgList = VariableGeneratorList(vgList=vgList)
   }
   network = new("VariableNetwork", vgList=vgList)
-
+  
   provisions = c(lapply(vgList, function(vg) vg@provisions))
   provisions = provisions[!sapply(provisions, is.null)]
   provisions = unique(provisions)   ###### outside view!
@@ -93,16 +93,16 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
   vgNames = names(vgList)
   #  names(network@vgList) = vgNames ### no such slot
   allProvisionNames = sapply(network@vgList,
-                          function(vg) vg@provisions@name)
+                             function(vg) vg@provisions@name)
   names(allProvisionNames) = vgNames
   allProvisions = sapply(network@vgList,
-                      function(vg) vg@provisions)
+                         function(vg) vg@provisions)
   names(allProvisions) = vgNames
   provisionMap = lapply(network@vgList, function(vg)
     vg@provisions@name)
   names(provisionMap) = vgNames
-#   provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
-#                               stringsAsFactors=FALSE)
+  #   provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
+  #                               stringsAsFactors=FALSE)
   getReqs = function(vg) (vg@requirements)
   requirementMap = sapply(network@vgList, getReqs)
   ### From VGs to Variables.
@@ -124,7 +124,7 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
   rownames(requirementMatrix) = uniqueRequirementNames
   for(vgName in names(vgList)) 
     requirementMatrix [ , vgName] = 
-     uniqueRequirementNames %in% requirementList[[vgName]]
+    uniqueRequirementNames %in% requirementList[[vgName]]
   if(is.matrix(requirementMatrix)) {
     #browser()
     ### From Variables to VGs.
@@ -142,12 +142,12 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
     candidates = list()
     candidateCounts = numeric(0)
   }
-#  browser()
-     #  ifVerboseCat("candidates for reqs: ", candidateCounts)
-     #   for(slotName in names(getSlots(x=getClass("VariableNetwork"))) )
-     #     eval(parse(text=paste0("`@<-`(network, ", slotName, 
-     #                            ", get(\"", slotName, "\"))")))
-     #   #`@<-`(network, slotName, get(slotName))
+  #  browser()
+  #  ifVerboseCat("candidates for reqs: ", candidateCounts)
+  #   for(slotName in names(getSlots(x=getClass("VariableNetwork"))) )
+  #     eval(parse(text=paste0("`@<-`(network, ", slotName, 
+  #                            ", get(\"", slotName, "\"))")))
+  #   #`@<-`(network, slotName, get(slotName))
   if(is.null(allRequirements)) {
     allRequirements=list()
     allRequirementNames=character(0)
@@ -202,46 +202,6 @@ getNetworkConnections = function(vgList, verbose=FALSE){
 }
 
 
-vA = new("Variable",name="vA",description="vA",checkDataType=is.double)
-vB = new("Variable",name="vB",description="vB",checkDataType=is.double)
-vC = new("Variable",name="vC",description="vC",checkDataType=is.double)
-vD = new("Variable",name="vD",description="vD",checkDataType=is.double)
-vE = new("Variable",name="vE",description="vE",checkDataType=is.double)
-
-
-vgListExample = list(
-  vg1=VariableGenerator(provisions=vA, generatorCode=function(){vB * vC},
-                    requirements=VariableList(list(vB,vC))),
-  vg2=VariableGenerator(provisions=vB, generatorCode=function(){vC+2},
-                    requirements=VariableList(list(vC))),
-  vg3=VariableGenerator(provisions=vC, generatorCode=function(){vD+3},
-                        requirements=VariableList(list(vD))),
-  vg4=VariableGenerator(provisions=vD, generatorCode=function(){4},
-                        requirements=VariableList(list())),
-  vg5=VariableGenerator(provisions=vE, generatorCode=function(){vA + 5},
-                        requirements=VariableList(list(vA)))
-)
-
-vNexample = VariableNetwork(vgList=VariableGeneratorList(vgListExample)) 
-### .... in progress...
-# getPopulationModelOutputs = function(popModel, alreadyDone=list()) {
-#   allVGs = function(pModel) {
-#    
-#     valueList = alreadyDone
-#     for(gen in popModel@requirements) {
-#       if( ! (gen@provisions %in% names(alreadyDone)))
-#         valueList = c(valueList,  
-#                       evaluateOutput(gen, alreadyDone=valueList))
-#     }
-#     return(valueList) 
-#   }
-#   ####
-# }
-
-pmEnv = function(pm) list2env(pm@vgList, new.env())
-
-
-# pmTempConn = getPMconnections(pmTemp, verbose=F)
 
 isRequiredHere = function(vg, req) {
   if(length(vg@requirements)==1) return(identical(vg@requirements, req))
@@ -325,3 +285,47 @@ hasCycles = function(M) sum(diag(matsum(M))) > 0
 
 # permuteToUpperTriangular(M)
 # hasCycles(M)
+
+if(interactive()){  ### for testing purposes
+  vA = new("Variable",name="vA",description="vA",checkDataType=is.double)
+  vB = new("Variable",name="vB",description="vB",checkDataType=is.double)
+  vC = new("Variable",name="vC",description="vC",checkDataType=is.double)
+  vD = new("Variable",name="vD",description="vD",checkDataType=is.double)
+  vE = new("Variable",name="vE",description="vE",checkDataType=is.double)
+  
+  
+  vgListExample = list(
+    vg1=VariableGenerator(provisions=vA, generatorCode=function(){vB * vC},
+                          requirements=VariableList(list(vB,vC))),
+    vg2=VariableGenerator(provisions=vB, generatorCode=function(){vC+2},
+                          requirements=VariableList(list(vC))),
+    vg3=VariableGenerator(provisions=vC, generatorCode=function(){vD+3},
+                          requirements=VariableList(list(vD))),
+    vg4=VariableGenerator(provisions=vD, generatorCode=function(){4},
+                          requirements=VariableList(list())),
+    vg5=VariableGenerator(provisions=vE, generatorCode=function(){vA + 5},
+                          requirements=VariableList(list(vA)))
+  )
+  
+  vNexample = VariableNetwork(vgList=VariableGeneratorList(vgListExample)) 
+  ### .... in progress...
+  # getPopulationModelOutputs = function(popModel, alreadyDone=list()) {
+  #   allVGs = function(pModel) {
+  #    
+  #     valueList = alreadyDone
+  #     for(gen in popModel@requirements) {
+  #       if( ! (gen@provisions %in% names(alreadyDone)))
+  #         valueList = c(valueList,  
+  #                       evaluateOutput(gen, alreadyDone=valueList))
+  #     }
+  #     return(valueList) 
+  #   }
+  #   ####
+  # }
+  # pmTempConn = getPMconnections(pmTemp, verbose=F)
+  
+}
+
+
+pmEnv = function(pm) list2env(pm@vgList, new.env())
+

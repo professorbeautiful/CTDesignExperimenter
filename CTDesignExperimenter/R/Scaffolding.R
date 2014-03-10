@@ -62,6 +62,21 @@ scaffoldObjectNames =
        SummarizePatient, CheckStoppingRules, SummarizeTrial,
        SummarizeSimulation)
 
+scaffoldInsertSubTypes = cq(
+  DesignParameter,
+  ,
+  PatientAttribute,
+  EligibilityCriterion,
+  ,
+  ScheduleTreatment,
+  PatientOutcome,
+  OffStudyCriterion,
+  ModificationRule,
+  PatientSummary,
+  StoppingCriterion,
+  TrialSummary,
+  SimulationSummary  ## Same as evaluation criterion?
+)
 scaffoldObjects = data.frame(stringsAsFactors=FALSE,
   row.names=scaffoldObjectNames,
   name=scaffoldObjectNames,
@@ -128,52 +143,10 @@ makeScaffoldObjects() # For building the package.
 ### Context = Evaluation or scenario or CT or patient.#####
 ### Thus, hierarchical, with 4 levels.
 
-v_SampleSizeMax = Variable(name="SampleSizeMax", 
-         description='Upper bound for sample size', 
-         checkDataType=is.numeric)
-
-createVG_FixedSampleSizeMax = function(Nmax = 3) {
-  VariableGenerator(insertSubType="DesignParameter", 
-                    parameters=list(SampleSizeMax=Nmax),
-                    provisions=v_SampleSizeMax, 
-                    generatorCode=function(){
-                      SampleSizeMax
-                    }
-  )
-}
-
-v_SampleSizeMaxIsReached = Variable(name="SampleSizeMaxIsReached", 
-                           description='Upper bound for sample size has been reached.', 
-                           checkDataType=is.logical)
-vg_SampleSizeMaxIsReached = VariableGenerator(insertSubType="StoppingCriterion", 
-                  requirements=VariableList(v_SampleSizeMax),
-                  provisions=v_SampleSizeMaxIsReached, 
-                  generatorCode=function(){
-                    SampleSizeMax <= trialData$NpatientsEnrolled
-                  }
-)
-
-
-
-## Creating a default scenario #####
-
-defaultScenario =  #as("Scenario",
-  new("ListOfInserts", list(
-    vg_liver=vg_liver, vg_age=vg_age, 
-    ec_liver=ec_liver, ec_age=ec_age,
-    vg_clearanceRate=vg_clearanceRate, 
-    vg_responseDoseThreshold=vg_responseDoseThreshold,
-    vg_toxDoseThreshold=vg_toxDoseThreshold,
-    vg_SampleSizeMax = createVG_FixedSampleSizeMax(2),
-    vg_SampleSizeMaxIsReached = vg_SampleSizeMaxIsReached)
-  )# )
-
 getVGs = function(scenario, subType) {
   whichOnes = (sapply(scenario, slot, name="insertSubType") == subType)
   return(scenario[whichOnes])
 }
-length(getVGs(scenario=defaultScenario, subType="PatientAttribute"))
-length(getVGs(scenario=defaultScenario, subType="EligibilityCriterion"))
 
 #### doAction methods and functions #####
 setGeneric("doAction", function(event, scenario, ...) standardGeneric("doAction"))
@@ -606,7 +579,5 @@ runTrial = function(scenario=defaultScenario) {
   initializeQueue()
   executeQueue()
 }
-
-scenarioNoElig = getVGs(defaultScenario, "PatientAttribute")
 
 if(interactive()) runTrial()  ## skip when building.

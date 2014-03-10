@@ -18,5 +18,3 @@ createVariableCatalog = function() {
 }
 
 
-vc = createVariableCatalog()
-for(v in ls(env=vc)) assign(v, value=get(v, env=vc), pos=1)
