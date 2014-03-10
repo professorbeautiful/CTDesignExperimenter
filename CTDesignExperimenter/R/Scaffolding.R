@@ -342,6 +342,7 @@ doThisAction_GeneratePatient = function(scenario=defaultScenario) {
     trialData$candidatePatient$VVenv = VVenv
   }
   environment(makeCandidate) <- trialData$candidatePatient
+  currentPatient <<- trialData$currentPatient
   trialData$NcurrentPatient = 0
   trialData$currentPatient = NULL
   makeCandidate()
@@ -384,10 +385,11 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
     return(notEligible)
     }")
   )
-  eg_VN = VariableNetwork(vgList=VariableGeneratorList(vgList=c(
-    getVGs(scenario, "PatientAttribute"),
-    getVGs(scenario, "EligibilityCriterion"),
-    vg_notEligible=vg_notEligible
+  eg_VN = VariableNetwork(vgList=VariableGeneratorList(
+    vgList=c(
+      getVGs(scenario, "PatientAttribute"),
+      getVGs(scenario, "EligibilityCriterion"),
+      vg_notEligible=vg_notEligible
   )))
   VVenv = evaluateVNoutputs(eg_VN, 
                             trialData$candidatePatient$VVenv)
@@ -414,10 +416,11 @@ doThisAction_EnrollPatient = function(scenario=defaultScenario) {
 }
 
 envCopy = function(envFrom, envTo, clear=TRUE, 
-                   excluded=character(0), copySubEnvironments=FALSE) {
+                   excluded=character(0), 
+                   copySubEnvironments=FALSE) {
   for(vv in ls(env=envFrom) %except% excluded) {
     obj = get(vv, env=envFrom)
-    if( ! (class(vv) == "environment"))
+    if(( ! (class(vv) == "environment")) | copySubEnvironments)
       assign(vv, env=envTo, obj)
   }
 }  
@@ -479,11 +482,11 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
   currentPatient = trialData$currentPatient
   cat(" CHECKING: in checkEligibility, make sure we don't re-do initial variables.\n")
   cat("BEFORE\n")
-  printVVenv(currentPatient$VVenv)    
+  ifVerboseCat(printVVenv(currentPatient$VVenv) )   
   currentPatient$VVenv = evaluateVNoutputs(offStudyVN, currentPatient$VVenv)
   ## TODO: in checkEligibility, make sure we don't re-do initial variables.
   cat("AFTER\n")
-  printVVenv(currentPatient$VVenv)    
+  ifVerboseCat(printVVenv(currentPatient$VVenv))    
 #   > trialData$currentPatient$temp = "current"
 #   > trialData$patientData[[1]]$temp
 #   [1] "current"
