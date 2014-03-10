@@ -91,7 +91,7 @@ makeDefaultScenario = function() {
   
   tempEnv = evaluateVNoutputs(vNpharm)
   
-  printNetworkOutputs(tempEnv)
+  #printNetworkOutputs(tempEnv)
   #######
   
   v_SampleSizeMax = Variable(name="SampleSizeMax", 
@@ -153,10 +153,15 @@ makeDefaultScenario = function() {
       vg_responseOutcome=vg_responseOutcome,
       vg_SampleSizeMax = createVG_FixedSampleSizeMax(2),
       vg_SampleSizeMaxIsReached = vg_SampleSizeMaxIsReached,
+      vg_dose=vg_dose,
       vg_responseOutcome = vg_responseOutcome)
     )# )
-  for(obj in ls())
-    assign(obj, get(obj), pos=1)
+  for(obj in ls()) {
+    cat("makeDefaultScenario: obj is ", obj, "\n")
+    tryresult = try(assign(obj, get(obj), pos=1))
+    if(class(tryresult) == "try-error")
+      cat("try-error\n")
+  }
   #length(getVGs(scenario=defaultScenario, subType="PatientAttribute"))
   #length(getVGs(scenario=defaultScenario, subType="EligibilityCriterion"))
   
