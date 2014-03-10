@@ -427,10 +427,25 @@ envCopy = function(envFrom, envTo, clear=TRUE,
 
 doThisAction_AssignTreatmentPlan = function(scenario=defaultScenario) {
   cat("doThisAction_AssignTreatmentPlan", " not yet implemented\n")
+  treatmentVariables = VariableList(
+    sapply(getVGs(scenario, "ScheduleTreatment"),
+           slot, "provisions"))
+  treatmentVgList = VariableGeneratorList(getVGs(scenario, 
+                                          "ScheduleTreatment"))
+  treatmentVN = VariableNetwork(vgList=treatmentVgList)
+  VVenv = evaluateVNoutputs(treatmentVN)
+  envCopy(VVenv, trialData$currentPatient)
 }
+
 doThisAction_GenerateOutcomes = function(scenario=defaultScenario) {
-  cat("doThisAction_GenerateOutcomes", " not yet implemented\n")
+  cat("doThisAction_GenerateOutcomes", " in progress\n")
+  outcomesVgList = VariableGeneratorList(getVGs(scenario, 
+                                                 "PatientOutcome"))
+  outcomesVN = VariableNetwork(vgList=outcomesVgList)
+  VVenv = evaluateVNoutputs(outcomesVN)
+  envCopy(VVenv, trialData$currentPatient)
 }
+
 doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
   ###  CAUTION: we do not want to regenerate the patient values.
   ###  Just add new VGs to the VVenv, and process them.
