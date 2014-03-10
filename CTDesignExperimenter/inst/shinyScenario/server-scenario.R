@@ -8,9 +8,6 @@ require("shinyIncubator")
 shinyServer_scaffold = function(input, output, session) {
   cat("Entered shinyServer_scaffold; 
       folder is ", getwd(), "\n")
-  scaffoldObjectNames = scaffoldObjects[1]
-  rownames(scaffoldObjectNames) = NULL
-  names(scaffoldObjectNames) = "event block"
   output$scaffoldTable = renderTable({scaffoldObjects})
 
   for(scafOb in scaffoldObjectNames) {
@@ -85,60 +82,6 @@ shinyServer_scaffold = function(input, output, session) {
   #  print(theUItext) }
     eval(parse(text=theUItext))
   }
-#     output$BeginClinicalTrial <- 
-#       renderTable(scaffoldObjects["BeginClinicalTrial", ])
-#   output$GeneratePatient <- 
-#       renderTable(scaffoldObjects["GeneratePatient", ])
-#   output$CheckEligibility <- renderUI({
-#     list(
-#       renderTable(scaffoldObjects[CheckEligibility, ]))
-#   }
-#   ) 
-#   output$EnrollPatient<- renderUI({
-#     list(
-#       renderTable(scaffoldObjects[EnrollPatient, ]))
-#   }
-#   ) 
-#   output$AssignTreatmentPlan<- renderUI({
-#     list(
-#       renderTable(scaffoldObjects[AssignTreatmentPlan, ]))
-#   }
-#   ) 
-#   output$GenerateOutcomes<- renderUI({
-#     list(
-#       renderTable(scaffoldObjects[GenerateOutcomes, ]))
-#   }
-#   ) 
-#   output$CheckOffStudy<- renderUI({
-#     list(
-#       renderTable(scaffoldObjects[CheckOffStudy, ]))
-#   }
-#   ) 
-#   output$CheckModifications<- renderUI({
-#     list(
-#       renderTable(scaffoldObjects[CheckModifications, ]))
-#   }
-#   ) 
-#   output$SummarizePatient<- renderUI({
-#     list(
-#       renderTable(scaffoldObjects[SummarizePatient, ]))
-#   }
-#   ) 
-#   output$CheckStoppingRules<- renderUI({
-#     list(
-#       renderTable(scaffoldObjects[CheckStoppingRules, ]))
-#   }
-#   ) 
-#   output$SummarizeTrial<- renderUI({
-#     list(
-#       renderTable(scaffoldObjects[SummarizeTrial, ]))
-#   }
-#   ) 
-#   output$SummarizeSimulation<- renderUI({
-#     list(
-#       renderTable(scaffoldObjects[SummarizeSimulation, ]))
-#   }
-#   )
 }
 
 shinyServer(shinyServer_scaffold)

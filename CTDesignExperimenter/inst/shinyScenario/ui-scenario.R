@@ -1,15 +1,11 @@
 ###  ui.R  
 ###  shiny interface for defining a variable
 
-scaffoldObjectNames = scaffoldObjects[1]
-rownames(scaffoldObjectNames) = NULL
-names(scaffoldObjectNames) = "event block"
 makeTabPanel =  function(scafOb) {
   parseTest = paste0("tabPanel(", '"', scafOb, 
                      '", renderTable(outputID="',
                      scafOb, 
-                     '")') 
-                     
+                     '")')                      
 }
 shinyUI(fluidPage(
   titlePanel("Scenario viewer: default scenario", "Scenario viewer"),
