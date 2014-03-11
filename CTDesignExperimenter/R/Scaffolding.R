@@ -342,10 +342,10 @@ doThisAction_GeneratePatient = function(scenario=defaultScenario) {
     trialData$candidatePatient$VVenv = VVenv
   }
   environment(makeCandidate) <- trialData$candidatePatient
-  currentPatient <<- trialData$currentPatient
   trialData$NcurrentPatient = 0
   trialData$currentPatient = NULL
   makeCandidate()
+#  currentPatient <<- trialData$currentPatient  ### doesn't always work.
 }
 
 doThisAction_CheckEligibility = function(scenario=defaultScenario) {
@@ -433,8 +433,12 @@ doThisAction_AssignTreatmentPlan = function(scenario=defaultScenario) {
   treatmentVgList = VariableGeneratorList(getVGs(scenario, 
                                           "ScheduleTreatment"))
   treatmentVN = VariableNetwork(vgList=treatmentVgList)
-  VVenv = evaluateVNoutputs(treatmentVN)
-  envCopy(VVenv, trialData$currentPatient)
+  trialData$currentPatient$VVenv = evaluateVNoutputs(
+    treatmentVN, 
+    list2env(x=as.list(trialData), trialData$currentPatient$VVenv)
+    # TODO: copy design parameter values into trialData$parameters,
+    # TODO: create and update current trial summaries into trialData.    
+  )
 }
 
 doThisAction_GenerateOutcomes = function(scenario=defaultScenario) {
@@ -442,8 +446,10 @@ doThisAction_GenerateOutcomes = function(scenario=defaultScenario) {
   outcomesVgList = VariableGeneratorList(getVGs(scenario, 
                                                  "PatientOutcome"))
   outcomesVN = VariableNetwork(vgList=outcomesVgList)
-  VVenv = evaluateVNoutputs(outcomesVN)
-  envCopy(VVenv, trialData$currentPatient)
+  trialData$currentPatient$VVenv = evaluateVNoutputs(
+    outcomesVN, 
+    list2env(x=as.list(trialData), 
+             trialData$currentPatient$VVenv))
 }
 
 doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
@@ -494,7 +500,7 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
     getVGs(scenario, "OffStudyCriterion"),
     vg_notOffStudy=vg_notOffStudy  ### Adding the final assessment.
   )))
-  currentPatient = trialData$currentPatient
+  currentPatient <<- trialData$currentPatient  ## This DOES work here.
   cat(" CHECKING: in checkEligibility, make sure we don't re-do initial variables.\n")
   cat("BEFORE\n")
   ifVerboseCat(printVVenv(currentPatient$VVenv) )   
