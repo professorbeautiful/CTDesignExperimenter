@@ -104,7 +104,10 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
   #   provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
   #                               stringsAsFactors=FALSE)
   getReqs = function(vg) (vg@requirements)
-  requirementMap = sapply(network@vgList, getReqs)
+  requirementMap = lapply(vgList, getReqs)
+  ## Was sapply.
+  if(length(requirementMap) > 0)
+    names(requirementMap) = names(vgList)
   ### From VGs to Variables.
   allRequirements = unique(unlist(requirementMap))
   if(!is.null(allRequirements) & !is.list(allRequirements)) 
@@ -114,7 +117,7 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
   
   ## but if 2 requirements have the same name, we need to know that. 
   
-  requirementList = sapply(vgList, getRequirementNames)
+  requirementList = lapply(vgList, getRequirementNames)
   uniqueRequirementNames = unique(unlist(requirementList))
   #  requirementMatrix = outer(vN@vgList, vN@allRequirements, isRequiredHere)
   outer( uniqueRequirementNames, names(vgList), `%in%`)
