@@ -51,7 +51,7 @@ ifVerboseCat = function(...){
   invisible(NULL)
 }
 
-clear = function(keep=c(".ctde", "verboseOptions")){
+clear = function(keep=c(".ctde", "startup", "verboseOptions")){
   answer <- repeat {
     cat("Delete ALL files in .GlobalEnv except ",
       paste(keep, collapse="&"), "?\n  (cannot be undone): ")
