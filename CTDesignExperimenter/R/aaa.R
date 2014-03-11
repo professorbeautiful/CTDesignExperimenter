@@ -1,15 +1,10 @@
-cat("======== AAA.R  ================\n")
+cat("======== aaa.R  ================\n")
 
 
-### Some utility classes and methods.  These may no longer be necessary.
-## Class Union: NumericLogical
-setClassUnion("NumericLogical",c("numeric","logical"))
+#printFunctionBody = function(f) attributes(attributes(f)$srcref)$srcfile$lines
 
-## Class Union: OptionalNumeric
-setClassUnion("OptionalNumeric",c("numeric","NULL"))
-
-## Class Union: OptionalCharacter
-setClassUnion("OptionalCharacter",c("character","NULL"))
+printFunctionBody = function(f) 
+  (deparse((body(f))))
 
 ### Convenience utilities borrowed from mvbutils
 
@@ -87,3 +82,15 @@ instantiateS4Object <- function(className,slots){
 ### other utilities
 ### inclusive , includes the endpoints
 "%between%" = function(x, range) { (x<=range[2] & x>=range[1])}
+
+
+######################
+### Some utility classes and methods.  These may no longer be necessary.
+## Class Union: NumericLogical
+setClassUnion("NumericLogical",c("numeric","logical"))
+
+## Class Union: OptionalNumeric
+setClassUnion("OptionalNumeric",c("numeric","NULL"))
+
+## Class Union: OptionalCharacter
+setClassUnion("OptionalCharacter",c("character","NULL"))

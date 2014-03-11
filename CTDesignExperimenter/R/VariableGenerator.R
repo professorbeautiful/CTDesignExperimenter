@@ -38,6 +38,18 @@ VariableGenerator = function(insertSubType="PatientAttribute",
   vg
 }
 
+setMethod(f="show", signature=signature("VariableGenerator"),
+          definition=function(object){
+            cat("VG: output: ")
+            show(object@outputVariable)
+            cat("VG: requirements: ")
+            if(length(object@requirements) == 0) cat(" None\n")
+            else cat(paste(sapply(object@requirements, show), "\n"))    
+            cat("VG: code: ")
+            cat(printFunctionBody(object@generatorCode))
+            cat("\n------------\n")
+          })
+
 makeVariableGeneratorConstructors <- function () {
   for(insertSubType in scaffoldInsertSubTypes) {
     if(insertSubType != "") {
