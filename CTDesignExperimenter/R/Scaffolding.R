@@ -187,6 +187,8 @@ initializeQueue = function(firstaction=BeginClinicalTrial) {
 # }
 
 executeQueue = function(verbose=TRUE, scenario=defaultScenario){
+  # Names of the VGs must be unique.
+  stopifnot(length(unique(names(scenario))) == length(scenario))
   nActions <<- length(actionQueue$actions)
   if(verbose) cat("executeQueue_: nActions = ", nActions, "\n")
   while(actionQueue$queuePointer <= nActions) {
