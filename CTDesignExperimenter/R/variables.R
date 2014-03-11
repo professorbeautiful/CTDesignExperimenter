@@ -57,12 +57,17 @@ setClass("Specifier",
                         provisions=NULL)
 )
 
-printFunctionBody = function(f) attributes(attributes(f)$srcref)$srcfile$lines
 
 setMethod("print", "Variable", function(x)
   cat(" ", x@name, " (", printFunctionBody(x@checkDataType), ")\n")  ### Omits description.
-)   
+) 
+## This only works with an explicit print(v) call.
 
+setMethod("show", "Variable", function(object)
+  cat(" ", object@name, " (", 
+      printFunctionBody(object@checkDataType), ")\n") 
+  ### Omits description.
+)
 is.nonnegative.vector = function(x) { is.numeric(x) & all(x>=0)}
 is.nonnegative.number = function(x) { is.numeric(x) & (x>=0)}
 
