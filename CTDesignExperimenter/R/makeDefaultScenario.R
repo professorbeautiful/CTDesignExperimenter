@@ -127,7 +127,7 @@ makeDefaultScenario = function() {
                                          provisions=v_responseOutcome, 
                                          requirements=VariableList(list(v_dose,v_responseDoseThreshold)),
                                          generatorCode=function()
-                                           v_responseDoseThreshold < patient.dose
+                                           responseDoseThreshold < dose
                                          )
   
   v_SampleSizeMaxIsReached = Variable(name="SampleSizeMaxIsReached", 
@@ -150,17 +150,15 @@ makeDefaultScenario = function() {
       vg_clearanceRate=vg_clearanceRate, 
       vg_responseDoseThreshold=vg_responseDoseThreshold,
       vg_toxDoseThreshold=vg_toxDoseThreshold,
+      vg_dose=vg_dose,
       vg_responseOutcome=vg_responseOutcome,
       vg_SampleSizeMax = createVG_FixedSampleSizeMax(2),
-      vg_SampleSizeMaxIsReached = vg_SampleSizeMaxIsReached,
-      vg_dose=vg_dose,
-      vg_responseOutcome = vg_responseOutcome)
+      vg_SampleSizeMaxIsReached = vg_SampleSizeMaxIsReached)
     )# )
   for(obj in ls()) {
-    cat("makeDefaultScenario: obj is ", obj, "\n")
     tryresult = try(assign(obj, get(obj), pos=1))
     if(class(tryresult) == "try-error")
-      cat("try-error\n")
+      cat("try-error: makeDefaultScenario: obj is ", obj, "\n")
   }
   #length(getVGs(scenario=defaultScenario, subType="PatientAttribute"))
   #length(getVGs(scenario=defaultScenario, subType="EligibilityCriterion"))
