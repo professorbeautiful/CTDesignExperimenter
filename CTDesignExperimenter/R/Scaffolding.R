@@ -422,7 +422,7 @@ envCopy = function(envFrom, envTo, clear=TRUE,
                    copySubEnvironments=FALSE) {
   for(vv in ls(env=envFrom) %except% excluded) {
     obj = get(vv, env=envFrom)
-    if(( ! (class(vv) == "environment")) | copySubEnvironments)
+    if(( ! (class(obj) == "environment")) | copySubEnvironments)
       assign(vv, env=envTo, obj)
   }
 }  
@@ -581,7 +581,7 @@ doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
       vg_notStopping=vg_notStopping
   )))
   envStopping = new.env()
-  envCopy(trialData, envStopping, 
+  envCopy(trialData, envStopping, exclude="patientData",
           clear=TRUE, copySubEnvironments=FALSE) # These are the defaults anyway.
   trialDataAugmented = 
     evaluateVNoutputs(stoppingVN, envVariableValues=envStopping)
