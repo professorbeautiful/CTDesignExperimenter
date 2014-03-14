@@ -319,8 +319,10 @@ doThisAction_BeginClinicalTrial = function(scenario=defaultScenario) {
   vgList = VariableGeneratorList(getVGs(scenario, 
                                         "DesignParameter"))
   designVN = VariableNetwork(vgList=vgList)
-  envCopy(evaluateVNoutputs(designVN), trialData)
-  trialData$NpatientsEnrolled = 0
+  trialData$designParameters = new.env()
+  envCopy(evaluateVNoutputs(designVN), trialData$designParameters)
+  trialData$trialSummaries = new.env()
+  trialData$trialSummaries$NpatientsEnrolled = 0
   trialData$patientData = list() ## This will hold enrolled patients.
 }
 ## TODO:  where do we put the accrual pattern? 
@@ -347,7 +349,6 @@ doThisAction_GeneratePatient = function(scenario=defaultScenario) {
   trialData$NcurrentPatient = 0
   trialData$currentPatient = NULL
   makeCandidate()
-#  currentPatient <<- trialData$currentPatient  ### doesn't always work.
 }
 
 doThisAction_CheckEligibility = function(scenario=defaultScenario) {
@@ -402,33 +403,35 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
 }
 
 doThisAction_EnrollPatient = function(scenario=defaultScenario) {
-  cat("Enrolling the patient; copying patient info.\n")
-  increment(NpatientsEnrolled, ENV=trialData)
-  trialData$NcurrentPatient = trialData$NpatientsEnrolled
+  cat("Enrolling the patient; copying patient info!!!!!!!!\n")
+  increment(NpatientsEnrolled, ENV=trialData$trialSummaries)
+  trialData$NcurrentPatient = trialData$trialSummaries$NpatientsEnrolled
   trialData$currentPatient =
-    trialData$patientData[[trialData$NpatientsEnrolled]] =
+    trialData$patientData[[trialData$trialSummaries$NpatientsEnrolled]] =
       new.env()
   trialData$currentPatient$VVenv = new.env()
+  currentPatient <<- trialData$currentPatient  ### doesn't always work.
+  ifVerboseCat("&1& currentPatient$VVenv contains candidatePatient? ", 
+               "candidatePatient" %in% ls(envir=currentPatient$VVenv) )
   ## Clone, not reference here! VVenv is an environment
-#   for(vv in ls(env=trialData$candidatePatient$VVenv))
-#       assign(vv, env=trialData$currentPatient$VVenv,
-#         get(vv, env=trialData$candidatePatient$VVenv)
-#   )
   envCopy(trialData$candidatePatient$VVenv, trialData$currentPatient$VVenv)
+  ifVerboseCat("&2& currentPatient$VVenv contains candidatePatient? ", 
+               "candidatePatient" %in% ls(envir=currentPatient$VVenv) , "\n")
 }
 
 envCopy = function(envFrom, envTo, clear=TRUE, 
                    excluded=character(0), 
                    copySubEnvironments=FALSE) {
   for(vv in ls(env=envFrom) %except% excluded) {
+    if(vv=="currentPatient") browser()
+    if(vv=="candidatePatient") browser()
     obj = get(vv, env=envFrom)
-    if(( ! (class(obj) == "environment")) | copySubEnvironments)
+    if( ( !(class(obj) == "environment")) )
       assign(vv, env=envTo, obj)
   }
 }  
 
 doThisAction_AssignTreatmentPlan = function(scenario=defaultScenario) {
-  cat("doThisAction_AssignTreatmentPlan", " not yet implemented\n")
   treatmentVariables = VariableList(
     sapply(getVGs(scenario, "ScheduleTreatment"),
            slot, "provisions"))
@@ -437,20 +440,21 @@ doThisAction_AssignTreatmentPlan = function(scenario=defaultScenario) {
   treatmentVN = VariableNetwork(vgList=treatmentVgList)
   trialData$currentPatient$VVenv = evaluateVNoutputs(
     treatmentVN, 
-    list2env(x=as.list(trialData), trialData$currentPatient$VVenv)
+    list2env(x=c(as.list(trialData$designParameters), 
+                 as.list(trialData$trialSummaries)),
+             trialData$currentPatient$VVenv)
     # TODO: copy design parameter values into trialData$parameters,
     # TODO: create and update current trial summaries into trialData.    
   )
 }
 
 doThisAction_GenerateOutcomes = function(scenario=defaultScenario) {
-  cat("doThisAction_GenerateOutcomes", " in progress\n")
   outcomesVgList = VariableGeneratorList(getVGs(scenario, 
                                                  "PatientOutcome"))
   outcomesVN = VariableNetwork(vgList=outcomesVgList)
   trialData$currentPatient$VVenv = evaluateVNoutputs(
     outcomesVN, 
-    list2env(x=as.list(trialData), 
+    list2env(x=as.list(trialData$designParameters), 
              trialData$currentPatient$VVenv))
 }
 
@@ -521,14 +525,13 @@ doThisAction_CheckModifications = function(scenario=defaultScenario) {
 
 doThisAction_SummarizePatient = function(scenario=defaultScenario) {
   cat("doThisAction_SummarizePatient", " not yet implemented\n")
-  ## TODO: implement updating trial summaries in trialData.
+  ## TODO: implement updating trial summaries in trialData$trialSummaries.
 }
 
 doThisAction_SummarizeSimulation = function(scenario=defaultScenario) {
   cat("doThisAction_SummarizeSimulation", " not yet implemented\n")
-  ## TODO: implement updating trial summaries in trialData.
+  ## TODO: implement updating simulation summaries.
 }
-
 
 doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
   ###  CAUTION: we do not want to regenerate the patient values.
@@ -581,7 +584,7 @@ doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
       vg_notStopping=vg_notStopping
   )))
   envStopping = new.env()
-  envCopy(trialData, envStopping, exclude="patientData",
+  envCopy(trialData$designParameters, envStopping, 
           clear=TRUE, copySubEnvironments=FALSE) # These are the defaults anyway.
   trialDataAugmented = 
     evaluateVNoutputs(stoppingVN, envVariableValues=envStopping)
@@ -596,14 +599,14 @@ doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
 
 doThisAction_SummarizeTrial = function(scenario=defaultScenario) {
   cat("doThisAction_SummarizeTrial", 
-      " #patients = ", trialData$NpatientsEnrolled, "\n")
+      " #patients = ", trialData$trialSummaries$NpatientsEnrolled, "\n")
 }
 
 runTrial = function(scenario=defaultScenario) {
   options(error=recover)
-  makeScaffoldObjects()
+  startup()
   initializeQueue()
   executeQueue()
 }
 
-if(interactive()) runTrial()  ## skip when building.
+#if(interactive()) runTrial()  ## skip when building.

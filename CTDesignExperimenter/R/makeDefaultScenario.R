@@ -138,7 +138,7 @@ makeDefaultScenario = function() {
     requirements=VariableList(v_SampleSizeMax),
     provisions=v_SampleSizeMaxIsReached, 
     generatorCode=function(){
-      SampleSizeMax <= trialData$NpatientsEnrolled
+      SampleSizeMax <= trialData$trialSummaries$NpatientsEnrolled
     }
   )
   ## Creating a default scenario #####
