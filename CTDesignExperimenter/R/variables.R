@@ -71,9 +71,6 @@ setMethod("show", "Variable", function(object)
 is.nonnegative.vector = function(x) { is.numeric(x) & all(x>=0)}
 is.nonnegative.number = function(x) { is.numeric(x) & (x>=0)}
 
-v_sexAsCharacter = new("Variable", name="sex", description="my sex variable", 
-                       checkDataType=function(x) is(x,"character"))
-#print(v_sexAsCharacter)
 
 setClass("VariableValue", contains="ANY",
          slots=list(variable="Variable"))
