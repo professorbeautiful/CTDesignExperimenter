@@ -25,3 +25,13 @@ makeTree = function() {
 }
 makeTree()
 length(..())
+
+extractEntry = function(L1=3, L2=4, start=jstree.obj(scenarioTree)) {
+  nodeLevel1 = ## 3rd in scaffold
+    start[["children"]][[1]][[L1]]
+  ul_node = nodeLevel1[["children"]][[1]][[2]] ### unnumbered list of entries.
+  nodeLevel2 = ul_node[["children"]][[1]][[L2]]
+  entry = nodeLevel2[["children"]][[1]]
+  entry
+}
+extractEntry()
