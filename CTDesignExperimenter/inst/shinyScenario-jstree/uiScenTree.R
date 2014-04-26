@@ -3,7 +3,7 @@
 
 require(shinysky)
 
-scenarioTree = makeTree()
+scenarioTree = makeTree("full")
 
 # nav = list(Branch = list(twig = list("leafOnTwigA", "leafOnTwigB"), 
 #                          "leafOnBranch"), 
