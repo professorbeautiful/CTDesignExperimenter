@@ -1,19 +1,34 @@
-insertSubTree = function(insertName, insertStyle) {
-  if(insertStyle=="string")
-    insertName
-  else {  ### extract vg components.
-    vg = get(insertName)
-    info = list(paste("name:", vg@outputVariable@name),
+insertVGSubTree = function(insertName, insertStyle="simple") {
+  vg = get(insertName)
+  if(insertStyle=="name-only")
+    return(insertName)
+  else if(insertStyle=="simple"){  ### extract vg components.
+    info = list(paste("outputname:", vg@outputVariable@name),
          paste("code:", paste(body(vg@generatorCode), 
                               collapse="; "))         
       )
     info = list(info)
     names(info) = insertName
-    info
+    return(info)    
+  } else { ## show variables and parameters
+    outputVarInfo = 
+      paste("output:", capture.output(vg@outputVariable))
+    codeInfo = paste("code:", 
+                     gsub(fixed=TRUE, "{;", "{",
+                          paste(printFunctionBody(vg@generatorCode), 
+                                     collapse="; ")))
+    info = list(outputVarInfo, codeInfo)
+    if(length(vg@parameters > 0)){
+      parameterInfo = vg@parameters #sapply(vg@parameters, printParameter)
+      info = c(info, parameterInfo)
+    }
+    info = list(info)
+    names(info) = insertName
+    return(info)    
   }
 }
 
-makeTree = function(insertStyle="string") {
+makeTree = function(insertStyle="simple") {
   scenarioTree = 
     sapply(scaffoldObjectNames, simplify=F, function(x) list())
   #    rep(list(list(inserts=character(0))), 13)
@@ -28,11 +43,11 @@ makeTree = function(insertStyle="string") {
     thisBranchNum = which(scaffoldObjectNames==scafBlockName)
     scenarioTree[[thisBranchNum]] = c(
       scenarioTree[[thisBranchNum]], 
-      insertSubTree(insertName, insertStyle))  
+      insertVGSubTree(insertName, insertStyle))  
  }
  for(i in 1:length(scenarioTree)){
    if(length(scenarioTree[[i]])==0) 
-     scenarioTree[[i]] = paste(scaffoldObjectNames[i], " (0)")
+     scenarioTree[[i]] =  " (0)"
    else
      names(scenarioTree)[[i]] = paste(names(scenarioTree)[[i]], 
                                       " (", length(scenarioTree[[i]]), ")")
