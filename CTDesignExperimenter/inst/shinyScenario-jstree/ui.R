@@ -12,15 +12,27 @@ scenarioTree = makeTree("full")
 myTreeObj = jstree.obj(scenarioTree)
 # myTreeObj[["children"]][[1]][[11]][[1]] = 
 #   'li class="jstree-open"'
-#myTree = jstree.local("jstree1", myTreeObj, '.jstree("open_all")')
-myTree = jstree.local("jstree1", myTreeObj, '')
 # Fails.  The closing tag is also set to class="jstree-open"
 # Must be a special [[<- method.
+
+#myTree = jstree.local("jstree1", myTreeObj, '.jstree("open_all")')
+#That works. Now we try another method.
+
+tagToOpenTree =
+  tags$script(
+    #  '$("#jstree1").open_all();'
+    'function openTree(){
+                            $("#jstree1").jstree("open_all");
+                            };
+              $(document).ready(openTree);')
+
+
+myTree = jstree("jstree1", myTreeObj)
 shinyUI(
   basicPage(
     headerPanel("shinyScenario-jstree"), 
     br(), br(),
-    h4("startup 3"), 
+    h4("startup 4"), 
     div(class = "well container-fluid", 
         div(class = "row-fluid", 
             div(class = "row-fluid",
@@ -30,13 +42,7 @@ shinyUI(
                     shinyalert("alert_jstree1"))
             ),
             hr(),
-            ### Seems to have to be at the end.
-            tags$script(
-              #  '$("#jstree1").open_all();'
-              'function openTree(){
-                            $("#jstree1").jstree("open_all");
-                            };
-              $(document).ready(openTree);')
+            tagToOpenTree
         )
     )
   )
