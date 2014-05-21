@@ -62,7 +62,7 @@ makeVariableGeneratorConstructors <- function () {
 }
 
 setMethod("print", "VariableGenerator", function(x){
-  cat("   VG: output: ", x@provisions, "\n")
+  cat("   VG: output: ", capture.output(x@provisions), "\n")
   for (req in x@requirements) {
     cat("       req: ", req, "\n") ### Omits all but the Variable name slot.
   }
