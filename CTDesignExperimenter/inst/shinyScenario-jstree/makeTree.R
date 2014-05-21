@@ -28,7 +28,7 @@ insertVGSubTree = function(insertName, insertStyle="simple") {
   }
 }
 
-makeTree = function(insertStyle="simple") {
+makeTree = function(insertStyle="simple", scenario=defaultScenario) {
   scenarioTree = 
     sapply(scaffoldObjectNames, simplify=F, function(x) list())
   #    rep(list(list(inserts=character(0))), 13)
