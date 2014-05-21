@@ -144,8 +144,11 @@ makeScaffoldObjects() # For building the package.
 ### Thus, hierarchical, with 4 levels.
 
 getVGs = function(scenario, subType) {
-  whichOnes = (sapply(scenario@inserts, slot, name="insertSubType") == subType)
-  return(scenario@inserts[whichOnes])
+  if(is(scenario, "Scenario")) it = scenario@inserts
+  else if(is(scenario, "ListOfInserts")) it = scenario
+  else stop("getVGs: Incorrect class for arg scenario")
+  whichOnes = (sapply(it, slot, name="insertSubType") == subType)
+  return(it[whichOnes])
 }
 
 #### doAction methods and functions #####
@@ -279,7 +282,7 @@ debug(addToQueue_)
 
 # setMethod("doAction", signature=list("Action", "Scenario"), #####
 
-setMethod("doAction", signature=list("Event", "ListOfInserts"), ######
+setMethod("doAction", signature=list("Event", "Scenario"), ######
           function(event, scenario=defaultScenario, ...) {
             cat("Event ", event@name , "is happening\n")
           }
@@ -306,7 +309,7 @@ doActionEvent = function(event, scenario=defaultScenario, ...){
     )
   }
 }
-setMethod("doAction", signature=list("ScaffoldEvent", "ListOfInserts"),
+setMethod("doAction", signature=list("ScaffoldEvent", "Scenario"),
           doActionEvent
 )
 
@@ -609,4 +612,4 @@ runTrial = function(scenario=defaultScenario) {
   executeQueue()
 }
 
-#if(interactive()) runTrial()  ## skip when building.
+if(interactive()) runTrial()  ## skip when building.

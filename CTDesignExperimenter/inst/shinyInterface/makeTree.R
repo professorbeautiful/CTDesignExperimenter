@@ -37,8 +37,8 @@ makeTree = function(insertStyle="simple",
   # names(scenarioTree) = scaffoldObjectNames
   # rep("inserts", length(scaffoldObjectNames)
   #                            , function(x)list(x))
-  for(insertName in names(defaultScenario)) {
-    insert = defaultScenario[[insertName]]
+  for(insertName in names(defaultScenario@inserts)) {
+    insert = defaultScenario@inserts[[insertName]]
     scafBlockName = scaffoldObjects$name[
       scaffoldObjects$eventInsertSubType == insert@insertSubType]
     thisBranchNum = which(scaffoldObjectNames==scafBlockName)
@@ -56,7 +56,7 @@ makeTree = function(insertStyle="simple",
   }
   scenarioTree
 }
-# makeTree("full")
+makeTree("full")
 
 
 extractEntry = function(L1=3, L2=4, start=jstree.obj(scenarioTree)) {

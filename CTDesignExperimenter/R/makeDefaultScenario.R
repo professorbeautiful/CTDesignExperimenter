@@ -143,8 +143,8 @@ makeDefaultScenario = function() {
   )
   ## Creating a default scenario #####
   
-  defaultScenario =  #as("Scenario",
-    new("ListOfInserts", 
+  defaultScenario =  new("Scenario",
+    inserts=new("ListOfInserts", 
        list(
       vg_liver=vg_liver, vg_age=vg_age, 
       ec_liver=ec_liver, ec_age=ec_age,
@@ -155,9 +155,10 @@ makeDefaultScenario = function() {
       vg_responseOutcome=vg_responseOutcome,
       vg_SampleSizeMax = createVG_FixedSampleSizeMax(2),
       vg_SampleSizeMaxIsReached = vg_SampleSizeMaxIsReached)
-      #,name="defaultScenario", 
-      #description="default scenario"
-    )# )
+    )
+    ,name="defaultScenario"
+    ,description="default scenario"
+  )
   for(obj in ls()) {
     tryresult = try(assign(obj, get(obj), pos=1))
     if(class(tryresult) == "try-error")
@@ -168,4 +169,5 @@ makeDefaultScenario = function() {
   
 }
 
+if(interactive()) makeDefaultScenario()
 # setMethod("print", "Scenario", definition = function(scen) )
