@@ -56,7 +56,6 @@ makeTree = function(insertStyle="simple",
   }
   scenarioTree
 }
-makeTree("full")
 
 
 extractEntry = function(L1=3, L2=4, start=jstree.obj(scenarioTree)) {
