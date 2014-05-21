@@ -1,6 +1,16 @@
+createVG_FixedSampleSizeMax = function(Nmax = 3) {
+  VariableGenerator(insertSubType="DesignParameter", 
+                    parameters=list(SampleSizeMax=Nmax),
+                    provisions=v_SampleSizeMax, 
+                    generatorCode=function(){
+                      SampleSizeMax
+                    }
+  )
+}
+vg_SampleSizeMax_2 = createVG_FixedSampleSizeMax(2)
 
-makeDefaultScenario = function() {
-  
+makeDefaultScenario = function(hideOutput=FALSE) {
+  if(hideOutput) sink("/dev/null")
     vg_age = PatientAttribute(parameters=list(ageMean=50, ageCV=0.5),
                               generatorCode=function(){
                                 rlognorm(1, ageMean, ageCV)
@@ -98,15 +108,6 @@ makeDefaultScenario = function() {
                              description='Upper bound for sample size', 
                              checkDataType=is.numeric)
   
-  createVG_FixedSampleSizeMax = function(Nmax = 3) {
-    VariableGenerator(insertSubType="DesignParameter", 
-                      parameters=list(SampleSizeMax=Nmax),
-                      provisions=v_SampleSizeMax, 
-                      generatorCode=function(){
-                        SampleSizeMax
-                      }
-    )
-  }
   
   # TESTING scenarioNoElig = getVGs(defaultScenario, "PatientAttribute")
   
@@ -153,7 +154,7 @@ makeDefaultScenario = function() {
       vg_toxDoseThreshold=vg_toxDoseThreshold,
       vg_dose=vg_dose,
       vg_responseOutcome=vg_responseOutcome,
-      vg_SampleSizeMax = createVG_FixedSampleSizeMax(2),
+      vg_SampleSizeMax_2 = vg_SampleSizeMax_2,
       vg_SampleSizeMaxIsReached = vg_SampleSizeMaxIsReached)
     )
     ,name="defaultScenario"
@@ -166,7 +167,8 @@ makeDefaultScenario = function() {
   }
   #length(getVGs(scenario=defaultScenario, subType="PatientAttribute"))
   #length(getVGs(scenario=defaultScenario, subType="EligibilityCriterion"))
-  
+  if(hideOutput) sink() # Stop hiding output
+  names(defaultScenario@inserts)
 }
 
 if(interactive()) makeDefaultScenario()
