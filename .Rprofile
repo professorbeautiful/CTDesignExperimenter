@@ -39,7 +39,7 @@ library("utils")
 	abbreviate.cdprompt = 3
 	Sys.setlocale("LC_COLLATE", "en_US.UTF-8")
 
-
+options(devtools.install.args="--no-multiarch")
 
 #
 ## createCTDEcatalog()
