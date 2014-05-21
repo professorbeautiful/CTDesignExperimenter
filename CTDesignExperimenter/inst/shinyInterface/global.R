@@ -1,5 +1,17 @@
 scaffoldObjectNames = scaffoldObjects[[1]]
 
-scenarioTree = makeTree("full", defaultScenario)
-myTreeObj = jstree.obj(scenarioTree)
-myTree = jstree("jstree1", myTreeObj)
+source("makeTree.R")
+
+reloadScenario = function() {  
+  require(shinysky)
+  scenarioTree <<- makeTree("full", currentScenario)
+  myTreeObj <<- jstree.obj(scenarioTree)
+  myTree <<- jstree("jstree1", myTreeObj)
+}
+
+
+
+## Start with current Scenario.
+currentScenario = defaultScenario  
+reloadScenario()
+
