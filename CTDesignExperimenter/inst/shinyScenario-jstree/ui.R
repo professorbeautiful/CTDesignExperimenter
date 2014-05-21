@@ -1,8 +1,12 @@
 ### shinyScenario-jstree 
 ### See /Users/Roger/Library/R/3.0/library/shinysky/examples/6_jstree/
 
+
 require(shinysky)
+
+### Convenience function:
 "%&%" = function (a, b)   paste(a, b, sep = "") 
+
 scenarioTree = makeTree("full")
 
 # nav = list(Branch = list(twig = list("leafOnTwigA", "leafOnTwigB"), 
@@ -18,16 +22,17 @@ myTreeObj = jstree.obj(scenarioTree)
 #myTree = jstree.local("jstree1", myTreeObj, '.jstree("open_all")')
 #That works. Now we try another method.
 
+## This works too, and does not require jstree.local
+OpenSesame = '$("#jstree1").jstree("open_all");'
 tagToOpenTree =
-  tags$script(
-    #  '$("#jstree1").open_all();'
-    'function openTree(){
-                            $("#jstree1").jstree("open_all");
-                            };
-              $(document).ready(openTree);')
-
+  tags$script(paste0(
+    'function openTree(){'
+    , OpenSesame 
+    , '                   };
+              $(document).ready(openTree);'))
 
 myTree = jstree("jstree1", myTreeObj)
+
 shinyUI(
   basicPage(
     headerPanel("shinyScenario-jstree"), 

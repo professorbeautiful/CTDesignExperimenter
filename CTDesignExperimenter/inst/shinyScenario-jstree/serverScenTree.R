@@ -2,6 +2,7 @@
 
 require(shiny)
 require(shinysky)
+require("CTDesignExperimenter")
 
 shinyServer(function(input, output, session) {
   # jstree
