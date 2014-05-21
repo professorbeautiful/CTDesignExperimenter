@@ -1,12 +1,9 @@
 ### shinyScenario-jstree 
 ### See /Users/Roger/Library/R/3.0/library/shinysky/examples/6_jstree/
 
-require(shinysky)
 "%&%" = function (a, b)   paste(a, b, sep = "") 
 
-scenarioTree = makeTree("full", defaultScenario)
-myTreeObj = jstree.obj(scenarioTree)
-myTree = jstree("jstree1", myTreeObj)
+# myTree is created in global.R
 OpenSesame = '$("#jstree1").jstree("open_all");'
 tagToOpenTree =
   tags$script(paste0(
@@ -16,8 +13,7 @@ tagToOpenTree =
        $(document).ready(openTree);'))
 
 scenarioPanel = tabPanel("scenario",
-                         textInput(inputId="scenarioName",  
-                                   value = defaultScenario@name,
+                         textInput(inputId="scenarioName",
                                    label="scenario name"),
                          div(class="row-fluid span3",
                              actionButton(inputId="btnRenameScen", label="rename scenario", styleclass = "success"),
@@ -25,6 +21,16 @@ scenarioPanel = tabPanel("scenario",
                              actionButton(inputId="btnFindScen" , label="find/replace scenario", styleclass = "success"),
                              actionButton(inputId="btnAddScen" , label="add scenario", styleclass = "success"),
                              hr()),
+                         textOutput("selectedNode"),
+                         conditionalPanel(condition = #'$( "select option:selected".length > 0 )',
+                                            #  '!(typeof input.jstree1 === "undefined") && input.jstree1.length > 0',
+                                            #'output.selectedNode == "vg_age"',
+                                            'output.selectedNode',
+                                          hr(),
+                                          actionButton(inputId="btnCloneInsert" , label="Clone insert", styleclass = "success"),
+                                          actionButton(inputId="btnEditInsert" , label="Edit insert", styleclass = "success"),
+                                          hr()),
+                         #'$("#jstree1").'
                          myTree,
                          tagToOpenTree 
 )
