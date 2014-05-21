@@ -144,7 +144,8 @@ makeDefaultScenario = function() {
   ## Creating a default scenario #####
   
   defaultScenario =  #as("Scenario",
-    new("ListOfInserts", list(
+    new("ListOfInserts", 
+       list(
       vg_liver=vg_liver, vg_age=vg_age, 
       ec_liver=ec_liver, ec_age=ec_age,
       vg_clearanceRate=vg_clearanceRate, 
@@ -154,6 +155,8 @@ makeDefaultScenario = function() {
       vg_responseOutcome=vg_responseOutcome,
       vg_SampleSizeMax = createVG_FixedSampleSizeMax(2),
       vg_SampleSizeMaxIsReached = vg_SampleSizeMaxIsReached)
+      #,name="defaultScenario", 
+      #description="default scenario"
     )# )
   for(obj in ls()) {
     tryresult = try(assign(obj, get(obj), pos=1))
@@ -164,3 +167,5 @@ makeDefaultScenario = function() {
   #length(getVGs(scenario=defaultScenario, subType="EligibilityCriterion"))
   
 }
+
+# setMethod("print", "Scenario", definition = function(scen) )

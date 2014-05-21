@@ -24,7 +24,6 @@ library("utils")
 	if(Sys.getenv("R_USER") ==  "")
 	  Sys.setenv(R_USER=Sys.getenv("HOME"))
 
-	library(mvbutils)
 	options(program.editor = function(name, fname) paste("open ", 
 	    fname, "", sep = ""), edit.scratchdir = "/Users/Roger/R.scratch", 
 	    backup.fix = c(2L, 2L))

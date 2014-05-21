@@ -144,8 +144,8 @@ makeScaffoldObjects() # For building the package.
 ### Thus, hierarchical, with 4 levels.
 
 getVGs = function(scenario, subType) {
-  whichOnes = (sapply(scenario, slot, name="insertSubType") == subType)
-  return(scenario[whichOnes])
+  whichOnes = (sapply(scenario@inserts, slot, name="insertSubType") == subType)
+  return(scenario@inserts[whichOnes])
 }
 
 #### doAction methods and functions #####
@@ -188,7 +188,7 @@ initializeQueue = function(firstaction=BeginClinicalTrial) {
 
 executeQueue = function(verbose=TRUE, scenario=defaultScenario){
   # Names of the VGs must be unique.
-  stopifnot(length(unique(names(scenario))) == length(scenario))
+  stopifnot(length(unique(names(scenario@inserts))) == length(scenario@inserts))
   nActions <<- length(actionQueue$actions)
   if(verbose) cat("executeQueue_: nActions = ", nActions, "\n")
   while(actionQueue$queuePointer <= nActions) {
@@ -316,7 +316,7 @@ doThisAction = function(event, scenario=defaultScenario)
 doThisAction_BeginClinicalTrial = function(scenario=defaultScenario) {
   cat("Must now initializeCTdata()\n")
   assign("trialData", new.env(), pos=1) #where is best?
-  vgList = VariableGeneratorList(getVGs(scenario, 
+  vgList = VariableGeneratorList(getVGs(scenario@inserts, 
                                         "DesignParameter"))
   designVN = VariableNetwork(vgList=vgList)
   trialData$designParameters = new.env()
@@ -336,7 +336,7 @@ doThisAction_GeneratePatient = function(scenario=defaultScenario) {
     rm(list=ls(envir=trialData$candidatePatient), envir=trialData$candidatePatient)
   
   makeCandidate = function() {
-    vgList = VariableGeneratorList(getVGs(scenario, 
+    vgList = VariableGeneratorList(getVGs(scenario@inserts, 
                                           "PatientAttribute"))
     candidateVN = VariableNetwork(vgList=vgList)
     VVenv = evaluateVNoutputs(candidateVN)
@@ -357,7 +357,7 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
       "Retrieve all VariableValues,
       and return the conjunction with all().\n")
   eligibilityVariables = VariableList(
-    sapply(getVGs(scenario, "EligibilityCriterion"),
+    sapply(getVGs(scenario@inserts, "EligibilityCriterion"),
            slot, "provisions"))
   v_notEligibleVariable = Variable(name="notEligible", 
                                    description="whether patient is not eligible; used in doThisAction_CheckEligibility",
@@ -390,8 +390,8 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
   )
   eg_VN = VariableNetwork(vgList=VariableGeneratorList(
     vgList=c(
-      getVGs(scenario, "PatientAttribute"),
-      getVGs(scenario, "EligibilityCriterion"),
+      getVGs(scenario@inserts, "PatientAttribute"),
+      getVGs(scenario@inserts, "EligibilityCriterion"),
       vg_notEligible=vg_notEligible
   )))
   VVenv = evaluateVNoutputs(eg_VN, 
@@ -433,9 +433,9 @@ envCopy = function(envFrom, envTo, clear=TRUE,
 
 doThisAction_AssignTreatmentPlan = function(scenario=defaultScenario) {
   treatmentVariables = VariableList(
-    sapply(getVGs(scenario, "ScheduleTreatment"),
+    sapply(getVGs(scenario@inserts, "ScheduleTreatment"),
            slot, "provisions"))
-  treatmentVgList = VariableGeneratorList(getVGs(scenario, 
+  treatmentVgList = VariableGeneratorList(getVGs(scenario@inserts, 
                                           "ScheduleTreatment"))
   treatmentVN = VariableNetwork(vgList=treatmentVgList)
   trialData$currentPatient$VVenv = evaluateVNoutputs(
@@ -449,7 +449,7 @@ doThisAction_AssignTreatmentPlan = function(scenario=defaultScenario) {
 }
 
 doThisAction_GenerateOutcomes = function(scenario=defaultScenario) {
-  outcomesVgList = VariableGeneratorList(getVGs(scenario, 
+  outcomesVgList = VariableGeneratorList(getVGs(scenario@inserts, 
                                                  "PatientOutcome"))
   outcomesVN = VariableNetwork(vgList=outcomesVgList)
   trialData$currentPatient$VVenv = evaluateVNoutputs(
@@ -466,7 +466,7 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
       "Retrieve all VariableValues,
       and return the disjunction (union) with any().\n")
   offStudyVariables = VariableList(
-    sapply(getVGs(scenario, "offStudyCriterion"),
+    sapply(getVGs(scenario@inserts, "offStudyCriterion"),
            slot, "provisions"))
   v_notOffStudyVariable = Variable(name="notOffStudy", 
                                    description="whether patient is offStudy; used in doThisAction_CheckoffStudy",
@@ -503,7 +503,7 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
     }")
   body(vg_notOffStudy@generatorCode) = parse(text=paste(theGeneratorBody))
   offStudyVN = VariableNetwork(vgList=VariableGeneratorList(vgList=c(
-    getVGs(scenario, "OffStudyCriterion"),
+    getVGs(scenario@inserts, "OffStudyCriterion"),
     vg_notOffStudy=vg_notOffStudy  ### Adding the final assessment.
   )))
   currentPatient <<- trialData$currentPatient  ## This DOES work here.
@@ -541,7 +541,7 @@ doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
       "Retrieve all VariableValues,
       and return the conjunction with any().\n")
   stoppingRuleVariables = VariableList(
-    sapply(getVGs(scenario, "StoppingCriterion"),
+    sapply(getVGs(scenario@inserts, "StoppingCriterion"),
            slot, "provisions"))
   v_notStoppingVariable = Variable(name="continueAccrual", 
                                    description="whether study is NOT stopping",
@@ -580,7 +580,7 @@ doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
   assign("vg_notStopping", vg_notStopping, pos=1)
   stoppingVN = VariableNetwork(
     vgList=VariableGeneratorList(vgList=c(
-      getVGs(scenario, "StoppingCriterion"),
+      getVGs(scenario@inserts, "StoppingCriterion"),
       vg_notStopping=vg_notStopping
   )))
   envStopping = new.env()
