@@ -1,4 +1,5 @@
 
+options(shiny.trace=TRUE)
 
 require(shiny)
 require(shinysky)
@@ -6,6 +7,9 @@ require("CTDesignExperimenter")
 
 shinyServer(function(input, output, session) {
   # jstree
+  
+  source("debugTools.R", local=TRUE)
+  
   rValues = reactiveValues()
   treeObserver = observe(
     label="myTreeObserver",

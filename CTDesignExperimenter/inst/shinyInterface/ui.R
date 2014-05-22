@@ -13,7 +13,7 @@ tagToOpenTree =
        $(document).ready(openTree);'))
 
 scenarioPanel = tabPanel("scenario",
-                         textInput(inputId="scenarioName",
+                         textInput(inputId="scenarioName",  
                                    label="scenario name"),
                          div(class="row-fluid span3",
                              actionButton(inputId="btnRenameScen", label="rename scenario", styleclass = "success"),
@@ -21,6 +21,9 @@ scenarioPanel = tabPanel("scenario",
                              actionButton(inputId="btnFindScen" , label="find/replace scenario", styleclass = "success"),
                              actionButton(inputId="btnAddScen" , label="add scenario", styleclass = "success"),
                              hr()),
+                         div(class="row-fluid span1",
+                             uiOutput(outputId="debugTools")
+                             ),
                          textOutput("selectedNode"),
                          conditionalPanel(condition = #'$( "select option:selected".length > 0 )',
                                             #  '!(typeof input.jstree1 === "undefined") && input.jstree1.length > 0',
