@@ -11,7 +11,7 @@ cat("Running .Rprofile from the CTDE project.\n")
 #print(search())
 ##[1] ".GlobalEnv"      "package:methods" "Autoloads"       "package:base"  
 library("mvbutils")
-attach("~/Dropbox/_HOME/R-in-Dropbox/R-utilities/.Rdata")
+attach("~/Dropbox/_HOME/R-in-Dropbox/R-utilities/.RData")
 library("utils")
 ##library("CTDesignExperimenter")
 ## error: could not find function "packageDescription" because utils was not attached.
