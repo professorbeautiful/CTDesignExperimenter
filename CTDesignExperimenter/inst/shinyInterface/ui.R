@@ -24,13 +24,19 @@ scenarioPanel = tabPanel("scenario",
                          textOutput("selectedNode"),
                          conditionalPanel(condition = #'$( "select option:selected".length > 0 )',
                                             #  '!(typeof input.jstree1 === "undefined") && input.jstree1.length > 0',
-                                            #'output.selectedNode == "vg_age"',
-                                            'output.selectedNode',
+                                          #  'output.numberSelected', ## fails
+                                             'output.selectedNode', # this works!
                                           hr(),
                                           actionButton(inputId="btnCloneInsert" , label="Clone insert", styleclass = "success"),
                                           actionButton(inputId="btnEditInsert" , label="Edit insert", styleclass = "success"),
+                                          textOutput("nSelectedText"),
                                           hr()),
-                         #'$("#jstree1").'
+                         ###  Buttons when > 1 items are selected:
+                         conditionalPanel(condition = 'output.numberSelected == 2', 
+                                          hr(),
+                                          actionButton(inputId="btnSaveListOfInserts" , label="btnSaveListOfInserts", styleclass = "success"),
+                                          actionButton(inputId="btnEditInsert" , label="Edit insert", styleclass = "success"),
+                                          hr()),
                          myTree,
                          tagToOpenTree 
 )

@@ -20,8 +20,13 @@ shinyServer(function(input, output, session) {
   output$selectedNode = renderText({
     print(paste0(input$jstree1, collapse = ", "))
     })
-  #numberSelected = reactiveValues(
-  #  selectionLength = length(input$jstree1))
+  output$numberSelected = reactive({
+    length(input$jstree1)
+    })
+  output$nSelectedText = renderText({
+    paste0("nSelected=", as.character(length(input$jstree1)))
+    #paste0("nSelected=", output$numberSelected) #  CANNOT READ FROM output.
+  })
   #anySelected = reactiveValues(numberSelected > 0)
                                   
 }) 
