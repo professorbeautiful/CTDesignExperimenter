@@ -7,7 +7,6 @@ createVG_FixedSampleSizeMax = function(Nmax = 3) {
                     }
   )
 }
-vg_SampleSizeMax_2 = createVG_FixedSampleSizeMax(2)
 
 makeDefaultScenario = function(hideOutput=FALSE) {
   if(hideOutput) sink("/dev/null")
@@ -104,11 +103,10 @@ makeDefaultScenario = function(hideOutput=FALSE) {
   #printNetworkOutputs(tempEnv)
   #######
   
-  v_SampleSizeMax = Variable(name="SampleSizeMax", 
-                             description='Upper bound for sample size', 
-                             checkDataType=is.numeric)
   
+  vg_SampleSizeMax_2 = createVG_FixedSampleSizeMax(2)
   
+
   # TESTING scenarioNoElig = getVGs(defaultScenario, "PatientAttribute")
   
   v_dose = Variable(name="dose", description="dose", checkDataType=is.numeric)
