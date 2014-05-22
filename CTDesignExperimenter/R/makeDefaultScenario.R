@@ -98,7 +98,7 @@ makeDefaultScenario = function(hideOutput=FALSE) {
       vg_toxDoseThreshold=vg_toxDoseThreshold))
   )  #### you need the names?
   
-  tempEnv = evaluateVNoutputs(vNpharm)
+  #tempEnv = evaluateVNoutputs(vNpharm)
   
   #printNetworkOutputs(tempEnv)
   #######
