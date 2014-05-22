@@ -33,8 +33,28 @@ B2@.Data  ### Of course, no names.
 
 ### Adding slots destroys the named list aspect
 ### Wait!  It's working now!
+```{r}
 setClass("TempC", contains="list",
          slots=c(Dslot="numeric"))
 D = new("TempC", list(a=1,b=2), Dslot=99)
 D[["a"]]
 names(D)
+```
+
+From ?Classes:
+---
+Some slot names correspond to attributes used in old-style S3 objects and in R objects without an explicit class, for example, the names attribute. If you define a class for which that attribute will be set, such as a subclass of named vectors, you should include "names" as a slot. See the definition of class "namedList" for an example. Using the names() assignment to set such names will generate a warning if there is no names slot and an error if the object in question is not a vector type. A slot called "names" can be used anywhere, but only if it is assigned as a slot, not via the default names() assignment.
+
+The names attribute of the .Data element is transferred to the object itself.
+```{r}
+attributes(A)$names
+```
+Do ALL attributes move that way?
+```{r}
+tempList = list(a=3, b=4)
+attributes(tempList)$dummy = "dummy"
+E = new("TempA", tempList)
+attributes(E)$names
+attributes(E)$dummy
+attributes(E@.Data)
+```
