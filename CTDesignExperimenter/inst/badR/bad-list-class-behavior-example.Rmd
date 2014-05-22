@@ -1,7 +1,7 @@
 ###  Problem (bug?) 
 ###  the names of a .Data list are lost,
 ###  if either subclassed or adding a slot.
-
+See [stackoverflow discussion](http://stackoverflow.com/questions/23788082/subclassing-s4-class-that-contains-a-list-with-names-access-by-name/23796292#23796292)
 ```{r}
 setClass("TempA", contains="list")
 A = new("TempA", list(a=1,b=2))
