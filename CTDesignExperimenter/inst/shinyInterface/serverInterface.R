@@ -14,6 +14,9 @@ shinyServer(function(input, output, session) {
   treeObserver = observe(
     label="myTreeObserver",
     {
+      cat("Entered treeObserver. #selected nodes =",
+        length(input$jstree1), "\n")
+#        "depths are ", input$jstree1)
       showshinyalert(session, "alert_jstree1", 
                    paste0("You selected these items in the tree: ", 
                           paste0(input$jstree1, collapse = ", ")))
@@ -21,6 +24,7 @@ shinyServer(function(input, output, session) {
     }
   )
   # treeObserver$onInvalidate(function() print("jstree1 selection changed!"))
+
   output$selectedNode = renderText({
     print(paste0(input$jstree1, collapse = ", "))
     })
