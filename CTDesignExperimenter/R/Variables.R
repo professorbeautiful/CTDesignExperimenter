@@ -42,22 +42,6 @@ VariableList = function(vList) {
 ###' Allows VariableGenerators to use either one Variable or a list of them in provisions and requirements.
 ###' 
 setClassUnion("Variables", c("Variable", "VariableList", "NULL"))
-
-##' Specifier
-##' 
-##' Superclass of VariableGenerator, PatientModelSpecifier, Design, OutcomeModelSpecifier, Criterion
-setClass("Specifier", 
-  #       contains="character", ### maybe a name will be desired.
-         slots=list(
-           parameters="list", 
-           requirements="Variables",
-           provisions="Variables"),
-         prototype=list(parameters=list(), 
-                        requirements=NULL,
-                        provisions=NULL)
-)
-
-
 setMethod("print", "Variable", function(x)
   cat(" ", x@name, " (", printFunctionBody(x@checkDataType), ")\n")  ### Omits description.
 ) 
