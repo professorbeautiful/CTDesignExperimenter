@@ -27,6 +27,9 @@ shinyServer(function(input, output, session) {
   output$numberSelected = reactive({
     length(input$jstree1)
     })
+  output$moreThanOneSelected = reactive({
+    length(input$jstree1) > 1
+  })
   output$nSelectedText = renderText({
     paste0("nSelected=", as.character(length(input$jstree1)))
     #paste0("nSelected=", output$numberSelected) #  CANNOT READ FROM output.
