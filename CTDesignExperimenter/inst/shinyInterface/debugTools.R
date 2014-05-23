@@ -1,3 +1,5 @@
+##  For source'ing in serverInterface.R
+
 output$evalOutput = renderText({
   ## This might be useful later for up-arrowing through past expressions.
   evalString = isolate(input$evalString)
