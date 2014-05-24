@@ -1,4 +1,6 @@
 require("CTDesignExperimenter")
+options(shiny.trace=TRUE)
+
 scaffoldObjectNames = scaffoldObjects[[1]]
 
 source("makeTree.R")
@@ -14,4 +16,9 @@ reloadScenario = function() {
 ## Start with current Scenario.
 currentScenario = defaultScenario  
 reloadScenario()
+
+experimentTable = data.frame(sampleSize=NA)
+addScenarioToExperiment = function(scenario){
+  experimentTable[nrow(experimentTable)+1, ] = NA
+}
 

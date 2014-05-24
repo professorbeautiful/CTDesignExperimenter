@@ -40,4 +40,8 @@ shinyServer(function(input, output, session) {
   })
   #anySelected = reactiveValues(numberSelected > 0)
                                   
+  
+  output$experimentTable = renderTable({experimentTable})
+
+  reactive({input$btnAddScen; addScenarioToExperiment(currentScenario@name)} )
 }) 
