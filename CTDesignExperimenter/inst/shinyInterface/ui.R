@@ -32,11 +32,19 @@ conditionPanelMoreThan1 =
                    actionButton(inputId="btnSaveListOfInserts" , label="btnSaveListOfInserts", styleclass = "success"),
                    hr())
 
-scenarioPanel = tabPanel("scenario",
+# scriptToGetDepths = tagList(singleton(tags$head(tags$script(
+#                             'var depths; 
+# .bind("select_node.jstree",function(e,data) {
+#       var inst=data.inst;
+#       depths = inst.get_path().length;
+#       var selected=inst.get_selected();
+#       var id=selected.attr("id");
+#       var name=selected.prop("tagName");
+#       console.log(name,id,depths);
+#   });'))))
+
+scenarioPanel = tabPanel("Current scenario",
                          #div(class="row-fluid span1",
-                         uiOutput(outputId="debugTools")
-                         #                             )
-                         ,
                          textInput(inputId="scenarioName",  
                                    label="scenario name",
                                    value=currentScenario@name),
@@ -47,20 +55,29 @@ scenarioPanel = tabPanel("scenario",
                              hr()),
                          conditionPanel1,
                          conditionPanelMoreThan1,
-                         myTree,
+                         div(style="overflow:auto; height:800px", 
+                         myTree),
                          tagToOpenTree 
 )
 
 shinyUI(
-  navbarPage(
-    headerPanel(h4("CTDE: Clinical trial design experimenter")), 
-#    div(class = "well container-fluid", 
-#        tabsetPanel(id="panelSet", type="pills",
-                    scenarioPanel,
-                    tabPanel("one run", 
-                             "Display results from a single CT run for the selected scenario."),
-                    tabPanel("criteria"),
-                    tabPanel("evaluation"))
-#    )
-#  )
+#  scriptToGetDepths,
+  navbarPage(title = 
+      h4("CTDE: Clinical trial design experimenter"),
+      header=tagList(hr(),
+                     uiOutput(outputId="debugTools"),
+                     hr()),
+    scenarioPanel,
+    tabPanel("One CT run", 
+             "Display results from a single CT run for the selected scenario.",
+             actionButton(inputId="btnRunOne" , label="Run one CT", styleclass = "success")
+    ),
+    tabPanel("Criteria",
+             "Criteria will be selected and created here."),
+    tabPanel("Experiment",
+             "A table, scenarios by criteria."
+             , actionButton(inputId="btnRunExperiment" , label="Run Experiment", styleclass = "success")
+             , dataTableOutput("experimentTable")
+    )
+  )
 )
