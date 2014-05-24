@@ -1,5 +1,4 @@
 
-options(shiny.trace=TRUE)
 
 require(shiny)
 require(shinysky)
@@ -12,25 +11,24 @@ shinyServer(function(input, output, session) {
   
   rValues = reactiveValues()
   treeObserver = observe(
-    label="myTreeObserver",
-    {
+    label="myTreeObserver", {
       cat("Entered treeObserver. #selected nodes =",
-        length(input$jstree1), "\n")
-#        "depths are ", input$jstree1)
+          length(input$jstree1), "\n")
+      #        "depths are ", input$jstree1)
       showshinyalert(session, "alert_jstree1", 
-                   paste0("You selected these items in the tree: ", 
-                          paste0(input$jstree1, collapse = ", ")))
+                     paste0("You selected these items in the tree: ", 
+                            paste0(input$jstree1, collapse = ", ")))
       # rValues$selectionLength = length(input$jstree1)
     }
   )
   # treeObserver$onInvalidate(function() print("jstree1 selection changed!"))
-
+  
   output$selectedNode = renderText({
     print(paste0(input$jstree1, collapse = ", "))
-    })
+  })
   output$numberSelected = reactive({
     length(input$jstree1)
-    })
+  })
   output$moreThanOneSelected = reactive({
     length(input$jstree1) > 1
   })
@@ -38,8 +36,6 @@ shinyServer(function(input, output, session) {
     paste0("nSelected=", as.character(length(input$jstree1)))
     #paste0("nSelected=", output$numberSelected) #  CANNOT READ FROM output.
   })
-  #anySelected = reactiveValues(numberSelected > 0)
-                                  
   
   output$experimentTable = renderTable({experimentTable})
 
