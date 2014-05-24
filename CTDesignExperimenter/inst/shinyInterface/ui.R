@@ -14,9 +14,9 @@ tagToOpenTree =
 
 conditionPanel1 = conditionalPanel(condition = #'$( "select option:selected".length > 0 )',
                                      #  '!(typeof input.jstree1 === "undefined") && input.jstree1.length > 0',
-                                     #  'output.numberSelected', ## fails
-                                     #   'output.selectedNode', # this works!
-                                     'input.jstree1.length == 1', #better
+                                     #  'output.numberSelected', ## fails. why?
+                                     #   'output.selectedNode', # this works better
+                                     'input.jstree1.length == 1', #perfect
                                    hr(),
                                    actionButton(inputId="btnRemoveInsert" , label="Remove insert", styleclass = "success"),
                                    actionButton(inputId="btnCloneInsert" , label="Clone insert", styleclass = "success"),
