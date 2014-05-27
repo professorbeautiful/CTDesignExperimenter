@@ -3,14 +3,17 @@
 temp = tagList(div(hr(),"abc"))
 temp[[1]] = tagAppendAttributes(temp[[1]], class="c")
 
-traverse = function(tree, index=numeric(0), searchTerm=NULL) {
+traverse = function(tree, level=1, index=numeric(0), searchTerm=NULL,
+                    searchCallback='as.vector(attr(tree, "index"))') {
   if(is.list(tree)){
     answer = list()
     for(i in seq(along=tree)){
-      nextanswer = traverse(tree[[i]], c(index,i), searchTerm)
+      nextanswer = traverse(tree[[i]], level=level+1, 
+                            index=c(index,i), searchTerm=searchTerm)
      if(!is.null(nextanswer)) {
         attr( nextanswer, "index") = c(index,i)
-        return(nextanswer)
+        if(!is.null(searchTerm))
+          return(nextanswer)
       }
       answer = list(answer, nextanswer)
     }
@@ -20,21 +23,24 @@ traverse = function(tree, index=numeric(0), searchTerm=NULL) {
       return(NULL)
   }
   else {
-    attr( tree, "index") = c(index,0)
+    attr( tree, "index") = index
     if(is.null(searchTerm))
       return(tree)
     if(searchTerm == tree) 
-      return(attr(tree, "index"))
+      return(eval(parse(text=searchCallback)))
     return(NULL)
   }
 }
 #traverse(myTree)
-traverse(myTree, searchTerm = "SummarizeSimulation")
-myTree[[c(5 , 3,  1,  3,  1, 13,  3,  1,  1)]]
+
+myTree[[print(as.vector(
+  traverse(myTree, searchTerm = "SummarizeSimulation"))
+  )]]
+# myTree[[c(5 , 3,  1,  3,  1, 13,  3,  1,  1)]]
 ## OK it will work.
-myTree[[c(5 , 3,  1,  3,  1, 13,  3,  1,  2)]]  # (0)
-myTree[[c(5 , 3,  1,  3,  1, 13,  2 )]]  # list()
-traverse(myTree, searchTerm = " (2)")
+#myTree[[c(5 , 3,  1,  3,  1, 13,  3,  1,  2)]]  # (0)
+#myTree[[c(5 , 3,  1,  3,  1, 13,  2 )]]  # list()
+#traverse(myTree, searchTerm = " (2)")
 
 
 #The data are in myTree[[5]].  1 2 and 3 are NOT empty...
