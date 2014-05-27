@@ -21,7 +21,7 @@ traverse = function(tree,
                             index=c(index,i)
                             )
      if(!is.null(nextanswer)) {
-        attr( nextanswer, "index") = c(index,i)
+        #attr( nextanswer, "index") = c(index,i)
         if(!is.null(searchTerm))
         #  return(nextanswer)
         answer = list(answer, nextanswer)
