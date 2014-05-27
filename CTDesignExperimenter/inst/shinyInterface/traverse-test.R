@@ -6,6 +6,7 @@ temp[[1]] = tagAppendAttributes(temp[[1]], class="c")
 
 as.vector(traverse(myTree, callback=4))
 
+
 myTree[[(as.vector(
   traverse(myTree, searchTerm = "SummarizeSimulation")
 )
@@ -18,11 +19,28 @@ traverse(myTree, searchTerm = "SummarizeSimulation",
 ## OK it will work.
 myTree[[c(5 , 3,  1,  3,  1, 13,  3,  1,  2)]]  # (0)
 # myTree[[c(5 , 3,  1,  3,  1, 13,  2 )]]  # list()
-traverse(myTree, searchTerm = "(1)", 
+
+### Can I add a class or id attribute?  Need the
+myTreeTemp = myTree  
+myTreeTemp[[c(5 , 3,  1,  3,  1, 13)]]  # Full list item.
+myTreeTemp[[c(5 , 3,  1,  3,  1, 13,  3)]]
+locationVector = c(5 , 3,  1,  3,  1, 13)  # or equivalently,
+locationVector = shorten(
+  traverse(myTreeTemp, searchTerm = "^li$", 2)[[2]]
+, 1)
+
+myTreeTemp[[locationVector]] <-
+  tagAppendAttributes(myTreeTemp[[locationVector]], class="CLASS")
+#### YES!!!!  Success. We can add a class (or id)  attribute.
+
+traverse(myTree, searchTerm = "\\(0\\)")
+unlist(traverse(myTree, searchTerm = "\\(0\\)"))
+traverse(myTree, searchTerm = "\\(1\\)", 
          callback=
            'list(level=level, index=as.vector(attr(tree, "index")))')
-traverse(myTree, searchTerm = "(1)", callback=2)  #It checks!
-traverse(myTree, searchTerm = "(1)", callback=3)
+traverse(myTree, searchTerm = "\\(1\\)", callback=2)  #It checks!
+traverse(myTree, searchTerm = "\\(1\\)", callback=3)
+
 traverse(myTree, searchTerm = "vg_")
 # Try replacing the 3 1 1 at the end to find the "<li" above.
 myTree[[c(5, 3, 1, 3, 1, 1, 3, 1, 2, 3, 1, 1, 3, 1, 1)]]
