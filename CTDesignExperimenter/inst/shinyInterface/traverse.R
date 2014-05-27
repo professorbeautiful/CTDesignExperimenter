@@ -1,62 +1,49 @@
 ## traverse over tree using recursion
 
-temp = tagList(div(hr(),"abc"))
-temp[[1]] = tagAppendAttributes(temp[[1]], class="c")
-
-traverse = function(tree, level=1, index=numeric(0), searchTerm=NULL,
-                    searchCallback='as.vector(attr(tree, "index"))') {
+traverse = function(tree, 
+                    callback=c(
+                      'tree',
+                      'as.vector(attr(tree, "index"))',
+                      'list(level=level, index=as.vector(attr(tree, "index")), value=tree)',
+                      'paste(paste(collapse=",", as.vector(attr(tree, "index"))), tree)'
+                      )
+                    , searchTerm=NULL, level=1, index=numeric(0)
+) {
+  if(is.numeric(callback))
+    callback = eval(formals(traverse)$callback)[callback]
+  callback = callback[1]
   if(is.list(tree)){
     answer = list()
     for(i in seq(along=tree)){
-      nextanswer = traverse(tree[[i]], level=level+1, 
-                            index=c(index,i), searchTerm=searchTerm)
+      nextanswer = traverse(tree[[i]], callback=callback,
+                            searchTerm=searchTerm,
+                            level=level+1, 
+                            index=c(index,i)
+                            )
      if(!is.null(nextanswer)) {
         attr( nextanswer, "index") = c(index,i)
         if(!is.null(searchTerm))
-          return(nextanswer)
-      }
-      answer = list(answer, nextanswer)
+        #  return(nextanswer)
+        answer = list(answer, nextanswer)
+     }
     }
-    if(is.null(searchTerm))
-      return(answer)
-    else
-      return(NULL)
+    #if(is.null(searchTerm))
+    answer[sapply(answer, length) == 0] = NULL
+    if(all(sapply(answer, is.null)) )
+       return(NULL)
+    if(is.list(answer) & length(answer) == 1)
+      return(answer[[1]])
+    return(answer)
   }
   else {
     attr( tree, "index") = index
+    answer = try(eval(parse(text=callback)))
+    if(class(answer) ==  "try-error")
+      return(NULL)
     if(is.null(searchTerm))
-      return(tree)
-    if(searchTerm == tree) 
-      return(eval(parse(text=searchCallback)))
+      return(answer)
+    if(length(grep(searchTerm, tree)) > 0) 
+      return(answer)
     return(NULL)
   }
 }
-#traverse(myTree)
-
-myTree[[print(as.vector(
-  traverse(myTree, searchTerm = "SummarizeSimulation"))
-  )]]
-# myTree[[c(5 , 3,  1,  3,  1, 13,  3,  1,  1)]]
-## OK it will work.
-#myTree[[c(5 , 3,  1,  3,  1, 13,  3,  1,  2)]]  # (0)
-#myTree[[c(5 , 3,  1,  3,  1, 13,  2 )]]  # list()
-#traverse(myTree, searchTerm = " (2)")
-
-
-#The data are in myTree[[5]].  1 2 and 3 are NOT empty...
-# but not printing unless unlisted first
-# myTree[[4]]
-# <script>$(function() {$('#jstree1').jstree()})</script> 
-
-# debug(traverse)
-# 
-# class(
-#   myTree[[5]][[2]][[1]]  # jstree
-#   myTree[[5]][[2]][[2]]  # ss-jstree
-# )
-# myTree[[5]][[3]][[1]][[1]] = "ul id='THIS-ID'"
-# 
-# 
-# traverse(myTree)
-# attr(traverse(myTree)[[186]], "index")
-# 
