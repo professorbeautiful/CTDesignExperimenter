@@ -78,14 +78,15 @@ extractEntry = function(L1=3, L2=4, start=jstree.obj(scenarioTree)) {
 }
 
 
+
 # extractEntry()[[1]]
 # Validation of scenarioMap:
 # for(vg in rownames(scenarioMap) )
 #   catn(vg, extractEntry(scenarioMap[vg, "blockIndex"], scenarioMap[vg, "insertIndex"])[[1]])
+# OK.
 
 
-
-# The following is wrong, and probably unnecessary.
+# The following is wrong, and probably unnecessary. It's supposed to be more general.
 # extractEntryNew = function(L=c(3,4), start=jstree.obj(scenarioTree)) {
 #   nodeLevel = start[["children"]][[1]]
 #   if(length(L) == 0) 
