@@ -1,4 +1,5 @@
 require("CTDesignExperimenter")
+require(shinysky)
 options(shiny.trace=TRUE)
 
 scaffoldObjectNames = scaffoldObjects[[1]]
@@ -6,12 +7,30 @@ scaffoldObjectNames = scaffoldObjects[[1]]
 source("makeTree.R")
 
 reloadScenario = function() {  
-  require(shinysky)
   scenarioTree <<- makeTree("full", currentScenario)
-  myTreeObj <<- jstree.obj(scenarioTree)
-  myTree <<- jstree("jstree1", myTreeObj)
+  # length(scenarioTree) is 13
+  myTreeObj <<- jstree.obj(scenarioTree)  # shiny.tag
+  # length(myTreeObj[[3]][[1]]) is 13
+  myTree <<- jstree("jstree1", myTreeObj)  # shiny.tag.list
+  # length(unlist(myTree)) is 192.  Very useful names! Gives depth and index.
+  # as.vector(unlist(myTree))
 }
 
+# table(unlist(myTree)[grep("name", names(unlist(myTree)))])
+# div   head     li   link script     ul 
+#   1      3     60      1      3     18 
+#unlist(myTree)[which(unlist(myTree) == "link") + (0:3)]
+#unlist(myTree)[which(unlist(myTree) == "") + (0:3)]
+
+# 
+#  unlist(myTree)[(grep("(ec|vg)_", unlist(myTree)))]  ### 11 vg or ec.
+## All are children.children.children.children.children
+#  unlist(myTree)[(grep("v_", unlist(myTree)))]  #NONE.
+# Using opm:traverse
+
+# traverse = function(li, func) {
+#   if(is.list(li) return(lapply()))
+# }
 
 ## Start with current Scenario.
 currentScenario = defaultScenario  

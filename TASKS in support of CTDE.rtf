@@ -1,0 +1,129 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf390
+{\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;\f1\fnil\fcharset0 Cambria;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\ri720
+
+\f0\fs24 \cf0 \
+
+\f1 TASKS in support of CTDE\
+\
+Support a contributor or developer adding a Variable definition for sharing.\
+\
+\pard\pardeftab720\fi720\ri720
+\cf0 Shiny interface: Capture a new Variable definition\
+\pard\pardeftab720\ri720
+
+\f0 \cf0 \
+\pard\pardeftab720\fi720\ri720
+
+\f1 \cf0 Utility: Write Variable definition to a file\
+\pard\pardeftab720\ri720
+
+\f0 \cf0 \
+\pard\pardeftab720\fi720\ri720
+
+\f1 \cf0 Utility: Upload Variable file to git repository CTDEswapmeet\
+\pard\pardeftab720\ri720
+
+\f0 \cf0 \
+\
+
+\f1 Support adding a VariableGenerator definition for sharing.\
+\
+\pard\pardeftab720\fi720\ri720
+\cf0 Shiny interface: Capture a new VariableGenerator definition\
+\pard\pardeftab720\ri720
+
+\f0 \cf0 \
+	
+\f1 Shiny interface: Augment: Search the CTDEswapmeet for a suitableVariable.\
+\
+\pard\pardeftab720\fi720\ri720
+\cf0 Utility: Write VariableGenerator definition to a file\
+\pard\pardeftab720\ri720
+
+\f0 \cf0 \
+\pard\pardeftab720\fi720\ri720
+
+\f1 \cf0 Utility: Upload VariableGenerator file to git repository CTDEswapmeet\
+\
+\pard\pardeftab720\ri720
+
+\f0 \cf0 \
+
+\f1 Given a Variable, find VariableGenerators that provide it.\
+\
+Given a Variable, find VariableGenerators that require it.\
+\
+Shiny interface:  select  VariableGenerators to package in a\'85\
+	PopulationModel\
+	DesignSpecifier\
+	OutcomeModel\
+	CriterionSet\
+\
+Shiny interface:  specify a CT evaluation experiment\
+	Varying parameters of single specifier components	\
+	Comparing major components\
+\
+Shiny interface: display CT evaluation experiment results\
+\
+Create Specifiers according to \'93
+\b Plan for development of clinical trial simulation platform
+\b0 \'94
+\f0\b \
+
+\b0 \
+\
+==================\
+Innovation also means using innovative models and  criteria to critique designs.\
+\
+\
+Refactoring tasks:\
+\
+NPatsData is a list of PatData objects.\
+PatData is the same as Patient, except that it's static.\
+Change to a Patient class.\
+Then we can define slots like:\
+	treatment plan\
+and methods, like:\
+	modify treatment plan\
+\
+YY set it up to be friendly to group sequential like 3+3.\
+\
+What are the minimum elements to allow you to RUN?\
+(aside from interoperability)?   As in the brown/green screen in oncotcap.\
+\
+Defining a clinical trial design atomically, with StatementBundle thinking:\
+	if(first patient), dose tier = 1\
+	if(finished last patient on tier)\
+		check stopping rule\
+		set dose tier =\
+			next dose tier (nTox on this tier, nPts on this tier, A, B,C,D,E)\
+	if(accruing patientNumber )\
+		if finished dose tier\
+			assign dose tier =  next dose tier\
+	when(stopped)  conclusion(patData)\
+\
+\
+On the ActionQueue,\
+when an Action happens, \
+if it is an Event, \
+then it has been filled with Actions that depend on the Event. \
+Those actions will now be added to the queue.\
+So an event has slot called \
+When an Action is added to the Design, \
+its requirements are the Events which trigger it (?),\
+its provisions are Events that it schedules.\
+Who is responsible for declaring the relationship, the event trigger, or the triggered action?\
+Using the VariableNetwork pattern,\
+the triggered action says what event it needs to trigger it.\
+If that event is not in the design bundle, it can't happen, but that's probably deserving of a warning only.\
+If theres more than one event of the same name... ?\
+\
+\
+An Action can be a ScheduleEventAction, ModifyScheduleAction, VariableGenerator, \
+VariableModifier,\
+\
+}
