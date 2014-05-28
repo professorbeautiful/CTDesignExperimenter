@@ -55,11 +55,13 @@ makeTree = function(insertStyle="simple",
     
   }
   for(i in 1:length(scenarioTree)){
-    if(length(scenarioTree[[i]])==0) 
-      scenarioTree[[i]] =  " (0)"
-    else
+#     if(length(scenarioTree[[i]])==0) 
+#       scenarioTree[[i]] =  " (0)"
+#     else
       names(scenarioTree)[[i]] = paste(names(scenarioTree)[[i]], 
                                        " (", length(scenarioTree[[i]]), ")")
+      if(length(scenarioTree[[i]])==0)
+        scenarioTree[[i]] [[1]] = "NO INSERTS HERE"
   }
   print(attributes(scenarioTree))
   assign("scenarioMap", scenarioMap, pos=1)
