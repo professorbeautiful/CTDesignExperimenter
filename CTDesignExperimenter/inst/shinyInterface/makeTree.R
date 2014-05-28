@@ -96,3 +96,29 @@ extractEntry = function(L1=3, L2=4, start=jstree.obj(scenarioTree)) {
 #   return(extractEntryNew(L[-1], 
 #                          nodeLevel[[ L[1] ]] [["children"]][[1]] ))
 # }
+
+
+myjstree.obj = 
+function (x, level=0) 
+{
+  handle <- function(ind, theList, level) {
+    name <- names(theList)[[ind]]
+    if (!is.null(name)) {
+      a <- tags$li(list(name, myjstree.obj(theList[[ind]], level=level+1)))
+    }
+    else {
+      a <- tags$li(theList[[ind]])
+    }
+    ### This line is added to shinysky:::jstree.obj
+    a <- tagAppendAttributes(a, class=paste0("level_", level))
+    return(a)
+  }
+  if (is.list(x)) {
+    ind <- seq(1:length(x))
+    res <- lapply(ind, handle, x, level=level)
+    return(tags$ul(res))
+  }
+  else {
+    x
+  }
+}

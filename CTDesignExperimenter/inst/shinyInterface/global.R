@@ -9,10 +9,21 @@ source("makeTree.R")
 reloadScenario = function() {  
   scenarioTree <<- makeTree("full", currentScenario)
   # length(scenarioTree) is 13
-  myTreeObj <<- jstree.obj(scenarioTree)  # shiny.tag
+  myTreeObj <<- myjstree.obj(scenarioTree)  # shiny.tag
+  # class attributes are added in myjstree.obj
   # length(myTreeObj[[3]][[1]]) is 13
   myTree <<- jstree("jstree1", myTreeObj)  # shiny.tag.list
-  # length(unlist(myTree)) is 192.  Very useful names! Gives depth and index.
+  
+#   vgNodes = unlist( 
+#     traverse(myTree, callback = 1, searchTerm = "vg_")
+#     )
+#   vgNodeIndices = sapply(strsplit(vgNodes, x = " "), ''
+#   for(node in vgNodes) {
+#     locationVector = strsplit(vgNodes)
+#     myTree[[locationVector]] <-
+#       tagAppendAttributes(myTreeTemp[[locationVector]], class="CLASS")
+#   }
+  # length(unlist(myTree)) is 192.  Very useful names! Gives depth.
   # as.vector(unlist(myTree))
 }
 
