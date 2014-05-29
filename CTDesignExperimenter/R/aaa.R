@@ -36,6 +36,11 @@ withNames =
                   names(x) <- n; 
                   x}
 
+###### Other utilities
+
+shorten = function(vec, cutsize) vec[1: (length(vec)-cutsize)]
+## should be an S3 generic.
+
 ifVerboseCat = function(...){
   #print(paste0("ifVerboseCat: sys.call(-1)=", sys.call(-1)))
   f=try(as.character(parse(text=sys.call(-1)[1]))[1] )
