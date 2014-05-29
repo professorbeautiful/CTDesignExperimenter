@@ -32,16 +32,23 @@ conditionPanelMoreThan1 =
                    actionButton(inputId="btnSaveListOfInserts" , label="btnSaveListOfInserts", styleclass = "success"),
                    hr())
 
+
+# This does not add depths data to input.
 # scriptToGetDepths = tagList(singleton(tags$head(tags$script(
 #                             'var depths; 
-# .bind("select_node.jstree",function(e,data) {
+# $(document).ready(function(){
+#    $("#jstree1").on("select_node.jstree", function(e,data) {
 #       var inst=data.inst;
-#       depths = inst.get_path().length;
 #       var selected=inst.get_selected();
-#       var id=selected.attr("id");
-#       var name=selected.prop("tagName");
-#       console.log(name,id,depths);
-#   });'))))
+#       depths = selected().length;
+#       alert("depths = ", depths);
+#       input.depths = depths;
+# //      var id=selected.attr("id");
+# //      var name=selected.prop("tagName");
+# //      console.log(name,id,depths);
+#   });
+# })'
+# ))))
 
 scenarioPanel = tabPanel("Current scenario",
                          #div(class="row-fluid span1",
