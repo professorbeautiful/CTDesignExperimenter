@@ -99,12 +99,14 @@ extractEntry = function(L1=3, L2=4, start=jstree.obj(scenarioTree)) {
 
 
 myjstree.obj = 
-function (x, level=0) 
+function (x, level=0, addLevelClass=TRUE) 
 {
   handle <- function(ind, theList, level) {
     name <- names(theList)[[ind]]
     if (!is.null(name)) {
-      a <- tags$li(list(name, myjstree.obj(theList[[ind]], level=level+1)))
+      a <- tags$li(list(name, 
+                        myjstree.obj(theList[[ind]], level=level+1,
+                                     addLevelClass=addLevelClass)))
     }
     else {
       a <- tags$li(theList[[ind]])
