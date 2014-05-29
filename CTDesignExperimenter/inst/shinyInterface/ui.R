@@ -60,13 +60,21 @@ scenarioPanel = tabPanel("Current scenario",
                          tagToOpenTree 
 )
 
+CSSreference = singleton(tags$head(tags$link(href = "ctde.css", 
+                                             rel = "stylesheet")))
 shinyUI(
 #  scriptToGetDepths,
-  navbarPage(title = 
+  navbarPage(
+    title = 
       h4("CTDE: Clinical trial design experimenter"),
-      header=tagList(hr(),
-                     uiOutput(outputId="debugTools"),
-                     hr()),
+    header=tagList(CSSreference,
+                   hr(),
+                   uiOutput(outputId="debugTools"),
+                   hr()),
+    # message-handler code causes hang.
+    #       singleton(
+    #         tags$head(tags$script(src = "message-handler.js"))
+    #       ),
     scenarioPanel,
     tabPanel("One CT run", 
              "Display results from a single CT run for the selected scenario.",
