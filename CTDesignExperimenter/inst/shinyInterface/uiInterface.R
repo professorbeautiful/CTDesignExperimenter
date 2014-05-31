@@ -73,12 +73,24 @@ scenarioPanel = tabPanel("Current scenario",
 
 CSSreference = singleton(tags$head(tags$link(href = "ctde.css", 
                                              rel = "stylesheet")))
+# getLevelOfSelection = singleton(tags$head(tags$script(
+#   var levelOfSelection;
+#   
+#   )))
+
+myJSincludes = tagList(
+  CSSreference ### OK. Works (for text colors)
+  , includeScript("www/ctde-types.js") ## It does find this !
+  , includeScript("www/ss-jstree.js") 
+)
+## The context menu appears with the standard menu, not in place of.
+#  scriptToGetDepths?
+
 shinyUI(
-#  scriptToGetDepths,
   navbarPage(
     title = 
       h4("CTDE: Clinical trial design experimenter"),
-    header=tagList(CSSreference,
+    header=tagList(myJSincludes,
                    hr(),
                    uiOutput(outputId="debugTools"),
                    hr()),
