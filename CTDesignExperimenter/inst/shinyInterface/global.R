@@ -50,5 +50,6 @@ reloadScenario()
 experimentTable = data.frame(sampleSize=NA)
 addScenarioToExperiment = function(scenario){
   experimentTable[nrow(experimentTable)+1, ] = NA
+  rownames(experimentTable) [nrow(experimentTable)] = scenario@name
 }
 
