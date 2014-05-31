@@ -12,25 +12,33 @@ tagToOpenTree =
     , '                   };
        $(document).ready(openTree);'))
 
+conditionPanelNoneSelected = conditionalPanel(condition = 'input.jstree1.length == 0',
+                                              div(class="row-fluid span3",
+                                                  actionButton(inputId="btnCloneScen", label="Clone and save scenario", styleclass = "success"),
+                                                  actionButton(inputId="btnFindScen" , label="Find &replace scenario", styleclass = "success"),
+                                                  actionButton(inputId="btnAddScen" , label="Add scenario to experiment", styleclass = "success"),
+                                                  hr())
+)
+                                              
 conditionPanel1 = conditionalPanel(condition = #'$( "select option:selected".length > 0 )',
                                      #  '!(typeof input.jstree1 === "undefined") && input.jstree1.length > 0',
                                      #  'output.numberSelected', ## fails. why?
                                      #   'output.selectedNode', # this works better
                                      'input.jstree1.length == 1', #perfect
-                                   hr(),
                                    actionButton(inputId="btnRemoveInsert" , label="Remove insert", styleclass = "success"),
                                    actionButton(inputId="btnCloneInsert" , label="Clone insert", styleclass = "success"),
                                    actionButton(inputId="btnEditInsert" , label="Edit insert", styleclass = "success"),
                                    textOutput("selectedNode"),
-                                   #                                           textOutput("nSelectedText"),
-                                   hr())
+                                   hr()
+)
 conditionPanelMoreThan1 = 
   ###  Buttons when > 1 items are selected:
   conditionalPanel(condition =  'input.jstree1.length > 1',
                    # 'output.moreThanOneSelected == true', 
-                   hr(),
                    actionButton(inputId="btnSaveListOfInserts" , label="btnSaveListOfInserts", styleclass = "success"),
-                   hr())
+                   textOutput("selectedNode"),
+                   hr()
+  )
 
 
 # This does not add depths data to input.
@@ -55,11 +63,7 @@ scenarioPanel = tabPanel("Current scenario",
                          textInput(inputId="scenarioName",  
                                    label="scenario name",
                                    value=currentScenario@name),
-                         div(class="row-fluid span3",
-                             actionButton(inputId="btnCloneScen", label="Clone and save scenario", styleclass = "success"),
-                             actionButton(inputId="btnFindScen" , label="Find &replace scenario", styleclass = "success"),
-                             actionButton(inputId="btnAddScen" , label="Add scenario to experiment", styleclass = "success"),
-                             hr()),
+                         conditionPanelNoneSelected,
                          conditionPanel1,
                          conditionPanelMoreThan1,
                          div(style="overflow:auto; height:800px", 
@@ -69,12 +73,24 @@ scenarioPanel = tabPanel("Current scenario",
 
 CSSreference = singleton(tags$head(tags$link(href = "ctde.css", 
                                              rel = "stylesheet")))
+# getLevelOfSelection = singleton(tags$head(tags$script(
+#   var levelOfSelection;
+#   
+#   )))
+
+myJSincludes = tagList(
+  CSSreference ### OK. Works (for text colors)
+  , includeScript("www/ctde-types.js") ## It does find this !
+  , includeScript("www/ss-jstree.js") 
+)
+## The context menu appears with the standard menu, not in place of.
+#  scriptToGetDepths?
+
 shinyUI(
-#  scriptToGetDepths,
   navbarPage(
     title = 
       h4("CTDE: Clinical trial design experimenter"),
-    header=tagList(CSSreference,
+    header=tagList(myJSincludes,
                    hr(),
                    uiOutput(outputId="debugTools"),
                    hr()),
