@@ -12,6 +12,14 @@ tagToOpenTree =
     , '                   };
        $(document).ready(openTree);'))
 
+conditionPanelNoneSelected = conditionalPanel(condition = 'input.jstree1.length == 0',
+                                              div(class="row-fluid span3",
+                                                  actionButton(inputId="btnCloneScen", label="Clone and save scenario", styleclass = "success"),
+                                                  actionButton(inputId="btnFindScen" , label="Find &replace scenario", styleclass = "success"),
+                                                  actionButton(inputId="btnAddScen" , label="Add scenario to experiment", styleclass = "success"),
+                                                  hr())
+)
+                                              
 conditionPanel1 = conditionalPanel(condition = #'$( "select option:selected".length > 0 )',
                                      #  '!(typeof input.jstree1 === "undefined") && input.jstree1.length > 0',
                                      #  'output.numberSelected', ## fails. why?
@@ -55,11 +63,7 @@ scenarioPanel = tabPanel("Current scenario",
                          textInput(inputId="scenarioName",  
                                    label="scenario name",
                                    value=currentScenario@name),
-                         div(class="row-fluid span3",
-                             actionButton(inputId="btnCloneScen", label="Clone and save scenario", styleclass = "success"),
-                             actionButton(inputId="btnFindScen" , label="Find &replace scenario", styleclass = "success"),
-                             actionButton(inputId="btnAddScen" , label="Add scenario to experiment", styleclass = "success"),
-                             hr()),
+                         conditionPanelNoneSelected,
                          conditionPanel1,
                          conditionPanelMoreThan1,
                          div(style="overflow:auto; height:800px", 
