@@ -25,20 +25,20 @@ conditionPanel1 = conditionalPanel(condition = #'$( "select option:selected".len
                                      #  'output.numberSelected', ## fails. why?
                                      #   'output.selectedNode', # this works better
                                      'input.jstree1.length == 1', #perfect
-                                   hr(),
                                    actionButton(inputId="btnRemoveInsert" , label="Remove insert", styleclass = "success"),
                                    actionButton(inputId="btnCloneInsert" , label="Clone insert", styleclass = "success"),
                                    actionButton(inputId="btnEditInsert" , label="Edit insert", styleclass = "success"),
                                    textOutput("selectedNode"),
-                                   #                                           textOutput("nSelectedText"),
-                                   hr())
+                                   hr()
+)
 conditionPanelMoreThan1 = 
   ###  Buttons when > 1 items are selected:
   conditionalPanel(condition =  'input.jstree1.length > 1',
                    # 'output.moreThanOneSelected == true', 
-                   hr(),
                    actionButton(inputId="btnSaveListOfInserts" , label="btnSaveListOfInserts", styleclass = "success"),
-                   hr())
+                   textOutput("selectedNode"),
+                   hr()
+  )
 
 
 # This does not add depths data to input.
