@@ -99,20 +99,33 @@ extractEntry = function(L1=3, L2=4, start=jstree.obj(scenarioTree)) {
 
 
 myjstree.obj = 
-function (x, level=0, addLevelClass=TRUE) 
+function (x, addLevelClass=TRUE, addLevelType=TRUE, addIndex=TRUE, level=0, index="0") 
 {
   handle <- function(ind, theList, level) {
     name <- names(theList)[[ind]]
     if (!is.null(name)) {
+      level=level+1
+      index = paste0(index, "_", ind)
       a <- tags$li(list(name, 
-                        myjstree.obj(theList[[ind]], level=level+1,
-                                     addLevelClass=addLevelClass)))
+                        myjstree.obj(theList[[ind]], 
+                                     addLevelClass=addLevelClass,
+                                     addLevelType=addLevelType,
+                                     addIndex=addIndex,
+                                     level=level,
+                                     index=index
+                        )))
     }
     else {
       a <- tags$li(theList[[ind]])
     }
     ### This line is added to shinysky:::jstree.obj
-    a <- tagAppendAttributes(a, class=paste0("level_", level))
+    if(addLevelClass)
+      a <- tagAppendAttributes(a, class=paste0("treeclass_", level))
+    if(addLevelType)
+      a <- tagAppendAttributes(a, type=paste0("level_", level))
+    if(addIndex)
+      a <- tagAppendAttributes(a, index=index)
+    # using the jstree plugin "types".
     return(a)
   }
   if (is.list(x)) {
