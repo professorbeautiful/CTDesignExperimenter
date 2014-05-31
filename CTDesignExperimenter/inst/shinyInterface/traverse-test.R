@@ -1,24 +1,26 @@
+# The world needs a treeApply!!
 
-temp = tagList(div(hr(),"abc"))
-temp[[1]] = tagAppendAttributes(temp[[1]], class="c")
+  
+(traverse(myTree, callback=1))  #### abandoned the callback approach
 
-
-
-as.vector(traverse(myTree, callback=4))
-
-
+traverse(myTree, searchTerm = "SummarizeSimulation")
 myTree[[(as.vector(
-  traverse(myTree, searchTerm = "SummarizeSimulation")
+  traverse(myTree, searchTerm = "SummarizeSimulation", 2)
 )
-)]]
-traverse(myTree, searchTerm = "SummarizeSimulation", 
-         callback=
-           'list(level=level, index=as.vector(attr(tree, "index")))')
+)]]  ### Found by index vector.
+
+# traverse(myTree, searchTerm = "SummarizeSimulation", 
+#          callback=
+#            'list(level=level, index=as.vector(attr(tree, "index")))')
 # myTree[[c(5 , 3,  1,  3,  1, 13,  3,  1,  1)]]  # "SummarizeSimulation"
 # myTree[[c(5 , 3,  1,  3,  1, 12,  3,  1,  1)]]  # "SummarizeTrial"
 ## OK it will work.
 myTree[[c(5 , 3,  1,  3,  1, 13,  3,  1,  2)]]  # (0)
 # myTree[[c(5 , 3,  1,  3,  1, 13,  2 )]]  # list()
+
+myTreeObj[[c( 3,  1, 13,  3,  1,  1)]] 
+# Remove the first 3 if using myTreeObj.
+myTreeObj[[c( 3,  1, 13)]] # This is the entire node.
 
 ### Can I add a class or id attribute?  Need the
 myTreeTemp = myTree  
@@ -33,21 +35,24 @@ myTreeTemp[[locationVector]] <-
   tagAppendAttributes(myTreeTemp[[locationVector]], class="CLASS")
 #### YES!!!!  Success. We can add a class (or id)  attribute.
 
-traverse(myTree, searchTerm = "\\(0\\)")
-unlist(traverse(myTree, searchTerm = "\\(0\\)"))
-traverse(myTree, searchTerm = "\\(1\\)", 
-         callback=
-           'list(level=level, index=as.vector(attr(tree, "index")))')
-traverse(myTree, searchTerm = "\\(1\\)", callback=2)  #It checks!
-traverse(myTree, searchTerm = "\\(1\\)", callback=3)
+### Here we assign the vg_ class to each VG node.
+myTreeTemp = myTree  
 
-traverse(myTree, searchTerm = "vg_")
-# Try replacing the 3 1 1 at the end to find the "<li" above.
-myTree[[c(5, 3, 1, 3, 1, 1, 3, 1, 2, 3, 1, 1, 3, 1, 1)]]
-#vg_SampleSizeMax_2
-myTree[[c(5, 3, 1, 3, 1, 1, 3, 1, 2, 3, 1, 1, 3, 1, 2, 1)]] #ul
-myTree[[c(5, 3, 1, 3, 1, 1, 3, 1, 2, 3, 1, 1, 3, 1, 2, 2)]] #ul
-myTree[[c(5, 3, 1, 3, 1, 1, 3, 1, 2, 3, 1, 1, 2)]] # list()
+vgHits = traverse(myTree, searchTerm="vg_")
+for(i in seq(along=vgHits)) {
+  locationVector = shorten(vgHits[[i]], 3)
+  myTreeTemp[[locationVector]] <-  #not doubleheaded
+    tagAppendAttributes(myTreeTemp[[locationVector]], class="vg_")
+}
+myTreeTemp[[shorten(vgHits[[1]], 3)]]
+
+### Here we assign the BLOCK class to each block node.
+whichAreBlocks = which(sapply(traverse(myTreeObj), length) == 6)
+for(i in whichAreBlocks) {
+  locationVector = print( traverse(myTreeObj)[[i]] )
+  myTreeObj[[locationVector]] <-  #not doubleheaded
+    tagAppendAttributes(myTreeObj[[locationVector]], class="BLOCK")
+}
 
 
 #The data are in myTree[[5]].  1 2 and 3 are NOT empty...
