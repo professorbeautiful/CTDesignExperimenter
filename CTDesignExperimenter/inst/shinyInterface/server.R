@@ -28,7 +28,10 @@ shinyServer(function(input, output, session) {
   output$selectedNode = renderText({
     print(paste0(input$jstree1, collapse = ", "))
   })
-  output$numberSelected = reactive({
+output$selectedNodes = renderText({  ## Must have a distinct name!
+  print(paste0(input$jstree1, collapse = ", "))
+})
+output$numberSelected = reactive({
     length(input$jstree1)
   })
   output$moreThanOneSelected = reactive({

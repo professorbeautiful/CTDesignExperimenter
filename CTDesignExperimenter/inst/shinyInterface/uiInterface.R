@@ -36,7 +36,7 @@ conditionPanelMoreThan1 =
   conditionalPanel(condition =  'input.jstree1.length > 1',
                    # 'output.moreThanOneSelected == true', 
                    actionButton(inputId="btnSaveListOfInserts" , label="btnSaveListOfInserts", styleclass = "success"),
-                   textOutput("selectedNode"),
+                   textOutput("selectedNodes"),
                    hr()
   )
 
