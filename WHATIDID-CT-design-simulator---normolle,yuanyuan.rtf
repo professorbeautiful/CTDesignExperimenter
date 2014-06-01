@@ -2,14 +2,18 @@
 \cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Consolas;\f2\fnil\fcharset0 Consolas-Bold;
 \f3\fnil\fcharset0 HelveticaNeue;\f4\fnil\fcharset0 Georgia;\f5\fmodern\fcharset0 Courier;
 \f6\fnil\fcharset0 Monaco;\f7\fnil\fcharset0 LucidaGrande;\f8\froman\fcharset0 TimesNewRomanPSMT;
-\f9\ftech\fcharset77 Symbol;}
+\f9\ftech\fcharset77 Symbol;\f10\fnil\fcharset0 Verdana;\f11\fmodern\fcharset0 CourierNewPSMT;
+\f12\fmodern\fcharset0 CourierNewPS-ItalicMT;}
 {\colortbl;\red255\green255\blue255;\red217\green11\blue0;\red255\green83\blue8;\red206\green59\blue0;
 \red155\green44\blue1;\red38\green38\blue38;\red0\green135\blue135;\red213\green14\blue52;\red251\green0\blue7;
 \red61\green52\blue46;\red251\green251\blue249;\red234\green54\blue39;\red218\green219\blue223;\red240\green241\blue241;
+\red49\green49\blue49;\red52\green52\blue52;\red237\green237\blue237;\red83\green83\blue83;\red255\green255\blue234;
 }
 {\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker .......}{\leveltext\leveltemplateid1\'07.......;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
-{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}}
-{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid3}
+{\list\listtemplateid4\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid301\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid4}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}{\listoverride\listid4\listoverridecount0\ls4}}
 \margl1440\margr1440\vieww10800\viewh8400\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
@@ -863,6 +867,8 @@ All options are necessary.   Without INSTALL_opts="--no-multiarch", I get these 
 	  shared object \'91roxygen2.so\'92 not found\
 I don't understand this, but at least the option solves the problem.\
 \
+options(devtools.install.args="--no-multiarch")\
+\
 Info about the new roxygen2 is at {\field{\*\fldinst{HYPERLINK "https://github.com/klutometis/roxygen/releases/tag/v3.0.0"}}{\fldrslt https://github.com/klutometis/roxygen/releases/tag/v3.0.0}}\
 I was in it for the new @slot directive.\
 \
@@ -997,7 +1003,257 @@ help did not work until Idid an R session restart.	\
 \
 2014-03-02\
 This looks useful.\
-{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/21133475/return-a-functions-code"}}{\fldrslt http://stackoverflow.com/questions/21133475/return-a-functions-code}}\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/21133475/return-a-functions-code"}}{\fldrslt \cf0 http://stackoverflow.com/questions/21133475/return-a-functions-code}}\
+\
+\
+2014-04-18\
+\
+options(devtools.install.args="--no-multiarch")\
+devtools::install_github("ShinySky","AnalytixWare")\
+library(shinysky)\
+Contains jstree().\
+Note singleton().\
+\
+2014-04-26\
+\
+I used shinysky  jstree successfully to display the defaultScenario.\
+\
+It's useful to look at the output of jstree:\
+\
+\
+and to study the syntax, e.g. the excerpt from {\field{\*\fldinst{HYPERLINK "http://www.w3schools.com/jquery/jquery_syntax.asp"}}{\fldrslt http://www.w3schools.com/jquery/jquery_syntax.asp}}\
+\
+===========\
+\
+\pard\pardeftab720\sl320\sa240
+
+\f10\fs26 \cf15 The jQuery syntax is tailor made for 
+\b selecting
+\b0  HTML elements and performing some 
+\b action
+\b0  on the element(s).\
+Basic syntax is: 
+\b $(
+\i selector
+\i0 ).
+\i action
+\i0 ()
+\b0 \
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sl320
+\ls3\ilvl0\cf15 {\listtext	\'95	}A $ sign to define/access jQuery\
+{\listtext	\'95	}A (
+\i selector
+\i0 ) to "query (or find)" HTML elements\
+{\listtext	\'95	}A jQuery 
+\i action
+\i0 () to be performed on the element(s)\
+\pard\pardeftab720\sl320\sa240
+\cf15 Examples:\
+$(this).hide() - hides the current element.\
+$("p").hide() - hides all <p> elements.\
+$(".test").hide() - hides all elements with class="test".\
+$("#test").hide() - hides the element with id="test".\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 ===========\
+See "
+\f10\fs26 More Examples of jQuery Selectors
+\f0\fs24 "\
+at {\field{\*\fldinst{HYPERLINK "http://www.w3schools.com/jquery/jquery_selectors.asp"}}{\fldrslt http://www.w3schools.com/jquery/jquery_selectors.asp}}\
+and complete listing: {\field{\*\fldinst{HYPERLINK "http://www.w3schools.com/jquery/jquery_ref_selectors.asp"}}{\fldrslt http://www.w3schools.com/jquery/jquery_ref_selectors.asp}}\
+\
+\
+A shortcut for 
+\f11\fs28 \cf16 \cb17 $(document).ready(function()\{\
+
+\f0\fs24 \cf0 \cb1 \
+\pard\pardeftab720
+
+\f11\fs28 \cf16 \cb17 	$(function()\{\
+	\'a0\'a0 
+\f12\i // jQuery methods go here...
+\f11\i0 \
+	\});\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 \cb1 \
+For example, the return val for jstree("jstree1", jstree.obj(scenarioTree))\
+begins thus:\
+	<script>$(function() \{$('#jstree1').jstree()\})</script>\
+	<div id="jstree1" class="ss-jstree">\
+	  <ul>\
+	    <li>\
+	      BeginSimulation  ( 1 )\
+	      <ul>\
+        <li>vg_SampleSizeMax</li>\
+...\
+So jstree() will be done AFTER the doc is loaded, in particular, after the jstree1 div is created.\
+\
+USING CSS: example:\
+\pard\pardeftab720
+
+\f11\fs28 \cf0 	$(this).css("background-color","#ffffff");
+\f0\fs24 \
+\
+Styles can be included as html:\
+	<style type="text/css">\
+	.important \{font-weight:bold;font-size:xx-large;\}\
+	.blue \{color:blue;\}\
+	</style>\
+\
+{\field{\*\fldinst{HYPERLINK "http://www.w3schools.com/tags/ref_httpmethods.asp"}}{\fldrslt http://www.w3schools.com/tags/ref_httpmethods.asp}}\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sl320
+\ls4\ilvl0
+\f10\b\fs26 \cf15 {\listtext	\'95	}GET
+\b0  - Requests data from a specified resource\
+\ls4\ilvl0
+\b {\listtext	\'95	}POST
+\b0  - Submits data to be processed to a specified resource\
+\pard\pardeftab720\sl320\sa240
+\cf15  
+\b Note:
+\b0  The GET method may return cached data. POST can also be used to get some data from the server. However, the POST method NEVER caches data, and is often used to send data along with the request.\
+\
+For jstree methods,\
+http://www.jstree.com/api/#/?q=(\
+See {\field{\*\fldinst{HYPERLINK "http://shiny.rstudio.com/gallery/"}}{\fldrslt http://shiny.rstudio.com/gallery/}}\
+See {\field{\*\fldinst{HYPERLINK "http://shiny.rstudio.com/articles/"}}{\fldrslt http://shiny.rstudio.com/articles/}}\
+\pard\pardeftab720\sl320\sa240
+{\field{\*\fldinst{HYPERLINK "http://shiny.rstudio.com/articles/building-inputs.html"}}{\fldrslt \cf15 http://shiny.rstudio.com/articles/building-inputs.html}}\
+\pard\pardeftab720\sl320\sa240
+{\field{\*\fldinst{HYPERLINK "http://shiny.rstudio.com/articles/building-outputs.html"}}{\fldrslt \cf15 http://shiny.rstudio.com/articles/building-outputs.html}}\
+\
+======\
+\
+2014-05-19\
+Returning to this project.\
+Eventually, we will clean the .GlobalEnv, AFTER we have all the new code in the package. For example, runApp is not yet in the package. So DO NOT clean.\
+.ctde loads our package. This is needed to create objects and make some functions and classes available.\
+To run the latest interface:\
+vg_SampleSizeMax = createVG_FixedSampleSizeMax()\
+.ctde()\
+\
+2014-05-21\
+github token (needed due to 2-level authentication; see {\field{\*\fldinst{HYPERLINK "http://blog.apericore.com/enabling-https-access-to-your-github-repositories-after-enabling-two-factor-authentication/"}}{\fldrslt http://blog.apericore.com/enabling-https-access-to-your-github-repositories-after-enabling-two-factor-authentication/}}).\
+\pard\pardeftab720\sl460
+
+\f1\fs28 \cf18 \cb19 56cc547d7bba289067a1add3fd7730ea611d610d\
+
+\f10\fs24 \cf0 OK, now I can push!\
+Hopefully won't have to do this again.\
+The token has been stored in keychain: github.com, May 21, 4:27PM.\
+Strange behavior of attributes when subclassing:\
+See bad-list-class-behavior-example.Rmd, also discussion on stackoverflow.\
+\
+2014-05-22\
+Valuable insight from renderText body:\
+    installExprFunction(expr, "func", env, quoted)\
+    function() \{\
+        value <- func()\
+        return(paste(capture.output(cat(value)), collapse = "\\n"))\
+    \}\
+\
+Useful notes from old interface (shinydocs/ui.R)\
+   # condition MUST BE VALID JS. \
+    # Therefore: input & output cannot share an ID. \
+    # Thus, the prepended "x".\
+    # Likewise, you can't put the following 2 lines in 2 places!!\
+    # If you see...\
+    #   Error in tag("div", list(...)) : argument is missing, with no default\
+    # it's because of an extra comma--  empty arg.\
+\
+Let's check out jQueryUI for popups etc:\
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/19172904/r-shiny-package-add-a-popup-with-error-warning"}}{\fldrslt http://stackoverflow.com/questions/19172904/r-shiny-package-add-a-popup-with-error-warning}}\
+\
+\
+The interface:\
+
+\b If a scaffold block is clicked,
+\b0  show list of available additional inserts for that block, and a NEW option.\
+After adding, check and report requirements/provisions integrity.\
+If there is a missing requirement, suggest the available possibilities, or NEW.\
+
+\b If a VG is clicked
+\b0 , options are:\
+	Remove, or Edit, or Clone and edit. \
+
+\b If multiple VGs are selected,
+\b0 \
+those options disappear, and \
+
+\b Clone scenario
+\b0 : \
+	Use popups to require new name, new description\
+	Then refresh the scenario name text.\
+
+\b Add scenario to experiment:  (currently called the evaluation tab)\
+
+\b0 \
+To get the node depth of the selected node:\
+ {\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/13908386/jstree-get-the-level-of-selected-node"}}{\fldrslt http://stackoverflow.com/questions/13908386/jstree-get-the-level-of-selected-node}}\
+\
+\
+
+\b 2014-05-24\
+
+\b0 See  mvbutils::search.task.trees\
+\
+ss-jstree-customized.js  (purpose: to return the node depth instead of the text)\
+hangs all of RStudio!\
+\
+
+\b 2014-05-27\
+
+\b0 Wrote traverse.R  It looks like it will work to search myTree and extract level information and index vector information.  Next step, have ALL search hits returned.\
+\
+Works with both myTree and myTreeObj.  The former is the latter prepended by 5 3 1.\
+\
+Now:\
+ we can collect the index vectors for ALL matching nodes.\
+ we can add an attribute to a <li> node.  Use "shorten" on the index vector for the search result to get the full shiny tag section.\
+\
+Goals:\
+(1) Set icon or other property for nodes, depending on depth. We have index depth; how do we convert that to node depth?\
+   As of now,  \
+	block = index depth = 9 = tree depth = 1\
+	vg/ec = index depth = 15 = tree depth = 2\
+\
+(2) When a VG/EC node is selected for deletion, delete from both the visible tree and the scenario. (Prompt for new scenario name, or otherwise show it's been edited.)\
+\
+(3) When a block node is selected, and an addition is selected (somehow: search or create), add to both the visible tree and the scenario.\
+\
+The world needs a treeApply!!\
+ \
+
+\b \
+2014-05-30
+\b0 \
+\
+Got a good edit/test cycle going with vi www/ss-jstree.js\
+Still can't get either the path length or the class.\
+\
+When opening in browser,\
+-- the tabs appear to the right of the title instead of below,\
+-- while ss-jstree is running, the tree is visible, with different colors so that the CSS and the class attributes are there. (But no icons or lines.)  But then the tree disappears. \
+\
+\pard\pardeftab720\sl460
+\cf0 \cb19 \
+\pard\pardeftab720\sl460
+
+\b \cf0 \cb19 2014-05-31\
+\pard\pardeftab720\sl460
+
+\b0 \cf0 \cb19 \
+No longer responding to tree click.  All conditionalPanels show up, suggesting that the javascript is aborted, possibly duplicate JS var names (a previous cause), but probably not that.  \
+\
+using git bisect, I found this commit did the selectedNode stuff fine:\
+e175c8b366f03c0b90ad253425a4ed619147cb1f  \
+though not the >1 part.\
+\
+Aha! Could it be that textOutput("selectedNode") shows up in both conditionPanel1 and conditionPanelMoreThan1?  YES!  that solved the problem. shiny should probably include a check for duplicates in each reactive function call assignment.\
+\
+\
 \
 \
 }
