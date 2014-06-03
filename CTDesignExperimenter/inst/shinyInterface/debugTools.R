@@ -1,15 +1,45 @@
 ##  For source'ing in serverInterface.R
 
 output$evaluatedOutput = renderText({
-  ## This might be useful later for up-arrowing through past expressions.
   evalString = isolate(input$evalString)
   ## you have to isolate; otherwise each character typed calls this callback.
+
+  ## This might be useful later for up-arrowing through past expressions.
   #   if(is.null(rValues$evalStringHistory))
   #     rValues$evalStringHistory = character(0)
   #  rValues$evalStringHistory = c(rValues$evalStringHistory, evalString)
   
-  if(input$evalButton > 0) eval(parse(text=evalString))
+  if(input$evalButton > 0) {
+    if(input$evalToggle == "R")
+      eval(parse(text=evalString))
+    else {
+      evalJS(evalString)
+      "JS output is in alert window."
+    }
+  }
 })  
+
+evalJS = function(evalString="1+5"){
+  #JSevaluation
+  div(list(tags$script(
+    # 'alert(', '"HERE IS JS"', ')'     # THIS WORKS! 
+    # 'alert(eval(', '"1+2"', '))'       # THIS WORKS! 
+    paste0(
+      'alert(eval("', evalString, '"))'       # THIS WORKS!
+    )
+  )))
+}
+
+output$JSevaluation = renderUI({
+  evalString = isolate(input$evalString)
+  if(input$evalButton > 0) {
+    if(input$evalToggle == "JS")
+      evalJS(evalString)
+  }
+})  
+
+  
+### Evaluation examples:
 ### example:   options(shiny.trace=input$traceButton)[[1]]
 ### example:   options("shiny.trace")[[1]]
 
@@ -33,15 +63,23 @@ output$debugTools = renderUI({
                                      value=TRUE,
                                      label=textOutput("shiny.trace.text")
                        ))),
+              tag("TD", list(HTML(paste0(rep("&nbsp;",15), collapse="")))),
               tag("TD", 
-                  list(style="color:\"red\"", actionButton("evalButton", "evalButton"))),
+                  list(actionButton("evalButton", 
+                                    HTML("<font color='red'> evaluate</font>")))),
+              tag("TD", list( 
+                radioButtons("evalToggle", "", c("R","JS"))
+                #              div(style="size:large;color:red", "R"),
+                #                  div(style="size:small;color:black", "/JS")
+              )),
               tag("TD",
                   list(width=10, textInput(inputId="evalString", label="", value="1+1"))),
               tag("TD", list(style="color:red", HTML("&rarr;"))),
               tag("TD",
                   list(width=800, 
                        style='text-align:"right"; color:white', 
-                       uiOutput(outputId="evaluatedOutput")))
+                       uiOutput(outputId="evaluatedOutput"))),
+              uiOutput(outputId='JSevaluation')
             )
         )
       )
