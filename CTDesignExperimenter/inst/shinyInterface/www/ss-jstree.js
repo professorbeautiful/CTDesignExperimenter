@@ -59,7 +59,7 @@ $.extend(ss_jstree, {
 	var pathlength;
 
    //This next alert happens.
-    if(leaves.length > 0) alert("HERE! #leaves = " + leaves.length); 
+    //if(leaves.length > 0) alert("HERE! #leaves = " + leaves.length); 
 
 // TRY THIS SOME TIME: document.getElementById("demo").innerHTML = fruits;
 
@@ -80,14 +80,14 @@ $.extend(ss_jstree, {
 
 // THIS BUSTS THE LOOP. pathlength = mynode.get_path().length;
 
-     alert("INSIDE LOOP class " + answerstring);
+     //alert("INSIDE LOOP class " + answerstring);
 
 	//r.push("L=" + pathlength + ". ");
 // Adding this causes the alert to fail!  + tree.get_node(leaves[i]).attr('class'));
 //      r.push(tree.get_node(leaves[i]).get_json()[0].class);
     }
-    alert("Result: (answerstring)" + answerstring + "///");
-    alert("Result: (r)" + r + "///");
+    //alert("Result: (answerstring)" + answerstring + "///");
+    //alert("Result: (r)" + r + "///");
 // OK, works for multiple selects.
     return r;
   },
