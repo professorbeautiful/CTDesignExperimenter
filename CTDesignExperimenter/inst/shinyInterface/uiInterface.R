@@ -23,16 +23,17 @@ conditionPanelNoneSelected = conditionalPanel(
       hr())
 )
                                               
-conditionPanel1 = conditionalPanel(condition = #'$( "select option:selected".length > 0 )',
-                                     #  '!(typeof input.jstree1 === "undefined") && input.jstree1.length > 0',
-                                     #  'output.numberSelected', ## fails. why?
-                                     #   'output.selectedNode', # this works better
-                                     'input.jstree1.length == 1', #perfect
-                                   actionButton(inputId="btnRemoveInsert" , label="Remove insert", styleclass = "success"),
-                                   actionButton(inputId="btnCloneInsert" , label="Clone insert", styleclass = "success"),
-                                   actionButton(inputId="btnEditInsert" , label="Edit insert", styleclass = "success"),
-                                   textOutput("selectedNode"),
-                                   hr()
+conditionPanel1 = conditionalPanel(condition = 
+    #'input.jstree1.length == 1', #perfect
+    # THE FOLLOWING WORKS TOO!
+    '$("#jstree1").jstree().get_selected().length == 1',  #This works!! 0 1 2 etc.
+    ## THE FOLLOWING expression shows #j1_2 etc:
+    ## 'alert($("#jstree1").jstree().get_selected().toString())',  
+    actionButton(inputId="btnRemoveInsert" , label="Remove insert", styleclass = "success"),
+    actionButton(inputId="btnCloneInsert" , label="Clone insert", styleclass = "success"),
+    actionButton(inputId="btnEditInsert" , label="Edit insert", styleclass = "success"),
+#    textOutput("selectedNode"),
+    hr()
 )
 conditionPanelMoreThan1 = 
   ###  Buttons when > 1 items are selected:
