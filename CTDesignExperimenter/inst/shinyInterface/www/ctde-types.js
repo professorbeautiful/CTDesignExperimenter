@@ -2,9 +2,10 @@ $(function () {
   $("#jstree1").jstree({
     "types" : {
       "level_1" : {
-        "icon" : "www/BLOCK.gif"
+        "icon" : "treeclass_1"
       }
     },
-    "plugins" : [ "types", "contextmenu", "wholerow" ]
+    // "plugins" : [ "types", "contextmenu", "wholerow" ]
+    "plugins" : [ "types"]
   });
 });
