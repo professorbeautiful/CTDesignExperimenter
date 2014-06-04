@@ -12,32 +12,24 @@ $.extend(ss_jstree, {
    // $("#jstree1").jstree().get_selected()[0].parents.length;
    // tree.get_node($("#jstree1").jstree().get_selected()[0]).parents.length;
 	var tree = $(el).jstree();
-	var leaves = tree.get_selected();
+	var leaves = tree.get_selected(); // an array of node id's, like "j1_5".
 	var i, j, r = [];
-	var answerstring = "";
 	var mynode;
 	var pathlength;
+	var mynode_data = [];
+	var mynode_li_attr;
 
+	// R-parse-able output string;
     for (i = 0, j = leaves.length; i < j; i++) {
-      mynode = tree.get_node(leaves[i]);
-      pathlength = mynode.parents.length;
-      r.push(pathlength + "_:_" + mynode.text);
-
-//      r.push(mynode.attr('id'));
-//      r.push(mynode.rslt.obj.attr('class'));
-// All j alerts happen, if nothing else goes wrong.
-
-
-// THIS BUSTS THE LOOP. pathlength = mynode.get_path().length;
-
-     //alert("INSIDE LOOP i= " + i);
-
-	//r.push("L=" + pathlength + ". ");
-// Adding this causes the alert to fail!  + tree.get_node(leaves[i]).attr('class'));
-//      r.push(tree.get_node(leaves[i]).get_json()[0].class);
+	mynode = tree.get_node(leaves[i]);
+	mynode_li_attr = mynode.li_attr;
+	mynode_li_attr["id"] = mynode.id;
+	//alert(mynode_li_attr);
+	r.push([mynode_li_attr]);
+	// THIS BUSTS THE LOOP. pathlength = mynode.get_path().length;
+	     //alert("INSIDE LOOP i= " + i);
     }
     //alert("Result: (r)" + r + "///");
-	// OK, works for multiple selects.
     return r;
   },
 

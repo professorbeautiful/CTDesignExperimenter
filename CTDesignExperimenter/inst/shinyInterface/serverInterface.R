@@ -12,8 +12,10 @@ shinyServer(function(input, output, session) {
   rValues = reactiveValues()
   treeObserver = observe(
     label="myTreeObserver", {
-      cat("Entered treeObserver. #selected nodes =",
-          length(input$jstree1), "\n")
+      cat("Entered treeObserver.\n",
+          capture.output(input$jstree1), "\n")
+      cat("Structure is\n",
+          capture.output(str(input$jstree1)), "\n")
       #        "depths are ", input$jstree1)
       #showshinyalert(session, "alert_jstree1",
 #       session$sendCustomMessage(type = 'testmessage',
