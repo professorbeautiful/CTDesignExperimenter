@@ -5,24 +5,22 @@ require(shinysky)
 require("CTDesignExperimenter")
 
 shinyServer(function(input, output, session) {
-  # jstree
   
   source("debugTools.R", local=TRUE)
   
   rValues = reactiveValues()
+
   treeObserver = observe(
     label="myTreeObserver", {
-      cat("Entered treeObserver.\n",
-          capture.output(input$jstree1), "\n")
-      cat("Structure is\n",
-          capture.output(str(input$jstree1)), "\n")
-      #        "depths are ", input$jstree1)
-      #showshinyalert(session, "alert_jstree1",
-#       session$sendCustomMessage(type = 'testmessage',
-#                                 message = list(
-#                      paste0("You selected these items in the tree: ", 
-#                             paste0(input$jstree1, collapse = ", "))))
-      # rValues$selectionLength = length(input$jstree1)
+      if(length(input$jstree1) > 0) {
+        nSelected <<- length(input$jstree1) / 4
+        treeSelection <<- matrix(ncol=4, input$jstree1, byrow=T,
+                                 dimnames=list(1:nSelected,
+                                   names(input$jstree1)[1:4]))
+        rValues$treeSelection = treeSelection
+        cat("Entered treeObserver.\n")
+        print(rValues$treeSelection)
+      }
     }
   )
   # treeObserver$onInvalidate(function() print("jstree1 selection changed!"))
