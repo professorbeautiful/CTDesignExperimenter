@@ -31,6 +31,9 @@ evalJS = function(evalString="1+5"){
 }
 
 output$JSevaluation = renderUI({
+  # TRY THIS SOME TIME, to avoid the alert window: 
+  #document.getElementById("demo").innerHTML = fruits;
+  
   evalString = isolate(input$evalString)
   if(input$evalButton > 0) {
     if(input$evalToggle == "JS")
