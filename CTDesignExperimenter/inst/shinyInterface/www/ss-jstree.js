@@ -24,6 +24,7 @@ $.extend(ss_jstree, {
 	mynode = tree.get_node(leaves[i]);
 	mynode_li_attr = mynode.li_attr;
 	mynode_li_attr["id"] = mynode.id;
+	mynode_li_attr["text"] = mynode.text;
 	//alert(mynode_li_attr);
 	r.push([mynode_li_attr]);
 	// THIS BUSTS THE LOOP. pathlength = mynode.get_path().length;

@@ -12,11 +12,17 @@ shinyServer(function(input, output, session) {
 
   treeObserver = observe(
     label="myTreeObserver", {
+      nColumnsInTreeValue = 5
       if(length(input$jstree1) > 0) {
-        nSelected <<- length(input$jstree1) / 4
-        treeSelection <<- matrix(ncol=4, input$jstree1, byrow=T,
+        nSelected <<- length(input$jstree1) / nColumnsInTreeValue
+        rValues$nSelected <<- nSelected
+        treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstree1, byrow=T,
                                  dimnames=list(1:nSelected,
-                                   names(input$jstree1)[1:4]))
+                                   names(input$jstree1)[1:nColumnsInTreeValue]))
+        ## Trim leading and trailing whitespace.
+        treeSelection[ , "text"] <<- gsub("^[\n\t ]*", "",
+                                        gsub("[\n\t ]*$", "",
+                                             treeSelection[ , "text"] ))
         rValues$treeSelection = treeSelection
         cat("Entered treeObserver.\n")
         print(rValues$treeSelection)
