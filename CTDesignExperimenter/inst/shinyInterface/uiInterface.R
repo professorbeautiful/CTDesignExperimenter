@@ -12,12 +12,15 @@ tagToOpenTree =
     , '                   };
        $(document).ready(openTree);'))
 
-conditionPanelNoneSelected = conditionalPanel(condition = 'input.jstree1.length == 0',
-                                              div(class="row-fluid span3",
-                                                  actionButton(inputId="btnCloneScen", label="Clone and save scenario", styleclass = "success"),
-                                                  actionButton(inputId="btnFindScen" , label="Find &replace scenario", styleclass = "success"),
-                                                  actionButton(inputId="btnAddScen" , label="Add scenario to experiment", styleclass = "success"),
-                                                  hr())
+# depth1Selected = conditionalPanel(condition='input.jstree1.')
+conditionPanelNoneSelected = conditionalPanel(
+  condition = 'input.jstree1.length == 0',
+  div(class="row-fluid span3",
+      actionButton(inputId="btnCloneScen", label="Clone and save scenario", styleclass = "success"),
+      actionButton(inputId="btnFindScen" , label="Find &replace scenario", styleclass = "success"),
+      actionButton(inputId="btnAddScen" , label="Add scenario to experiment", styleclass = "success"),
+      shinyalert(id = "cloneScen"),
+      hr())
 )
                                               
 conditionPanel1 = conditionalPanel(condition = #'$( "select option:selected".length > 0 )',
@@ -77,6 +80,7 @@ CSSreference = singleton(tags$head(tags$link(href = "ctde.css",
 #   var levelOfSelection;
 #   
 #   )))
+
 
 myJSincludes = tagList(
   CSSreference ### OK. Works (for text colors)
