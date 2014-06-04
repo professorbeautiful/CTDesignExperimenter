@@ -45,4 +45,19 @@ output$numberSelected = reactive({
   output$experimentTable = renderTable({experimentTable})
 
   reactive({input$btnAddScen; addScenarioToExperiment(currentScenario@name)} )
+
+  observe({
+    input$btnCloneScen    # Trigger if clicked
+    cat("\nSaving scenario\n")
+    assign(isolate(input$scenarioName), pos = 1,
+                   currentScenario
+                   ##TODO: update currentScenario 
+                   ## responding to deletes, insertions, edits in place.
+    )
+    showshinyalert(session, id="cloneScen",
+                   HTMLtext=paste(
+                     "Saving scenario, name = ",
+                     isolate(input$scenarioName)))
+    #window.prompt("sometext","defaultText");
+  })
 }) 
