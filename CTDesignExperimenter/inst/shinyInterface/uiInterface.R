@@ -106,14 +106,16 @@ shinyUI(
     scenarioPanel,
     tabPanel("One CT run", 
              "Display results from a single CT run for the selected scenario.",
-             actionButton(inputId="btnRunOne" , label="Run one CT", styleclass = "success")
+             hr(),
+             actionButton(inputId="btnRunOne", label="Run one CT", styleclass = "success")
+             , uiOutput("oneRunResults")
     ),
     tabPanel("Criteria",
              "Criteria will be selected and created here."),
     tabPanel("Experiment",
              "A table, scenarios by criteria."
              , actionButton(inputId="btnRunExperiment" , label="Run Experiment", styleclass = "success")
-             , dataTableOutput("experimentTable")
+             , tableOutput("experimentTableOut")
     )
   )
 )

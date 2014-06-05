@@ -44,11 +44,54 @@ output$numberSelected = reactive({
     length(input$jstree1) > 1
   })
   output$nSelectedText = renderText({
-    paste0("nSelected=", as.character(length(input$jstree1)))
+    print(paste0("nSelected=", rValues$nSelected))
     #paste0("nSelected=", output$numberSelected) #  CANNOT READ FROM output.
   })
   
-  output$experimentTable = renderTable({experimentTable})
+  output$oneRunResults = renderUI(
+    {
+      input$btnRunOne ## to kick it off.
+      runTrial()
+      nPatients = length(trialData$patientData)
+      returnvalueString1 = paste0(
+        "tagList(",
+        "div(",
+            paste("'", capture.output(
+              printVVenv(trialData$trialSummaries))
+            , "'", collapse=","),
+        "))")
+      returnvalue = eval(parse(text=returnvalueString1))
+       
+      for(iPatient in 1:nPatients) {
+        returnvalueString2 = paste0(
+          "tagList(hr(), ",
+          "p(style='fontsize:large', em('Patient #",
+          iPatient,
+          "')), ",
+          "hr(), ",
+          paste("div('", capture.output(
+            printVVenv(trialData$patientData[[iPatient]]$VVenv))
+            , "')", collapse=", \n") ,
+          ")")
+        returnvalue = tagList(
+            returnvalue , eval(parse(text=returnvalueString2))
+        ) 
+      }
+#         ,
+#         paste(collapse=",",
+#               "HTML('Patient #", 1:nPatients,
+#           "'), div(capture.output(printVVenv(trialData$patientData[[", 1:nPatients,
+#               "]]$VVenv))), hr()")
+        returnvalue
+    })
+
+  output$experimentTableOut = renderTable({
+    input$btnAddScen
+    experimentTable[nrow(experimentTable)+1, ] <<- NA
+    rownames(experimentTable) [nrow(experimentTable)] <<- 
+      currentScenario@name
+    print(experimentTable)
+  })
 
   reactive({input$btnAddScen; addScenarioToExperiment(currentScenario@name)} )
 
