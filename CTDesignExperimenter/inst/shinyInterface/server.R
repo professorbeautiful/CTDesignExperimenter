@@ -44,7 +44,7 @@ output$numberSelected = reactive({
     length(input$jstree1) > 1
   })
   output$nSelectedText = renderText({
-    paste0("nSelected=", as.character(length(input$jstree1)))
+    print(paste0("nSelected=", rValues$nSelected))
     #paste0("nSelected=", output$numberSelected) #  CANNOT READ FROM output.
   })
   
