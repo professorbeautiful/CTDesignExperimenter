@@ -1253,7 +1253,119 @@ though not the >1 part.\
 \
 Aha! Could it be that textOutput("selectedNode") shows up in both conditionPanel1 and conditionPanelMoreThan1?  YES!  that solved the problem. shiny should probably include a check for duplicates in each reactive function call assignment.\
 \
+Right-clicking on a node via control-click brings up the special tree context menu (not ther regular menu), and de-selects the tree node.\
 \
 \
+\pard\pardeftab720\sl460
+
+\b \cf0 \cb19 2014-06-02
+\b0 \cb19 \
+\
+Valuable description of delegated events:\
+http://api.jquery.com/on/\
+\
+'alert($("#jstree1"))'   shows [object Object]\
+'alert($("#jstree1").inst)'  shows undefined\
+'alert($("#jstree1").data().length)', shows undefined\
+\
+'alert($("#jstree1")[0])',   shows [object HTMLDivElement]\
+'alert($("#jstree1")[0][0])', shows undefined\
+\
+\
+'alert($("#jstree1").get_json())',   the alert doesn't happen for any of these:\
+'alert($("#jstree1").getJSON())',\
+'alert($("#jstree1").getJSON()[0])',\
+'alert($("#jstree1").jstree.get_selected().length)',\
+\
+ 'alert($("#jstree1").jstree().get_selected())',\
+   returns an empty alert (not even "") initially.\
+  Selecting nodes successively generate alert text:\
+	j1_1  j1_2  etc. (in order in the tree, regardless of depth)\
+  Selecting multiple nodes generates alert text like \
+	j1_1,j1_2,j1_3\
+Adding [0] to the query returns undefined initially, then j1_1 etc.\
+ Adding [0].text to the query is undefined even after selecting.\
+'alert($("#jstree1").jstree().get_selected()[0].text)',\
+\
+  'alert($("#jstree1").jstree().get_selected()[0].attr("class"))',\
+the alert fails.\
+\
+'alert($("#jstree1").attr("class"))',\
+RETURNS this:\
+	ss-jstree jstree jstree-1 jstree-default jstree-default-responsive shiny-bound-input\
+The same for all node clicks.\
+\
+'alert($("#jstree1").attr("id"))',  returns "jstree1"\
+\
+In ss-jstree.js, "leaves" corresponds to $("#jstree1").jstree().get_selected()\
+Thus:\
+	 'alert($("#jstree1").jstree()\
+	           .get_node(\
+	                   $("#jstree1").jstree().get_selected()\
+	       ))',\
+returns "false" initially, then [object Object].\
+\
+The labels    'alert($("#jstree1").jstree().get_selected().toString())',  #j1_2 etc\
+do NOT change if tree branches above are closed are opened. Whew.\
+====\
+Here is the entire set of commented efforts and notes:\
+\
+#'$( "select option:selected".length > 0 )',\
+                                     #  '!(typeof input.jstree1 === "undefined") && input.jstree1.length > 0',\
+                                     #  'output.numberSelected', ## fails. why?\
+                                     #   'output.selectedNode', # this works better\
+#                                     '$("#jstree1").length == 1',  #doesn't work.\
+#          '$("#jstree1").getValue().length == 1',  #doesn't work.\
+#                                   'input.jstree1.length == 1', #perfect\
+#  'alert($("#jstree1").get_json())',\
+#'alert($("#jstree1").data().length)',\
+\
+  #  'alert($("#jstree1")  /// breaking the line is ok.\
+  #     .attr("class"))',  ### ss-jstree jstree jstree-1 jstree-default jstree-default-responsive shiny-bound-input\
+\
+#   'alert($("#jstree1").jstree().get_selected()[0].attr("class"))', ## no alert\
+\
+#'   alert($("#jstree1").jstree().get_selected().length )',  #This works!! 0 1 2 etc.\
+\
+#   'alert($("#jstree1").jstree().get_selected()[0].toString() )',  #This works!! But just delivers the j1_2 etc.\
+\
+# the following is patterned after ss-jstree.js:  tree.get_node(leaves[i])\
+#   'alert($("#jstree1").jstree()      // "tree", in ss-jstree.js\
+#             .get_node(\
+#                     $("#jstree1").jstree().get_selected()   // leaves, in ss-jstree.js\
+#         ) )',  # false, or [object Object].\
+\
+# 'alert($("#jstree1").jstree()      // "tree", in ss-jstree.js\
+#             .get_node(\
+#                     $("#jstree1").jstree().get_selected() [0]  // leaves, in ss-jstree.js\
+#         ).length )',  #undefined.\
+\
+============\
+\
+The last item in the tree is j1_67. Looking at unlist(myTreeObj).\
+And, sum(unlist(myTreeObj) == "li")  equals 67.\
+There are 13 "children.children" BLOCKs, \
+18 "children.children.children.children"  (VGs), \
+and 4 "children.children.children.children.children.children" (details)\
+\
+> table(names(unlist(myTreeObj)[ which(unlist(myTreeObj) == "li") + 4]))\
+\
+                                     children.children \
+                                                    13 \
+                   children.children.children.children \
+                                                    18 \
+ children.children.children.children.children.children \
+                                                     4 \
+children.children.children.children.children.children1 \
+                                                    32 \
+For each children.children.children.children.children.children1\
+there is a children.children.children.children.children.children2.\
+\
+
+\b \cb19 2014-06-04\
+\pard\pardeftab720\sl460
+
+\b0 \cf0 \cb19 \
+To simplify, do git commits frequently to ui.R and server.R, and periodically bring the linked files up to date.\
 \
 }
