@@ -113,7 +113,7 @@ shinyUI(
     tabPanel("Experiment",
              "A table, scenarios by criteria."
              , actionButton(inputId="btnRunExperiment" , label="Run Experiment", styleclass = "success")
-             , dataTableOutput("experimentTable")
+             , tableOutput("experimentTableOut")
     )
   )
 )

@@ -48,7 +48,21 @@ output$numberSelected = reactive({
     #paste0("nSelected=", output$numberSelected) #  CANNOT READ FROM output.
   })
   
-  output$experimentTable = renderTable({experimentTable})
+  #rValues[["oneRunResults"]] = 
+#   output$oneRunResults = uiOutput(outputID="",
+#     {
+#       input$btnRunOne ## to kick it off.
+#       runTrial()
+#       capture.output(print(trialData$trialSummaries))
+#     })
+
+  output$experimentTableOut = renderTable({
+    input$btnAddScen
+    experimentTable[nrow(experimentTable)+1, ] <<- NA
+    rownames(experimentTable) [nrow(experimentTable)] <<- 
+      currentScenario@name
+    print(experimentTable)
+  })
 
   reactive({input$btnAddScen; addScenarioToExperiment(currentScenario@name)} )
 
