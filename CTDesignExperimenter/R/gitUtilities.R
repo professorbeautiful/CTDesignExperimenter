@@ -1,19 +1,17 @@
 cat("==========  gitUtilities =========\n")
 
-#####
-
-writeSwapMeetFile = function(object, prefix,
-                             dir="../CTDEswapmeet",
-                             author=system("echo $USER",intern=TRUE),
-                             time=Sys.time(),
+writeSwapMeetFile = function(item,
                              commitIt=TRUE,
                              ...
-){
-  filename = paste(prefix, ".", as.numeric(time), ".R", sep="")
-  dput(object, file=paste0(dir, "/",filename))
-  if(commitIt) commitSwapMeetFile(filename, dir, ...)
+){  
+  path = makeItemFilePath(item)
+  filename = gsub(".*/", "", path)
+  item@filename = filename
+  dput(item, file=path)
+  if(commitIt) commitSwapMeetFile(filename, swapDir, ...)
   return(filename)
 }
+
 
 writeVariableFile = function(variable, ...)
   writeSwapMeetFile(variable, prefix=paste0("v_", variable@name), ...)
@@ -24,7 +22,11 @@ writeVariableGeneratorFile = function(variableGenerator)
       ...)
 
 writeInsertFile = function(insert, ...) {
-  for(v in insert@requirements)
+  for(v in insert@requirements) {
+    if(!file.exists(paste0("../CTDEswapmeet/", v@filename))) {
+      write
+    }
+  }
     writeVariableFile(v, commitIt=TRUE)
   provlist = ifelse(is.list(insert@provisions), 
                     insert@provisions, list(insert@provisions))

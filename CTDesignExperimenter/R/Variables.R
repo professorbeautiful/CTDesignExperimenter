@@ -1,6 +1,6 @@
 cat("======== Variables.R ================\n")
 
-setClass("Variable", 
+setClass("Variable", contains="SwapItem",
          slots=list(name="character", description="character", 
                                        checkDataType="function"))
 Variable = function(name="variableName", 
