@@ -144,3 +144,5 @@ markdown-tests.Rmd
 markdown-tests.html
 markdown-tests.md
 swapmeet
+shinyInterface-current-bad
+.gitignore
