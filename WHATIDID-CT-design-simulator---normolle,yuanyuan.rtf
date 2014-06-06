@@ -1368,4 +1368,18 @@ there is a children.children.children.children.children.children2.\
 \b0 \cf0 \cb19 \
 To simplify, do git commits frequently to ui.R and server.R, and periodically bring the linked files up to date.\
 \
+\pard\pardeftab720\sl460
+
+\b \cf0 \cb19 2014-06-05\
+\pard\pardeftab720\sl460
+
+\b0 \cf0 \cb19 Beginning a refactoring where ALL the VGs and Variables and Scenarios etc are ALWAYS stored in either the local or the github swapmeet.\
+\
+How to store?  Currently as source files. But hard to search. \
+If it were a single environment, you could search through the objects by type. Later you could even construct and maintain an index for them.\
+But using source files, users can push to github.\
+You could then periodically sync and rebuild a local catalog for search.\
+\
+SwapItem (SharedItem?) is a superclass of Insert and Variable and Scenario.\
+\
 }
