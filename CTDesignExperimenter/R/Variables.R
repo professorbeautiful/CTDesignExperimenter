@@ -146,13 +146,16 @@ extractRequirements = function(generator){
 }
 
 
-#extractRequirements(clearanceRate)
+# extractRequirements(vg_clearanceRate)
+#   No requirements.
+# extractRequirements(vg_responseDoseThreshold)
+#   Requires clearanceRate.
 
 # extractProvisions = function(generator){
 #   generator@outputName
 # }
 
-# extractProvisions(clearanceRate)
+# extractProvisions(vg_clearanceRate)
 #  NOT SURE ABOUT THIS.
 # For a VariableGenerator,
 # the name of the generator is the provision.
