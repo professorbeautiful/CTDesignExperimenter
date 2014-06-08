@@ -9,8 +9,11 @@ createVG_FixedSampleSizeMax = function(Nmax = 3) {
 }
 
 makeDefaultScenario = function(hideOutput=FALSE) {
-  if(hideOutput) sink("/dev/null")
-    vg_age = PatientAttribute(parameters=list(ageMean=50, ageCV=0.5),
+  if(hideOutput) {
+    on.exit({sink()})  
+    sink("/dev/null")
+  }
+  vg_age = PatientAttribute(parameters=list(ageMean=50, ageCV=0.5),
                               generatorCode=function(){
                                 rlognorm(1, ageMean, ageCV)
                               },
