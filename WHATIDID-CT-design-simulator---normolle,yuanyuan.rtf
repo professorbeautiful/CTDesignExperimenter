@@ -3,7 +3,7 @@
 \f3\fnil\fcharset0 HelveticaNeue;\f4\fnil\fcharset0 Georgia;\f5\fmodern\fcharset0 Courier;
 \f6\fnil\fcharset0 Monaco;\f7\fnil\fcharset0 LucidaGrande;\f8\froman\fcharset0 TimesNewRomanPSMT;
 \f9\ftech\fcharset77 Symbol;\f10\fnil\fcharset0 Verdana;\f11\fmodern\fcharset0 CourierNewPSMT;
-\f12\fmodern\fcharset0 CourierNewPS-ItalicMT;}
+\f12\fmodern\fcharset0 CourierNewPS-ItalicMT;\f13\fmodern\fcharset0 Courier-Bold;}
 {\colortbl;\red255\green255\blue255;\red217\green11\blue0;\red255\green83\blue8;\red206\green59\blue0;
 \red155\green44\blue1;\red38\green38\blue38;\red0\green135\blue135;\red213\green14\blue52;\red251\green0\blue7;
 \red61\green52\blue46;\red251\green251\blue249;\red234\green54\blue39;\red218\green219\blue223;\red240\green241\blue241;
@@ -1382,4 +1382,29 @@ You could then periodically sync and rebuild a local catalog for search.\
 \
 SwapItem (SharedItem?) is a superclass of Insert and Variable and Scenario.\
 \
-}
+\pard\pardeftab720\sl460
+
+\b \cf0 \cb19 2014-06-09\
+\pard\pardeftab720\sl460
+
+\b0 \cf0 \cb19 Saving Inserts and Scenarios:\
+Choices:\
+   A)  Use dput, but since it doesn't handle S4, replace Variable objects by their filenames. The VariableList union would now include a character vector marked as SwapItemName.\
+When used, the file is read and the name is replaced by the actual object. Reference classes?  I don't think they will simplify things. Sometimes the object's file will be local, sometimes at github. Advantage:  being able to search the code directly.\
+  Actually, it handles a single Variable in the VG provisions slot fine, but not the VG requirements slot, holding a VariableList.\
+  Actually, it does NOT handle the provision slot, because it relies on new().\
+=>Oboy! see dput2, at http://stackoverflow.com/questions/3466599/dputting-an-s4-object\
+And maybe we can insert calls to dget() when a file with that filename is available.\
+  B) Use save. This will save all the contained S4 objects correctly, but only if ascii=FALSE.\
+Then you can't search.\
+\
+[Aside:  the problem where tab-completion + mvbutils loaded leads to a slew of warnings stems from the function 
+\f5 \cb1 .rs.addJsonRpcHandler\
+which is in http://web.mit.edu/r/r_v2.15.1/RStudio/R/modules/SessionHelp.R\
+specifically,    match = suppressWarnings(regexpr('<body>.*</body>', html))\
+returning a vector length > 1.]\
+\
+
+\f13\b 2014-06-12\
+
+\f5\b0 Finished refactoring so that all SwapItems are written with filename fields filled.}
