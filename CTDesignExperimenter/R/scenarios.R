@@ -27,11 +27,11 @@ cat("======== scenarios.R  ================\n")
 #' An evaluation will consist of a list of scenarios, together with evaluation criteria.
 #'  The scenarioEnv holds inserts (with parameter values assigned), 
 #'  variablevalues, and patient data. #####
-setClass("Scenario", 
+setClass("Scenario", contains="SwapItem",
          slots=c(inserts="ListOfInserts",
                           name="character",
                  description="character"),
-      prototype=prototype( 
+      prototype=prototype(
         inserts=new("ListOfInserts"),
         name="Name me please.",
         description="Description optional."))

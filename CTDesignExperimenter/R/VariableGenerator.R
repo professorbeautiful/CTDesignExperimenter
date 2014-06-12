@@ -25,6 +25,8 @@ VariableGenerator = function(insertSubType="PatientAttribute",
   if(missing(provisions)) provisions=outputVariable
   if(missing(outputVariable)) outputVariable=provisions
   vg = new("VariableGenerator", 
+           timestamp=Sys.time(),
+           author=Sys.getenv("USER"),
            insertSubType=insertSubType,
            parameters=parameters,
            provisions=provisions,

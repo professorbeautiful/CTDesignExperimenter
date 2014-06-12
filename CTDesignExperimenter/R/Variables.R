@@ -14,13 +14,14 @@ Variable = function(name="variableName",
     stop("Variable: checkDataType args list should be \"x\"")
   newVariable = new("Variable", name=name,
              description = description,
-             checkDataType=checkDataType)
-  if(gitAction=="write")
-    writeVariableFile(newVariable) # use default folder swapmeet.
-  if(gitAction=="push") {
-    writeVariableFile(newVariable)
-    pushSwapMeetFiles()
-  }
+             checkDataType=checkDataType,
+             timestamp=Sys.time())
+#   if(gitAction=="write")
+#     writeVariableFile(newVariable) # use default folder swapmeet.
+#   if(gitAction=="push") {
+#     writeVariableFile(newVariable)
+#     pushSwapMeetFiles()
+#   }
   return(newVariable)
 }
 setClass("VariableList", contains="list",

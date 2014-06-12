@@ -8,9 +8,16 @@ cat("======== SwapItem ================\n")
 ##' 
 setClass("SwapItem",
          slots=list(
+           name="character",
            description="character",
            author="character",
            timestamp="POSIXct",
-           filename="character")
+           filename="character"),
+         prototype=prototype(
+           name="NEED NAME",
+           description="NEED DESCRIPTION",
+           author=Sys.getenv("USER"),
+           timestamp=as.POSIXct(NA), ## assigned when saved
+           filename="")  ## assigned when saved
 )
 

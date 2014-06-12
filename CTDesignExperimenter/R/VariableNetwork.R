@@ -82,7 +82,10 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
       stop("VariableNetwork: all vg names must be unique")
     vgList = VariableGeneratorList(vgList=vgList)
   }
-  network = new("VariableNetwork", vgList=vgList)
+  network = new("VariableNetwork", vgList=vgList,
+                timestamp=Sys.time(),
+                author=Sys.getenv("USER")
+  )
   
   provisions = c(lapply(vgList, function(vg) vg@provisions))
   provisions = provisions[!sapply(provisions, is.null)]
