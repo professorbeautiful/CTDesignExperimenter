@@ -1,8 +1,8 @@
 cat("======== run  ================\n")
 
 
-run = function(background=FALSE, shinyfolder="shinyScenario", local=FALSE, createCTDEcatalog=FALSE) {
-  if(createCTDEcatalog) createCTDEcatalog()
+run = function(background=FALSE, shinyfolder="shinyInterface", local=FALSE, createCTDEcatalog=FALSE) {
+#   if(createCTDEcatalog) createCTDEcatalog()
   #   if(background) { ## Run it in the background outside of this session.
   #     system("echo 'library(CTDesignExplorer); run()' | R --vanilla")
   #   PROBLEMS!  Warning in .simpleDuplicateClass(def, prev) :
