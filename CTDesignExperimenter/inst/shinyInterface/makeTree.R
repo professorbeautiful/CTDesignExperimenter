@@ -79,15 +79,37 @@ extractEntry = function(L1=3, L2=4, start=jstree.obj(scenarioTree)) {
   entry
 }
 
-
-
-# extractEntry()[[1]]
+# extractEntry()[[1]]   #  responseDoseThreshold
 # Validation of scenarioMap:
 # for(vg in rownames(scenarioMap) )
 #   catn(vg, extractEntry(scenarioMap[vg, "blockIndex"], scenarioMap[vg, "insertIndex"])[[1]])
 # OK.
 
-
+loadLatestScenario = function(){
+  latestScenarioName <<- rev(dir(swapMeetDir(), pattern="^S_"))[1]
+  latestScenario <<- source(swapMeetDir() %&% latestScenarioName)
+  invisible()
+}
+findInsertInScenario = function( L1=3, L2=4, scenario) {
+  if(missing(scenario)) {
+    loadLatestScenario()
+    scenario = latestScenario
+  }
+  blockName = scaffoldObjectNames[L1]
+  insertSubType = scaffoldInsertSubTypes[L1]
+  if( insertSubType == "")
+    stop("findInsertInScenario: insertSubType not found")
+  insertCount = 0
+  for(insertNum in seq(along=scenario@inserts)) {
+    if(scenario@inserts[[insertNum]]@insertSubType == insertSubType) {
+      insertCount = insertCount + 1
+      if(insertCount == L2)
+        return(scenario@inserts[[insertNum]])
+    }
+  }
+  return(NULL)
+}
+findInsertInScenario()
 # The following is wrong, and probably unnecessary. It's supposed to be more general.
 # extractEntryNew = function(L=c(3,4), start=jstree.obj(scenarioTree)) {
 #   nodeLevel = start[["children"]][[1]]
