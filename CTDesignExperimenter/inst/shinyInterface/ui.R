@@ -12,7 +12,6 @@ tagToOpenTree =
     , '                   };
        $(document).ready(openTree);'))
 
-# depth1Selected = conditionalPanel(condition='input.jstree1.')
 conditionPanelNoneSelected = conditionalPanel(
   condition = 'input.jstree1.length == 0',
   div(class="row-fluid span3",
@@ -32,7 +31,7 @@ conditionPanel1 = conditionalPanel(condition =
     actionButton(inputId="btnRemoveInsert" , label="Remove insert", styleclass = "success"),
     actionButton(inputId="btnCloneInsert" , label="Clone insert", styleclass = "success"),
     actionButton(inputId="btnEditInsert" , label="Edit insert", styleclass = "success"),
-#    textOutput("selectedNode"),
+    textOutput("selectedNode"),
     hr()
 )
 conditionPanelMoreThan1 = 
@@ -45,22 +44,6 @@ conditionPanelMoreThan1 =
   )
 
 
-# This does not add depths data to input.
-# scriptToGetDepths = tagList(singleton(tags$head(tags$script(
-#                             'var depths; 
-# $(document).ready(function(){
-#    $("#jstree1").on("select_node.jstree", function(e,data) {
-#       var inst=data.inst;
-#       var selected=inst.get_selected();
-#       depths = selected().length;
-#       alert("depths = ", depths);
-#       input.depths = depths;
-# //      var id=selected.attr("id");
-# //      var name=selected.prop("tagName");
-# //      console.log(name,id,depths);
-#   });
-# })'
-# ))))
 
 scenarioPanel = tabPanel("Current scenario",
                          #div(class="row-fluid span1",

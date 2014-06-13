@@ -31,7 +31,7 @@ conditionPanel1 = conditionalPanel(condition =
     actionButton(inputId="btnRemoveInsert" , label="Remove insert", styleclass = "success"),
     actionButton(inputId="btnCloneInsert" , label="Clone insert", styleclass = "success"),
     actionButton(inputId="btnEditInsert" , label="Edit insert", styleclass = "success"),
-#    textOutput("selectedNode"),
+    textOutput("selectedNode"),
     hr()
 )
 conditionPanelMoreThan1 = 
