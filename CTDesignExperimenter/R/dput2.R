@@ -27,6 +27,7 @@ dput2 <- function (x,
             cat("    ,", n, "= ", file = file)
           }
         }
+        if(i > 1) cat(", ", file = file)
         dput2(x[[i]], file = file, control = control)
       }
       cat(")\n", file = file)
@@ -38,7 +39,7 @@ dput2 <- function (x,
   else .Internal(dput(x, file, opts))
 }
 
-dget2 = function(file) {
+dget2 = function(file) {  ## NOT USED?
   object = dget(file)
   assign(object@name, object, pos=1)
 }
