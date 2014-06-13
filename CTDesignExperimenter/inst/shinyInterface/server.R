@@ -32,59 +32,45 @@ shinyServer(function(input, output, session) {
   # treeObserver$onInvalidate(function() print("jstree1 selection changed!"))
 
   output$selectedNode = renderText({
-    print(paste0(input$jstree1, collapse = ", "))
+    #     input$jstree1
+    #     rValues$selectedNodePath = 
+    print(paste0("selectedNodes ", input$jstree1, collapse = ", "))
   })
-output$selectedNodes = renderText({  ## Must have a distinct name!
-  print(paste0(input$jstree1, collapse = ", "))
-})
-output$numberSelected = reactive({
-    length(input$jstree1)
-  })
-  output$moreThanOneSelected = reactive({
-    length(input$jstree1) > 1
-  })
-  output$nSelectedText = renderText({
-    print(paste0("nSelected=", rValues$nSelected))
-    #paste0("nSelected=", output$numberSelected) #  CANNOT READ FROM output.
+  output$selectedNodes = renderText({  ## Must have a distinct name!
+    print(paste0("selectedNodes ", input$jstree1, collapse = ", "))
   })
   
-  output$oneRunResults = renderUI(
-    {
-      input$btnRunOne ## to kick it off.
-      runTrial()
-      nPatients = length(trialData$patientData)
-      returnvalueString1 = paste0(
-        "tagList(",
-        "div(",
-            paste("'", capture.output(
-              printVVenv(trialData$trialSummaries))
-            , "'", collapse=","),
-        "))")
-      returnvalue = eval(parse(text=returnvalueString1))
-       
-      for(iPatient in 1:nPatients) {
-        returnvalueString2 = paste0(
-          "tagList(hr(), ",
-          "p(style='fontsize:large', em('Patient #",
-          iPatient,
-          "')), ",
-          "hr(), ",
-          paste("div('", capture.output(
-            printVVenv(trialData$patientData[[iPatient]]$VVenv))
-            , "')", collapse=", \n") ,
-          ")")
-        returnvalue = tagList(
-            returnvalue , eval(parse(text=returnvalueString2))
-        ) 
-      }
-#         ,
-#         paste(collapse=",",
-#               "HTML('Patient #", 1:nPatients,
-#           "'), div(capture.output(printVVenv(trialData$patientData[[", 1:nPatients,
-#               "]]$VVenv))), hr()")
-        returnvalue
-    })
-
+  output$oneRunResults = renderUI({
+    input$btnRunOne ## to kick it off.
+    runTrial()
+    nPatients = length(trialData$patientData)
+    returnvalueString1 = paste0(
+      "tagList(",
+      "div(",
+      paste("'", capture.output(
+        printVVenv(trialData$trialSummaries))
+        , "'", collapse=","),
+      "))")
+    returnvalue = eval(parse(text=returnvalueString1))
+    
+    for(iPatient in 1:nPatients) {
+      returnvalueString2 = paste0(
+        "tagList(hr(), ",
+        "p(style='fontsize:large', em('Patient #",
+        iPatient,
+        "')), ",
+        "hr(), ",
+        paste("div('", capture.output(
+          printVVenv(trialData$patientData[[iPatient]]$VVenv))
+          , "')", collapse=", \n") ,
+        ")")
+      returnvalue = tagList(
+        returnvalue , eval(parse(text=returnvalueString2))
+      ) 
+    }
+    returnvalue
+  })
+  
   output$experimentTableOut = renderTable({
     input$btnAddScen
     experimentTable[nrow(experimentTable)+1, ] <<- NA
@@ -92,16 +78,16 @@ output$numberSelected = reactive({
       currentScenario@name
     print(experimentTable)
   })
-
+  
   reactive({input$btnAddScen; addScenarioToExperiment(currentScenario@name)} )
-
+  
   observe({
     input$btnCloneScen    # Trigger if clicked
     cat("\nSaving scenario\n")
     assign(isolate(input$scenarioName), pos = 1,
-                   currentScenario
-                   ##TODO: update currentScenario 
-                   ## responding to deletes, insertions, edits in place.
+           currentScenario
+           ##TODO: update currentScenario 
+           ## responding to deletes, insertions, edits in place.
     )
     showshinyalert(session, id="cloneScen",
                    HTMLtext=paste(
