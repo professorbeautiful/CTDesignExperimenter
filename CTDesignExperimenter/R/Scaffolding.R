@@ -607,7 +607,7 @@ doThisAction_SummarizeTrial = function(scenario=defaultScenario) {
 
 runTrial = function(scenario=defaultScenario) {
   options(error=recover)
-  startup()
+  #startup()
   initializeQueue()
   executeQueue()
 }
