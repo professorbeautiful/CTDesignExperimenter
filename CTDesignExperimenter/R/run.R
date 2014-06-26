@@ -1,7 +1,7 @@
 cat("======== run  ================\n")
 
 
-run = function(background=FALSE, shinyfolder="shinyInterface", local=FALSE, createCTDEcatalog=FALSE) {
+run = function(background=FALSE, shinyfolder="shinyInterface", local=TRUE, createCTDEcatalog=FALSE) {
 #   if(createCTDEcatalog) createCTDEcatalog()
   #   if(background) { ## Run it in the background outside of this session.
   #     system("echo 'library(CTDesignExplorer); run()' | R --vanilla")
