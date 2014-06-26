@@ -80,12 +80,12 @@ writeInsertFile = function(insert, commitIt=FALSE, ...) {
     for(vNum in seq(along=insert@provisions)) 
       insert@provisions[[vNum]] =
         writeVariableFile(insert@provisions[[vNum]])
-    insert@outputVariable = insert@provisions[[1]]
+    insert@outputVariable = insert@provisions[[1]] #temporary
   }
-  else if(is(insert@provisions, "Variable")) {
+  else  {
     insert@provisions = writeVariableFile(
       insert@provisions)
-    insert@outputVariable = insert@provisions[[1]]
+    insert@outputVariable = insert@provisions
   }
   writeSwapMeetFile(insert)
 }
