@@ -4,6 +4,7 @@
 	packageStartupMessage("This is ", pkgname, " ", desc$Version, " ", desc$Date)
 	#	createCTDEcatalog()    # Can't write into locked env.
   #startup()
+	loadLatestScenario()
 	return(invisible(NULL))
 }
 
