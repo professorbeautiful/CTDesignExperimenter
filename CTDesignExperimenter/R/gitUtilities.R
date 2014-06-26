@@ -29,7 +29,7 @@ swapMeetDir = function(dir) {
   else if(exists(x = "swapDir", where = 1))
     return(get("swapDir", pos=1))
   else {
-    dir = "../CTDEswapmeet/"  ## default
+    dir = getwd() %&% "/../CTDEswapmeet/"  ## default
     assign('swapDir', dir, pos=1)
     return(dir)
   }
