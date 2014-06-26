@@ -11,15 +11,21 @@ insertVGSubTree = function(insertName, insertStyle="simple") {
     names(info) = insertName
     return(info)    
   } else { ## show variables and parameters
-    outputVarInfo = 
-      paste("output:", capture.output(vg@outputVariable))
+    needed = sapply(vg@requirements, 
+                          function(v)paste0("needs:",
+                                           capture.output(v)))
+    info = as.list(needed)
     codeInfo = paste("code:", 
                      gsub(fixed=TRUE, "{;", "{",
                           paste(printFunctionBody(vg@generatorCode), 
                                      collapse="; ")))
-    info = list(outputVarInfo, codeInfo)
+    info = c(info, codeInfo)
+    outputVarInfo = 
+      paste0("provides:", capture.output(vg@outputVariable))
+    info = c(info, outputVarInfo)
     if(length(vg@parameters > 0)){
-      parameterInfo = vg@parameters #sapply(vg@parameters, printParameter)
+      parameterInfo = #vg@parameters 
+        paste0("param: ", names(vg@parameters), "=", unlist(vg@parameters))
       info = c(info, parameterInfo)
     }
     info = list(info)
@@ -87,9 +93,10 @@ extractEntry = function(L1=3, L2=4, start=jstree.obj(scenarioTree)) {
 
 loadLatestScenario = function(){
   latestScenarioName <<- rev(dir(swapMeetDir(), pattern="^S_"))[1]
-  latestScenario <<- source(swapMeetDir() %&% latestScenarioName)
+  latestScenario <<- dget(swapMeetDir() %&% latestScenarioName)
   invisible()
 }
+
 findInsertInScenario = function( L1=3, L2=4, scenario) {
   if(missing(scenario)) {
     loadLatestScenario()
@@ -109,16 +116,7 @@ findInsertInScenario = function( L1=3, L2=4, scenario) {
   }
   return(NULL)
 }
-findInsertInScenario()
-# The following is wrong, and probably unnecessary. It's supposed to be more general.
-# extractEntryNew = function(L=c(3,4), start=jstree.obj(scenarioTree)) {
-#   nodeLevel = start[["children"]][[1]]
-#   if(length(L) == 0) 
-#     return(nodeLevel)
-#   return(extractEntryNew(L[-1], 
-#                          nodeLevel[[ L[1] ]] [["children"]][[1]] ))
-# }
-
+# findInsertInScenario()
 
 myjstree.obj = 
 function (x, addLevelClass=TRUE, addLevelType=TRUE, addIndex=TRUE, level=0, index="0") 
