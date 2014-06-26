@@ -124,6 +124,21 @@ if(interactive()) {
  seeSwapMeetFile(.Last.value)
 }
 
+loadLatestScenario = function(setCurrent=TRUE){
+  latestScenarioName <<- rev(dir(swapMeetDir(), pattern="^S_"))[1]
+  latestScenario <<- dget(swapMeetDir() %&% latestScenarioName)
+  if(setCurrent)
+    currentScenario <<-latestScenario
+  invisible()
+}
 
-##################################
+loadScenarioInserts = function(verbose=TRUE){
+  foreach(insert = currentScenario@inserts) %do% {
+    if(verbose) catn("Loading " %&% insert@name)
+    assign(insert@name, insert, pos=1)
+  }
+}
+
+
+
 

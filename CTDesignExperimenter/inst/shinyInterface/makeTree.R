@@ -91,12 +91,6 @@ extractEntry = function(L1=3, L2=4, start=jstree.obj(scenarioTree)) {
 #   catn(vg, extractEntry(scenarioMap[vg, "blockIndex"], scenarioMap[vg, "insertIndex"])[[1]])
 # OK.
 
-loadLatestScenario = function(){
-  latestScenarioName <<- rev(dir(swapMeetDir(), pattern="^S_"))[1]
-  latestScenario <<- dget(swapMeetDir() %&% latestScenarioName)
-  invisible()
-}
-
 findInsertInScenario = function( L1=3, L2=4, scenario) {
   if(missing(scenario)) {
     loadLatestScenario()
