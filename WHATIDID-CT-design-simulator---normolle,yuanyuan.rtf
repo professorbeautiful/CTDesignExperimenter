@@ -3,7 +3,7 @@
 \f3\fnil\fcharset0 HelveticaNeue;\f4\fnil\fcharset0 Georgia;\f5\fmodern\fcharset0 Courier;
 \f6\fnil\fcharset0 Monaco;\f7\fnil\fcharset0 LucidaGrande;\f8\froman\fcharset0 TimesNewRomanPSMT;
 \f9\ftech\fcharset77 Symbol;\f10\fnil\fcharset0 Verdana;\f11\fmodern\fcharset0 CourierNewPSMT;
-\f12\fmodern\fcharset0 CourierNewPS-ItalicMT;\f13\fmodern\fcharset0 Courier-Bold;}
+\f12\fmodern\fcharset0 CourierNewPS-ItalicMT;}
 {\colortbl;\red255\green255\blue255;\red217\green11\blue0;\red255\green83\blue8;\red206\green59\blue0;
 \red155\green44\blue1;\red38\green38\blue38;\red0\green135\blue135;\red213\green14\blue52;\red251\green0\blue7;
 \red61\green52\blue46;\red251\green251\blue249;\red234\green54\blue39;\red218\green219\blue223;\red240\green241\blue241;
@@ -1237,14 +1237,11 @@ When opening in browser,\
 -- the tabs appear to the right of the title instead of below,\
 -- while ss-jstree is running, the tree is visible, with different colors so that the CSS and the class attributes are there. (But no icons or lines.)  But then the tree disappears. \
 \
-\pard\pardeftab720\sl460
-\cf0 \cb19 \
-\pard\pardeftab720\sl460
+\
 
-\b \cf0 \cb19 2014-05-31\
-\pard\pardeftab720\sl460
+\b 2014-05-31\
 
-\b0 \cf0 \cb19 \
+\b0 \
 No longer responding to tree click.  All conditionalPanels show up, suggesting that the javascript is aborted, possibly duplicate JS var names (a previous cause), but probably not that.  \
 \
 using git bisect, I found this commit did the selectedNode stuff fine:\
@@ -1256,10 +1253,9 @@ Aha! Could it be that textOutput("selectedNode") shows up in both conditionPanel
 Right-clicking on a node via control-click brings up the special tree context menu (not ther regular menu), and de-selects the tree node.\
 \
 \
-\pard\pardeftab720\sl460
 
-\b \cf0 \cb19 2014-06-02
-\b0 \cb19 \
+\b 2014-06-02
+\b0 \
 \
 Valuable description of delegated events:\
 http://api.jquery.com/on/\
@@ -1362,18 +1358,15 @@ For each children.children.children.children.children.children1\
 there is a children.children.children.children.children.children2.\
 \
 
-\b \cb19 2014-06-04\
-\pard\pardeftab720\sl460
+\b 2014-06-04\
 
-\b0 \cf0 \cb19 \
+\b0 \
 To simplify, do git commits frequently to ui.R and server.R, and periodically bring the linked files up to date.\
 \
-\pard\pardeftab720\sl460
 
-\b \cf0 \cb19 2014-06-05\
-\pard\pardeftab720\sl460
+\b 2014-06-05\
 
-\b0 \cf0 \cb19 Beginning a refactoring where ALL the VGs and Variables and Scenarios etc are ALWAYS stored in either the local or the github swapmeet.\
+\b0 Beginning a refactoring where ALL the VGs and Variables and Scenarios etc are ALWAYS stored in either the local or the github swapmeet.\
 \
 How to store?  Currently as source files. But hard to search. \
 If it were a single environment, you could search through the objects by type. Later you could even construct and maintain an index for them.\
@@ -1382,12 +1375,10 @@ You could then periodically sync and rebuild a local catalog for search.\
 \
 SwapItem (SharedItem?) is a superclass of Insert and Variable and Scenario.\
 \
-\pard\pardeftab720\sl460
 
-\b \cf0 \cb19 2014-06-09\
-\pard\pardeftab720\sl460
+\b 2014-06-09\
 
-\b0 \cf0 \cb19 Saving Inserts and Scenarios:\
+\b0 Saving Inserts and Scenarios:\
 Choices:\
    A)  Use dput, but since it doesn't handle S4, replace Variable objects by their filenames. The VariableList union would now include a character vector marked as SwapItemName.\
 When used, the file is read and the name is replaced by the actual object. Reference classes?  I don't think they will simplify things. Sometimes the object's file will be local, sometimes at github. Advantage:  being able to search the code directly.\
@@ -1400,11 +1391,75 @@ Then you can't search.\
 \
 [Aside:  the problem where tab-completion + mvbutils loaded leads to a slew of warnings stems from the function 
 \f5 \cb1 .rs.addJsonRpcHandler\
-which is in http://web.mit.edu/r/r_v2.15.1/RStudio/R/modules/SessionHelp.R\
-specifically,    match = suppressWarnings(regexpr('<body>.*</body>', html))\
-returning a vector length > 1.]\
+\pard\pardeftab720\sl460
+
+\f10 \cf0 which is in\
+
+\f5  http://web.mit.edu/r/r_v2.15.1/RStudio/R/modules/SessionHelp.R\
+
+\f10 specifically
+\f5 , \
+   match = suppressWarnings(regexpr('<body>.*</body>', html))\
+
+\f10 returning a vector length > 1.]
+\f5 \
+
+\f10 \
+
+\b 2014-06-12\
+
+\b0 Finished refactoring so that all SwapItems are written with filename fields filled.\
 \
 
-\f13\b 2014-06-12\
+\b 2014-06-25\
 
-\f5\b0 Finished refactoring so that all SwapItems are written with filename fields filled.}
+\b0 \
+Installed a new RStudio, Version 0.98.945. Got the following errors.\
+There is a query message from yesterday at  \
+ {\field{\*\fldinst{HYPERLINK "https://support.rstudio.com/hc/communities/public/questions/202717056-problem-with-RStudio-0-98-945-installation-and-compile-notebook-"}}{\fldrslt https://support.rstudio.com/hc/communities/public/questions/202717056-problem-with-RStudio-0-98-945-installation-and-compile-notebook-}}
+\f5 \
+I will follow this thread.\
+\
+Error installing package: * installing *source* package \'91rstudio\'92 ...\
+** R\
+** inst\
+** preparing package for lazy loading\
+** help\
+*** installing help indices\
+** building package indices\
+** testing if installed package can be loaded\
+*** arch - R\
+*** arch - x86_64\
+ERROR: loading failed for \'91R\'92\
+* removing \'91/Users/Roger/Library/R/3.0/library/rstudio\'92\
+\
+Error installing package: * installing *source* package \'91manipulate\'92 ...\
+** R\
+** preparing package for lazy loading\
+** help\
+*** installing help indices\
+** building package indices\
+** testing if installed package can be loaded\
+*** arch - R\
+*** arch - x86_64\
+ERROR: loading failed for \'91R\'92\
+* removing \'91/Users/Roger/Library/R/3.0/library/manipulate\'92\
+\
+
+\f10 ======\
+\
+http://jqueryui.com/   could be useful.  See\
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/19172904/r-shiny-package-add-a-popup-with-error-warning"}}{\fldrslt http://stackoverflow.com/questions/19172904/r-shiny-package-add-a-popup-with-error-warning}}\
+Also jquery-dialogextend\
+\
+To get the jsTree index (path) in javascript:\
+window.Shiny.shinyapp.$bindings.selectedNode.el.childNodes[0].nodeValue \
+(or textContent or data)\
+This is confirmed in the Debugging aids window.\
+I can use this in a conditionalPanel!\
+Aside from selectedNode, we can also get JSevaluation, debugTools, evaluatedOutput, experimentTableOut, oneRunResults, and shiny.trace.text.  \
+All these are assigned to output$ components.\
+It seems we cannot find rValues directly in javascript. Perhaps through writing into an output object.\
+\
+\
+}
