@@ -59,9 +59,14 @@ scenarioPanel = tabPanel("Current scenario",
 )
 
 variableEditorPanel = #conditionalPanel(condition = 'true',
-                                       tabPanel("Edit var",
-                                       HTML("This is the variableEditor panel.")
-                                       )
+  # Sadly, cannot put a conditionalPanel in a tabsetPanel.
+                        tabPanel("Edit var",
+                          HTML("This is the variableEditor panel."),
+                          actionButton(inputId="btnCreateVar" , 
+                                       label="Create new Variable", styleclass = "success")
+                          #,conditionalPanel(condition = 'input.btnCreateVar')
+                          
+                        )
                                        #)
 
 CSSreference = singleton(tags$head(tags$link(href = "ctde.css", 
@@ -95,7 +100,11 @@ shinyUI(
     #         tags$head(tags$script(src = "message-handler.js"))
     #       ),
     scenarioPanel,
-    variableEditorPanel,
+    navbarMenu("Editors",
+               variableEditorPanel,
+               tabPanel("Create new Variable"),
+               tabPanel("Create new Insert")
+    ),
 #    insertEditorPanel,
     tabPanel("One CT run", 
              "Display results from a single CT run for the selected scenario.",
