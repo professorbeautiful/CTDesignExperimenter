@@ -58,6 +58,12 @@ scenarioPanel = tabPanel("Current scenario",
                          tagToOpenTree 
 )
 
+variableEditorPanel = #conditionalPanel(condition = 'true',
+                                       tabPanel("Edit var",
+                                       HTML("This is the variableEditor panel.")
+                                       )
+                                       #)
+
 CSSreference = singleton(tags$head(tags$link(href = "ctde.css", 
                                              rel = "stylesheet")))
 # getLevelOfSelection = singleton(tags$head(tags$script(
@@ -76,6 +82,8 @@ myJSincludes = tagList(
 
 shinyUI(
   navbarPage(
+    inverse=TRUE,
+    id="tabsetID",
     title = 
       h4("CTDE: Clinical trial design experimenter"),
     header=tagList(myJSincludes,
@@ -87,6 +95,8 @@ shinyUI(
     #         tags$head(tags$script(src = "message-handler.js"))
     #       ),
     scenarioPanel,
+    variableEditorPanel,
+#    insertEditorPanel,
     tabPanel("One CT run", 
              "Display results from a single CT run for the selected scenario.",
              hr(),

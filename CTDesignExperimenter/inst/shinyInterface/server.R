@@ -9,8 +9,20 @@ shinyServer(function(input, output, session) {
   source("debugTools.R", local=TRUE)
   
   rValues = reactiveValues()
-
+  
+  rValues$editingVariable = FALSE
+  
+  observe(label="editingVariableObserver", {
+    catn("editingVariableObserver: rValues$editingVariable = ", rValues$editingVariable)
+    if(rValues$editingVariable) 
+      updateTabsetPanel(session, "tabsetID", selected = "Edit var")
+    #"selected" is the title on the tab.
+  }
+  )
+  
   treeObserver = observe(
+    #     observers use eager evaluation; as soon as their dependencies change, they
+    #     schedule themselves to re-execute.
     label="myTreeObserver", {
       nColumnsInTreeValue = 5
       if(length(input$jstree1) > 0) {
@@ -18,22 +30,28 @@ shinyServer(function(input, output, session) {
         rValues$nSelected <<- nSelected
         treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstree1, byrow=T,
                                  dimnames=list(1:nSelected,
-                                   names(input$jstree1)[1:nColumnsInTreeValue]))
+                                               names(input$jstree1)[1:nColumnsInTreeValue]))
         ## Trim leading and trailing whitespace.
         treeSelection[ , "text"] <<- gsub("^[\n\t ]*", "",
-                                        gsub("[\n\t ]*$", "",
-                                             treeSelection[ , "text"] ))
-        rValues$treeSelection = treeSelection
-        cat("Entered treeObserver.\n")
-        print(rValues$treeSelection)
+                                          gsub("[\n\t ]*$", "",
+                                               treeSelection[ , "text"] ))
+        cat("Entered treeObserver. rValues$treeSelection is:\n")
+        print(treeSelection)
+        rValues$treeSelectionText = treeSelection[ , "text"]
+        rValues$treeSelectionIndex = treeSelection[ , "index"]
+        rValues$treeSelectionDepth = 
+          length(strsplit(split = "_",
+                          nchar(treeSelection[ , "index"])))
       }
     }
   )
+  
+  output$treeSelectionText = renderText(rValues$treeSelectionText)
+  output$treeSelectionIndex = renderText(rValues$treeSelectionIndex)
+  output$treeSelectionDepth = renderText(rValues$treeSelectionDepth)
   # treeObserver$onInvalidate(function() print("jstree1 selection changed!"))
-
+  
   output$selectedNode = renderText({
-    #     input$jstree1
-    #     rValues$selectedNodePath = 
     print(paste0("selectedNodes ", input$jstree1, collapse = ", "))
   })
   output$selectedNodes = renderText({  ## Must have a distinct name!
