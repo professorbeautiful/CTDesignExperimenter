@@ -13,7 +13,7 @@ tagToOpenTree =
        $(document).ready(openTree);'))
 
 conditionPanelNoneSelected = conditionalPanel(
-  condition = 'input.jstree1.length == 0',
+  '$("#jstree1").jstree().get_selected().length == 0',  #This works!! 0 1 2 etc.
   div(class="row-fluid span3",
       actionButton(inputId="btnCloneScen", label="Clone and save scenario", styleclass = "success"),
       actionButton(inputId="btnFindScen" , label="Find &replace scenario", styleclass = "success"),
@@ -21,23 +21,36 @@ conditionPanelNoneSelected = conditionalPanel(
       shinyalert(id = "cloneScen"),
       hr())
 )
-                                              
-conditionPanel1 = conditionalPanel(condition = 
-    #'input.jstree1.length == 1', #perfect
-    # THE FOLLOWING WORKS TOO!
-    '$("#jstree1").jstree().get_selected().length == 1',  #This works!! 0 1 2 etc.
+  
+outputPreamble = 'window.Shiny.shinyapp.$bindings.'
+
+conditionPanel_1_insert = conditionalPanel(condition = 
+    'input.jstree1.length == 1', #perfect
+    #'
+    #  '($("#jstree1").jstree().get_selected().length == 1)', # & (" %&%
+    #  outputPreamble %&% 'treeSelectionDepth == 2)',
     ## THE FOLLOWING expression shows #j1_2 etc:
     ## 'alert($("#jstree1").jstree().get_selected().toString())',  
     actionButton(inputId="btnRemoveInsert" , label="Remove insert", styleclass = "success"),
     actionButton(inputId="btnCloneInsert" , label="Clone insert", styleclass = "success"),
     actionButton(inputId="btnEditInsert" , label="Edit insert", styleclass = "success"),
+    actionButton(inputId="btnAddRequirement" , label="Add a needed Variable", styleclass = "success"),
     textOutput("selectedNode"),
     hr()
 )
+# conditionPanel_1_variable = 
+#   conditionalPanel(condition = 
+#                      "($('#jstree1').jstree().get_selected().length == 1) & (" %&%
+#                      outputPreamble %&% 'treeSelectionDepth == 3)',
+#                    HTML("Selected one variable."),
+#                    textOutput("selectedNode"),
+#                    hr()
+#   )
 conditionPanelMoreThan1 = 
   ###  Buttons when > 1 items are selected:
-  conditionalPanel(condition =  'input.jstree1.length > 1',
-                   # 'output.moreThanOneSelected == true', 
+  conditionalPanel(
+    '$("#jstree1").jstree().get_selected().length > 1',  #This works!! 0 1 2 etc.
+    # 'output.moreThanOneSelected == true', 
                    actionButton(inputId="btnSaveListOfInserts" , label="btnSaveListOfInserts", styleclass = "success"),
                    textOutput("selectedNodes"),
                    hr()
@@ -51,7 +64,8 @@ scenarioPanel = tabPanel("Current scenario",
                                    label="scenario name",
                                    value=currentScenario@name),
                          conditionPanelNoneSelected,
-                         conditionPanel1,
+#                         conditionPanel_1_insert,
+#                         conditionPanel_1_variable,
                          conditionPanelMoreThan1,
                          div(style="overflow:auto; height:800px", 
                          myTree),
