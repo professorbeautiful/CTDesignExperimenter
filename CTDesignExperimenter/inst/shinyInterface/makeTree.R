@@ -4,25 +4,26 @@ insertVGSubTree = function(insertName, insertStyle="simple") {
     return(insertName)
   else if(insertStyle=="simple"){  ### extract vg components.
     info = list(paste("outputname:", vg@outputVariable@name),
-         paste("code:", paste(body(vg@generatorCode), 
+         paste(":", paste(body(vg@generatorCode), 
                               collapse="; "))         
       )
-    info = list(info)
+    info = list(generator=info)
     names(info) = insertName
     return(info)    
   } else { ## show variables and parameters
     needed = sapply(vg@requirements, 
                           function(v)paste0("needs:",
                                            capture.output(v)))
+    #names(needed) = "needed"
     info = as.list(needed)
     codeInfo = paste("code:", 
                      gsub(fixed=TRUE, "{;", "{",
                           paste(printFunctionBody(vg@generatorCode), 
                                      collapse="; ")))
-    info = c(info, codeInfo)
+    info = c(info, generator=codeInfo)
     outputVarInfo = 
       paste0("provides:", capture.output(vg@outputVariable))
-    info = c(info, outputVarInfo)
+    info = c(info, list(outputVarInfo))
     if(length(vg@parameters > 0)){
       parameterInfo = #vg@parameters 
         paste0("param: ", names(vg@parameters), "=", unlist(vg@parameters))
