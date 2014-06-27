@@ -89,15 +89,28 @@ shinyServer(function(input, output, session) {
     returnvalue
   })
   
+  observe({
+    input$btnAddScen  ### Make reactive to button.
+    updateTabsetPanel(session, "tabsetID", selected = "Experiment")
+    catn("==== doing updateTabsetPanel to Experiment")
+  })  
+# reactive({input$btnAddScen; 
+#           addScenarioToExperiment(currentScenario@name)} )
+
   output$experimentTableOut = renderTable({
-    input$btnAddScen
+    input$btnAddScen  ### Make reactive to button.
     experimentTable[nrow(experimentTable)+1, ] <<- NA
-    rownames(experimentTable) [nrow(experimentTable)] <<- 
-      currentScenario@name
+    catn("==== appended...")
+    print(rownames(experimentTable))
+    print(input$scenarioName)
+    try(
+      rownames(experimentTable) [nrow(experimentTable)] <<- 
+        input$scenarioName
+    )
+    catn("==== rownames changed...")
     print(experimentTable)
   })
   
-  reactive({input$btnAddScen; addScenarioToExperiment(currentScenario@name)} )
   
   observe({
     input$btnCloneScen    # Trigger if clicked
