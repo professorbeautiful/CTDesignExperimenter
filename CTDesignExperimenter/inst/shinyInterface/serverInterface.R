@@ -90,9 +90,10 @@ shinyServer(function(input, output, session) {
   })
   
   observe({
-    input$btnAddScen  ### Make reactive to button.
-    updateTabsetPanel(session, "tabsetID", selected = "Experiment")
-    catn("==== doing updateTabsetPanel to Experiment")
+    if(input$btnAddScen > 0) { ### Make reactive to button.
+      updateTabsetPanel(session, "tabsetID", selected = "Experiment")
+      catn("==== doing updateTabsetPanel to Experiment")
+    }
   })  
 # reactive({input$btnAddScen; 
 #           addScenarioToExperiment(currentScenario@name)} )
