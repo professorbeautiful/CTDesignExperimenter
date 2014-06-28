@@ -41,7 +41,7 @@ shinyServer(function(input, output, session) {
         rValues$treeSelectionIndex = paste(treeSelection[ , "index"], collapse=" & ")
         rValues$treeSelectionDepth = 
           length(strsplit(split = "_",
-                          treeSelection[ 1, "index"]) [[1]])
+                          treeSelection[ 1, "index"]) [[1]]) - 1
       }
       else {
         rValues$treeSelectionText = ""

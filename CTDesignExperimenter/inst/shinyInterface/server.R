@@ -37,15 +37,20 @@ shinyServer(function(input, output, session) {
                                                treeSelection[ , "text"] ))
         cat("Entered treeObserver. rValues$treeSelection is:\n")
         print(treeSelection)
-        rValues$treeSelectionText = treeSelection[ , "text"]
-        rValues$treeSelectionIndex = treeSelection[ , "index"]
+        rValues$treeSelectionText = paste(treeSelection[ , "text"], collapse=" & ")
+        rValues$treeSelectionIndex = paste(treeSelection[ , "index"], collapse=" & ")
         rValues$treeSelectionDepth = 
           length(strsplit(split = "_",
-                          nchar(treeSelection[ , "index"])))
+                          treeSelection[ 1, "index"]) [[1]]) - 1
+      }
+      else {
+        rValues$treeSelectionText = ""
+        rValues$treeSelectionIndex = ""
+        rValues$treeSelectionDepth = 0
+          
       }
     }
   )
-  
   output$treeSelectionText = renderText(rValues$treeSelectionText)
   output$treeSelectionIndex = renderText(rValues$treeSelectionIndex)
   output$treeSelectionDepth = renderText(rValues$treeSelectionDepth)
@@ -90,9 +95,10 @@ shinyServer(function(input, output, session) {
   })
   
   observe({
-    input$btnAddScen  ### Make reactive to button.
-    updateTabsetPanel(session, "tabsetID", selected = "Experiment")
-    catn("==== doing updateTabsetPanel to Experiment")
+    if(input$btnAddScen > 0) { ### Make reactive to button.
+      updateTabsetPanel(session, "tabsetID", selected = "Experiment")
+      catn("==== doing updateTabsetPanel to Experiment")
+    }
   })  
 # reactive({input$btnAddScen; 
 #           addScenarioToExperiment(currentScenario@name)} )

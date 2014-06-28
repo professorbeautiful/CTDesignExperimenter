@@ -12,6 +12,7 @@ tagToOpenTree =
     , '                   };
        $(document).ready(openTree);'))
 
+
 conditionPanelNoneSelected = conditionalPanel(
   '$("#jstree1").jstree().get_selected().length == 0',  #This works!! 0 1 2 etc.
   div(class="row-fluid span3",
@@ -22,11 +23,14 @@ conditionPanelNoneSelected = conditionalPanel(
       hr())
 )
   
-outputPreamble = 'window.Shiny.shinyapp.$bindings.'
+outputPreamble <<- 'window.Shiny.shinyapp.$bindings.'
+
+leafDepthJSfunction = singleton(tags$script(
+  "function leafDepth() { return " %&% outputPreamble %&% 
+    " treeSelectionDepth.el.textContent; }; "))  
 
 conditionPanel_1_insert = conditionalPanel(condition = 
-    'input.jstree1.length == 1', #perfect
-    #'
+  'input.jstree1.length == 1 & (leafDepth() == 2)', 
     #  '($("#jstree1").jstree().get_selected().length == 1)', # & (" %&%
     #  outputPreamble %&% 'treeSelectionDepth == 2)',
     ## THE FOLLOWING expression shows #j1_2 etc:
@@ -35,7 +39,7 @@ conditionPanel_1_insert = conditionalPanel(condition =
     actionButton(inputId="btnCloneInsert" , label="Clone insert", styleclass = "success"),
     actionButton(inputId="btnEditInsert" , label="Edit insert", styleclass = "success"),
     actionButton(inputId="btnAddRequirement" , label="Add a needed Variable", styleclass = "success"),
-    textOutput("selectedNode"),
+    # NOT WORKING  textOutput("selectedNode"),
     hr()
 )
 # conditionPanel_1_variable = 
@@ -64,7 +68,7 @@ scenarioPanel = tabPanel("Current scenario",
                                    label="scenario name",
                                    value=currentScenario@name),
                          conditionPanelNoneSelected,
-#                         conditionPanel_1_insert,
+                         conditionPanel_1_insert,
 #                         conditionPanel_1_variable,
                          conditionPanelMoreThan1,
                          div(style="overflow:auto; height:800px", 
@@ -94,7 +98,8 @@ CSSreference = singleton(tags$head(tags$link(href = "ctde.css",
 myJSincludes = tagList(
   CSSreference ### OK. Works (for text colors)
   , includeScript("www/ctde-types.js") ## It does find this !
-  , includeScript("www/ss-jstree.js") 
+  , includeScript("www/ss-jstree.js")  # and this.
+  , leafDepthJSfunction
 )
 ## The context menu appears with the standard menu, not in place of.
 #  scriptToGetDepths?
@@ -108,7 +113,10 @@ shinyUI(
     header=tagList(myJSincludes,
                    hr(),
                    uiOutput(outputId="debugTools"),
-                   hr()),
+                   hr(),
+                   conditionalPanel(condition = 'true',
+                                    textOutput('treeSelectionDepth' 
+                                              ))),
     # message-handler code causes hang.
     #       singleton(
     #         tags$head(tags$script(src = "message-handler.js"))
