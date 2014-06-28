@@ -29,7 +29,8 @@ swapMeetDir = function(dir) {
   else if(exists(x = "swapDir", where = 1))
     return(get("swapDir", pos=1))
   else {
-    dir = getwd() %&% "/../CTDEswapmeet/"  ## default
+    dir = Sys.getenv("HOME") %&% "/CTDEswapmeet/"  ## default
+    if(!file.exists(dir)) dir.create(dir)
     assign('swapDir', dir, pos=1)
     return(dir)
   }
@@ -124,11 +125,18 @@ if(interactive()) {
  seeSwapMeetFile(.Last.value)
 }
 
+latestScenarioName <- function() 
+  rev(dir(swapMeetDir(), pattern="^S_"))[1]
+
 loadLatestScenario = function(setCurrent=TRUE){
-  latestScenarioName <<- rev(dir(swapMeetDir(), pattern="^S_"))[1]
-  latestScenario <<- dget(swapMeetDir() %&% latestScenarioName)
-  if(setCurrent)
-    currentScenario <<-latestScenario
+  catn("swapMeetDir()", swapMeetDir(), "  ", "latestScenarioName:", latestScenarioName())
+  if(!is.na(latestScenarioName())) {
+    latestScenarioFile <<- swapMeetDir() %&% latestScenarioName()
+    latestScenario <<- dget(latestScenarioFile)
+    catn(class(latestScenario))
+    if(setCurrent)
+      currentScenario <<-latestScenario
+  }
   invisible()
 }
 
