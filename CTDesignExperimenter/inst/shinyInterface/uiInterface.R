@@ -12,6 +12,7 @@ tagToOpenTree =
     , '                   };
        $(document).ready(openTree);'))
 
+
 conditionPanelNoneSelected = conditionalPanel(
   '$("#jstree1").jstree().get_selected().length == 0',  #This works!! 0 1 2 etc.
   div(class="row-fluid span3",
@@ -22,7 +23,10 @@ conditionPanelNoneSelected = conditionalPanel(
       hr())
 )
   
-outputPreamble = 'window.Shiny.shinyapp.$bindings.'
+outputPreamble <<- 'window.Shiny.shinyapp.$bindings.'
+
+leafDepthJSfunction = singleton(tags$script(
+  "function leafDepth() { " %&% outputPreamble %&% "treeSelectionDepth; }"))
 
 conditionPanel_1_insert = conditionalPanel(condition = 
     'input.jstree1.length == 1', #perfect
@@ -35,7 +39,7 @@ conditionPanel_1_insert = conditionalPanel(condition =
     actionButton(inputId="btnCloneInsert" , label="Clone insert", styleclass = "success"),
     actionButton(inputId="btnEditInsert" , label="Edit insert", styleclass = "success"),
     actionButton(inputId="btnAddRequirement" , label="Add a needed Variable", styleclass = "success"),
-    textOutput("selectedNode"),
+    # NOT WORKING  textOutput("selectedNode"),
     hr()
 )
 # conditionPanel_1_variable = 
@@ -94,7 +98,8 @@ CSSreference = singleton(tags$head(tags$link(href = "ctde.css",
 myJSincludes = tagList(
   CSSreference ### OK. Works (for text colors)
   , includeScript("www/ctde-types.js") ## It does find this !
-  , includeScript("www/ss-jstree.js") 
+  , includeScript("www/ss-jstree.js")
+  ,leafDepthJSfunction
 )
 ## The context menu appears with the standard menu, not in place of.
 #  scriptToGetDepths?

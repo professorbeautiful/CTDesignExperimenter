@@ -37,15 +37,20 @@ shinyServer(function(input, output, session) {
                                                treeSelection[ , "text"] ))
         cat("Entered treeObserver. rValues$treeSelection is:\n")
         print(treeSelection)
-        rValues$treeSelectionText = treeSelection[ , "text"]
-        rValues$treeSelectionIndex = treeSelection[ , "index"]
+        rValues$treeSelectionText = paste(treeSelection[ , "text"], collapse=" & ")
+        rValues$treeSelectionIndex = paste(treeSelection[ , "index"], collapse=" & ")
         rValues$treeSelectionDepth = 
           length(strsplit(split = "_",
-                          nchar(treeSelection[ , "index"])))
+                          treeSelection[ 1, "index"]) [[1]])
+      }
+      else {
+        rValues$treeSelectionText = ""
+        rValues$treeSelectionIndex = ""
+        rValues$treeSelectionDepth = 0
+          
       }
     }
   )
-  
   output$treeSelectionText = renderText(rValues$treeSelectionText)
   output$treeSelectionIndex = renderText(rValues$treeSelectionIndex)
   output$treeSelectionDepth = renderText(rValues$treeSelectionDepth)
