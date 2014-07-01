@@ -42,7 +42,7 @@ leafTextJSfunction = singleton(tags$script(
   "))
 
 conditionPanel_1_insert = conditionalPanel(condition = 
-       'input.jstree1.length == 1 & (leafDepth() == 2)', 
+       '($("#jstree1").jstree().get_selected().length == 1) & (leafDepth() == 2)', 
      ## THE FOLLOWING expression shows #j1_2 etc:
      ## 'alert($("#jstree1").jstree().get_selected().toString())',  
      actionButton(inputId="btnRemoveInsert" , label="Remove insert", css.class = "treeclass_2"),
@@ -53,14 +53,14 @@ conditionPanel_1_insert = conditionalPanel(condition =
 )
 conditionPanel_1_vg_code = 
   conditionalPanel(condition = 
-                     'input.jstree1.length == 1 & (leafDepth() == 3)
+                     '($("#jstree1").jstree().get_selected().length == 1) & (leafDepth() == 3)
                    & is_code()', 
                    actionButton(inputId="btnEditCode" , label="Edit code", css.class = "treeclass_3"),
                    hr()
   )
 conditionPanel_1_needed_var = 
   conditionalPanel(condition = 
-                     'input.jstree1.length == 1 & (leafDepth() == 3)
+                     '($("#jstree1").jstree().get_selected().length == 1) & (leafDepth() == 3)
                    & is_needed()', 
                    HTML("Selected one variable."),
                    actionButton(inputId="btnRemoveVariable" , label="Remove Variable", css.class = "treeclass_3"),
