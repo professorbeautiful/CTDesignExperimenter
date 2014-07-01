@@ -67,8 +67,8 @@ makeTree = function(insertStyle="simple",
 #     else
       names(scenarioTree)[[i]] = paste(names(scenarioTree)[[i]], 
                                        " (", length(scenarioTree[[i]]), ")")
-      if(length(scenarioTree[[i]])==0)
-        scenarioTree[[i]] [[1]] = "NO INSERTS HERE"
+#       if(length(scenarioTree[[i]])==0)
+#         scenarioTree[[i]] [[1]] = "NO INSERTS HERE"
   }
   print(attributes(scenarioTree))
   assign("scenarioMap", scenarioMap, pos=1)
@@ -148,7 +148,7 @@ function (x, addLevelClass=TRUE, addLevelType=TRUE, addIndex=TRUE, level=0, inde
     return(a)
   }
   if (is.list(x)) {
-    ind <- seq(1:length(x))
+    ind <- seq(along=x)
     res <- lapply(ind, handle, x, level=level)
     return(tags$ul(res))
   }
