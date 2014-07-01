@@ -51,6 +51,8 @@ conditionPanel_1_insert = conditionalPanel(condition =
      actionButton(inputId="btnAddRequirement" , label="Add a needed Variable", css.class = "treeclass_2"),
      hr()
 )
+
+###  TODO:   this condition is not working correctly.
 conditionPanel_1_vg_code = 
   conditionalPanel(condition = 
                      '($("#jstree1").jstree().get_selected().length == 1) & (leafDepth() == 3)
