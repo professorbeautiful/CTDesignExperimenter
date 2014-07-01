@@ -119,7 +119,7 @@ shinyServer(function(input, output, session) {
   
   
   observe({
-    input$btnCloneScen    # Trigger if clicked
+   if( input$btnCloneScen > 0) {   # Trigger if clicked
     cat("\nSaving scenario\n")
     assign(isolate(input$scenarioName), pos = 1,
            currentScenario
