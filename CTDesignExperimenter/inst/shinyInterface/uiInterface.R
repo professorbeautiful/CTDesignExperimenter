@@ -93,7 +93,7 @@ scenarioPanel = tabPanel("Current scenario",
                                               div(class="span1"
                                                   ,tags$em("Selection")
                                               ),
-                                              div(class="span1", 
+                                              div(class="span1" 
                                                   ,textOutput('treeSelectionDepth')
                                               ),
                                               div(class="span9"
