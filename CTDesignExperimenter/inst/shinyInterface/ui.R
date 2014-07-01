@@ -75,6 +75,20 @@ scenarioPanel = tabPanel("Current scenario",
                          conditionPanel_1_insert,
 #                         conditionPanel_1_variable,
                          conditionPanelMoreThan1,
+                         conditionalPanel(condition = 
+                                            '$("#jstree1").jstree().get_selected().length > 0',
+                                          div(class="row-fluid",
+                                              div(class="span1"
+                                                  ,tags$em("Selection")
+                                              ),
+                                              div(class="span1", 
+                                                  ,textOutput('treeSelectionDepth')
+                                              ),
+                                              div(class="span9"
+                                                  ,textOutput('treeSelectionText')
+                                              )
+                                            ) 
+                         ),
                          div(style="overflow:auto; height:800px", 
                          myTree),
                          tagToOpenTree 
