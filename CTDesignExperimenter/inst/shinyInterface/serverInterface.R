@@ -57,7 +57,7 @@ shinyServer(function(input, output, session) {
   # treeObserver$onInvalidate(function() print("jstree1 selection changed!"))
   
   output$selectedNode = renderText({
-    print(paste0("selectedNodes ", input$jstree1, collapse = ", "))
+    print(paste0("selectedNodes ", paste(input$jstree1, collapse = ", ")))
   })
   output$selectedNodes = renderText({  ## Must have a distinct name!
     print(paste0("selectedNodes ", input$jstree1, collapse = ", "))
