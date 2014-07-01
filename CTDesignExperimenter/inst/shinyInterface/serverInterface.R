@@ -126,10 +126,11 @@ shinyServer(function(input, output, session) {
            ##TODO: update currentScenario 
            ## responding to deletes, insertions, edits in place.
     )
-    showshinyalert(session, id="cloneScen",
+    showshinyalert(session, id="cloneScen", styleclass = "inverse",
                    HTMLtext=paste(
                      "Saving scenario, name = ",
                      isolate(input$scenarioName)))
     #window.prompt("sometext","defaultText");
+  }
   })
 }) 
