@@ -1,9 +1,9 @@
 Package: CTDesignExperimenter
 Type: Package
 Title: Clinical Trial Simulation Experiment Platform
-Version: 0.76
-Date: 2014-03-11
-Author: Yuanyuan Wang and Roger Day
+Version: 0.80
+Date: 2014-07-01
+Author: Roger Day
 Maintainer: Roger Day <day01@pitt.edu>
 Description: This package presents a highly sharable simulation experiment platform for evaluating clinical trial designs. The code base relies on S4 classes and methods, but details are hidden as much as possible. A scenario is a population model, study design, and outcome model.  In addition there are evaluation criterion  objects.  An action queue implements the simulation and allows for complex decision making at the patient level or CT level. The exchange of common data elements provides interoperability among the objects.
 License: GPL (>=2)
