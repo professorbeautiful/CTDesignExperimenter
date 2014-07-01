@@ -1,14 +1,44 @@
-/* ctde theme */
-/* icon: url("www/BLOCK.gif") left center no-repeat; */
-.treeclass_1 {
+/* http://www.w3schools.com/cssref/trysel.asp */
+
+.noSelection {
+  background-color:black;
+}
+
+/* li.treeclass_1 > .jstree-icon { PLACED to the left, not replacing old icon */
+/* li.treeclass_1 > .jstree-ocl { */
+a.jstree-anchor ,
+a.jstree-anchor > i.jstree-icon,
+li > ul > .jstree-icon
+{
+  background: none !important; 
+}
+li.treeclass_1 > a.jstree-anchor ,
+li.treeclass_1 > ul > .jstree-icon {
+  background: url("BLOCK32.png") 0px 0px no-repeat !important; 
+}
+li.treeclass_2 > a.jstree-anchor ,
+li.treeclass_2 > ul > .jstree-icon {
+  background: url("Insert32.png") 0px 0px no-repeat !important; 
+}
+
+
+.treeclass_1, .BLOCKlevel {
   background-color:#d0e4fe;
   color:blue;
-  icon:"./BLOCK.gif";
 }
-.treeclass_2 {
+
+/*.jstree-default > li .treeclass_1  {*/
+li.treeclass_1  { 
+	/*icon:"www/BLOCK.gif";*/
+	/* icon: url("BLOCK.gif") 0px 0px left center no-repeat !important; */
+	/* icon: "BLOCK32.png" 0px 0px left center no-repeat !important; */
+}
+
+.treeclass_2, .INSERTlevel {
   background-color:#d0e4fe;
-  color:orange;
+  color:darkred;
 }
-.treeclass_3 {
+
+.treeclass_3, .VARlevel{
   color:green;
 }
