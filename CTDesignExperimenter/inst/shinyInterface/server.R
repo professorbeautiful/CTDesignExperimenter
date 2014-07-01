@@ -24,7 +24,7 @@ shinyServer(function(input, output, session) {
     #     observers use eager evaluation; as soon as their dependencies change, they
     #     schedule themselves to re-execute.
     label="myTreeObserver", {
-      nColumnsInTreeValue = 5
+      nColumnsInTreeValue = 6
       if(length(input$jstree1) > 0) {
         nSelected <<- length(input$jstree1) / nColumnsInTreeValue
         rValues$nSelected <<- nSelected
@@ -119,17 +119,18 @@ shinyServer(function(input, output, session) {
   
   
   observe({
-    input$btnCloneScen    # Trigger if clicked
+   if( input$btnCloneScen > 0) {   # Trigger if clicked
     cat("\nSaving scenario\n")
     assign(isolate(input$scenarioName), pos = 1,
            currentScenario
            ##TODO: update currentScenario 
            ## responding to deletes, insertions, edits in place.
     )
-    showshinyalert(session, id="cloneScen",
+    showshinyalert(session, id="cloneScen", styleclass = "inverse",
                    HTMLtext=paste(
                      "Saving scenario, name = ",
                      isolate(input$scenarioName)))
     #window.prompt("sometext","defaultText");
+  }
   })
 }) 
