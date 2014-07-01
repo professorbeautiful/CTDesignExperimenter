@@ -24,7 +24,7 @@ shinyServer(function(input, output, session) {
     #     observers use eager evaluation; as soon as their dependencies change, they
     #     schedule themselves to re-execute.
     label="myTreeObserver", {
-      nColumnsInTreeValue = 5
+      nColumnsInTreeValue = 6
       if(length(input$jstree1) > 0) {
         nSelected <<- length(input$jstree1) / nColumnsInTreeValue
         rValues$nSelected <<- nSelected
