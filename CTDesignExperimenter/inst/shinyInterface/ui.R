@@ -16,9 +16,13 @@ tagToOpenTree =
 conditionPanelNoneSelected = conditionalPanel(
   '$("#jstree1").jstree().get_selected().length == 0',  #This works!! 0 1 2 etc.
   div(class="row-fluid span3",
-      actionButton(inputId="btnCloneScen", label="Clone and save scenario", styleclass = "success"),
-      actionButton(inputId="btnFindScen" , label="Find &replace scenario", styleclass = "success"),
-      actionButton(inputId="btnAddScen" , label="Add scenario to experiment", styleclass = "success"),
+      actionButton(inputId="btnCloneScen", 
+                   label="Clone and save scenario", 
+                   css.class = "BLOCKlevel"),
+      actionButton(inputId="btnFindScen" , 
+                   label="Find &replace scenario", css.class = "BLOCKlevel"),
+      actionButton(inputId="btnAddScen" , 
+                   label="Add scenario to experiment", css.class = "BLOCKlevel"),
       shinyalert(id = "cloneScen"),
       hr())
 )
