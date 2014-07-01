@@ -136,11 +136,15 @@ function (x, addLevelClass=TRUE, addLevelType=TRUE, addIndex=TRUE, level=0, inde
     ### This line is added to shinysky:::jstree.obj
     if(addLevelClass)
       a <- tagAppendAttributes(a, class=paste0("treeclass_", level))
-    if(addLevelType)
+    if(addLevelType) {
       a <- tagAppendAttributes(a, type=paste0("level_", level))
+      a <- tagAppendAttributes(a, rel=paste0("level_", level))
+    }
     if(addIndex)
       a <- tagAppendAttributes(a, index=index)
     # using the jstree plugin "types".
+    #a <- tagAppendAttributes(a, `data-jstree`='{icon:"www/BLOCK.gif"}')
+    # direct approach doesnt work either
     return(a)
   }
   if (is.list(x)) {
