@@ -1,16 +1,13 @@
-insertVGSubTree = function(insertName, insertStyle="simple") {
-  vg = get(insertName)
-  if(insertStyle=="name-only")
-    return(insertName)
-  else if(insertStyle=="simple"){  ### extract vg components.
+insertVGSubTree = function(insert, insertStyle="full") {
+  if(insertStyle=="simple"){  ### extract vg components.
     info = list(paste("outputname:", vg@outputVariable@name),
          paste(":", paste(body(vg@generatorCode), 
                               collapse="; "))         
       )
     info = list(generator=info)
-    names(info) = insertName
+    names(info) = insert@filename
     return(info)    
-  } else { ## show variables and parameters
+  } else { ## "full" ---  show variables and parameters
     needed = sapply(vg@requirements, 
                           function(v)paste0("needs:",
                                            capture.output(v)))
@@ -30,13 +27,12 @@ insertVGSubTree = function(insertName, insertStyle="simple") {
       info = c(info, parameterInfo)
     }
     info = list(info)
-    names(info) = insertName
+    names(info) = insert@filename
     return(info)    
   }
 }
 
-makeTree = function(insertStyle="simple", 
-                    scenario=defaultScenario) {
+makeTree = function(scenario=defaultScenario, insertStyle="full") {
   scenarioTree = 
     sapply(scaffoldObjectNames, simplify=F, function(x) list())
   scenarioMap = data.frame(insertName=names(scenario@inserts))
@@ -57,7 +53,7 @@ makeTree = function(insertStyle="simple",
     cat(thisBranchNum, " ")
     scenarioTree[[thisBranchNum]] = c(
       scenarioTree[[thisBranchNum]], 
-      insertVGSubTree(insertName, insertStyle)) 
+      insertVGSubTree(insert, insertStyle)) 
     scenarioMap[insertName, "insertIndex"] = length(scenarioTree[[thisBranchNum]])
     
   }
@@ -77,22 +73,37 @@ makeTree = function(insertStyle="simple",
 }
 
 
-extractEntry = function(L1=3, L2=4, start=jstree.obj(scenarioTree)) {
+extractTreeText = function(L1=3, L2=4, L3=1, start=myTreeObj) {
   nodeLevel1 = ## 3rd in scaffold
     start[["children"]][[1]][[L1]]
   ul_node = nodeLevel1[["children"]][[1]][[2]] ### unnumbered list of entries.
   nodeLevel2 = ul_node[["children"]][[1]][[L2]]
   entry = nodeLevel2[["children"]][[1]]
-  entry
+  if(is.null(L3)) return(entry)
+  ul_node = entry[[2]]
+  nodeLevel3 = ul_node[["children"]] [[1]] [[L3]]
+  return(nodeLevel3[["children"]] [[1]] [[2]])
 }
 
-# extractEntry()[[1]]   #  responseDoseThreshold
+# extractTreeText(L3=NULL)[[1]]   #  Correct answer: responseDoseThreshold
+# extractTreeText()   #  Correct answer: "needs:  clearanceRate  ( is.double(x) & (x >= 0) )"
+
+# extractTreeObject = function(L1=3, L2=4, L3=1, start=myTreeObj) {
+#   treeText = extractTreeText(L1,L2,L3,start)
+#   if(is.null(L3))
+#   return()
+# }
+
 # Validation of scenarioMap:
 # for(vg in rownames(scenarioMap) )
 #   catn(vg, extractEntry(scenarioMap[vg, "blockIndex"], scenarioMap[vg, "insertIndex"])[[1]])
 # OK.
 
-findInsertInScenario = function( L1=3, L2=4, scenario) {
+findObjectInScenario = function( index="0_3_4_1", scenario) {
+  levels = strsplit(index, split="_") [[1]] [-1]
+  L1 = as.numeric(levels[1])
+  L2 = as.numeric(levels[2])
+  L3 = as.numeric(levels[3])
   if(missing(scenario)) {
     loadLatestScenario()
     scenario = latestScenario
@@ -101,58 +112,80 @@ findInsertInScenario = function( L1=3, L2=4, scenario) {
   insertSubType = scaffoldInsertSubTypes[L1]
   if( insertSubType == "")
     stop("findInsertInScenario: insertSubType not found")
+  ## The following works ONLY if the scenario insert order within block is not changed.
   insertCount = 0
   for(insertNum in seq(along=scenario@inserts)) {
     if(scenario@inserts[[insertNum]]@insertSubType == insertSubType) {
       insertCount = insertCount + 1
-      if(insertCount == L2)
-        return(scenario@inserts[[insertNum]])
+      if(insertCount == L2) {
+        theInsert = scenario@inserts[[insertNum]]
+        if(is.na(L3))  ### It's an insert
+          return(theInsert)
+        else {
+          nodeText = extractTreeText(L1, L2, L3, makeTree(scenario))
+          slotOrder = cq(needs="requirements", code="generatorCode",
+                         provides="outputVariable", param="parameters")
+          objectList = c(list(),theInsert@requirements, theInsert@generatorCode,
+                         theInsert@outputVariable, theInsert@parameters)
+          return(objectList[[L3]])
+#           if(grep("code:", nodeText) == 1)
+#             return(theInsert@generatorCode)
+#           else if(grep("provides:", nodeText) == 1)
+#             return(theInsert@outputVariable)
+#           else if(grep("needs:", nodeText) == 1) {
+#             
+#             return(theInsert@)
+           }
+        }
+      }
     }
-  }
   return(NULL)
 }
-# findInsertInScenario()
+
+findObjectInScenario("0_3_4")
+findObjectInScenario("0_3_4_1")
+findObjectInScenario("0_3_4_2")
 
 myjstree.obj = 
-function (x, addLevelClass=TRUE, addLevelType=TRUE, addIndex=TRUE, level=0, index="0") 
-{
-  handle <- function(ind, theList, level) {
-    name <- names(theList)[[ind]]
-    if (!is.null(name)) {
-      level=level+1
-      index = paste0(index, "_", ind)
-      a <- tags$li(list(name, 
-                        myjstree.obj(theList[[ind]], 
-                                     addLevelClass=addLevelClass,
-                                     addLevelType=addLevelType,
-                                     addIndex=addIndex,
-                                     level=level,
-                                     index=index
-                        )))
+  function (x, addLevelClass=TRUE, addLevelType=TRUE, addIndex=TRUE, level=0, index="0") 
+  {
+    handle <- function(ind, theList, level) {
+      name <- names(theList)[[ind]]
+      if (!is.null(name)) {
+        level=level+1
+        index = paste0(index, "_", ind)
+        a <- tags$li(list(name, 
+                          myjstree.obj(theList[[ind]], 
+                                       addLevelClass=addLevelClass,
+                                       addLevelType=addLevelType,
+                                       addIndex=addIndex,
+                                       level=level,
+                                       index=index
+                          )))
+      }
+      else {
+        a <- tags$li(theList[[ind]])
+      }
+      ### This line is added to shinysky:::jstree.obj
+      if(addLevelClass)
+        a <- tagAppendAttributes(a, class=paste0("treeclass_", level))
+      if(addLevelType) {
+        a <- tagAppendAttributes(a, type=paste0("level_", level))
+        a <- tagAppendAttributes(a, rel=paste0("level_", level))
+      }
+      if(addIndex)
+        a <- tagAppendAttributes(a, index=index)
+      # using the jstree plugin "types".
+      #a <- tagAppendAttributes(a, `data-jstree`='{icon:"www/BLOCK.gif"}')
+      # direct approach doesnt work either
+      return(a)
+    }
+    if (is.list(x)) {
+      ind <- seq(along=x)
+      res <- lapply(ind, handle, x, level=level)
+      return(tags$ul(res))
     }
     else {
-      a <- tags$li(theList[[ind]])
+      x
     }
-    ### This line is added to shinysky:::jstree.obj
-    if(addLevelClass)
-      a <- tagAppendAttributes(a, class=paste0("treeclass_", level))
-    if(addLevelType) {
-      a <- tagAppendAttributes(a, type=paste0("level_", level))
-      a <- tagAppendAttributes(a, rel=paste0("level_", level))
-    }
-    if(addIndex)
-      a <- tagAppendAttributes(a, index=index)
-    # using the jstree plugin "types".
-    #a <- tagAppendAttributes(a, `data-jstree`='{icon:"www/BLOCK.gif"}')
-    # direct approach doesnt work either
-    return(a)
   }
-  if (is.list(x)) {
-    ind <- seq(along=x)
-    res <- lapply(ind, handle, x, level=level)
-    return(tags$ul(res))
-  }
-  else {
-    x
-  }
-}
