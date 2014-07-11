@@ -7,8 +7,8 @@
 ### the output of my investigations using sys.frames() etc. is at 
 ### /Users/Roger/Dropbox/_HOME/CT-design-simulator---normolle,yuanyuan/fixHtmlEscape.R
 
-
-assignInNamespace(ns="shiny", x="htmlEscape", 
+### htmlEscape was moved from shiny to htmltools.
+assignInNamespace(ns="htmltools", x="htmlEscape", 
                   function(text, attribute=TRUE, browse=TRUE) {
   .htmlSpecials <- list(
     `&` = '&amp;',
