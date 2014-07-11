@@ -63,7 +63,7 @@ output$debugTools = renderUI({
               tag("TD",
                   list(width=120, style="color: blue",
                        checkboxInput(inputId="traceCheckbox", 
-                                     value=TRUE,
+                                     value=FALSE,
                                      label=textOutput("shiny.trace.text")
                        ))),
               tag("TD", list(HTML(paste0(rep("&nbsp;",15), collapse="")))),
