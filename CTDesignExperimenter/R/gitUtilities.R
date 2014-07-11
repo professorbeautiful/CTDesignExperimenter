@@ -96,6 +96,15 @@ writeScenarioFile = function(scenario, commitIt=FALSE, ...) {
     scenario@inserts[[insertName]] = writeInsertFile(
       scenario@inserts[[insertName]])
   }
+  names(scenario@inserts@.Data) = 
+    sapply(scenario@inserts@.Data, slot, "filename")
+  ## Then... surprise!
+#   > names(latestScenario@inserts@.Data) 
+#   NULL
+#   > names(latestScenario@inserts) 
+#   [1] "I_liverFunction_Roger_1404934528.80031.R"         
+#   [2] "I_age_Roger_1404934528.79521.R"     ...
+  
   writeSwapMeetFile(scenario, commitIt=commitIt)
 }
 
@@ -132,8 +141,11 @@ loadLatestScenario = function(setCurrent=TRUE){
   catn("swapMeetDir()", swapMeetDir(), "  ", "latestScenarioName:", latestScenarioName())
   if(!is.na(latestScenarioName())) {
     latestScenarioFile <<- swapMeetDir() %&% latestScenarioName()
-    latestScenario <<- dget(latestScenarioFile)
+    latestScenario <- dget(latestScenarioFile)
     catn(class(latestScenario))
+    names(latestScenario@inserts@.Data) <- sapply(latestScenario@inserts@.Data,
+                                                 slot, name="filename")
+    assign("latestScenario",  latestScenario, pos=1)
     if(setCurrent)
       currentScenario <<-latestScenario
   }
