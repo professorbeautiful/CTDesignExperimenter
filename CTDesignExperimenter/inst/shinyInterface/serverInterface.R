@@ -2,6 +2,7 @@
 
 require(shiny)
 require(shinysky)
+require(shinyTable)
 require("CTDesignExperimenter")
 
 shinyServer(function(input, output, session) {
