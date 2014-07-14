@@ -1,5 +1,5 @@
 output$varEditorUI = renderUI({ 
-  theVar = findObjectInScenario(rValues$treeSelectionIndex)
+  theVar = rValues$theVar
   catn("output$varEditorUI: var is ", capture.output(theVar))
   CHECK<-capture.output(theVar@checkDataType)
   CHECK = gsub("[\t ]+", " ", 
@@ -26,10 +26,39 @@ output$varEditorUI = renderUI({
     renderText({"timestamp: " %&% capture.output(theVar@timestamp)}),
     renderText({"file: " %&% theVar@filename}),
     hr(),
+    actionButton(inputId="btnNewVar" , 
+                 label="New variable", css.class = "treeClass-3"),
     actionButton(inputId="btnSearchVar" , 
-                 label="Search for variable", css.class = "treeClass-3"),
+                 label="Find and load variable", css.class = "treeClass-3"),
     actionButton(inputId="btnSaveVar" , 
-                 label="Save variable", css.class = "treeClass-3")
+                 label="Save variable in scenario", css.class = "treeClass-3"),
+    actionButton(inputId="btnSaveVarAs" , 
+                 label="Save variable as...", css.class = "treeClass-3")
   )
 })
 
+observe({       ### Clear the inputs to create a new variable.
+  if(input$tabsetID=="Editors" & !is.null(input$btnNewVar)){
+    if(input$btnNewVar > 0) {
+      rValues$theVar = 
+        Variable(name = "", description = "", checkDataType = function(x){TRUE})
+    }
+  }
+})
+
+observe({       ### Save Variable in a swapMeet file.
+  if(input$tabsetID=="Editors" & !is.null(input$btnSaveVarAs)){
+    if(input$btnSaveVarAs > 0) {
+      theVar = try(
+        Variable(name = input$varName, 
+                        description = input$varDescription, 
+                        checkDataType = eval(parse(text=input$varCHECK)))) 
+      if(class(theVar) == "try-error")
+        shinyalert("Error in variable: " %&% theVar)
+      else {
+        theVar = writeSwapMeetFile(theVar, verbose = TRUE)
+        rValues$theVar = theVar
+      }
+    }
+  }
+})

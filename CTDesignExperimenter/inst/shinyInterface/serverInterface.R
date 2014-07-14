@@ -60,7 +60,10 @@ shinyServer(function(input, output, session) {
           length(strsplit(split = "_",
                           treeSelection[ 1, "index"]) [[1]]) - 1
         rValues$editingVariable = 
-          (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1)    
+          (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1) 
+        if(rValues$editingVariable) {
+          rValues$theVar = findObjectInScenario(rValues$treeSelectionIndex)
+        }
       }
       else {
         rValues$treeSelectionText = ""
