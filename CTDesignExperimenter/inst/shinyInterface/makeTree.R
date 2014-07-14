@@ -50,7 +50,7 @@ makeTree = function(scenario=defaultScenario, insertStyle="full") {
     scenarioMap[insertName, "blockIndex"] = blockIndex
     scafBlockName = scaffoldObjects$name[blockIndex]
     thisBranchNum = which(scaffoldObjectNames==scafBlockName)
-    cat(thisBranchNum, " ")
+    #cat(thisBranchNum, " ")
     scenarioTree[[thisBranchNum]] = c(
       scenarioTree[[thisBranchNum]], 
       insertVGSubTree(insert, insertStyle)) 
@@ -66,7 +66,7 @@ makeTree = function(scenario=defaultScenario, insertStyle="full") {
 #       if(length(scenarioTree[[i]])==0)
 #         scenarioTree[[i]] [[1]] = "NO INSERTS HERE"
   }
-  print(attributes(scenarioTree))
+  # print(attributes(scenarioTree))
   assign("scenarioMap", scenarioMap, pos=1)
   attributes(scenarioTree) = c(attributes(scenarioTree), scenarioMap=scenarioMap)
   scenarioTree
