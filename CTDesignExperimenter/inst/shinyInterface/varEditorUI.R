@@ -18,14 +18,6 @@ output$varEditorUI = renderUI({
   div(
     HTML(" Editing selected Variable"), 
     hr(),
-    textInput("varName", label = "name", theVar@name),
-    textInput("varDescription", label = "description", theVar@description),
-    textInput("varCHECK", label = "check", CHECK),
-    hr(),
-    renderText({"author: " %&% theVar@author}),
-    renderText({"timestamp: " %&% capture.output(theVar@timestamp)}),
-    renderText({"file: " %&% theVar@filename}),
-    hr(),
     actionButton(inputId="btnNewVar" , 
                  label="New variable", css.class = "treeClass-3"),
     actionButton(inputId="btnSearchVar" , 
@@ -36,19 +28,34 @@ output$varEditorUI = renderUI({
                  label="Save variable as...", css.class = "treeClass-3"),
     hr(),
     conditionalPanel("input.btnSearchVar > 0",
-                     fileInput("varSearchFileInput", "varSearchFileInput"))
+                     select2Input("varSearchFileInput", "varSearchFileInput",
+                                 #selectize=FALSE,
+                                 choices=rev(dir(swapMeetDir(), pattern = "^V_")),
+                                 width="100%")),
+    #fileInput("varSearchFileInput", "varSearchFileInput"))
+    hr(),
+    textInput("varName", label = "name", theVar@name),
+    textInput("varDescription", label = "description", theVar@description),
+    textInput("varCHECK", label = "check", CHECK),
+    hr(),
+    renderText({"author: " %&% theVar@author}),
+    renderText({"timestamp: " %&% capture.output(theVar@timestamp)}),
+    renderText({"file: " %&% theVar@filename})
   )
 })
 
-observe({       ### Clear the inputs to create a new variable.
+observe({       ### Find and load a variable from a file.
   if(input$tabsetID=="Editors" & !is.null(input$btnSearchVar)){
-    if(input$btnSearchVar > 0) {
+    if(input$btnSearchVar > 0 & !is.null(input$varSearchFileInput)) {
       try({
-        fileInfo = input$varSearchFileInput
-        print(fileInfo)
-        theVar = source(fileInfo$datapath, local = TRUE)$value
+#         fileInfo = input$varSearchFileInput
+#         print(fileInfo)
+#        theVar = source(fileInfo$datapath, local = TRUE)$value
+        theVar = source(swapMeetDir() %&% input$varSearchFileInput, 
+                        local = TRUE)$value
         print(str(theVar))
         if(class(theVar) == "Variable") rValues$theVar = theVar
+        else shinyalert("Sorry, it wasn't a Variable file.")
       })
     }
   }
