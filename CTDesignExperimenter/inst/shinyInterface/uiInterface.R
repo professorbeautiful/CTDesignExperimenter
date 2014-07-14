@@ -91,33 +91,37 @@ conditionPanel_moreThan1_insert =
     hr()
   )
 
-scenarioPanel = tabPanel("Current scenario",
-                         #div(class="row-fluid span1",
-                         textInput(inputId="scenarioName",  
-                                   label="scenario name",
-                                   value=currentScenario@name),
-                         conditionPanelNoneSelected,
-                         conditionPanel_1_insert,
-                         conditionPanel_1_vg_code,
-                         conditionPanel_1_needed_var,
-                         conditionPanel_moreThan1_insert,
-                         conditionalPanel(condition = 
-                                            '$("#jstree1").jstree().get_selected().length > 0',
-                                          div(class="row-fluid",
-                                              div(class="span1"
-                                                  ,tags$em("Selection")
-                                              ),
-                                              div(class="span1" 
-                                                  ,textOutput('treeSelectionDepth')
-                                              ),
-                                              div(class="span9"
-                                                  ,textOutput('treeSelectionText')
-                                              )
-                                            ) 
-                         ),
-                         div(style="overflow:auto; height:800px", 
-                             myTree),
-                         tagToOpenTree 
+scenarioPanel = tabPanel(
+  "Current scenario",
+  #div(class="row-fluid span1",
+  textInput(inputId="scenarioName",  
+            label="scenario name",
+            value=currentScenario@name),
+  conditionPanelNoneSelected,
+  conditionPanel_1_insert,
+  conditionPanel_1_vg_code,
+  conditionPanel_1_needed_var,
+  conditionPanel_moreThan1_insert,
+  conditionalPanel(condition = 
+                     '$("#jstree1").jstree().get_selected().length > 0',
+                   #$("#modalContents").dialog({bgiframe: true, height: 140, modal: true});
+                   div(class="row-fluid", 
+                       ### style='display:none'?? 
+                       ###  We only need these textOutputs to calculate JS conditions.
+                       div(class="span1"
+                           ,tags$em("Selection")
+                       ),
+                       div(class="span1" 
+                           ,textOutput('treeSelectionDepth')
+                       ),
+                       div(class="span9"
+                           ,textOutput('treeSelectionText')
+                       )
+                   ) 
+  ),
+  div(style="overflow:auto; height:800px", 
+      myTree),
+  tagToOpenTree 
 )
 
 editorPanel = #conditionalPanel(condition = 'true',
