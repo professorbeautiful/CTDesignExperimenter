@@ -3,8 +3,12 @@ cat("======== aaa.R  ================\n")
 
 #printFunctionBody = function(f) attributes(attributes(f)$srcref)$srcfile$lines
 
-printFunctionBody = function(f) 
-  (deparse((body(f))))
+printFunctionBody = function(f) {
+  theBody = capture.output(f)
+  theBody = gsub("^<environment.*", "", theBody) ## Remove env line if not .Primitive
+  gsub("[\t ]+", " ", paste(collapse="", theBody ) ) 
+}
+##  Previously (deparse((body(f)))), but doesnt work on .Primitives
 
 ### Convenience utilities borrowed from mvbutils
 
