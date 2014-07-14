@@ -54,6 +54,8 @@ makeTree = function(scenario=defaultScenario, insertStyle="full") {
     scenarioTree[[thisBranchNum]] = c(
       scenarioTree[[thisBranchNum]], 
       insertVGSubTree(insert, insertStyle)) 
+    names( scenarioTree[[thisBranchNum]]) [length( scenarioTree[[thisBranchNum]])] =
+      insertName
     scenarioMap[insertName, "insertIndex"] = length(scenarioTree[[thisBranchNum]])
     
   }
