@@ -132,9 +132,15 @@ myJSincludes = tagList(
   , CSSreference ### OK. Works (for text colors)
   , leafDepthJSfunction
   , leafTextJSfunction
+##  Fiddling with jqueryUI popups:
+popupJSincludes = tagList(
+  includeCSS("www/css/jquery-ui.css"),  
+  includeScript("www/js/jquery-ui.js")
+  #, includeScript("www/js/varEditPopup.js")
 )
+# also see jQuery-dialogextend,  https://github.com/ROMB/jquery-dialogextend
+
 ## The context menu appears with the standard menu, not in place of.
-#  scriptToGetDepths?
 
 shinyUI(
   navbarPage(
@@ -144,6 +150,9 @@ shinyUI(
       h4("CTDE: Clinical trial design experimenter"),
     header=tagList(myJSincludes,
                    hr(),
+                   popupJSincludes,
+                   # textInput("console", "Enter an R Command"),
+                   # uiOutput("varEditPopup"), ### Alternative to using tabsets.
                    uiOutput(outputId="debugTools"),
                    hr()),
     # message-handler code causes hang.

@@ -14,6 +14,11 @@ shinyServer(function(input, output, session) {
   rValues = reactiveValues()
   rValues$editingVariable = FALSE
   
+#   output$varEditPopup <- renderPrint({
+#     code <- input$console
+#     output <- eval( parse( text=code ) )
+#     return(output)
+#   })
   observe(label="editingVariableObserver", {
     catn("editingVariableObserver: rValues$editingVariable = ", rValues$editingVariable)
     if(rValues$editingVariable) 
@@ -64,6 +69,24 @@ shinyServer(function(input, output, session) {
   output$selectedNodes = renderText({  ## Must have a distinct name!
     print(paste0("selectedNodes ", input$jstree1, collapse = ", "))
   })
+  
+  popupInsertEditor = function() {
+    cat("popupInsertEditor is called\n")
+  } # place holder
+  popupVariableEditor = function() {
+    cat("popupVariableEditor is called\n")
+  } # place holder
+  
+  onNodeClick = observe(label="onNodeClick",
+                          {
+                            if(rValues$treeSelectionDepth == 2) {
+                              popupInsertEditor()
+                            }
+                            if(rValues$treeSelectionDepth == 3) {
+                              popupVariableEditor()
+                            }
+                          })
+  
   
   output$oneRunResults = renderUI({
     input$btnRunOne ## to kick it off.
