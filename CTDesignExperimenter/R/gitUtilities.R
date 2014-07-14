@@ -137,8 +137,9 @@ if(interactive()) {
 latestScenarioName <- function() 
   rev(dir(swapMeetDir(), pattern="^S_"))[1]
 
-loadLatestScenario = function(setCurrent=TRUE){
-  catn("swapMeetDir()", swapMeetDir(), "  ", "latestScenarioName:", latestScenarioName())
+loadLatestScenario = function(setCurrent=TRUE, verbose=FALSE){
+ if(verbose) 
+   catn("swapMeetDir()", swapMeetDir(), "  ", "latestScenarioName:", latestScenarioName())
   if(!is.na(latestScenarioName())) {
     latestScenarioFile <<- swapMeetDir() %&% latestScenarioName()
     latestScenario <- dget(latestScenarioFile)
