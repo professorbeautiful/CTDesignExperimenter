@@ -29,20 +29,20 @@ conditionPanelNoneSelected = conditionalPanel(
 
 outputPreamble <<- 'window.Shiny.shinyapp.$bindings.'
 
-leafDepthJSfunction = singleton(tags$script(
-  "function leafDepth() { return " %&% outputPreamble %&% 
+treeSelectionDepthJSfunction = singleton(tags$script(
+  "function treeSelectionDepth() { return " %&% outputPreamble %&% 
     " treeSelectionDepth.el.textContent; }; "))
-leafTextJSfunction = singleton(tags$script(
-  "function leafText() { return " %&% outputPreamble %&% 
+treeSelectionTextJSfunction = singleton(tags$script(
+  "function treeSelectionText() { return " %&% outputPreamble %&% 
     " treeSelectionText.el.textContent; };
-   function is_needed() {return leafText().search('needs:') == 0;}; 
-   function is_code() {return leafText().search('generator code:') == 0;}; 
-   function is_param() {return leafText().search('param:') == 0;}; 
-   function is_provision() {return leafText().search('provides:') == 0;}; 
+   function is_needed() {return treeSelectionText().search('needs:') == 0;}; 
+   function is_code() {return treeSelectionText().search('generator code:') == 0;}; 
+   function is_param() {return treeSelectionText().search('param:') == 0;}; 
+   function is_provision() {return treeSelectionText().search('provides:') == 0;}; 
   "))
 
 conditionPanel_1_insert = conditionalPanel(condition = 
-       '($("#jstree1").jstree().get_selected().length == 1) & (leafDepth() == 2)', 
+       '($("#jstree1").jstree().get_selected().length == 1) & (treeSelectionDepth() == 2)', 
      ## THE FOLLOWING expression shows #j1_2 etc:
      ## 'alert($("#jstree1").jstree().get_selected().toString())',  
      actionButton(inputId="btnRemoveInsert" , label="Remove insert", css.class = "treeclass_2"),
@@ -55,7 +55,7 @@ conditionPanel_1_insert = conditionalPanel(condition =
 ###  TODO:   this condition is not working correctly.
 conditionPanel_1_vg_code = 
   conditionalPanel(condition = 
-                     '($("#jstree1").jstree().get_selected().length == 1) & (leafDepth() == 3)
+                     '($("#jstree1").jstree().get_selected().length == 1) & (treeSelectionDepth() == 3)
                    & is_code()', 
                    actionButton(inputId="btnEditCode" , label="Edit code", css.class = "treeclass_3"),
                    hr()
@@ -73,7 +73,7 @@ conditionPanel_1_needed_var =
 conditionPanel_moreThan1_insert = 
   conditionalPanel(
     '$("#jstree1").jstree().get_selected().length > 1
-    & (leafDepth() == 2)',
+    & (treeSelectionDepth() == 2)',
     actionButton(inputId="btnSaveListOfInserts" , label="btnSaveListOfInserts", css.class = "treeclass_2"),
     textOutput("selectedNodes"),
     hr()
