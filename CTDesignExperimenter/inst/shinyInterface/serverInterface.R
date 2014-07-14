@@ -9,8 +9,9 @@ shinyServer(function(input, output, session) {
   
   source("debugTools.R", local=TRUE)
   
+  source("varEditorUI.R", local=TRUE)
+
   rValues = reactiveValues()
-  
   rValues$editingVariable = FALSE
   
   observe(label="editingVariableObserver", {

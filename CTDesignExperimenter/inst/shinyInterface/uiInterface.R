@@ -108,15 +108,15 @@ scenarioPanel = tabPanel("Current scenario",
                          tagToOpenTree 
 )
 
-variableEditorPanel = #conditionalPanel(condition = 'true',
+editorPanel = #conditionalPanel(condition = 'true',
   # Sadly, cannot put a conditionalPanel in a tabsetPanel.
-  tabPanel("Edit var",
-           HTML("This is the variableEditor panel."),
-           actionButton(inputId="btnCreateVar" , 
-                        label="Create new Variable", css.class = "success")
-           #,conditionalPanel(condition = 'input.btnCreateVar')
+  tabPanel("Editors",
+           conditionalPanel(condition = 'treeSelectionDepth()==2',
+                            uiOutput("insertEditorUI")),
+           conditionalPanel(condition = 'treeSelectionDepth()==3
+                            && (is_needed() || is_provision() ) ',
+                            uiOutput("varEditorUI"))
   )
-#)
 
 CSSreference = singleton(tags$head(tags$link(href = "ctde.css", 
                                              rel = "stylesheet")))
