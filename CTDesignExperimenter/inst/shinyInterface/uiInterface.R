@@ -146,8 +146,10 @@ myJSincludes = tagList(
   includeScript("www/ctde-types.js") ## It does find this !
   , includeScript("www/ss-jstree.js")  # and this.
   , CSSreference ### OK. Works (for text colors)
-  , leafDepthJSfunction
-  , leafTextJSfunction
+  , treeSelectionDepthJSfunction
+  , treeSelectionTextJSfunction
+)
+
 ##  Fiddling with jqueryUI popups:
 popupJSincludes = tagList(
   includeCSS("www/css/jquery-ui.css"),  
