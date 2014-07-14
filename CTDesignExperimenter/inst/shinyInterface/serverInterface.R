@@ -14,18 +14,28 @@ shinyServer(function(input, output, session) {
   rValues = reactiveValues()
   rValues$editingVariable = FALSE
   
+  observe({
+    if(input$btnEditVariable > 0) {
+      rValues$editingVariable == TRUE
+    }
+  }
+  )
+  
 #   output$varEditPopup <- renderPrint({
 #     code <- input$console
 #     output <- eval( parse( text=code ) )
 #     return(output)
 #   })
+  
   observe(label="editingVariableObserver", {
     catn("editingVariableObserver: rValues$editingVariable = ", rValues$editingVariable)
-    if(rValues$editingVariable) 
-      updateTabsetPanel(session, "tabsetID", selected = "Edit var")
+    if(rValues$editingVariable) {
+      updateTabsetPanel(session, "tabsetID", selected = "Editors")
+    }
     #"selected" is the title on the tab.
   }
   )
+  
   
   treeObserver = observe(
     #     observers use eager evaluation; as soon as their dependencies change, they
@@ -49,18 +59,22 @@ shinyServer(function(input, output, session) {
         rValues$treeSelectionDepth = 
           length(strsplit(split = "_",
                           treeSelection[ 1, "index"]) [[1]]) - 1
+        rValues$editingVariable = 
+          (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1)    
       }
       else {
         rValues$treeSelectionText = ""
         rValues$treeSelectionIndex = ""
         rValues$treeSelectionDepth = 0
-          
       }
     }
   )
+  # We need the following to make the values available to JS.  
+  # See nodeDepthJSfunction etc.
   output$treeSelectionText = renderText(rValues$treeSelectionText)
   output$treeSelectionIndex = renderText(rValues$treeSelectionIndex)
   output$treeSelectionDepth = renderText(rValues$treeSelectionDepth)
+  output$editingVariable = renderText(rValues$editingVariable)
   # treeObserver$onInvalidate(function() print("jstree1 selection changed!"))
   
   output$selectedNode = renderText({

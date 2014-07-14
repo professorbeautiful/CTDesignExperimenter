@@ -62,8 +62,20 @@ conditionPanel_1_vg_code =
   )
 conditionPanel_1_needed_var = 
   conditionalPanel(condition = 
-                     '($("#jstree1").jstree().get_selected().length == 1) & (leafDepth() == 3)
-                   & is_needed()', 
+                     '($("#jstree1").jstree().get_selected().length == 1)
+                    & (treeSelectionDepth() == 3)
+                    & is_needed()', ### Requirement
+                   HTML("Selected one variable."),
+                   actionButton(inputId="btnRemoveVariable" , label="Remove Variable", css.class = "treeclass_3"),
+                   actionButton(inputId="btnCloneVariable" , label="Clone Variable", css.class = "treeclass_3"),
+                   actionButton(inputId="btnEditVariable" , label="Edit Variable", css.class = "treeclass_3"),
+                   hr()
+  )
+conditionPanel_1_generator_code = 
+  conditionalPanel(condition = 
+                     '($("#jstree1").jstree().get_selected().length == 1)
+                   & (treeSelectionDepth() == 3)
+                   & is_code()', ### Generator code.
                    HTML("Selected one variable."),
                    actionButton(inputId="btnRemoveVariable" , label="Remove Variable", css.class = "treeclass_3"),
                    actionButton(inputId="btnCloneVariable" , label="Clone Variable", css.class = "treeclass_3"),
@@ -160,12 +172,7 @@ shinyUI(
     #         tags$head(tags$script(src = "message-handler.js"))
     #       ),
     scenarioPanel,
-    navbarMenu("Editors",
-               variableEditorPanel,
-               tabPanel("Create new Variable"),
-               tabPanel("Create new Insert")
-    ),
-    #    insertEditorPanel,
+    editorPanel,
     tabPanel("One CT run", 
              "Display results from a single CT run for the selected scenario.",
              hr(),
