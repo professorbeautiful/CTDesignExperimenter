@@ -33,9 +33,27 @@ output$varEditorUI = renderUI({
     actionButton(inputId="btnSaveVar" , 
                  label="Save variable in scenario", css.class = "treeClass-3"),
     actionButton(inputId="btnSaveVarAs" , 
-                 label="Save variable as...", css.class = "treeClass-3")
+                 label="Save variable as...", css.class = "treeClass-3"),
+    hr(),
+    conditionalPanel("input.btnSearchVar > 0",
+                     fileInput("varSearchFileInput", "varSearchFileInput"))
   )
 })
+
+observe({       ### Clear the inputs to create a new variable.
+  if(input$tabsetID=="Editors" & !is.null(input$btnSearchVar)){
+    if(input$btnSearchVar > 0) {
+      try({
+        fileInfo = input$varSearchFileInput
+        print(fileInfo)
+        theVar = source(fileInfo$datapath, local = TRUE)$value
+        print(str(theVar))
+        if(class(theVar) == "Variable") rValues$theVar = theVar
+      })
+    }
+  }
+})
+
 
 observe({       ### Clear the inputs to create a new variable.
   if(input$tabsetID=="Editors" & !is.null(input$btnNewVar)){
