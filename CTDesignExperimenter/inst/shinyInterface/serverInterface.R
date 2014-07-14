@@ -94,6 +94,14 @@ shinyServer(function(input, output, session) {
     returnvalue
   })
   
+  is_needed = function()
+    return (grep(rValues$treeSelectionText, 'needs:') > 0 )
+  is_code = function()
+    return (grep(rValues$treeSelectionText, 'generator code:') > 0 )
+  is_param = function()
+    return (grep(rValues$treeSelectionText, 'param:') > 0 )
+  is_provision = function()
+    return (grep(rValues$treeSelectionText, 'provides:') > 0 )
   observe({
     if(input$btnAddScen > 0) { ### Make reactive to button.
       updateTabsetPanel(session, "tabsetID", selected = "Experiment")
