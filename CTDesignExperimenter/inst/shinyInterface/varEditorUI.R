@@ -28,18 +28,26 @@ output$varEditorUI = renderUI({
                  # fnInitComplete works.
                  , fnRowCallback= I(
                " function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                    console.log('fnRowCallback', aData, iDisplayIndex, iDisplayIndexFull);
+                    $(nRow).on('click', function() {
+                      console.log('Row Clicked. ', 
+                        this, aData, iDisplayIndex, iDisplayIndexFull);
+                      });
+                    //console.log('fnRowCallback', aData, iDisplayIndex, iDisplayIndexFull);
                     // this
                   }")
                )
                , callback="function(oTable) {
-                    alert('callback');
-                    oTable.on('click', function() {
-                      alert('Row clicked.');
-                     console.log('Row Clicked.' , this);
-                    // this.parent().find('td').each(function() {
-                    //    console.log(this.html());
-                    //  });
+                    // This approach does not get me the cell info.
+                    oTable.on('click', function(el) {
+                      window.thisRow = el;
+//thisRow.currentTarget is HTMLTableElement
+//thisRow.currentTarget.children[0].innerHTML It's the header row!
+                      //alert('Row clicked.' + this); // HTMLTableElement
+                     console.log('Row clicked. ', this.getLastChild());
+                      this.setBgColor('blue');
+                      //this.parent().find('td').each(function() {
+                      //  console.log(this.html());
+                      //});
                    });
                }"
 #                    
