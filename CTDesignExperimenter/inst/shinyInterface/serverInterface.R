@@ -9,10 +9,10 @@ shinyServer(function(input, output, session) {
   
   source("debugTools.R", local=TRUE)
   
-  source("varEditorUI.R", local=TRUE)
-
   rValues = reactiveValues()
   rValues$editingVariable = FALSE
+
+  source("varEditorUI.R", local=TRUE)
   
   observe({
     if(input$btnEditVariable > 0) {
@@ -21,11 +21,11 @@ shinyServer(function(input, output, session) {
   }
   )
   
-#   output$varEditPopup <- renderPrint({
-#     code <- input$console
-#     output <- eval( parse( text=code ) )
-#     return(output)
-#   })
+  #   output$varEditPopup <- renderPrint({
+  #     code <- input$console
+  #     output <- eval( parse( text=code ) )
+  #     return(output)
+  #   })
   
   observe(label="editingVariableObserver", {
     catn("editingVariableObserver: rValues$editingVariable = ", rValues$editingVariable)
