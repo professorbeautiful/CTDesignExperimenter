@@ -1,5 +1,5 @@
 require("CTDesignExperimenter")
-require(shinysky)
+require(shinysky) 
 options(shiny.trace=FALSE)
 
 scaffoldObjectNames = scaffoldObjects[[1]]
@@ -12,7 +12,7 @@ reloadScenario = function() {
   myTreeObj <<- myjstree.obj(scenarioTree)  # shiny.tag
   # class attributes are added in myjstree.obj
   # length(myTreeObj[[3]][[1]]) is 13
-  myTree <<- jstree("jstree1", myTreeObj)  # shiny.tag.list
+  myTree <<- jstree("jstreeScenario", myTreeObj)  # shiny.tag.list
   
 #   vgNodes = unlist( 
 #     traverse(myTree, callback = 1, searchTerm = "vg_")

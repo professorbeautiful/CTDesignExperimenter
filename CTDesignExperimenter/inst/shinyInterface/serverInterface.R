@@ -56,12 +56,12 @@ shinyServer(function(input, output, session) {
     #     schedule themselves to re-execute.
     label="myTreeObserver", {
       nColumnsInTreeValue = 6
-      if(length(input$jstree1) > 0) {
-        nSelected <<- length(input$jstree1) / nColumnsInTreeValue
+      if(length(input$jstreeScenario) > 0) {
+        nSelected <<- length(input$jstreeScenario) / nColumnsInTreeValue
         rValues$nSelected <<- nSelected
-        treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstree1, byrow=T,
+        treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstreeScenario, byrow=T,
                                  dimnames=list(1:nSelected,
-                                               names(input$jstree1)[1:nColumnsInTreeValue]))
+                                               names(input$jstreeScenario)[1:nColumnsInTreeValue]))
         ## Trim leading and trailing whitespace.
         treeSelection[ , "text"] <<- gsub("^[\n\t ]*", "",
                                           gsub("[\n\t ]*$", "",
@@ -95,13 +95,13 @@ shinyServer(function(input, output, session) {
   output$treeSelectionIndex = renderText(rValues$treeSelectionIndex)
   output$treeSelectionDepth = renderText(rValues$treeSelectionDepth)
   output$editingVariable = renderText(rValues$editingVariable)
-  # treeObserver$onInvalidate(function() print("jstree1 selection changed!"))
+  # treeObserver$onInvalidate(function() print("jstreeScenario selection changed!"))
   
   output$selectedNode = renderText({
-    print(paste0("selectedNodes ", paste(input$jstree1, collapse = ", ")))
+    print(paste0("selectedNodes ", paste(input$jstreeScenario, collapse = ", ")))
   })
   output$selectedNodes = renderText({  ## Must have a distinct name!
-    print(paste0("selectedNodes ", input$jstree1, collapse = ", "))
+    print(paste0("selectedNodes ", input$jstreeScenario, collapse = ", "))
   })
   
   popupInsertEditor = function() {

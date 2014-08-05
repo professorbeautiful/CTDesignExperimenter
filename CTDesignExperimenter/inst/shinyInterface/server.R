@@ -9,10 +9,10 @@ shinyServer(function(input, output, session) {
   
   source("debugTools.R", local=TRUE)
   
-  source("varEditorUI.R", local=TRUE)
-
   rValues = reactiveValues()
   rValues$editingVariable = FALSE
+
+  source("varEditorUI.R", local=TRUE)
   
   observe({
     if(input$btnEditVariable > 0) {
@@ -21,11 +21,11 @@ shinyServer(function(input, output, session) {
   }
   )
   
-#   output$varEditPopup <- renderPrint({
-#     code <- input$console
-#     output <- eval( parse( text=code ) )
-#     return(output)
-#   })
+  #   output$varEditPopup <- renderPrint({
+  #     code <- input$console
+  #     output <- eval( parse( text=code ) )
+  #     return(output)
+  #   })
   
   observe(label="editingVariableObserver", {
     catn("editingVariableObserver: rValues$editingVariable = ", rValues$editingVariable)
@@ -35,19 +35,33 @@ shinyServer(function(input, output, session) {
     #"selected" is the title on the tab.
   }
   )
+  observe(label="editingInsertObserver", {
+    catn("editingInsertObserver: rValues$editingInsert = ", rValues$editingInsert)
+    if(rValues$editingInsert) {
+      updateTabsetPanel(session, "tabsetID", selected = "Editors")
+    }
+    #"selected" is the title on the tab.
+  }
+  )
   
+  observe({
+    if(input$tabsetID != "editing") {    ## react if tab changes
+      rValues$editingVariable = FALSE
+      rValues$editingInsert = FALSE
+    }
+  })
   
   treeObserver = observe(
     #     observers use eager evaluation; as soon as their dependencies change, they
     #     schedule themselves to re-execute.
     label="myTreeObserver", {
       nColumnsInTreeValue = 6
-      if(length(input$jstree1) > 0) {
-        nSelected <<- length(input$jstree1) / nColumnsInTreeValue
+      if(length(input$jstreeScenario) > 0) {
+        nSelected <<- length(input$jstreeScenario) / nColumnsInTreeValue
         rValues$nSelected <<- nSelected
-        treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstree1, byrow=T,
+        treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstreeScenario, byrow=T,
                                  dimnames=list(1:nSelected,
-                                               names(input$jstree1)[1:nColumnsInTreeValue]))
+                                               names(input$jstreeScenario)[1:nColumnsInTreeValue]))
         ## Trim leading and trailing whitespace.
         treeSelection[ , "text"] <<- gsub("^[\n\t ]*", "",
                                           gsub("[\n\t ]*$", "",
@@ -61,9 +75,12 @@ shinyServer(function(input, output, session) {
                           treeSelection[ 1, "index"]) [[1]]) - 1
         rValues$editingVariable = 
           (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1) 
-        if(rValues$editingVariable) {
+        if(rValues$editingVariable) 
           rValues$theVar = findObjectInScenario(rValues$treeSelectionIndex)
-        }
+        rValues$editingInsert = 
+          (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
+        if(rValues$editingInsert) 
+          rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
       }
       else {
         rValues$treeSelectionText = ""
@@ -78,13 +95,13 @@ shinyServer(function(input, output, session) {
   output$treeSelectionIndex = renderText(rValues$treeSelectionIndex)
   output$treeSelectionDepth = renderText(rValues$treeSelectionDepth)
   output$editingVariable = renderText(rValues$editingVariable)
-  # treeObserver$onInvalidate(function() print("jstree1 selection changed!"))
+  # treeObserver$onInvalidate(function() print("jstreeScenario selection changed!"))
   
   output$selectedNode = renderText({
-    print(paste0("selectedNodes ", paste(input$jstree1, collapse = ", ")))
+    print(paste0("selectedNodes ", paste(input$jstreeScenario, collapse = ", ")))
   })
   output$selectedNodes = renderText({  ## Must have a distinct name!
-    print(paste0("selectedNodes ", input$jstree1, collapse = ", "))
+    print(paste0("selectedNodes ", input$jstreeScenario, collapse = ", "))
   })
   
   popupInsertEditor = function() {

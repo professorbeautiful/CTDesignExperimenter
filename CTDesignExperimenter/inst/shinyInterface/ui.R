@@ -4,7 +4,7 @@
 "%&%" = function (a, b)   paste(a, b, sep = "") 
 
 # myTree is created in global.R
-OpenSesame = '$("#jstree1").jstree("open_all");'
+OpenSesame = '$("#jstreeScenario").jstree("open_all");'
 tagToOpenTree =
   tags$script(paste0(
     'function openTree(){'
@@ -14,7 +14,7 @@ tagToOpenTree =
 
 
 conditionPanelNoneSelected = conditionalPanel(
-  '$("#jstree1").jstree().get_selected().length == 0',  #This works!! 0 1 2 etc.
+  '$("#jstreeScenario").jstree().get_selected().length == 0',  #This works!! 0 1 2 etc.
   div(class="row-fluid span3",
       actionButton(inputId="btnCloneScen", 
                    label="Clone and save scenario", 
@@ -42,9 +42,9 @@ treeSelectionTextJSfunction = singleton(tags$script(
   "))
 
 conditionPanel_1_insert = conditionalPanel(condition = 
-       '($("#jstree1").jstree().get_selected().length == 1) & (treeSelectionDepth() == 2)', 
+       '($("#jstreeScenario").jstree().get_selected().length == 1) & (treeSelectionDepth() == 2)', 
      ## THE FOLLOWING expression shows #j1_2 etc:
-     ## 'alert($("#jstree1").jstree().get_selected().toString())',  
+     ## 'alert($("#jstreeScenario").jstree().get_selected().toString())',  
      actionButton(inputId="btnRemoveInsert" , label="Remove insert", css.class = "treeclass_2"),
      actionButton(inputId="btnCloneInsert" , label="Clone insert", css.class = "treeclass_2"),
      actionButton(inputId="btnEditInsert" , label="Edit insert", css.class = "treeclass_2"),
@@ -55,14 +55,14 @@ conditionPanel_1_insert = conditionalPanel(condition =
 ###  TODO:   this condition is not working correctly.
 conditionPanel_1_vg_code = 
   conditionalPanel(condition = 
-                     '($("#jstree1").jstree().get_selected().length == 1) & (treeSelectionDepth() == 3)
+                     '($("#jstreeScenario").jstree().get_selected().length == 1) & (treeSelectionDepth() == 3)
                    & is_code()', 
                    actionButton(inputId="btnEditCode" , label="Edit code", css.class = "treeclass_3"),
                    hr()
   )
 conditionPanel_1_needed_var = 
   conditionalPanel(condition = 
-                     '($("#jstree1").jstree().get_selected().length == 1)
+                     '($("#jstreeScenario").jstree().get_selected().length == 1)
                     & (treeSelectionDepth() == 3)
                     & is_needed()', ### Requirement
                    HTML("Selected one variable."),
@@ -73,7 +73,7 @@ conditionPanel_1_needed_var =
   )
 conditionPanel_1_generator_code = 
   conditionalPanel(condition = 
-                     '($("#jstree1").jstree().get_selected().length == 1)
+                     '($("#jstreeScenario").jstree().get_selected().length == 1)
                    & (treeSelectionDepth() == 3)
                    & is_code()', ### Generator code.
                    HTML("Selected one variable."),
@@ -84,7 +84,7 @@ conditionPanel_1_generator_code =
   )
 conditionPanel_moreThan1_insert = 
   conditionalPanel(
-    '$("#jstree1").jstree().get_selected().length > 1
+    '$("#jstreeScenario").jstree().get_selected().length > 1
     & (treeSelectionDepth() == 2)',
     actionButton(inputId="btnSaveListOfInserts" , label="btnSaveListOfInserts", css.class = "treeclass_2"),
     textOutput("selectedNodes"),
@@ -103,7 +103,7 @@ scenarioPanel = tabPanel(
   conditionPanel_1_needed_var,
   conditionPanel_moreThan1_insert,
   conditionalPanel(condition = 
-                     '$("#jstree1").jstree().get_selected().length > 0',
+                     '$("#jstreeScenario").jstree().get_selected().length > 0',
                    #$("#modalContents").dialog({bgiframe: true, height: 140, modal: true});
                    div(class="row-fluid", 
                        ### style='display:none'?? 
@@ -145,6 +145,8 @@ CSSreference = singleton(tags$head(tags$link(href = "ctde.css",
 myJSincludes = tagList(
   includeScript("www/ctde-types.js") ## It does find this !
   , includeScript("www/ss-jstree.js")  # and this.
+  , includeScript("http://cdn.datatables.net/1.10.1/js/jquery.dataTables.min.js")
+  , includeScript("http://code.jquery.com/jquery-1.11.1.min.js")
   , CSSreference ### OK. Works (for text colors)
   , treeSelectionDepthJSfunction
   , treeSelectionTextJSfunction
