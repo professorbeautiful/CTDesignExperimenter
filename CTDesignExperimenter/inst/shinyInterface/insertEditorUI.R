@@ -1,5 +1,5 @@
 output$insertEditorUI = renderUI({ 
-  theInsert = findObjectInScenario(rValues$treeSelectionIndex)
+  theInsert = rValues$theInsert
   catn("output$insertEditorUI: insert is ", capture.output(theInsert))
   div(
     HTML(" Editing selected Insert - NOT IMPLEMENTED"), 
@@ -8,6 +8,8 @@ output$insertEditorUI = renderUI({
                  label="Search for insert", css.class = "treeClass-2"),
     actionButton(inputId="btnSaveInsert" , 
                  label="Save insert", css.class = "treeClass-2")
+    textInput("insertName", label = "name", theInsert@name),
+    
   )
 })
 

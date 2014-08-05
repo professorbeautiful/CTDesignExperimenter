@@ -35,7 +35,21 @@ shinyServer(function(input, output, session) {
     #"selected" is the title on the tab.
   }
   )
+  observe(label="editingInsertObserver", {
+    catn("editingInsertObserver: rValues$editingInsert = ", rValues$editingInsert)
+    if(rValues$editingInsert) {
+      updateTabsetPanel(session, "tabsetID", selected = "Editors")
+    }
+    #"selected" is the title on the tab.
+  }
+  )
   
+  observe({
+    if(input$tabsetID != "editing") {    ## react if tab changes
+      rValues$editingVariable = FALSE
+      rValues$editingInsert = FALSE
+    }
+  })
   
   treeObserver = observe(
     #     observers use eager evaluation; as soon as their dependencies change, they
@@ -61,9 +75,12 @@ shinyServer(function(input, output, session) {
                           treeSelection[ 1, "index"]) [[1]]) - 1
         rValues$editingVariable = 
           (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1) 
-        if(rValues$editingVariable) {
+        if(rValues$editingVariable) 
           rValues$theVar = findObjectInScenario(rValues$treeSelectionIndex)
-        }
+        rValues$editingInsert = 
+          (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
+        if(rValues$editingInsert) 
+          rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
       }
       else {
         rValues$treeSelectionText = ""
