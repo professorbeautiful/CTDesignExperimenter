@@ -11,12 +11,20 @@ shinyServer(function(input, output, session) {
   
   rValues = reactiveValues()
   rValues$editingVariable = FALSE
-
+  rValues$editingInsert = FALSE
+  
   source("varEditorUI.R", local=TRUE)
+  source("insertEditorUI.R", local=TRUE)
   
   observe({
     if(input$btnEditVariable > 0) {
       rValues$editingVariable == TRUE
+    }
+  }
+  )
+  observe({
+    if(input$btnEditInsert > 0) {
+      rValues$editingInsert == TRUE
     }
   }
   )
@@ -31,16 +39,14 @@ shinyServer(function(input, output, session) {
     catn("editingVariableObserver: rValues$editingVariable = ", rValues$editingVariable)
     if(rValues$editingVariable) {
       updateTabsetPanel(session, "tabsetID", selected = "Editors")
-    }
-    #"selected" is the title on the tab.
+    }    #"selected" is the title on the tab.
   }
   )
   observe(label="editingInsertObserver", {
     catn("editingInsertObserver: rValues$editingInsert = ", rValues$editingInsert)
     if(rValues$editingInsert) {
       updateTabsetPanel(session, "tabsetID", selected = "Editors")
-    }
-    #"selected" is the title on the tab.
+    }    #"selected" is the title on the tab.
   }
   )
   
