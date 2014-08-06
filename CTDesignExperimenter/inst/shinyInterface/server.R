@@ -18,13 +18,13 @@ shinyServer(function(input, output, session) {
   
   observe({
     if(input$btnEditVariable > 0) {
-      rValues$editingVariable == TRUE
+      isolate(rValues$openingVariableEditor <- TRUE)
     }
   }
   )
   observe({
     if(input$btnEditInsert > 0) {
-      rValues$editingInsert == TRUE
+      isolate(rValues$openingInsertEditor <- TRUE)
     }
   }
   )
