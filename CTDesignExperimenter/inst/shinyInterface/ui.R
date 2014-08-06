@@ -145,8 +145,8 @@ CSSreference = singleton(tags$head(tags$link(href = "ctde.css",
 myJSincludes = tagList(
   includeScript("www/ctde-types.js") ## It does find this !
   , includeScript("www/ss-jstree.js")  # and this.
-  , includeScript("http://cdn.datatables.net/1.10.1/js/jquery.dataTables.min.js")
-  , includeScript("http://code.jquery.com/jquery-1.11.1.min.js")
+#  , includeScript("http://cdn.datatables.net/1.10.1/js/jquery.dataTables.min.js")
+#  , includeScript("http://code.jquery.com/jquery-1.11.1.min.js")
   , CSSreference ### OK. Works (for text colors)
   , treeSelectionDepthJSfunction
   , treeSelectionTextJSfunction
