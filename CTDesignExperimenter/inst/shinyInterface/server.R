@@ -57,37 +57,41 @@ shinyServer(function(input, output, session) {
     #     observers use eager evaluation; as soon as their dependencies change, they
     #     schedule themselves to re-execute.
     label="myTreeObserver", {
-      nColumnsInTreeValue = 6
-      if(length(input$jstreeScenario) > 0) {
-        nSelected <<- length(input$jstreeScenario) / nColumnsInTreeValue
-        rValues$nSelected <<- nSelected
-        treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstreeScenario, byrow=T,
-                                 dimnames=list(1:nSelected,
-                                               names(input$jstreeScenario)[1:nColumnsInTreeValue]))
-        ## Trim leading and trailing whitespace.
-        treeSelection[ , "text"] <<- gsub("^[\n\t ]*", "",
-                                          gsub("[\n\t ]*$", "",
-                                               treeSelection[ , "text"] ))
-        cat("Entered treeObserver. rValues$treeSelection is:\n")
-        print(treeSelection)
-        rValues$treeSelectionText = paste(treeSelection[ , "text"], collapse=" & ")
-        rValues$treeSelectionIndex = paste(treeSelection[ , "index"], collapse=" & ")
-        rValues$treeSelectionDepth = 
-          length(strsplit(split = "_",
-                          treeSelection[ 1, "index"]) [[1]]) - 1
-        rValues$editingVariable = 
-          (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1) 
-        if(rValues$editingVariable) 
-          rValues$theVar = findObjectInScenario(rValues$treeSelectionIndex)
-        rValues$editingInsert = 
-          (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
-        if(rValues$editingInsert) 
-          rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
-      }
-      else {
-        rValues$treeSelectionText = ""
-        rValues$treeSelectionIndex = ""
-        rValues$treeSelectionDepth = 0
+      cat("treeObserver: tabsetID = ", isolate(input$tabsetID), "\n")
+      input$jstreeScenario  ### Added to restore reactivity. Necessary! (a mystery)
+      if(isolate(input$tabsetID) == "Current scenario") { ### Fixes part of the problem
+        nColumnsInTreeValue = 6
+        if(length(input$jstreeScenario) > 0) {
+          nSelected <<- length(input$jstreeScenario) / nColumnsInTreeValue
+          rValues$nSelected <<- nSelected
+          treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstreeScenario, byrow=T,
+                                   dimnames=list(1:nSelected,
+                                                 names(input$jstreeScenario)[1:nColumnsInTreeValue]))
+          ## Trim leading and trailing whitespace.
+          treeSelection[ , "text"] <<- gsub("^[\n\t ]*", "",
+                                            gsub("[\n\t ]*$", "",
+                                                 treeSelection[ , "text"] ))
+          cat("Entered treeObserver. rValues$treeSelection is:\n")
+          print(treeSelection)
+          rValues$treeSelectionText = paste(treeSelection[ , "text"], collapse=" & ")
+          rValues$treeSelectionIndex = paste(treeSelection[ , "index"], collapse=" & ")
+          rValues$treeSelectionDepth = 
+            length(strsplit(split = "_",
+                            treeSelection[ 1, "index"]) [[1]]) - 1
+          rValues$openingVariableEditor = 
+            (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1) 
+          if(rValues$openingVariableEditor) 
+            rValues$theVar = findObjectInScenario(rValues$treeSelectionIndex)
+          rValues$openingInsertEditor = 
+            (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
+          if(rValues$openingInsertEditor) 
+            rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
+        }
+        else {
+          rValues$treeSelectionText = ""
+          rValues$treeSelectionIndex = ""
+          rValues$treeSelectionDepth = 0
+        }
       }
     }
   )
