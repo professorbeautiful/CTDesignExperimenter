@@ -3,8 +3,8 @@ insertToDataframe = function(theInsert) {
     output=capture.output(show(theInsert@outputVariable)),
     parameters=ifelse(length(theInsert@parameters)==0,
                       "",
-                      paste(names(insert@parameters), 
-                            as.vector(capture.output(insert@parameters)),
+                      paste(names(theInsert@parameters), 
+                            as.vector(capture.output(theInsert@parameters)),
                             sep="=", collapse="\n")
     ),
     needed=ifelse(is.null(theInsert@requirements),
@@ -12,7 +12,7 @@ insertToDataframe = function(theInsert) {
                       paste(sapply(theInsert@requirements, capture.output), 
                             collapse="\n")
     ),
-    generator=printFunctionBody(object@generatorCode),
+    generator=printFunctionBody(theInsert@generatorCode),
     author=theInsert@author,
     timestamp=capture.output(theInsert@timestamp),
     filename=theInsert@filename      
@@ -22,11 +22,14 @@ insertToDataframe = function(theInsert) {
 
 
 output$insertEditorUI = renderUI({ 
+  rValues$openingInsertEditor = FALSE
   theInsert = rValues$theInsert
   catn("output$insertEditorUI: insert is ", capture.output(theInsert))
   iFilenames <<- rev(dir(swapMeetDir(), pattern = "^I_"))
-  allInsertsList = lapply(vFilenames, function(fname) {
-    theInsert = source(swapMeetDir() %&% fname, local=TRUE)$value
+  allInsertsList = lapply(iFilenames, function(fname) {
+    theInsert <<- source(swapMeetDir() %&% fname, local=TRUE)$value
+    if(! (class(theInsert)=="VariableGenerator"))
+      browser()
     insertToDataframe(theInsert)
   })
   allInsertsDF <<- Reduce(rbind, allInsertsList)
@@ -42,12 +45,12 @@ output$insertEditorUI = renderUI({
   
   
   div(
-    HTML(" Editing selected Insert - NOT IMPLEMENTED"), 
+    HTML(" Editing selected Insert - IN PROGRESS"), 
     hr(),
     actionButton(inputId="btnSearchInsert" , 
                  label="Search for insert", css.class = "treeClass-2"),
     actionButton(inputId="btnSaveInsert" , 
-                 label="Save insert", css.class = "treeClass-2")
+                 label="Save insert", css.class = "treeClass-2"),
     textInput("insertName", label = "name", theInsert@name)
     #   ,  MORE STUFF
     
