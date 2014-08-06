@@ -10,50 +10,46 @@ shinyServer(function(input, output, session) {
   source("debugTools.R", local=TRUE)
   
   rValues = reactiveValues()
-  rValues$editingVariable = FALSE
-  rValues$editingInsert = FALSE
+  rValues$openingVariableEditor = FALSE
+  rValues$openingInsertEditor = FALSE
   
   source("varEditorUI.R", local=TRUE)
   source("insertEditorUI.R", local=TRUE)
   
-  observe({
+  observeBtnEditVariable = observe(label="observeBtnEditVariable", {
     if(input$btnEditVariable > 0) {
       isolate(rValues$openingVariableEditor <- TRUE)
     }
   }
   )
-  observe({
+  
+  observeBtnEditInsert = observe(label="observeBtnEditInsert", {
     if(input$btnEditInsert > 0) {
       isolate(rValues$openingInsertEditor <- TRUE)
     }
   }
   )
   
-  #   output$varEditPopup <- renderPrint({
-  #     code <- input$console
-  #     output <- eval( parse( text=code ) )
-  #     return(output)
-  #   })
-  
-  observe(label="editingVariableObserver", {
-    catn("editingVariableObserver: rValues$editingVariable = ", rValues$editingVariable)
-    if(rValues$editingVariable) {
+  editingVariableObserver = observe(label="editingVariableObserver", {
+    catn("editingVariableObserver: rValues$openingVariableEditor = ", rValues$openingVariableEditor)
+    if(rValues$openingVariableEditor) {
       updateTabsetPanel(session, "tabsetID", selected = "Editors")
     }    #"selected" is the title on the tab.
   }
   )
-  observe(label="editingInsertObserver", {
-    catn("editingInsertObserver: rValues$editingInsert = ", rValues$editingInsert)
-    if(rValues$editingInsert) {
+  editingInsertObserver = observe(label="editingInsertObserver", {
+    catn("editingInsertObserver: rValues$openingInsertEditor = ", rValues$openingInsertEditor)
+    if(rValues$openingInsertEditor) {
       updateTabsetPanel(session, "tabsetID", selected = "Editors")
     }    #"selected" is the title on the tab.
   }
   )
   
-  observe({
-    if(input$tabsetID != "editing") {    ## react if tab changes
-      rValues$editingVariable = FALSE
-      rValues$editingInsert = FALSE
+  observeTabReset = observe(label = "observeTabReset", {
+    cat("observed:  Resetting the tabset to ", input$tabsetID, "\n")
+    if(input$tabsetID != "Editors") {    ## react if tab changes
+      rValues$openingVariableEditor <- FALSE
+      rValues$openingInsertEditor <- FALSE
     }
   })
   
@@ -100,7 +96,8 @@ shinyServer(function(input, output, session) {
   output$treeSelectionText = renderText(rValues$treeSelectionText)
   output$treeSelectionIndex = renderText(rValues$treeSelectionIndex)
   output$treeSelectionDepth = renderText(rValues$treeSelectionDepth)
-  output$editingVariable = renderText(rValues$editingVariable)
+  output$openingVariableEditor = renderText(rValues$openingVariableEditor)
+  output$openingInsertEditor = renderText(rValues$openingInsertEditor)
   # treeObserver$onInvalidate(function() print("jstreeScenario selection changed!"))
   
   output$selectedNode = renderText({
@@ -168,7 +165,7 @@ shinyServer(function(input, output, session) {
   is_provision = function()
     return (grep(rValues$treeSelectionText, 'provides:') > 0 )
   
-  observe({
+  observeBtnAddScen = observe(label="observeBtnAddScen", {
     if(input$btnAddScen > 0) { ### Make reactive to button.
       updateTabsetPanel(session, "tabsetID", selected = "Experiment")
       catn("==== doing updateTabsetPanel to Experiment")
