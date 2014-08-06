@@ -9,6 +9,7 @@ varToDataframe = function(theVar){
   )
 }
 output$varEditorUI = renderUI({ 
+  rValues$openingVariableEditor <<- FALSE
   theVar = rValues$theVar
   CHECK = printFunctionBody(theVar@checkDataType)
   catn("output$varEditorUI: var is ", capture.output(theVar))
