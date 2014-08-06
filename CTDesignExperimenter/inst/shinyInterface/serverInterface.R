@@ -35,6 +35,7 @@ shinyServer(function(input, output, session) {
   #     return(output)
   #   })
   
+  ## If a Variable is selected in the Scenario, open the Editors tab.
   observe(label="editingVariableObserver", {
     catn("editingVariableObserver: rValues$editingVariable = ", rValues$editingVariable)
     if(rValues$editingVariable) {
@@ -42,24 +43,29 @@ shinyServer(function(input, output, session) {
     }    #"selected" is the title on the tab.
   }
   )
-  observe(label="editingInsertObserver", {
+  
+  ## If an Insert is selected in the Scenario, open the Editors tab.
+  editingInsertObserver = observe(label="editingInsertObserver", {
     catn("editingInsertObserver: rValues$editingInsert = ", rValues$editingInsert)
     if(rValues$editingInsert) {
       updateTabsetPanel(session, "tabsetID", selected = "Editors")
     }    #"selected" is the title on the tab.
   }
   )
+  editingInsertObserver.setPriority(1)
   
+  ## If you switch tabs, reset the flags
   observe({
     if(input$tabsetID != "editing") {    ## react if tab changes
-      rValues$editingVariable = FALSE
-      rValues$editingInsert = FALSE
+      rValues$editingVariable <<- FALSE
+      rValues$editingInsert <<- FALSE
     }
   })
   
   treeObserver = observe(
     #     observers use eager evaluation; as soon as their dependencies change, they
     #     schedule themselves to re-execute.
+    #     You can suspend, resume, destroy, and setPriority.
     label="myTreeObserver", {
       nColumnsInTreeValue = 6
       if(length(input$jstreeScenario) > 0) {
