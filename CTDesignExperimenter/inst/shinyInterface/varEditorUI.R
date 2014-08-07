@@ -15,8 +15,8 @@ output$varEditorUI = renderUI({
   catn("output$varEditorUI: var is ", capture.output(theVar))
   vFilenames <<- rev(dir(swapMeetDir(), pattern = "^V_"))
   allVariablesList = lapply(vFilenames, function(fname) {
-    theVar = source(swapMeetDir() %&% fname, local=TRUE)$value
-    varToDataframe(theVar)
+    tempVar = source(swapMeetDir() %&% fname, local=TRUE)$value
+    varToDataframe(tempVar)
   })
   allVariablesDF <<- Reduce(rbind, allVariablesList)
   radioButtons = sapply(1:nrow(allVariablesDF),

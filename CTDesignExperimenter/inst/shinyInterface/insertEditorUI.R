@@ -27,10 +27,10 @@ output$insertEditorUI = renderUI({
   catn("output$insertEditorUI: insert is ", capture.output(theInsert))
   iFilenames <<- rev(dir(swapMeetDir(), pattern = "^I_"))
   allInsertsList = lapply(iFilenames, function(fname) {
-    theInsert <<- source(swapMeetDir() %&% fname, local=TRUE)$value
+    tempInsert = source(swapMeetDir() %&% fname, local=TRUE)$value
     if(! (class(theInsert)=="VariableGenerator"))
       browser()
-    insertToDataframe(theInsert)
+    insertToDataframe(tempInsert)
   })
   allInsertsDF <<- Reduce(rbind, allInsertsList)
   radioButtons = sapply(1:nrow(allInsertsDF),
@@ -122,7 +122,7 @@ observe({       ### Clear the inputs to create a new Insert.
   }
 })
 
-observe({       ### Save Insert in a swapMeet file.
+observeBtnSaveInsertAs = observe(label="observeBtnSaveInsertAs", {       ### Save Insert in a swapMeet file.
   if(input$tabsetID=="Editors" & !is.null(input$btnSaveInsertAs)){
     if(input$btnSaveInsertAs > 0) {
       theInsert = try(
@@ -139,7 +139,7 @@ observe({       ### Save Insert in a swapMeet file.
   }
 })
 
-observe({
+observeChooseInsert = observe(label="observeChooseInsert", {
   insertFileName = allInsertsDF[input$chooseInsert, "filename"]
   catn("insertFileName = ", insertFileName)
   theInsert = try(
@@ -147,4 +147,6 @@ observe({
   )
   if(class(theInsert) != "try-error")
     rValues$theInsert = theInsert
+  else
+    cat("observeChooseInsert:  insert reading went bad", theInsert, "\n")
 })
