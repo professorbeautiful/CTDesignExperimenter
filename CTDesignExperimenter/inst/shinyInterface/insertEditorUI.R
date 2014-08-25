@@ -1,8 +1,8 @@
 insertToDataframe = function(theInsert) {
-  data.frame(
+  data.frame( 
     output=capture.output(show(theInsert@outputVariable)),
-    parameters=ifelse(length(theInsert@parameters)==0,
-                      "",
+    parameters=ifelse(is.null(theInsert@parameters) | length(theInsert@parameters)==0,
+                      character(0),
                       paste(names(theInsert@parameters), 
                             as.vector(capture.output(theInsert@parameters)),
                             sep="=", collapse="\n")
@@ -43,28 +43,90 @@ output$insertEditorUI = renderUI({
   allInsertnames <<- data.frame(name=unique(allInsertsDF$name))
   output$allInsertsTable <<- renderDataTable(allInsertsDF)
   
+  #output$parameterTable = renderDataTable({as.data.frame(theInsert@parameters)})
   
+  output$parameterHOT <- renderHotable({
+    as.data.frame(theInsert@parameters)  ## OK
+  }, readOnly = FALSE)
+  
+  observe({
+    if(exists("parameterDF"))
+      parameterDF_old = parameterDF
+    parameterDF <- hot.to.df(input$parameterHOT)
+    print(parameterDF)
+    if(exists("parameterDF_old")) {
+      cat("Parameter is changed: ")
+      for(pName in names(parameterDF)) {
+        if( parameterDF_old[[pName]] != parameterDF[[pName]])
+          cat(pName, " changed from ", parameterDF_old[[pName]], " to ", parameterDF[[pName]])
+      }
+      cat("\n")
+    }
+  }
+  )
+  
+  showEditableInsertSlot = function(label, slotName) {
+    tagList(tag('table', tag('tr', 
+                             tagList(tag('th', label), 
+                             tag('th', 
+                                 renderText({slot(rValues$theInsert, slot=slotName)}))
+    ))))
+  }
+  
+  ### Return value starts here.
   div(
-    HTML("Insert Editor"), 
+    fluidRow(column(width=2, p(
+      strong("Editing an insert ", class="INSERTlevel"),
+      img(src='Insert32.png', align="absmiddle")  ### Place in app root. Also, "www/" will not work.
+    )),
+    column(width=10, offset=0,
+           span(class="BLOCKlevel",
+                strong(" in block ", class="BLOCKlevel"),
+                img(src='BLOCK32.png', align="absmiddle"),  ### Place in app root. Also, "www/" will not work.
+                #tagAppendAttributes( does not work with renderText etc.
+                renderText( { theInsert@insertSubType}) #, class="BLOCKlevel")
+           ))
+    ),
     hr(),
-    div(class='col-6',
+    div(class='col-12',
         actionButton(inputId="btnNewInsert" , 
-                     label="New Insert", css.class = "treeClass-2"),
+                     label="New Insert", css.class = "INSERTlevel"),
         actionButton(inputId="btnSearchInsert" , 
-                     label="Search for insert", css.class = "treeClass-2"),
+                     label="Search for insert", css.class = "INSERTlevel"),
         actionButton(inputId="btnSaveInsert" , 
-                     label="Save insert", css.class = "treeClass-2"),
+                     label="Save insert", css.class = "INSERTlevel"),
         actionButton(inputId="btnSaveInsertAs" , 
-                     label="Save Insert as...", css.class = "treeClass-2"),
-        renderText( {theInsert@insertSubType}),
-        textInput("insertName", label = "name", theInsert@name),
-        tagAppendAttributes(div(
-          textInput("insertDescription", label = "description", theInsert@description)),
-          style="width:100%"),
-        renderText( {capture.output(theInsert@outputVariable)}),
-        tagAppendAttributes(div(
-          textInput("generator", label = "generator", printFunctionBody(theInsert@generatorCode))),
-          style="width:100%"),
+                     label=div("Save Insert as...", class="INSERTlevel"),
+                     css.class = "treeclass-2"),
+        tagAppendAttributes(tag=strong(
+                              textInput("insertName", 
+                                        label = strong("name", class="INSERTlevel"), 
+                                        theInsert@name)),
+                            style="width:100%"),
+        textInput("insertDescription", 
+                  label = strong("description", class="INSERTlevel"), 
+                  theInsert@description),
+        # showEditableInsertSlot("DESCRIPTION", "description"),
+        #         tagAppendAttributes(tag=div(class="row-fluid",
+        #                                     strong(
+        #           textInput("insertDescription", label = ("description"), 
+        #                     theInsert@description))),
+        #           class="INSERTlevel,row-fluid", 
+        #           style="width:100%"),
+        div(strong("output variable", class="INSERTlevel"), 
+            img(src="Var32.png")),
+        renderText( { capture.output(theInsert@outputVariable)) }),
+        
+        div(strong("generatorCode", class="INSERTlevel"), 
+            tagAppendAttributes(
+              textInput(inputId = "generatorCode",  label = "",
+                        printFunctionBody(theInsert@generatorCode))),
+            style="width:100%"),
+        
+        div(class = "well container-fluid", div(class = "row-fluid", 
+                                                hotable("parameterHOT"))), 
+        
+        #tableOutput(outputId = "parameterTable"),
         hr(),
         renderText({"author: " %&% theInsert@author}),
         renderText({"timestamp: " %&% capture.output(theInsert@timestamp)}),
@@ -122,19 +184,53 @@ observe({       ### Clear the inputs to create a new Insert.
   }
 })
 
-observeBtnSaveInsertAs = observe(label="observeBtnSaveInsertAs", {       ### Save Insert in a swapMeet file.
-  if(input$tabsetID=="Editors" & !is.null(input$btnSaveInsertAs)){
-    if(input$btnSaveInsertAs > 0) {
-      theInsert = try(
-        Insert(name = input$insertName, 
-                 description = input$insertDescription, 
-                 generatorCode = eval(parse(text=input$generatorCode)))) 
+Insert = VariableGenerator
+
+makeInsert = function() {
+  theNewParameters = hot.to.df(input$parameterHOT)
+  
+  try(
+    Insert(insertSubType = rValues$theInsert@insertSubType,
+    #       name = input$insertName, 
+    #       description = input$insertDescription, 
+           parameters = theNewParameters,
+           provisions = rValues$theInsert@provisions,  #Not yet editable
+           requirements = rValues$theInsert@requirements,  #Not yet editable,
+           outputVariable = rValues$theInsert@outputVariable,  #Not yet editable,
+           generatorCode = eval(parse(text="function() " %&% input$generatorCode)))
+    ) 
+}
+
+observeBtnSaveInsert = observe(label="observeBtnSaveInsert", {       
+  ### Save Insert in the scenario
+  if(input$tabsetID=="Editors" & !is.null(input$btnSavInserte)){
+    if(input$btnSaveInsert > 0) {
+      theInsert = makeInsert()
       if(class(theInsert) == "try-error")
-        shinyalert("Error in Insert: " %&% theInsert)
+        shinyalert("Error in observeBtnSaveInsert/makeInsert: " %&% theInsert)
       else {
         theInsert = writeSwapMeetFile(theInsert, verbose = TRUE)
+        shinyalert("observeBtnSaveInsert/makeInsert: made new Insert. Wrote file "%&%
+                     theInsert$filename)
         rValues$theInsert = theInsert
-      }
+        # Now, insert into Scenario, 
+        # switch to Scenario tab,
+        # and warn that Scenario is not saved.
+      } 
+    }
+  }
+})
+
+### This writes the file!
+observeBtnSaveInsertAs = observe(label="observeBtnSaveInsertAs", { 
+  ### Save Insert in a swapMeet file.
+  if(input$tabsetID=="Editors" & !is.null(input$btnSaveInsertAs)){
+    if(input$btnSaveInsertAs > 0) {
+      theInsert = makeInsert()
+      if(class(theInsert) == "try-error")
+        shinyalert("Error in Insert: " %&% theInsert)
+      else 
+        rValues$theInsert = theInsert = writeSwapMeetFile(theInsert, verbose = TRUE)      
     }
   }
 })
