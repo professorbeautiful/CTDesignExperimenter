@@ -1,6 +1,7 @@
 //input binding for jstree
 
 //alert("In my ss-jstree.js");
+var ss_jstree = new Shiny.InputBinding();
 
 $.extend(ss_jstree, {
   find: function(scope) {
