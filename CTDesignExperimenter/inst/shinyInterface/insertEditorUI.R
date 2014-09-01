@@ -1,3 +1,8 @@
+rm(requirementDF)
+rm(requirementDF_old)
+rm(parameterDF)
+rm(parameterDF_old)
+
 insertToDataframe = function(theInsert) {
   data.frame( 
     output=capture.output(show(theInsert@outputVariable)),
@@ -43,61 +48,101 @@ output$insertEditorUI = renderUI({
   allInsertnames <<- data.frame(name=unique(allInsertsDF$name))
   output$allInsertsTable <<- renderDataTable(allInsertsDF)
   
-  #output$parameterTable = renderDataTable({as.data.frame(theInsert@parameters)})
   
-  output$parameterHOT <- renderHotable({
-    as.data.frame(theInsert@parameters)  ## OK
-  }, readOnly = FALSE)
+  ###################  REQUIREMENTS  ##############################
   
   observe({
-    if(exists("parameterDF"))
-      parameterDF_old = parameterDF
-    parameterDF <- hot.to.df(input$parameterHOT)
-    print(parameterDF)
-    if(exists("parameterDF_old")) {
-      cat("Parameter is changed: ")
-      for(pName in names(parameterDF)) {
-        if( parameterDF_old[[pName]] != parameterDF[[pName]])
-          cat(pName, " changed from ", parameterDF_old[[pName]], " to ", parameterDF[[pName]])
+    if(exists("requirementDF"))
+      requirementDF_old <<- requirementDF
+    requirementDF <<- hot.to.df(input$requirementHOT)
+    print(requirementDF)
+    if(exists("requirementDF_old")) {
+      cat("requirement is changed: ")
+      for(pName in names(requirementDF)) {
+        if( requirementDF_old[[pName]] != requirementDF[[pName]])
+          cat(pName, " changed from ", requirementDF_old[[pName]], " to ", requirementDF[[pName]])
       }
       cat("\n")
     }
   }
   )
   
-  showEditableInsertSlot = function(label, slotName) {
-    tagList(tag('table', tag('tr', 
-                             tagList(tag('th', label), 
-                             tag('th', 
-                                 renderText({slot(rValues$theInsert, slot=slotName)}))
-    ))))
-  }
+  output$requirementHOT <- renderHotable({
+    df = as.data.frame(sapply(theInsert@requirements,
+                  function(v) c(v@description, printFunctionBody(v@checkDataType))))
+    names(df) = sapply(theInsert@requirements, slot, name="name")
+    cat("requirementHOT: df is:\n")
+    print(df)
+    print(dim(df))
+    rownames(df) = c("description", "checkDataType")
+    df
+  }, readOnly = FALSE)
   
-  ### Return value starts here.
+  ###################  PARAMETERS  ##############################
+  observe({
+    if(exists("parameterDF"))
+      parameterDF_old <<- parameterDF
+    parameterDF <<- hot.to.df(input$parameterHOT)
+    catn("observer: parameterDF:")
+    print(parameterDF)
+    if(exists("parameterDF_old")) {
+      cat("Parameter is changed: ")
+      for(pName in names(parameterDF)) {
+        #if( parameterDF_old[[pName]] != parameterDF[[pName]])
+          catn(pName, " changed from ", parameterDF_old[[pName]], " to ", parameterDF[[pName]])
+      }
+      cat("\n")
+    }
+  }
+  )
+
+  output$parameterHOT <- renderHotable({
+    df = as.data.frame(theInsert@parameters)
+    #names(df) = namessapply(theInsert@requirements, slot, name="name")
+    cat("parameterHOT: df is:\n")
+    print(df)
+    print(dim(df))
+    df
+  }, readOnly = FALSE)
+  
+  
+  ############ showEditableInsertSlot, a FAILED EXPERIMENT ? ####################
+  
+#   showEditableInsertSlot = function(label, slotName) {
+#     tagList(tag('table', tag('tr', 
+#                              tagList(tag('th', label), 
+#                              tag('th', 
+#                                  renderText({slot(rValues$theInsert, slot=slotName)}))
+#     ))))
+#   }
+  
+  ### Return value for renderUI "expr" arg starts here.
   div(
-    fluidRow(column(width=2, p(
-      strong("Editing an insert ", class="INSERTlevel"),
-      img(src='Insert32.png', align="absmiddle")  ### Place in app root. Also, "www/" will not work.
-    )),
-    column(width=10, offset=0,
+    fluidRow(
+      column(width=1, p(
+        strong("Editing an insert ", class="INSERTlevel"),
+        img(src='Insert32.png', align="absmiddle")  ### Place in app root. Also, "www/" will not work.
+      )),
+      column(width=6, offset=0,
            span(class="BLOCKlevel",
                 strong(" in block ", class="BLOCKlevel"),
-                img(src='BLOCK32.png', align="absmiddle"),  ### Place in app root. Also, "www/" will not work.
-                #tagAppendAttributes( does not work with renderText etc.
-                renderText( { theInsert@insertSubType}) #, class="BLOCKlevel")
-           ))
-    ),
+                img(src='BLOCK32.png', align="absmiddle")  ### Place in app root. Also, "www/" will not work.
+           ),
+           renderText( {  theInsert@insertSubType}) #, class="BLOCKlevel")
+      )
+    ) ## end of fluidRow
+    ,
     hr(),
     div(class='col-12',
         actionButton(inputId="btnNewInsert" , 
-                     label="New Insert", css.class = "INSERTlevel"),
+                     label=div("New Insert", class = "INSERTlevel")),
         actionButton(inputId="btnSearchInsert" , 
-                     label="Search for insert", css.class = "INSERTlevel"),
+                     label=div("Search for insert", class = "INSERTlevel")),
         actionButton(inputId="btnSaveInsert" , 
-                     label="Save insert", css.class = "INSERTlevel"),
+                     label=div("Save insert", class = "INSERTlevel")),
         actionButton(inputId="btnSaveInsertAs" , 
-                     label=div("Save Insert as...", class="INSERTlevel"),
-                     css.class = "treeclass-2"),
+                     label=div("Save Insert as...", class="INSERTlevel")),
+                  # css.class doesnt work.   css.class = "treeclass-2"),
         tagAppendAttributes(tag=strong(
                               textInput("insertName", 
                                         label = strong("name", class="INSERTlevel"), 
@@ -115,22 +160,55 @@ output$insertEditorUI = renderUI({
         #           style="width:100%"),
         div(strong("output variable", class="INSERTlevel"), 
             img(src="Var32.png")),
-        renderText( { capture.output(theInsert@outputVariable)) }),
+        renderText( { capture.output(theInsert@outputVariable) }),
         
         div(strong("generatorCode", class="INSERTlevel"), 
-            tagAppendAttributes(
+            div(style="width:1000", 
               textInput(inputId = "generatorCode",  label = "",
-                        printFunctionBody(theInsert@generatorCode))),
-            style="width:100%"),
+                        printFunctionBody(theInsert@generatorCode)),
+              actionButton(inputId="btnCheckCode", "check code (not implemented)")
+            ))
+        ,
         
-        div(class = "well container-fluid", div(class = "row-fluid", 
-                                                hotable("parameterHOT"))), 
+        #tags$script('vb.width("100%").css("bold")'),  THE CULPRIT!!! Caused all the renderText elements to fail.
         
-        #tableOutput(outputId = "parameterTable"),
+        div(class = "well container-fluid", 
+            div(strong("requirements", class="INSERTlevel")), 
+            div(class = "row-fluid", hotable("requirementHOT")),
+            img(src="Var32.png"),
+            actionButton(inputId="btnAddRequirement" , 
+                         label=div("Add requirement (not implemented yet)", 
+                                   class = "VARlevel")),
+            actionButton(inputId="btnEditRequirement" , 
+                         label=div("Edit requirement (not implemented yet)", 
+                                   class = "VARlevel")),
+            actionButton(inputId="btnRemoveRequirement" , 
+                         label=div("Remove requirement (not implemented yet)", 
+                                   class = "VARlevel"))
+        ),    
+        
+        div(class = "well container-fluid", 
+            div(strong("parameters", class="INSERTlevel")), 
+            div(class = "row-fluid", hotable("parameterHOT")),
+            actionButton(inputId="btnAddParameter" , 
+                         label=div("Add parameter (not implemented yet)", 
+                                   class = "INSERTlevel")),
+            actionButton(inputId="btnCheckParameter" , 
+                         label=div("Check parameter (not implemented yet)", 
+                                   class = "INSERTlevel")),
+            actionButton(inputId="btnRemoveParameter" , 
+                         label=div("Remove parameter (not implemented yet)", 
+                                   class = "INSERTlevel"))
+            ,
+            tableOutput(outputId = "parameterTable")
+        ),     
+        
         hr(),
+      div(class="INSERTlevel",
         renderText({"author: " %&% theInsert@author}),
         renderText({"timestamp: " %&% capture.output(theInsert@timestamp)}),
         renderText({"file: " %&% theInsert@filename})
+      )
     ),
     div(class='col-6',
         conditionalPanel("input.btnSearchInsert > 0", 
@@ -171,10 +249,9 @@ observe({       ### Find and load a Insert from a file.
   }
 })
 
-###################
+###################### Clear the inputs to create a new Insert   ##############
 
-
-observe({       ### Clear the inputs to create a new Insert.
+observe({       
   if(input$tabsetID=="Editors" & !is.null(input$btnNewInsert)){
     if(input$btnNewInsert > 0) {
       cat("NewInsert functionality is not yet implemented\n")
@@ -185,7 +262,6 @@ observe({       ### Clear the inputs to create a new Insert.
 })
 
 Insert = VariableGenerator
-
 makeInsert = function() {
   theNewParameters = hot.to.df(input$parameterHOT)
   
@@ -213,9 +289,9 @@ observeBtnSaveInsert = observe(label="observeBtnSaveInsert", {
         shinyalert("observeBtnSaveInsert/makeInsert: made new Insert. Wrote file "%&%
                      theInsert$filename)
         rValues$theInsert = theInsert
-        # Now, insert into Scenario, 
-        # switch to Scenario tab,
-        # and warn that Scenario is not saved.
+        # TODO:  insert into Scenario, 
+        #    switch to Scenario tab,
+        #    and warn that Scenario is not saved.
       } 
     }
   }
