@@ -1,4 +1,4 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf210
 \cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Consolas;\f2\fnil\fcharset0 Consolas-Bold;
 \f3\fnil\fcharset0 HelveticaNeue;\f4\fnil\fcharset0 Georgia;\f5\fmodern\fcharset0 Courier;
 \f6\fnil\fcharset0 Monaco;\f7\fnil\fcharset0 LucidaGrande;\f8\froman\fcharset0 TimesNewRomanPSMT;
@@ -1476,7 +1476,8 @@ The problem of getting the treeSelectionDepth is solved.\
 Command-click to unselect.\
 \
 2014-06-29\
-{\field{\*\fldinst{HYPERLINK "http://www.w3schools.com/cssref/trysel.asp"}}{\fldrslt http://www.w3schools.com/cssref/trysel.asp}}\
+\pard\pardeftab720\sl460
+{\field{\*\fldinst{HYPERLINK "http://www.w3schools.com/cssref/trysel.asp"}}{\fldrslt \cf0 http://www.w3schools.com/cssref/trysel.asp}}\
 \
 \
 2014-07-07\
@@ -1487,4 +1488,48 @@ User clicks on an Insert. Options: \
 \
 2014-07-13\
 \pard\pardeftab720\sl460
-{\field{\*\fldinst{HYPERLINK "http://www.federicosilva.net/2012/01/did-you-know-editing-nodes-with-jstree.html"}}{\fldrslt \cf0 http://www.federicosilva.net/2012/01/did-you-know-editing-nodes-with-jstree.html}}}
+{\field{\*\fldinst{HYPERLINK "http://www.federicosilva.net/2012/01/did-you-know-editing-nodes-with-jstree.html"}}{\fldrslt \cf0 http://www.federicosilva.net/2012/01/did-you-know-editing-nodes-with-jstree.html}}\
+\
+2014-07-14\
+\pard\pardeftab720\sl460
+{\field{\*\fldinst{HYPERLINK "http://cran.r-project.org/web/packages/RSelenium/vignettes/shinytesting.html"}}{\fldrslt \cf0 http://cran.r-project.org/web/packages/RSelenium/vignettes/shinytesting.html}}\
+\
+2014-08-02\
+Added radio buttons to the variable table; easy to set up as a radio group and grab input, get filename and read Variable into rValues$theVar. Nice.\
+\
+2014-08-06\
+Solving the tab-jumping problem\'85\
+At first, every tab change cuased the jstree to react.\
+We restricted treeObserver to run only if the 1st tab.\
+\pard\pardeftab720
+
+\f7 \cf0 This line:\
+
+\f11       if(input$tabsetID == "Current scenario") \{ \
+
+\f7 allows clicking on other tabs to work, \
+but clicking on the tab \'93Current scenario\'94 still reverts to the Editors tab. \
+It seems that when ANY tab is selected, the treeObserver is triggered.
+\f10 \
+\pard\pardeftab720\sl460
+\cf0 Then we had to isolate that. 
+\f7 Changing it to\
+\pard\pardeftab720
+
+\f11 \cf0       if(isolate(input$tabsetID) == "Current scenario") \{\
+
+\f7 keeps treeObserver from trying to switch to the Editors page.  Good!\
+However, now treeObserver is not called when a node is clicked,\
+even though the click event is detected by shiny
+\f10 \
+\pard\pardeftab720\sl460
+\cf0 But that removed the reactivity to the jstree.\
+Adding a standalone reference to the jstree restored the jstree selection reactivity, without inducing inappropriate tab-jumping.  Mysterious, but problem solved finally.\
+ \'97\'97\'97\'97\
+\
+\
+\
+\
+\
+\
+}
