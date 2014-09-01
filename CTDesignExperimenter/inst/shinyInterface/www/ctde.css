@@ -23,7 +23,7 @@ li.treeclass_2 > ul > .jstree-icon {
 
 
 .treeclass_1, .BLOCKlevel {
-  background-color:#d0e4fe;
+  background-color:lightgrey;
   color:blue;
 }
 
@@ -40,5 +40,6 @@ li.treeclass_1  {
 }
 
 .treeclass_3, .VARlevel{
+  background-color:#d0e4fe;
   color:green;
 }
