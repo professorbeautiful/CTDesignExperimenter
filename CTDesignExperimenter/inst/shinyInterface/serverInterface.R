@@ -10,55 +10,49 @@ shinyServer(function(input, output, session) {
   source("debugTools.R", local=TRUE)
   
   rValues = reactiveValues()
-  rValues$editingVariable = FALSE
-  rValues$editingInsert = FALSE
+  rValues$openingVariableEditor = FALSE
+  rValues$openingInsertEditor = FALSE
   
   source("varEditorUI.R", local=TRUE)
   source("insertEditorUI.R", local=TRUE)
   
-  observe({
+  observeBtnEditVariable = observe(label="observeBtnEditVariable", {
     if(input$btnEditVariable > 0) {
-      rValues$editingVariable == TRUE
-    }
-  }
-  )
-  observe({
-    if(input$btnEditInsert > 0) {
-      rValues$editingInsert == TRUE
+      isolate(rValues$openingVariableEditor <- TRUE)
     }
   }
   )
   
-  #   output$varEditPopup <- renderPrint({
-  #     code <- input$console
-  #     output <- eval( parse( text=code ) )
-  #     return(output)
-  #   })
+  observeBtnEditInsert = observe(label="observeBtnEditInsert", {
+    if(input$btnEditInsert > 0) {
+      isolate(rValues$openingInsertEditor <- TRUE)
+    }
+  }
+  )
   
   ## If a Variable is selected in the Scenario, open the Editors tab.
-  observe(label="editingVariableObserver", {
-    catn("editingVariableObserver: rValues$editingVariable = ", rValues$editingVariable)
-    if(rValues$editingVariable) {
+  editingVariableObserver = observe(label="editingVariableObserver", {
+    catn("editingVariableObserver: rValues$openingVariableEditor = ", rValues$openingVariableEditor)
+    if(rValues$openingVariableEditor) {
       updateTabsetPanel(session, "tabsetID", selected = "Editors")
     }    #"selected" is the title on the tab.
   }
   )
-  
   ## If an Insert is selected in the Scenario, open the Editors tab.
   editingInsertObserver = observe(label="editingInsertObserver", {
-    catn("editingInsertObserver: rValues$editingInsert = ", rValues$editingInsert)
-    if(rValues$editingInsert) {
+    catn("editingInsertObserver: rValues$openingInsertEditor = ", rValues$openingInsertEditor)
+    if(rValues$openingInsertEditor) {
       updateTabsetPanel(session, "tabsetID", selected = "Editors")
     }    #"selected" is the title on the tab.
   }
   )
-  editingInsertObserver.setPriority(1)
   
   ## If you switch tabs, reset the flags
-  observe({
-    if(input$tabsetID != "editing") {    ## react if tab changes
-      rValues$editingVariable <<- FALSE
-      rValues$editingInsert <<- FALSE
+  observeTabReset = observe(label = "observeTabReset", {
+    cat("observed:  Resetting the tabset to ", input$tabsetID, "\n")
+    if(input$tabsetID != "Editors") {    ## react if tab changes
+      rValues$openingVariableEditor <- FALSE
+      rValues$openingInsertEditor <- FALSE
     }
   })
   
@@ -67,37 +61,41 @@ shinyServer(function(input, output, session) {
     #     schedule themselves to re-execute.
     #     You can suspend, resume, destroy, and setPriority.
     label="myTreeObserver", {
-      nColumnsInTreeValue = 6
-      if(length(input$jstreeScenario) > 0) {
-        nSelected <<- length(input$jstreeScenario) / nColumnsInTreeValue
-        rValues$nSelected <<- nSelected
-        treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstreeScenario, byrow=T,
-                                 dimnames=list(1:nSelected,
-                                               names(input$jstreeScenario)[1:nColumnsInTreeValue]))
-        ## Trim leading and trailing whitespace.
-        treeSelection[ , "text"] <<- gsub("^[\n\t ]*", "",
-                                          gsub("[\n\t ]*$", "",
-                                               treeSelection[ , "text"] ))
-        cat("Entered treeObserver. rValues$treeSelection is:\n")
-        print(treeSelection)
-        rValues$treeSelectionText = paste(treeSelection[ , "text"], collapse=" & ")
-        rValues$treeSelectionIndex = paste(treeSelection[ , "index"], collapse=" & ")
-        rValues$treeSelectionDepth = 
-          length(strsplit(split = "_",
-                          treeSelection[ 1, "index"]) [[1]]) - 1
-        rValues$editingVariable = 
-          (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1) 
-        if(rValues$editingVariable) 
-          rValues$theVar = findObjectInScenario(rValues$treeSelectionIndex)
-        rValues$editingInsert = 
-          (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
-        if(rValues$editingInsert) 
-          rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
-      }
-      else {
-        rValues$treeSelectionText = ""
-        rValues$treeSelectionIndex = ""
-        rValues$treeSelectionDepth = 0
+      cat("treeObserver: tabsetID = ", isolate(input$tabsetID), "\n")
+      input$jstreeScenario  ### Added to restore reactivity. Necessary! (a mystery)
+      if(isolate(input$tabsetID) == "Current scenario") { ### Fixes part of the problem
+        nColumnsInTreeValue = 6
+        if(length(input$jstreeScenario) > 0) {
+          nSelected <<- length(input$jstreeScenario) / nColumnsInTreeValue
+          rValues$nSelected <<- nSelected
+          treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstreeScenario, byrow=T,
+                                   dimnames=list(1:nSelected,
+                                                 names(input$jstreeScenario)[1:nColumnsInTreeValue]))
+          ## Trim leading and trailing whitespace.
+          treeSelection[ , "text"] <<- gsub("^[\n\t ]*", "",
+                                            gsub("[\n\t ]*$", "",
+                                                 treeSelection[ , "text"] ))
+          cat("Entered treeObserver. rValues$treeSelection is:\n")
+          print(treeSelection)
+          rValues$treeSelectionText = paste(treeSelection[ , "text"], collapse=" & ")
+          rValues$treeSelectionIndex = paste(treeSelection[ , "index"], collapse=" & ")
+          rValues$treeSelectionDepth = 
+            length(strsplit(split = "_",
+                            treeSelection[ 1, "index"]) [[1]]) - 1
+          rValues$openingVariableEditor = 
+            (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1) 
+          if(rValues$openingVariableEditor) 
+            rValues$theVar = findObjectInScenario(rValues$treeSelectionIndex)
+          rValues$openingInsertEditor = 
+            (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
+          if(rValues$openingInsertEditor) 
+            rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
+        }
+        else {
+          rValues$treeSelectionText = ""
+          rValues$treeSelectionIndex = ""
+          rValues$treeSelectionDepth = 0
+        }
       }
     }
   )
@@ -106,7 +104,8 @@ shinyServer(function(input, output, session) {
   output$treeSelectionText = renderText(rValues$treeSelectionText)
   output$treeSelectionIndex = renderText(rValues$treeSelectionIndex)
   output$treeSelectionDepth = renderText(rValues$treeSelectionDepth)
-  output$editingVariable = renderText(rValues$editingVariable)
+  output$openingVariableEditor = renderText(rValues$openingVariableEditor)
+  output$openingInsertEditor = renderText(rValues$openingInsertEditor)
   # treeObserver$onInvalidate(function() print("jstreeScenario selection changed!"))
   
   output$selectedNode = renderText({
@@ -174,7 +173,7 @@ shinyServer(function(input, output, session) {
   is_provision = function()
     return (grep(rValues$treeSelectionText, 'provides:') > 0 )
   
-  observe({
+  observeBtnAddScen = observe(label="observeBtnAddScen", {
     if(input$btnAddScen > 0) { ### Make reactive to button.
       updateTabsetPanel(session, "tabsetID", selected = "Experiment")
       catn("==== doing updateTabsetPanel to Experiment")
