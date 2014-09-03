@@ -122,11 +122,11 @@ output$insertEditorUI = renderUI({
     ### Let's see if we can put all this on one line,
     # using the ideas at https://groups.google.com/forum/#!searchin/shiny-discuss/shinysky/shiny-discuss/rYMmnAtYuJY/_nnzF1ka1vYJ.
     list(
-        div(class="span2", strong("Editing an insert ", class="INSERTlevel")),
-        div(class="span1", img(src='Insert32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
-        div(class="span1", strong(" in block ", class="BLOCKlevel")),
-        div(class="span1", img(src='BLOCK32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
-        div(class="span6", renderText( {  theInsert@insertSubType})) #, class="BLOCKlevel")
+        column(width=2, offset=0, strong("Editing an insert ", class="INSERTlevel")),
+        column(width=1, img(src='Insert32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
+        column(width=1, strong(" in block ", class="BLOCKlevel")),
+        column(width=1, img(src='BLOCK32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
+        column(width=6, renderText( {  theInsert@insertSubType})) #, class="BLOCKlevel")
     )
     ,
     br(),
