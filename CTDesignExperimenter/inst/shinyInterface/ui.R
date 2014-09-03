@@ -150,6 +150,7 @@ myJSincludes = tagList(
   , CSSreference ### OK. Works (for text colors)
   , treeSelectionDepthJSfunction
   , treeSelectionTextJSfunction
+  , singleton(tags$script("outputPreamble = '" %&% outputPreamble %&% "';"))
 )
 
 ##  Fiddling with jqueryUI popups:
