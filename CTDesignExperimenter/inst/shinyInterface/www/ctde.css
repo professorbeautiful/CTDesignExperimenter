@@ -1,7 +1,7 @@
 /* http://www.w3schools.com/cssref/trysel.asp */
 
 .noSelection {
-  background-color:black;
+ /*  background-color:black;*/
 }
 
 /* li.treeclass_1 > .jstree-icon { PLACED to the left, not replacing old icon */
@@ -23,7 +23,7 @@ li.treeclass_2 > ul > .jstree-icon {
 
 
 .treeclass_1, .BLOCKlevel {
-  background-color:lightgrey;
+ /*  background-color:lightgrey;*/
   color:blue;
 }
 
@@ -35,11 +35,11 @@ li.treeclass_1  {
 }
 
 .treeclass_2, .INSERTlevel {
-  background-color:#d0e4fe;
+ /*  background-color:#d0e4fe;*/
   color:darkred;
 }
 
 .treeclass_3, .VARlevel{
-  background-color:#d0e4fe;
+ /*  background-color:#d0e4fe;*/
   color:green;
 }
