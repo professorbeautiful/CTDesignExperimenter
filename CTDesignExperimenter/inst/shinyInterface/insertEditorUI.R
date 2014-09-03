@@ -1,7 +1,4 @@
-rm(requirementDF)
-rm(requirementDF_old)
-rm(parameterDF)
-rm(parameterDF_old)
+
 
 insertToDataframe = function(theInsert) {
   data.frame( 
@@ -27,6 +24,10 @@ insertToDataframe = function(theInsert) {
 
 
 output$insertEditorUI = renderUI({ 
+  rm(requirementDF, inherits = TRUE)
+  rm(requirementDF_old, inherits = TRUE)
+  rm(parameterDF, inherits = TRUE)
+  rm(parameterDF_old, inherits = TRUE)
   rValues$openingInsertEditor = FALSE
   theInsert = rValues$theInsert
   catn("output$insertEditorUI: insert is ", capture.output(theInsert))
