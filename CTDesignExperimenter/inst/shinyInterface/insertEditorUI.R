@@ -119,20 +119,17 @@ output$insertEditorUI = renderUI({
   
   ### Return value for renderUI "expr" arg starts here.
   div(
-    fluidRow(
-      column(width=1, p(
-        strong("Editing an insert ", class="INSERTlevel"),
-        img(src='Insert32.png', align="absmiddle")  ### Place in app root. Also, "www/" will not work.
-      )),
-      column(width=6, offset=0,
-           span(class="BLOCKlevel",
-                strong(" in block ", class="BLOCKlevel"),
-                img(src='BLOCK32.png', align="absmiddle")  ### Place in app root. Also, "www/" will not work.
-           ),
-           renderText( {  theInsert@insertSubType}) #, class="BLOCKlevel")
-      )
-    ) ## end of fluidRow
+    ### Let's see if we can put all this on one line,
+    # using the ideas at https://groups.google.com/forum/#!searchin/shiny-discuss/shinysky/shiny-discuss/rYMmnAtYuJY/_nnzF1ka1vYJ.
+    list(
+        div(class="span2", strong("Editing an insert ", class="INSERTlevel")),
+        div(class="span1", img(src='Insert32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
+        div(class="span1", strong(" in block ", class="BLOCKlevel")),
+        div(class="span1", img(src='BLOCK32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
+        div(class="span6", renderText( {  theInsert@insertSubType})) #, class="BLOCKlevel")
+    )
     ,
+    br(),
     hr(),
     div(class='col-12',
         actionButton(inputId="btnNewInsert" , 
