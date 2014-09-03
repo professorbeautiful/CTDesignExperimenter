@@ -178,17 +178,22 @@ output$insertEditorUI = renderUI({
         
         div(class = "well container-fluid", 
             div(strong("requirements", class="INSERTlevel")), 
-            div(class = "row-fluid", hotable("requirementHOT")),
+            div(class = "row-fluid", 
+                conditionalPanel('window.Shiny.shinyapp.$bindings.requirementHOT.el.attributes.length > 0',
+                                 hotable("requirementHOT"))),
             img(src="Var32.png"),
             actionButton(inputId="btnAddRequirement" , 
                          label=div("Add requirement (not implemented yet)", 
                                    class = "VARlevel")),
-            actionButton(inputId="btnEditRequirement" , 
-                         label=div("Edit requirement (not implemented yet)", 
-                                   class = "VARlevel")),
-            actionButton(inputId="btnRemoveRequirement" , 
-                         label=div("Remove requirement (not implemented yet)", 
-                                   class = "VARlevel"))
+            conditionalPanel('window.Shiny.shinyapp.$bindings.requirementHOT.el.attributes.length > 0',
+                             ## Use JS version of outputPreamble?
+                             actionButton(inputId="btnEditRequirement" , 
+                                          label=div("Edit requirement (not implemented yet)", 
+                                                    class = "VARlevel")),
+                             actionButton(inputId="btnRemoveRequirement" , 
+                                          label=div("Remove requirement (not implemented yet)", 
+                                                    class = "VARlevel"))
+            )
         ),    
         
         div(class = "well container-fluid", 
