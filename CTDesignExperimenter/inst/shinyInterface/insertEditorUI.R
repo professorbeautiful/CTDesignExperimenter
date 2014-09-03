@@ -24,10 +24,10 @@ insertToDataframe = function(theInsert) {
 
 
 output$insertEditorUI = renderUI({ 
-  rm(requirementDF, inherits = TRUE)
-  rm(requirementDF_old, inherits = TRUE)
-  rm(parameterDF, inherits = TRUE)
-  rm(parameterDF_old, inherits = TRUE)
+  try(rm(requirementDF))
+  try(rm(requirementDF_old))
+  try(rm(parameterDF))
+  try(rm(parameterDF_old))
   rValues$openingInsertEditor = FALSE
   theInsert = rValues$theInsert
   catn("output$insertEditorUI: insert is ", capture.output(theInsert))
@@ -107,6 +107,8 @@ output$insertEditorUI = renderUI({
   }, readOnly = FALSE)
   
   
+  output$insertSubTypeTOP = renderText( {  theInsert@insertSubType})
+  
   ############ showEditableInsertSlot, a FAILED EXPERIMENT ? ####################
   
 #   showEditableInsertSlot = function(label, slotName) {
@@ -122,11 +124,11 @@ output$insertEditorUI = renderUI({
     ### Let's see if we can put all this on one line,
     # using the ideas at https://groups.google.com/forum/#!searchin/shiny-discuss/shinysky/shiny-discuss/rYMmnAtYuJY/_nnzF1ka1vYJ.
     list(
-        column(width=2, offset=0, strong("Editing an insert ", class="INSERTlevel")),
-        column(width=1, img(src='Insert32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
-        column(width=1, strong(" in block ", class="BLOCKlevel")),
-        column(width=1, img(src='BLOCK32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
-        column(width=6, renderText( {  theInsert@insertSubType})) #, class="BLOCKlevel")
+        column(width=2, offset=-1, strong("Editing an insert ", class="INSERTlevel")),
+        column(width=1, offset=-1, img(src='Insert32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
+        column(width=1, offset=-1, strong(" in block ", class="BLOCKlevel")),
+        column(width=1, offset=-1, img(src='BLOCK32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
+        column(width=6, offset=-1, div(class="BLOCKlevel", textOutput("insertSubTypeTOP"))) 
     )
     ,
     br(),
