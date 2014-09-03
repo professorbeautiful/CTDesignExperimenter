@@ -60,7 +60,7 @@ output$insertEditorUI = renderUI({
     if(exists("requirementDF_old")) {
       cat("requirement is changed: ")
       for(pName in names(requirementDF)) {
-        if( requirementDF_old[[pName]] != requirementDF[[pName]])
+        #if( requirementDF_old[[pName]] != requirementDF[[pName]])
           cat(pName, " changed from ", requirementDF_old[[pName]], " to ", requirementDF[[pName]])
       }
       cat("\n")
