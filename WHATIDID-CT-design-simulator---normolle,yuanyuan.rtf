@@ -1527,9 +1527,50 @@ even though the click event is detected by shiny
 Adding a standalone reference to the jstree restored the jstree selection reactivity, without inducing inappropriate tab-jumping.  Mysterious, but problem solved finally.\
  \'97\'97\'97\'97\
 \
+2014-09-02\
+Trying to troubleshoot why CTDE tree does not appear in Chrome or Safari. This warning shows up in Chrome:\
+	'Attr.nodeValue' is deprecated. Please use 'value' instead.\
+Not produced by any of the extensions. \
+It probably comes from env.rhino.1.2.js which is in shinysky.  May not be resposnsible for the problem.\
+\
+throbber.gif might be stuck.\
+https://github.com/deitch/jstree-grid/issues/59 is interesting, probably not helpful.\
+But we might try to redraw the tree.\
 \
 \
-\
-\
-\
+
+\f11 In firefox, this pulls out a node:  $('#jstreeScenario').find('0_1_1')\
+
+\f10 as an Object.  If you define (in the JS box) \
+
+\f11 function listAllProperties(o)\{     \
+	var objectToInspect;     \
+	var result = [];\
+	for(objectToInspect = o; objectToInspect !== null; objectToInspect = Object.getPrototypeOf(objectToInspect))\{  \
+		result = result.concat(Object.getOwnPropertyNames(objectToInspect));  \
+	\}\
+	return result; \
+\}\
+
+\f10 \
+then this code:\
+   
+\f11 listAllProperties($('#jstreeScenario').find('0_1_1'))
+\f10 \
+returns a long list. \
+On the other hand, this:\
+	
+\f11 Object.getOwnPropertyNames($('#jstreeScenario').find('0_1_1'))\
+
+\f10 returns just this:\
+	
+\f11 length,prevObject,context,selector
+\f10 \
+
+\f11 $('#jstreeScenario').find('0_1_1').context
+\f10  is a 
+\f11 [object HTMLDocument]\
+
+\f10 Here is a useful reference: \
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects\
 }
