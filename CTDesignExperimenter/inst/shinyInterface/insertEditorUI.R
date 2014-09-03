@@ -125,16 +125,18 @@ output$insertEditorUI = renderUI({
     # using the ideas at https://groups.google.com/forum/#!searchin/shiny-discuss/shinysky/shiny-discuss/rYMmnAtYuJY/_nnzF1ka1vYJ.
     list(
       ## If divs instead of columns, vertical instead of horizontal.
-        column(width=2, offset=-1, strong("Editing an insert ", class="INSERTlevel")),
-        column(width=1, offset=-1, img(src='Insert32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
-        column(width=1, offset=-1, strong(" in block ", class="BLOCKlevel")),
-        column(width=1, offset=-1, img(src='BLOCK32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
-        column(width=6, offset=-1, div(class="BLOCKlevel", textOutput("insertSubTypeTOP"))) 
+      ## Negative offsets are the same as zero. widths must be in 1,...,12.
+        column(width=2, offset=-10, strong("Editing an insert ", class="INSERTlevel")),
+        column(width=1, offset=-10, img(src='Insert32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
+        column(width=1, offset=-10, strong(" in block ", class="BLOCKlevel")),
+        column(width=1, offset=-10, img(src='BLOCK32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
+        column(width=6, offset=-10, div(class="BLOCKlevel", textOutput("insertSubTypeTOP"))) 
     )
     ,
     br(),
     hr(),
     div(class='col-12',
+        div(class = "well container-fluid", 
         actionButton(inputId="btnNewInsert" , 
                      label=div("New Insert", class = "INSERTlevel")),
         actionButton(inputId="btnSearchInsert" , 
@@ -142,8 +144,9 @@ output$insertEditorUI = renderUI({
         actionButton(inputId="btnSaveInsert" , 
                      label=div("Save insert", class = "INSERTlevel")),
         actionButton(inputId="btnSaveInsertAs" , 
-                     label=div("Save Insert as...", class="INSERTlevel")),
+                     label=div("Save Insert as...", class="INSERTlevel"))
                   # css.class doesnt work.   css.class = "treeclass-2"),
+        ),
         tagAppendAttributes(tag=strong(
                               textInput("insertName", 
                                         label = strong("name", class="INSERTlevel"), 
