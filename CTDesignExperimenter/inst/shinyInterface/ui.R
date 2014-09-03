@@ -48,7 +48,7 @@ conditionPanel_1_insert = conditionalPanel(condition =
      actionButton(inputId="btnRemoveInsert" , label="Remove insert", css.class = "treeclass_2"),
      actionButton(inputId="btnCloneInsert" , label="Clone insert", css.class = "treeclass_2"),
      actionButton(inputId="btnEditInsert" , label="Edit insert", css.class = "treeclass_2"),
-     actionButton(inputId="btnAddRequirement" , label="Add a needed Variable", css.class = "treeclass_2"),
+     #actionButton(inputId="btnAddRequirement" , label="Add a needed Variable", css.class = "treeclass_2"),
      hr()
 )
 
