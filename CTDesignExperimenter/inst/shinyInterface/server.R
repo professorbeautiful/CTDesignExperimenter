@@ -212,3 +212,37 @@ shinyServer(function(input, output, session) {
   }
   })
 }) 
+
+
+### Implement the btnRemoveInsert button.
+### First, allow modification to the tree:
+# operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+# in case of 'rename_node' node_position is filled with the new node name
+JSallowDeletion = tags$script("
+                              $('#jstreeScenario').jstree({
+                              'core' : {
+                              'check_callback' : function (operation, node, node_parent, node_position, more) {
+                              return operation === 'delete_node';
+                              }
+                              }
+                              });
+                              function removeNode(node) {
+                              $('#jstreeScenario').jstree('delete_node', node); // e.g. #j1_2.
+                              }
+                              ")
+
+observe({
+  if(exists("input")) 
+    if(!is.null(input$btnRemoveInsert) & (input$btnRemoveInsert > 0)) {
+      # Find in the Scenario object and delete and reconstruct the tree.
+      # This is the actual object (e.g. VG): findObjectInScenario(rValues$treeSelectionIndex)
+      selectedInsertIndex <<- which(sapply(currentScenario@inserts, function(INSERT) 
+        identical(INSERT, findObjectInScenario(rValues$treeSelectionIndex,
+                                               currentScenario))))
+      currentScenario@inserts <<- 
+        new('ListOfInserts', currentScenario@inserts[-selectedInsertIndex])
+      # error:assignment of an object of class “list” is not valid for @‘inserts’
+      # in an object of class “Scenario”; is(value, "ListOfInserts") is not TRUE
+      reloadScenario()
+    }
+})
