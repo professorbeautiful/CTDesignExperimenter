@@ -10,6 +10,85 @@ shinyServer(function(input, output, session) {
   source("debugTools.R", local=TRUE)
   
   rValues = reactiveValues()
+  
+  rValues$currentScenario = defaultScenario
+  
+  ### Without this "reactive" wrapper, I get the error 
+  # Error in .getReactiveEnvironment()$currentContext() : 
+  #   Operation not allowed without an active reactive context. (You tried to do something that can only be done from inside a reactive expression or observer.)
+#   rValues$scenarioTree = reactive({
+#     catn("reloadScenario, length of inserts is ",
+#         length(rValues$currentScenario@inserts))
+#     makeTree(scenario=rValues$currentScenario, "full")
+#     #catn("length of scenarioTree is ", length(rValues$scenarioTree))
+#     # length(scenarioTree) is 13
+#   })
+
+# myTree is created in global.R
+
+
+output$jstreeScenarioOutput = renderUI({
+    jstree("jstreeScenario",  myjstree.obj(
+      makeTree(scenario=rValues$currentScenario, "full")))
+})
+
+#   observe({
+#     catn("class of myTreeObj is ", class(rValues$myTreeObj))
+#   })
+#   output$myTree = jstree(id="jstreeScenario", rValues$myTreeObj)
+#   output$TEMP = renderText({"TEMP"})
+  # class(renderText({"TEMP"}))  is   shiny.render.function function
+#   output$myTree = renderUI({
+#     rValues$myTreeObj # temporary; make sure it's reactive
+#     catn("renderUI for myTree")
+#      returnvalue = jstree(id="jstreeScenario", rValues$myTreeObj)
+#      catn("renderUI for myTree: class of returnvalue is ", class(returnvalue))
+#      #div(returnvalue)
+ #"jstree HERE"
+#     textOutput('TEMP')
+ # class(renderText({"TEMP"}))  is   shiny.render.function function
+#   })
+## components of output$:
+  # window.Shiny.shinyapp.$bindings.myTree.el  is HTMLDivElement
+  # so is window.Shiny.shinyapp.$bindings.treeSelectionText.el
+ #window.Shiny.shinyapp.$bindings.treeSelectionText.el.attributes.length is 2
+# From window.Shiny.shinyapp.$bindings.myTree.el.attributes.class.value, we get
+#          shiny-html-output shiny-bound-output shiny-output-error
+# Handy code:  pbcopy(capture.output(myTree)); sink()
+  
+  #   vgNodes = unlist( 
+  #     traverse(myTree, callback = 1, searchTerm = "vg_")
+  #     )
+  #   vgNodeIndices = sapply(strsplit(vgNodes, x = " "), ''
+  #   for(node in vgNodes) {
+  #     locationVector = strsplit(vgNodes)
+  #     myTree[[locationVector]] <-
+  #       tagAppendAttributes(myTreeTemp[[locationVector]], class="CLASS")
+  #   }
+  # length(unlist(myTree)) is 192.  Very useful names! Gives depth.
+  # as.vector(unlist(myTree))
+  
+  # table(unlist(myTree)[grep("name", names(unlist(myTree)))])
+  # div   head     li   link script     ul 
+  #   1      3     60      1      3     18 
+  #unlist(myTree)[which(unlist(myTree) == "link") + (0:3)]
+  #unlist(myTree)[which(unlist(myTree) == "") + (0:3)]
+  
+  # 
+  #  unlist(myTree)[(grep("(ec|vg)_", unlist(myTree)))]  ### 11 vg or ec.
+  ## All are children.children.children.children.children
+  #  unlist(myTree)[(grep("v_", unlist(myTree)))]  #NONE.
+  # Using opm:traverse
+  
+  # traverse = function(li, func) {
+  #   if(is.list(li) return(lapply()))
+  # }
+  
+  ## Start with current Scenario.
+  currentScenario = defaultScenario  
+#  reloadScenario()
+  
+  
   rValues$openingVariableEditor = FALSE
   rValues$openingInsertEditor = FALSE
   
@@ -194,31 +273,30 @@ shinyServer(function(input, output, session) {
       catn("==== rownames changed...")
       print(experimentTable)
     }
-  })
-  
-  observe({
-   if( input$btnCloneScen > 0) {   # Trigger if clicked
-    cat("\nSaving scenario\n")
-    assign(isolate(input$scenarioName), pos = 1,
-           currentScenario
-           ##TODO: update currentScenario 
-           ## responding to deletes, insertions, edits in place.
-    )
-    showshinyalert(session, id="cloneScen", styleclass = "inverse",
-                   HTMLtext=paste(
-                     "Saving scenario, name = ",
-                     isolate(input$scenarioName)))
-    #window.prompt("sometext","defaultText");
-  }
-  })
-}) 
+    
+    observe({
+      if( input$btnCloneScen > 0) {   # Trigger if clicked
+        cat("\nSaving scenario\n")
+        assign(isolate(input$scenarioName), pos = 1,
+               currentScenario
+               ##TODO: update currentScenario 
+               ## responding to deletes, insertions, edits in place.
+        )
+        showshinyalert(session, id="cloneScen", styleclass = "inverse",
+                       HTMLtext=paste(
+                         "Saving scenario, name = ",
+                         isolate(input$scenarioName)))
+        #window.prompt("sometext","defaultText");
+      }
+    })
+  }) 
 
 
-### Implement the btnRemoveInsert button.
-### First, allow modification to the tree:
-# operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
-# in case of 'rename_node' node_position is filled with the new node name
-JSallowDeletion = tags$script("
+  ### Implement the btnRemoveInsert button.
+  ### First, allow modification to the tree:
+  # operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+  # in case of 'rename_node' node_position is filled with the new node name
+  JSallowDeletion = tags$script("
                               $('#jstreeScenario').jstree({
                               'core' : {
                               'check_callback' : function (operation, node, node_parent, node_position, more) {
@@ -231,18 +309,25 @@ JSallowDeletion = tags$script("
                               }
                               ")
 
-observe({
-  if(exists("input")) 
-    if(!is.null(input$btnRemoveInsert) & (input$btnRemoveInsert > 0)) {
-      # Find in the Scenario object and delete and reconstruct the tree.
-      # This is the actual object (e.g. VG): findObjectInScenario(rValues$treeSelectionIndex)
-      selectedInsertIndex <<- which(sapply(currentScenario@inserts, function(INSERT) 
-        identical(INSERT, findObjectInScenario(rValues$treeSelectionIndex,
-                                               currentScenario))))
-      currentScenario@inserts <<- 
-        new('ListOfInserts', currentScenario@inserts[-selectedInsertIndex])
-      # error:assignment of an object of class “list” is not valid for @‘inserts’
-      # in an object of class “Scenario”; is(value, "ListOfInserts") is not TRUE
-      reloadScenario()
-    }
+  observe({
+    if(exists("input")) 
+      if(!is.null(input$btnRemoveInsert) & (input$btnRemoveInsert > 0)) {
+        # Find in the Scenario object and delete and reconstruct the tree.
+        # This is the actual object (e.g. VG): findObjectInScenario(rValues$treeSelectionIndex)
+        selectedInsertIndex <<- which(sapply(currentScenario@inserts, function(INSERT) 
+          identical(INSERT, findObjectInScenario(isolate(rValues$treeSelectionIndex),
+                                                 currentScenario))))
+        if(length(selectedInsertIndex) == 1) {   
+          catn("REMOVING insert # ", selectedInsertIndex)
+          currentScenario@inserts <<- 
+            new('ListOfInserts', currentScenario@inserts[-selectedInsertIndex])
+          #reloadScenario()  #This creates a new mytree.
+          ##   $('#jstreeScenario').jstree('refresh')  ## not enough.
+          # http://stackoverflow.com/questions/11139482/how-to-refresh-a-jstree-without-triggering-select-node-again
+          
+        }
+        else catn("ERROR in removing insert from Scenario: selectedInsertIndex is ",
+                  selectedInsertIndex)
+      }
+  })
 })

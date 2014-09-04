@@ -118,10 +118,12 @@ scenarioPanel = tabPanel(
                            ,textOutput('treeSelectionText')
                        )
                    ) 
-  ),
-  div(style="overflow:auto; height:800px", 
-      myTree),
-  tagToOpenTree 
+  )
+  , tagToOpenTree
+  ,
+  div(style="overflow:auto; height:800px", "SCENARIO TREE" 
+       , uiOutput(outputId = 'jstreeScenarioOutput')
+  ) 
 )
 
 editorPanel = #conditionalPanel(condition = 'true',
