@@ -119,11 +119,14 @@ scenarioPanel = tabPanel(
                        )
                    ) 
   )
-  , tagToOpenTree
-  ,
-  div(style="overflow:auto; height:800px", "SCENARIO TREE" 
-       , uiOutput(outputId = 'jstreeScenarioOutput')
-  ) 
+  #,
+  #div(style="overflow:auto; height:800px", "SCENARIO TREE" 
+      ### myTree responds to JS (tagToOpenTree, and conditionals)
+      ### The uiOutput element does not.
+    #, uiOutput(outputId = 'jstreeScenarioOutput')  
+#    , myTree
+    , tagToOpenTree  ## This tag MUST be AFTER myTree! Why? (Can be inside the div or not)
+  #) 
 )
 
 editorPanel = #conditionalPanel(condition = 'true',

@@ -24,12 +24,17 @@ shinyServer(function(input, output, session) {
 #     # length(scenarioTree) is 13
 #   })
 
-# myTree is created in global.R
-
+  # myTree was initially created in global.R. 
+# Must wrap this in "reactive", or else "Operation no allowed withou an active reacive context..."
+rValues$myTree =  reactive({
+  catn("Changing myTree in reactive expression. Number of inserts is ",
+       length(rValues$currentScenario@inserts))
+  jstree("jstreeScenario",  myjstree.obj(
+    makeTree(scenario=rValues$currentScenario, "full")))
+})
 
 output$jstreeScenarioOutput = renderUI({
-    jstree("jstreeScenario",  myjstree.obj(
-      makeTree(scenario=rValues$currentScenario, "full")))
+  rValues$myTree  ## No error message here.
 })
 
 #   observe({
@@ -85,7 +90,7 @@ output$jstreeScenarioOutput = renderUI({
   # }
   
   ## Start with current Scenario.
-  currentScenario = defaultScenario  
+  rValues$currentScenario = defaultScenario  
 #  reloadScenario()
   
   
@@ -278,8 +283,8 @@ output$jstreeScenarioOutput = renderUI({
       if( input$btnCloneScen > 0) {   # Trigger if clicked
         cat("\nSaving scenario\n")
         assign(isolate(input$scenarioName), pos = 1,
-               currentScenario
-               ##TODO: update currentScenario 
+               rValues$currentScenario
+               ##TODO: update rValues$currentScenario 
                ## responding to deletes, insertions, edits in place.
         )
         showshinyalert(session, id="cloneScen", styleclass = "inverse",
@@ -314,14 +319,15 @@ output$jstreeScenarioOutput = renderUI({
       if(!is.null(input$btnRemoveInsert) & (input$btnRemoveInsert > 0)) {
         # Find in the Scenario object and delete and reconstruct the tree.
         # This is the actual object (e.g. VG): findObjectInScenario(rValues$treeSelectionIndex)
-        selectedInsertIndex <<- which(sapply(currentScenario@inserts, function(INSERT) 
+        selectedInsertIndex <<- which(sapply(rValues$currentScenario@inserts, function(INSERT) 
           identical(INSERT, findObjectInScenario(isolate(rValues$treeSelectionIndex),
-                                                 currentScenario))))
+                                                 rValues$currentScenario))))
         if(length(selectedInsertIndex) == 1) {   
           catn("REMOVING insert # ", selectedInsertIndex)
-          currentScenario@inserts <<- 
-            new('ListOfInserts', currentScenario@inserts[-selectedInsertIndex])
+          rValues$currentScenario@inserts <<- 
+            new('ListOfInserts', rValues$currentScenario@inserts[-selectedInsertIndex])
           #reloadScenario()  #This creates a new mytree.
+          catn("#inserts is now ", length(rValues$currentScenario@inserts))
           ##   $('#jstreeScenario').jstree('refresh')  ## not enough.
           # http://stackoverflow.com/questions/11139482/how-to-refresh-a-jstree-without-triggering-select-node-again
           
