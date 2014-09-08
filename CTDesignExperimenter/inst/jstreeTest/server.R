@@ -14,8 +14,8 @@ shinyServer(function(input, output, session) {
   ## The next line has no effect unless ui.R is changed as indicated.
   output$testTree = renderUI({jstree("jstree1", jstree.obj(rV$nav))})
   observe({
-    if(input$changeTree > 0) {
-      rV$nav[[2]] = paste("CHANGED!", input$changeTree)
+    if(input$changeTree > 0) {  ### button pressed
+      names(rV$newData)[[2]] = paste("root2 CHANGED!", input$changeTree)
     }
   })
   observe({
