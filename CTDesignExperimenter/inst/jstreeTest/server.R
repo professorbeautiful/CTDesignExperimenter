@@ -1,6 +1,7 @@
 require(shiny)
 require(shinysky)
-
+require(shinyTree)
+assignInNamespace("listToTags", myListToTags, ns="shinyTree")
 
 shinyServer(function(input, output, session) {
 
@@ -8,11 +9,41 @@ shinyServer(function(input, output, session) {
   
   rV = reactiveValues()
   rV$nav = list(
-    "Branch"=list("twig"=list("leafOnTwigA","leafOnTwigB" ),"leafOnBranch"),
-    "Topleaf"
+    "Branch"=list(
+      "twig"=list("leafOnTwigA"="leafOnTwigATEXT","leafOnTwigB" ),
+      "leafOnBranch"),
+    ThisIsTopleaf="Topleaf"
+  )
+  # "st" is shinyTree?
+  openedNode = function(theNode) {
+    structure(theNode, stopened=TRUE)
+  }
+  rV$newData =     list(
+    root1 = structure("StuffInRoot1", stselected=TRUE, sticon="signal"),
+    root2 = structure(
+      list(
+        SubListA = 
+          openedNode(list(leaf1 = "", leaf2 = "", leaf3="")),
+        SubListB = structure(list(leafA = "", leafB = ""), stdisabled=TRUE)
+      ),
+      stopened=TRUE,
+      index="indexForRoot2"
+    )
   )
   ## The next line has no effect unless ui.R is changed as indicated.
   output$testTree = renderUI({jstree("jstree1", jstree.obj(rV$nav))})
+  output$testText = renderText({ rV$nav[[2]] })
+  
+  output$newTree = renderTree( { rV$newData
+    } )
+  output$selTxt <- renderText({
+    sel <- input$treeSel
+    if (is.null(sel)){
+      "None"
+    } else{
+      sel
+    }    
+  })
   observe({
     if(input$changeTree > 0) {  ### button pressed
       names(rV$newData)[[2]] = paste("root2 CHANGED!", input$changeTree)
@@ -22,5 +53,10 @@ shinyServer(function(input, output, session) {
     showshinyalert(session, "alert_jstree1", 
                    paste0("You selected these items in the tree: ", 
                           paste0(input$jstree1, collapse = ", ")))
+  })
+  observe({
+    showshinyalert(session, "alert_jstree1", 
+                   paste0("You selected these items in the tree: ", 
+                          paste0(input$testText, collapse = ", ")))
   })
 })

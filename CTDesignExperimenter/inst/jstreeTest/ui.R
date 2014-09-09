@@ -12,6 +12,7 @@
 
 library(shiny)
 library(shinysky)
+require(shinyTree)
 
 shiny.trace = TRUE
 
@@ -24,24 +25,36 @@ shinyUI(basicPage(
   div(class="well container-fluid", 
       uiOutput(outputId="debugTools"),  ### This is super-useful!
       div(class="row-fluid" 
-          , jstree("jstree1", jstree.obj(nav))
+          # , jstree("jstree1", jstree.obj(nav))
           # , uiOutput(outputId = 'testTree')
+          , shinyTree('newTree', selected='treeSel')
+          , uiOutput(outputId = 'testText')
           , div(class="span10"
                 , shinyalert("alert_jstree1")
                 , actionButton('changeTree', 'changeTree by changing the data')
                 , br()
-                , "below will show up only after selecting a leaf (input.jstree1.length > 0)"
+                , "The newTree:"
+                #, verbatimTextOutput(outputId = 'newTree')
+                , "Currently Selected:"
+                , verbatimTextOutput("selTxt")
+                , "below will show up only after selecting a leaf with text root2"
                 , br()
-                , conditionalPanel('input.jstree1.length > 0', 
-                                   'jstree1- something selected  ' %&% 
-                                     textOutput('jstree1'))
+                , conditionalPanel("window.Shiny.shinyapp.$bindings.selTxt.el.firstChild.nodeValue
+                                   == 'root2'", 
+                                   paste('root2 was selected  '))
+                , br()
+                , "below will show up only after changing the testText"
+                , br()
+                , conditionalPanel('selTxt != "Topleaf"', 
+                                   paste('testText is now  ',
+                                         textOutput('testText')))
                 , br()
           )
           , conditionalPanel('openTree()', "OPENING TREE")
       )
   )
   , tags$script(
-    'function openTree(){$("#jstree1").jstree("open_all");};
-  $(document).ready(function() {$("#jstree1").ready(openTree);});'
+    'function openTree(){$("#newTree").jstree("open_all");};
+  $(document).ready(function() {$("#newTree").ready(openTree);});'
   )
 ))
