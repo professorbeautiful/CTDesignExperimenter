@@ -149,15 +149,16 @@ findObjectInScenario("0_3_4_1")
 findObjectInScenario("0_3_4_2")
 
 myjstree.obj = 
-  function (x, addLevelClass=TRUE, addLevelType=TRUE, addIndex=TRUE, level=0, index="0") 
+  function (x, prefix="", addLevelClass=TRUE, addLevelType=TRUE, addIndex=TRUE, level=0, index="0") 
   {
     handle <- function(ind, theList, level) {
       name <- names(theList)[[ind]]
       if (!is.null(name)) {
         level=level+1
-        index = paste0(index, "_", ind)
+        index = paste0(prefix, index, "_", ind)
         a <- tags$li(list(name, 
                           myjstree.obj(theList[[ind]], 
+                                       prefix=prefix,
                                        addLevelClass=addLevelClass,
                                        addLevelType=addLevelType,
                                        addIndex=addIndex,
@@ -170,10 +171,10 @@ myjstree.obj =
       }
       ### This line is added to shinysky:::jstree.obj
       if(addLevelClass)
-        a <- tagAppendAttributes(a, class=paste0("treeclass_", level))
+        a <- tagAppendAttributes(a, class=paste0(prefix, "treeclass_", level))
       if(addLevelType) {
-        a <- tagAppendAttributes(a, type=paste0("level_", level))
-        a <- tagAppendAttributes(a, rel=paste0("level_", level))
+        a <- tagAppendAttributes(a, type=paste0(prefix, "level_", level))
+        a <- tagAppendAttributes(a, rel=paste0(prefix, "level_", level))
       }
       if(addIndex)
         a <- tagAppendAttributes(a, index=index)
