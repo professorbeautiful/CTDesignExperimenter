@@ -1,19 +1,25 @@
-##  For source'ing in serverInterface.R
+##  For source'ing in server.R
+
+outputPreamble <<- 'window.Shiny.shinyapp.$bindings.'
+# EXAMPLE:  window.Shiny.shinyapp.$bindings.selTxt.firstChild.nodeValue
 
 output$evaluatedOutput = renderText({
   evalString = isolate(input$evalString)
   ## you have to isolate; otherwise each character typed calls this callback.
-
   ## This might be useful later for up-arrowing through past expressions.
   #   if(is.null(rValues$evalStringHistory))
   #     rValues$evalStringHistory = character(0)
   #  rValues$evalStringHistory = c(rValues$evalStringHistory, evalString)
   
   if(input$evalButton > 0) {
-    if(input$evalToggle == "R")
+    evalToggle = input$evalToggle
+    if(evalToggle == "R")
       eval(parse(text=evalString))
     else {
-      evalJS(evalString)
+       if(evalToggle == "JSoutput")
+         evalJS(paste0(outputPreamble, evalString))
+#       else
+        evalJS(evalString)
       "JS output is in alert window."
     }
   }
@@ -49,15 +55,18 @@ output$JSevaluation = renderUI({
 
 output$shiny.trace.text = renderText({
   eval(options(shiny.trace=input$traceCheckbox), envir = .GlobalEnv);
-  catn("shiny.trace: ", options("shiny.trace")[[1]])
+  cat("shiny.trace: ", options("shiny.trace")[[1]], "\n")
   if( options("shiny.trace")[[1]] != input$traceCheckbox)
-    catn('Error: options("shiny.trace")[[1]] should equal input$traceCheckbox');
-  "trace=" %&% input$traceCheckbox
+    cat('Error: options("shiny.trace")[[1]] should equal input$traceCheckbox', "\n");
+  paste("trace=", input$traceCheckbox)
 })   #### OK this works now.
 
 
 output$debugTools = renderUI({
   div(style="background:darkGrey",
+      singleton(tags$script(paste(
+        "outputPreamble = '", outputPreamble, "';")))
+      ,
       em(strong("Debugging aids")),
       tag("table", list(
         tag("tr", 
