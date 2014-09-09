@@ -1573,4 +1573,32 @@ On the other hand, this:\
 
 \f10 Here is a useful reference: \
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects\
-}
+\
+2014-09-04\
+\
+We can access a jstree() by id with JS, if it is placed directly in the html (previously we have accessed the tree selection state via JS, and opened the tree with tagToOpenTree). But then if it\'92s direct, it\'92s hard (impossible?) to make it reactive. If wrapped in uiOutput, it can be reactive, but not accessible by id. \
+In my testTree example, the conditional panel condition works AND clicking the button to change the tree works, but opening the tree is not working.\
+\
+		#openTree works if jstree is in ui.R directly,\
+              # but not if jstree is wrapped in uiOutput.\
+              # Likewise for the conditionalPanel.  Both require JS access to #\'94jstree1\'94.\
+              # But then, it's not reactive.    \
+> uiOutput(outputId = 'testTree')\
+<div id="testTree" class="shiny-html-output"></div> \
+\
+output$testTree = renderUI(\{jstree("jstree1", jstree.obj(rV$nav))\})\
+gives function (shinysession, name, ...) \{ \'85 \}\
+\
+\
+2014-09-06\
+For a textarea widget in shiny:\
+http://stackoverflow.com/questions/14452465/how-to-create-textarea-as-input-in-a-shiny-webapp-in-r\
+And, use shinyAce for the generatorCode box!!!!!\
+And, look into hugo for blogging!\
+\
+I posted the jstree problem to {\field{\*\fldinst{HYPERLINK "https://groups.google.com/forum/#!topic/shiny-discuss/8GvOkqZyPzs"}}{\fldrslt https://groups.google.com/forum/#!topic/shiny-discuss/8GvOkqZyPzs}}\
+\
+jstreeTest DOES work in Chrome \
+\
+2014-09-08\
+Trying the shinyTree package.   Forked. Modified listToTags() to add attributes: class, treePath, rel and type.  Added prefix (maybe not necessary with jQuery selection syntax). }
