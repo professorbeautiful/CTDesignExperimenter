@@ -21,6 +21,7 @@ output$evaluatedOutput = renderText({
 
 evalJS = function(evalString="1+5"){
   #JSevaluation
+  evalString = gsub('"', "'", evalString) # replace all DQ with SQ.
   div(list(tags$script(
     # 'alert(', '"HERE IS JS"', ')'     # THIS WORKS! 
     # 'alert(eval(', '"1+2"', '))'       # THIS WORKS! 
