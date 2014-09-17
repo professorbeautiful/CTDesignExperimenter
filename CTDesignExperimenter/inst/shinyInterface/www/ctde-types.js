@@ -1,5 +1,5 @@
 $(function () {
-  $("#jstree1").jstree({
+  $("#scenarioTree").jstree({
     "types" : {
       "level_1" : {
             'icon' : { 'image' :  "BLOCK32.png" }
