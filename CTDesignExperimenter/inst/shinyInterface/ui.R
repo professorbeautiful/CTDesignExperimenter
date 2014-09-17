@@ -121,14 +121,21 @@ scenarioPanel = tabPanel(
                        )
                    ) 
   )
-  #,
-  #div(style="overflow:auto; height:800px", "SCENARIO TREE" 
-      ### myTree responds to JS (tagToOpenTree, and conditionals)
+  , hr()
+  # THE FOLLOWING div LINE IS RESPONSIBLE FOR NOT SHOWING UP IN CHROME AND SAFARI
+  # Specifically, it is overflow:auto.  Also overflow:scroll breaks it.
+  #, div(style="overflow:auto; height:800px", "SCENARIO TREE" 
+  #, div(style="overflow:scroll;height:400px;background-color:lightgrey"
+        , "SCENARIO TREE"
+  ### myTree responds to JS (tagToOpenTree, and conditionals)
       ### The uiOutput element does not.
-    #, uiOutput(outputId = 'jstreeScenarioOutput')  
-#    , myTree
-    , tagToOpenTree  ## This tag MUST be AFTER myTree! Why? (Can be inside the div or not)
+    , uiOutput(outputId = 'jstreeScenarioOutput')  
+  #, jstree("jstreeScenario",  myjstree.obj(
+  #  makeTree(scenario=currentScenario, "full")))
+  # makeTree(scenario=rValues$currentScenario, "full")))
+
   #) 
+  , tagToOpenTree  ## This tag MUST be AFTER myTree! Why? (Can be inside the div or not)
 )
 
 editorPanel = #conditionalPanel(condition = 'true',
@@ -150,8 +157,8 @@ CSSreference = singleton(tags$head(tags$link(href = "ctde.css",
 
 
 myJSincludes = tagList(
-  includeScript("www/ctde-types.js") ## It does find this !
-  , includeScript("www/ss-jstree.js")  # and this.  This is not the culprit in the browser problem.
+  #includeScript("www/ctde-types.js") ## It does find this !
+   includeScript("www/ss-jstree.js")  # and this.  This is not the culprit in the browser problem.
 #  , includeScript("http://cdn.datatables.net/1.10.1/js/jquery.dataTables.min.js")
 #  , includeScript("http://code.jquery.com/jquery-1.11.1.min.js")
   , CSSreference ### OK. Works (for text colors)
@@ -174,8 +181,7 @@ shinyUI(
   navbarPage(
     inverse=TRUE,
     id="tabsetID",
-    title = 
-      h4("CTDE: Clinical trial design experimenter"),
+    title = "CTDE: Clinical trial design experimenter",
     header=tagList(myJSincludes,
                    hr(),
                    popupJSincludes,

@@ -26,15 +26,21 @@ shinyServer(function(input, output, session) {
 
   # myTree was initially created in global.R. 
 # Must wrap this in "reactive", or else "Operation no allowed withou an active reacive context..."
-rValues$myTree =  reactive({
-  catn("Changing myTree in reactive expression. Number of inserts is ",
-       length(rValues$currentScenario@inserts))
-  jstree("jstreeScenario",  myjstree.obj(
-    makeTree(scenario=rValues$currentScenario, "full")))
-})
+# rValues$myTree =  reactive({
+#   catn("Changing myTree in reactive expression. Number of inserts is ",
+#        length(rValues$currentScenario@inserts))
+#   jstree("jstreeScenario",  myjstree.obj(
+#     makeTree(scenario=rValues$currentScenario, "full")))
+# })
 
 output$jstreeScenarioOutput = renderUI({
-  rValues$myTree  ## No error message here.
+  ##rValues$myTree  ## No error message here.
+  catn("Changing myTree in reactive expression. Number of inserts is ",
+       length(rValues$currentScenario@inserts))
+  div(style="overflow:scroll;height:400px;",
+    jstree("jstreeScenario",  myjstree.obj(
+    makeTree(scenario=rValues$currentScenario, "full")))
+  )
 })
 
 #   observe({
