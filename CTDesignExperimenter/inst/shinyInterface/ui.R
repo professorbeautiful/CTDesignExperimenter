@@ -10,7 +10,9 @@ tagToOpenTree =
     'function openTree(){'
     , OpenSesame 
     , '                   };
-       $(document).ready(openTree);'))
+       $(document).ready(
+            $("#jstreeScenario").ready(
+              openTree));'))
 
 
 conditionPanelNoneSelected = conditionalPanel(
