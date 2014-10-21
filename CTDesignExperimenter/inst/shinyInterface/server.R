@@ -2,10 +2,36 @@
 
 require(shiny)
 require(shinysky)
-require(shinyTable)
+#require(shinyTable)
 require("CTDesignExperimenter")
 
+
 shinyServer(function(input, output, session) {
+  
+  observe({
+    currScen = rValues$currentScenario
+    messageSent = 
+             myjstree.obj(
+               makeTree(scenario=currScen, "full")
+             )
+    # messageSent = tags$ul(messageSent)
+    #messageSent = jstree("jstreeScenario",  messageSent)
+    messageSent = capture.output(  print(messageSent))
+    messageSent = paste(collapse=" ", messageSent)
+    messageSent <<- messageSent
+    
+    #newTree = '<ul> B      <li> B-A         <ul>            <li>       B-A-A          </li><li>             B-A-B </li>        </ul></li>      <li> B-B </li>    </ul>';
+    
+    # messageSent = messageSent [[5]] [[3]]
+    #   messageSent [[5]] [[3]] is the html
+    #   In ss-jstree.ss receiveMessage, 
+    #   messageSent[[5]][[3]]
+    
+    session$sendInputMessage("jstreeScenario", messageSent)
+    
+    #session$sendInputMessage("jstreeScenario", newTree)
+    #catn("str of messageSent[[5]][[3]] is ", str(messageSent))
+  })
   
   source("debugTools.R", local=TRUE)
   
