@@ -176,17 +176,20 @@ output$jstreeScenarioOutput = renderUI({
   treeObserver = observe(
     #     observers use eager evaluation; as soon as their dependencies change, they
     #     schedule themselves to re-execute.
-    label="myTreeObserver", {
+    label="myTreeObserver", 
+    {
       cat("treeObserver: tabsetID = ", isolate(input$tabsetID), "\n")
       input$jstreeScenario  ### Added to restore reactivity. Necessary! (a mystery)
+      
       if(isolate(input$tabsetID) == "Current scenario") { ### Fixes part of the problem
         nColumnsInTreeValue = 6  ### 7 if using shinyTree
         if(length(input$jstreeScenario) > 0) {
           nSelected <<- length(input$jstreeScenario) / nColumnsInTreeValue
           rValues$nSelected <<- nSelected
-          treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstreeScenario, byrow=T,
-                                   dimnames=list(1:nSelected,
-                                                 names(input$jstreeScenario)[1:nColumnsInTreeValue]))
+          try({
+            treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstreeScenario, byrow=T,
+                                     dimnames=list(1:nSelected,
+                                                   names(input$jstreeScenario)[1:nColumnsInTreeValue]))
           ## Trim leading and trailing whitespace.
           treeSelection[ , "text"] <<- gsub("^[\n\t ]*", "",
                                             gsub("[\n\t ]*$", "",
@@ -211,6 +214,7 @@ output$jstreeScenarioOutput = renderUI({
 #             (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
 #           if(rValues$openingInsertEditor) 
 #             rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
+          })
         }
         else {
           rValues$treeSelectionText = ""
