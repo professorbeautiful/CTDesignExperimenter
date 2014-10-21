@@ -180,7 +180,7 @@ myjstree.obj =
         a <- tagAppendAttributes(a, index=index)
       
       ### Adaptation for shinyTree 
-      a <- tagAppendAttributes(a, `data-jstree`='{&quot;opened&quot;: true}')
+      ## a <- tagAppendAttributes(a, `data-jstree`='{&quot;opened&quot;: true}')
 
       # using the jstree plugin "types".
       #a <- tagAppendAttributes(a, `data-jstree`='{icon:"www/BLOCK.gif"}')
@@ -191,8 +191,9 @@ myjstree.obj =
       ##  attr(x, 'stopened') = TRUE
       ind <- seq(along=x)
       res <- lapply(ind, handle, x, level=level)
-      return(tagAppendAttributes(tags$ul(res), 
-                                 `data-jstree`='{&quot;opened&quot;: true}'))
+      return(tags$ul(res))
+#       return(tagAppendAttributes(tags$ul(res), 
+#                                  `data-jstree`='{&quot;opened&quot;: true}'))
     }
     else {
       x
