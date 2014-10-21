@@ -64,11 +64,15 @@ output$jstreeScenarioOutput = renderUI({
   catn("Changing myTree in reactive expression. Number of inserts is ",
        length(rValues$currentScenario@inserts))
   div(style="overflow:scroll;height:400px;",
-    jstree("jstreeScenario",  myjstree.obj(
-    makeTree(scenario=rValues$currentScenario, "full")))
+      myListToJStreeTags("jstreeScenario",  
+                         myjstree.obj(
+                           makeTree(scenario=rValues$currentScenario, "full")))
+    , singleton(tagToOpenTree) ### does not help
+    , singleton(tags$script(OpenSesame) )  ### does not help
   )
 })
 
+#  
 #   observe({
 #     catn("class of myTreeObj is ", class(rValues$myTreeObj))
 #   })
