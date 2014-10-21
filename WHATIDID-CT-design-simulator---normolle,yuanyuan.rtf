@@ -1538,12 +1538,15 @@ https://github.com/deitch/jstree-grid/issues/59 is interesting, probably not hel
 But we might try to redraw the tree.\
 \
 \
+\pard\pardeftab720\sl460
 
-\f11 In firefox, this pulls out a node:  $('#jstreeScenario').find('0_1_1')\
+\f11 \cf0 In firefox, this pulls out a node:  $('#jstreeScenario').find('0_1_1')\
+\pard\pardeftab720\sl460
 
-\f10 as an Object.  If you define (in the JS box) \
+\f10 \cf0 as an Object.  If you define (in the JS box) \
+\pard\pardeftab720\sl460
 
-\f11 function listAllProperties(o)\{     \
+\f11 \cf0 function listAllProperties(o)\{     \
 	var objectToInspect;     \
 	var result = [];\
 	for(objectToInspect = o; objectToInspect !== null; objectToInspect = Object.getPrototypeOf(objectToInspect))\{  \
@@ -1551,8 +1554,9 @@ But we might try to redraw the tree.\
 	\}\
 	return result; \
 \}\
+\pard\pardeftab720\sl460
 
-\f10 \
+\f10 \cf0 \
 then this code:\
    
 \f11 listAllProperties($('#jstreeScenario').find('0_1_1'))
@@ -1566,12 +1570,14 @@ On the other hand, this:\
 	
 \f11 length,prevObject,context,selector
 \f10 \
+\pard\pardeftab720\sl460
 
-\f11 $('#jstreeScenario').find('0_1_1').context
+\f11 \cf0 $('#jstreeScenario').find('0_1_1').context
 \f10  is a 
 \f11 [object HTMLDocument]\
+\pard\pardeftab720\sl460
 
-\f10 Here is a useful reference: \
+\f10 \cf0 Here is a useful reference: \
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects\
 \
 2014-09-04\
@@ -1601,4 +1607,76 @@ I posted the jstree problem to {\field{\*\fldinst{HYPERLINK "https://groups.goog
 jstreeTest DOES work in Chrome \
 \
 2014-09-08\
-Trying the shinyTree package.   Forked. Modified listToTags() to add attributes: class, treePath, rel and type.  Added prefix (maybe not necessary with jQuery selection syntax). }
+Trying the shinyTree package.   Forked. Modified listToTags() to add attributes: class, treePath, rel and type.  Added prefix (maybe not necessary with jQuery selection syntax)	. \
+\
+\
+2014-10-08\
+\
+The examples in shinyTree do not work.\
+\
+2014-10-11\
+Bidirectional,  configuration and reactive?  (slider)  Why \'93deprecated\'94?\
+http://stackoverflow.com/questions/18700589/interactive-reactive-change-of-min-max-values-of-sliderinput\
+\
+Interesting commands for the JS box:\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 pbcopy(capture.output(HTML(jstree("jstreeScenario2", myjstree.obj(makeTree(scenario=rValues$currentScenario, "full"))))))\
+This, after creating an actual jstreeScenario2 tree in the R answer section.\
+\
+jstree receiving message: DOING IT.  This is sending jstree(\'85).  Not what we want.\
+We don\'92t want the wrapper if our receiveMessage is  doing $("#jstreeScenario").html(data).\
+data begins\'85\
+<script>$(function() \{$('#jstreeScenario').jstree()\})</script> \
+<div id="jstreeScenario" class="ss-jstree">  \
+\
+\
+\
+====\
+\
+Useful new knowledge:\
+\
+Before deletion:  length is 15044\
+After a deletion: \
+\
+jstree receiving message; length of message is 13988\
+jstree receiving message: DOING IT. length of message is 13988\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f6\fs22 \cf0 \CocoaLigature0 pbpaste|wc\
+     177    1523   27240\
+newHTML length is 13988\
+Before jstree refresh\
+Before jstree trigger change, length is 27010\
+After jstree trigger change, length is 27010\
+\
+From JS box: newHTML.length is 13988\
+Then, from JS box,\
+$("#jstreeScenario").html(newHTML);\
+succeeds in setting the visual tree correctly! Deleted node is gone.\
+But it doesn\'92t behave as a tree.\
+\
+Refresh seems to mess it up; returns the full tree with the deleted node.\
+\
+Ah, but without the refresh, the icons are incorrect\
+and you can\'92t select a node.\
+\
+Somehow you have to get the data into the core of the tree object.\
+
+\f0\fs24 \CocoaLigature1 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 =====\
+$("#jstreeScenario").jstree(\{'core' : \{'data': newHTML\}\});   // doesnt work.\
+$("#jstreeScenario").jstree('refresh');\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f6\fs22 \cf0 \CocoaLigature0 $("#jstreeScenario").html(newHTML);
+\f0\fs24 \CocoaLigature1 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 $("#jstreeScenario").jstree(\{'core' : false\});\
+$("#jstreeScenario").jstree('refresh' );\
+\
+\
+\
+Hey!  span is for inline container, div is for block container.}
