@@ -354,26 +354,34 @@ output$jstreeScenarioOutput = renderUI({
                               }
                               ")
 
-  observe({
-    if(exists("input")) 
-      if(!is.null(input$btnRemoveInsert) & (input$btnRemoveInsert > 0)) {
+buttonRemoveInsertObserver = observe({
+  if(exists("input")) 
+    if(!is.null(input$btnRemoveInsert) & (input$btnRemoveInsert > 0)) {
+      isolate({
         # Find in the Scenario object and delete and reconstruct the tree.
         # This is the actual object (e.g. VG): findObjectInScenario(rValues$treeSelectionIndex)
-        selectedInsertIndex <<- which(sapply(rValues$currentScenario@inserts, function(INSERT) 
-          identical(INSERT, findObjectInScenario(isolate(rValues$treeSelectionIndex),
-                                                 rValues$currentScenario))))
+        treeSelectionIndex <<- isolate(rValues$treeSelectionIndex)
+        cat("buttonRemoveInsertObserver: treeSelectionIndex is ", treeSelectionIndex, "\n")
+        rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
+        selectedInsertIndex <<- which(sapply(
+          isolate(rVcS@inserts),
+          function(INSERT) 
+            identical(INSERT, findObjectInScenario(treeSelectionIndex,
+                                                   isolate(rVcS)))))
         if(length(selectedInsertIndex) == 1) {   
-          catn("REMOVING insert # ", selectedInsertIndex)
+          catn("REMOVING insert # ", selectedInsertIndex, ": ",
+               names(rVcS@inserts)[[selectedInsertIndex]])
           rValues$currentScenario@inserts <<- 
-            new('ListOfInserts', rValues$currentScenario@inserts[-selectedInsertIndex])
+            new('ListOfInserts', isolate(rVcS@inserts)[-selectedInsertIndex])
           #reloadScenario()  #This creates a new mytree.
-          catn("#inserts is now ", length(rValues$currentScenario@inserts))
+          catn("#inserts is now ", length(isolate(rVcS@inserts)))
           ##   $('#jstreeScenario').jstree('refresh')  ## not enough.
           # http://stackoverflow.com/questions/11139482/how-to-refresh-a-jstree-without-triggering-select-node-again
           
         }
         else catn("ERROR in removing insert from Scenario: selectedInsertIndex is ",
                   selectedInsertIndex)
-      }
-  })
+      })
+    }
+})
 })
