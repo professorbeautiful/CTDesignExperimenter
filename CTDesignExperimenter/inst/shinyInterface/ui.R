@@ -114,13 +114,13 @@ scenarioPanel = tabPanel(
   # Specifically, it is overflow:auto.  Also overflow:scroll breaks it.
   #, div(style="overflow:auto; height:800px", "SCENARIO TREE" 
   #, div(style="overflow:scroll;height:400px;background-color:lightgrey"
-        , "SCENARIO TREE"
+  , "SCENARIO TREE"
   ### myTree responds to JS (tagToOpenTree, and conditionals)
-      ### The uiOutput element does not.
-    , uiOutput(outputId = 'jstreeScenarioOutput')  
-  #, jstree("jstreeScenario",  myjstree.obj(
-  #  makeTree(scenario=currentScenario, "full")))
-  # makeTree(scenario=rValues$currentScenario, "full")))
+  ### The uiOutput element does not.
+  #  , uiOutput(outputId = 'jstreeScenarioOutput')  
+  , jstree("jstreeScenario",  myjstree.obj(
+    makeTree(scenario=currentScenario, "full")))
+  #  makeTree(scenario=rValues$currentScenario, "full")))
 
   #) 
   , tagToOpenTree  ## This tag MUST be AFTER myTree! Why? (Can be inside the div or not)
