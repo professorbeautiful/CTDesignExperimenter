@@ -153,6 +153,7 @@ myJSincludes = tagList(
   , treeSelectionDepthJSfunction
   , treeSelectionTextJSfunction
   , singleton(tags$script("outputPreamble = '" %&% outputPreamble %&% "';"))
+  , singleton(tagToOpenTree)
 )
 
 ##  Fiddling with jqueryUI popups:
