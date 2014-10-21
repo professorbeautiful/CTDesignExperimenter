@@ -14,7 +14,11 @@ shinyServer(function(input, output, session) {
       "leafOnBranch"),
     ThisIsTopleaf="Topleaf"
   )
+  
+  
+  rV$scenarioTree = scenarioTree
   # "st" is shinyTree?
+  
   openedNode = function(theNode) {
     structure(theNode, stopened=TRUE)
   }
@@ -26,16 +30,27 @@ shinyServer(function(input, output, session) {
           openedNode(list(leaf1 = "", leaf2 = "", leaf3="")),
         SubListB = structure(list(leafA = "", leafB = ""), stdisabled=TRUE)
       ),
-      stopened=TRUE,
-      index="indexForRoot2"
-    )
+      stopened=TRUE    )
   )
   ## The next line has no effect unless ui.R is changed as indicated.
   output$testTree = renderUI({jstree("jstree1", jstree.obj(rV$nav))})
   output$testText = renderText({ rV$nav[[2]] })
   
-  output$newTree = renderTree( { rV$newData
-    } )
+  #  output$newTree = renderTree( { rV$newData    } )
+  myRenderTree =
+    function (expr, env = parent.frame(), quoted = FALSE) 
+    {
+      func <- exprToFunction(expr, env, quoted)
+      return(function(shinysession, name, ...) {
+        cat("====myRenderTree====\n")
+        tree <- func()
+        HTML(as.character(expr))
+      })
+    }
+  
+  output$newTree = myRenderTree( {myjstree.obj(rV$scenarioTree)} )
+  
+  
   output$selTxt <- renderText({
     sel <- input$treeSel
     if (is.null(sel)){
@@ -46,7 +61,8 @@ shinyServer(function(input, output, session) {
   })
   observe({
     if(input$changeTree > 0) {  ### button pressed
-      names(rV$newData)[[2]] = paste("root2 CHANGED!", input$changeTree)
+      #names(rV$newData)[[2]] = paste("root2 CHANGED!", input$changeTree)
+      names(rV$scenarioTree)[[2]] = paste("BeginClinicalTrial CHANGED!", input$changeTree)
     }
   })
   observe({

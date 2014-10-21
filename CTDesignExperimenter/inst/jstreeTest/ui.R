@@ -30,6 +30,7 @@ shinyUI(basicPage(
           , shinyTree('newTree', selected='treeSel')
           , uiOutput(outputId = 'testText')
           , div(class="span10"
+                , includeScript("www/ctde-types.js") 
                 , shinyalert("alert_jstree1")
                 , actionButton('changeTree', 'changeTree by changing the data')
                 , br()
@@ -37,12 +38,13 @@ shinyUI(basicPage(
                 #, verbatimTextOutput(outputId = 'newTree')
                 , "Currently Selected:"
                 , verbatimTextOutput("selTxt")
-                , "below will show up only after selecting a leaf with text root2"
+                , "below will show up only after selecting a leaf with text vg_SampleSizeMax_2"
                 , br()
                 , conditionalPanel("window.Shiny.shinyapp.$bindings.selTxt.el.firstChild.nodeValue
-                                   == 'root2'", 
-                                   paste('root2 was selected  '))
+                                   == 'vg_SampleSizeMax_2'", 
+                                   paste('vg_SampleSizeMax_2 was selected  '))
                 , br()
+                , hr()
                 , "below will show up only after changing the testText"
                 , br()
                 , conditionalPanel('selTxt != "Topleaf"', 
