@@ -3,18 +3,6 @@
 
 "%&%" = function (a, b)   paste(a, b, sep = "") 
 
-# myTree is created in global.R
-OpenSesame = '$("#jstreeScenario").jstree("open_all");'
-tagToOpenTree =
-  tags$script(paste0(
-    'function openTree(){'
-    , OpenSesame 
-    , '                   };
-       $(document).ready(
-            $("#jstreeScenario").ready(
-              openTree));'))
-
-
 conditionPanelNoneSelected = conditionalPanel(
   '$("#jstreeScenario").jstree().get_selected().length == 0',  #This works!! 0 1 2 etc.
   div(class="row-fluid span3",

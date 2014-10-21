@@ -6,6 +6,16 @@ scaffoldObjectNames = scaffoldObjects[[1]]
 
 source("makeTree.R")
 
+OpenSesame = '$("#jstreeScenario").jstree("open_all");'
+tagToOpenTree =
+  tags$script(paste0(
+    'function openTree(){'
+    , OpenSesame 
+    , '                   }; // openTree()  works fine by hand (in evalJS box); 
+       $(document).ready(    // binding only works when jstree is in ui.R, not renderUI.
+            $("#jstreeScenario").ready(
+              openTree));'))
+
 reloadScenario = function() {  
   scenarioTree <<- makeTree(scenario=currentScenario, "full")
   # length(scenarioTree) is 13
