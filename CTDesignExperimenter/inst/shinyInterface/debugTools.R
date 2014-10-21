@@ -13,14 +13,15 @@ output$evaluatedOutput = renderText({
   
   if(input$evalButton > 0) {
     evalToggle = input$evalToggle
-    if(evalToggle == "R")
-      eval(parse(text=evalString))
+    if(evalToggle == "R") {
+      capture.output(eval(parse(text=evalString)))
+    }
     else {
        if(evalToggle == "JSoutput")
          evalJS(paste0(outputPreamble, evalString))
 #       else
         evalJS(evalString)
-      "JS output is in alert window."
+      "JS output is in alert window, if there was no error."
     }
   }
 })  
