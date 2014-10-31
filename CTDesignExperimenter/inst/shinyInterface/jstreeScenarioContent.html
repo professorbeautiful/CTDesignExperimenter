@@ -5,13 +5,12 @@
 
 <script>
 
-var theJsonMessage;
+var  theJsonMessage =  [ "INITIAL TREE ", {"text" : "Second" }];
 
   
 $("#jstreeScenario").jstree({core: { data: function(node, cb) { cb(theJsonMessage); }
   }} )  ;
 
-theJsonMessage =  [ "INITIAL TREE ", {"text" : "Second" }]
 
 $('#jstreeScenario').jstree('refresh');
 

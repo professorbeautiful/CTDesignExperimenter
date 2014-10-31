@@ -84,7 +84,7 @@ conditionPanel_moreThan1_insert =
 scenarioPanel = tabPanel(
   "Current scenario",
   #div(class="row-fluid span1",
-  includeHTML("jstreeTestContent.html"),
+  #includeHTML("jstreeTestContent.html"),
   textInput(inputId="scenarioName",  
             label="scenario name",
             value=currentScenario@name),
