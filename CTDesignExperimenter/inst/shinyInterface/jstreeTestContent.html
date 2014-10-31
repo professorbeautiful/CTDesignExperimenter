@@ -1,0 +1,39 @@
+<script>$(function() {$('#newStuff').jstree()})</script> 
+
+
+<div id='newStuff' class="ss-jstree"> NEW STUFF </div>
+
+<script>
+var treeData =     [  'INITIAL',  
+      { 'text' : 'Root node 2', 
+        'myAttr' : 'attr-2',
+        'state' : 
+            {   'opened' : true,   'selected' : true , 'rel': 'RELrootnode2'}, 
+        'children' : [   
+                { 'text' : 'Child 1' , 'class' : 'child1' },   'Child 2' 
+                ]        
+      }     
+  ];
+  
+$("#newStuff").jstree({core: { data: function(node, cb) { cb(treeData); }
+  }} )  ;
+</script>
+
+<div> 
+  <button type='button' onclick="
+    alert('Changing the tree');
+    treeData = 
+      [  'CHANGEDXXxXXXXXXXXXXXXxXCHANGEDXXxXXXXXXXXXXXXxXCHANGEDXXxXXXXXXXXXXXXxX',  
+        { 'text' : 'Root node 2', 'state' : {   'opened' : true,   'selected' : true }, 
+            'children' : [   
+                { 'text' : 'Child 1' },  'Child 2' 
+                , 'CHANGEDXXxXXXXXXXXXXXXxXCHANGEDXXxXXXXXXXXXXXXxXCHANGEDXXxXXXXXXXXXXXXxX'
+                , 'CHANGEDXXxXXXXXXXXXXXXxXCHANGEDXXxXXXXXXXXXXXXxXCHANGEDXXxXXXXXXXXXXXXxX'
+                ]        
+        }     
+      ];
+    $('#newStuff').jstree('refresh');
+  "  > 
+  BUTTON
+  </button>
+</div>

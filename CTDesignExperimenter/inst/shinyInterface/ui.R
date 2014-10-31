@@ -84,6 +84,7 @@ conditionPanel_moreThan1_insert =
 scenarioPanel = tabPanel(
   "Current scenario",
   #div(class="row-fluid span1",
+  includeHTML("jstreeTestContent.html"),
   textInput(inputId="scenarioName",  
             label="scenario name",
             value=currentScenario@name),
@@ -118,12 +119,19 @@ scenarioPanel = tabPanel(
   ### myTree responds to JS (tagToOpenTree, and conditionals)
   ### The uiOutput element does not.
   #  , uiOutput(outputId = 'jstreeScenarioOutput')  
-  , jstree("jstreeScenario",  myjstree.obj(
-    makeTree(scenario=currentScenario, "full")))
-  #  makeTree(scenario=rValues$currentScenario, "full")))
-
-  #) 
+#   , jstree("jstreeScenario",  
+#           myjstree.obj(list("a","b"))
+#           # myjstree.obj(makeTree(scenario=currentScenario, "full"))
+#     )
+# 
+#   #) 
+#   , tags$script("  var jsonMessage;
+#                 $('#jstreeScenario').jstree(
+#                   { core: { data: function (node, cb) { cb(jsonMessage); } }
+#               });")
+  , includeHTML("jstreeScenarioContent.html")
   , tagToOpenTree  ## This tag MUST be AFTER myTree! Why? (Can be inside the div or not)
+
 )
 
 editorPanel = #conditionalPanel(condition = 'true',
@@ -145,8 +153,17 @@ CSSreference = singleton(tags$head(tags$link(href = "ctde.css",
 
 
 myJSincludes = tagList(
+  
   #includeScript("www/ctde-types.js") ## It does find this !
-   includeScript("www/ss-jstree.js")  # and this.  This is not the culprit in the browser problem.
+ # includeScript("https://code.jquery.com/jquery-2.1.1.min.js"),
+#  includeScript("http://static.jstree.com/3.0.8/assets/dist/jstree.min.js"),
+#  includeScript("http://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.min.js"),
+   includeScript("www/jquery-2.1.1.min.js"),
+   includeScript("www/jstree.min.js"),
+   includeScript("www/json2.min.js"),
+  
+  # includeScript("www/html-to-json.js")
+  includeScript("www/ss-jstree.js")  # and this.  
 #  , includeScript("http://cdn.datatables.net/1.10.1/js/jquery.dataTables.min.js")
 #  , includeScript("http://code.jquery.com/jquery-1.11.1.min.js")
   , CSSreference ### OK. Works (for text colors)

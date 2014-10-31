@@ -4,7 +4,8 @@ insertVGSubTree = function(insert, insertStyle="full") {
          paste(":", paste(body(insert@generatorCode), 
                               collapse="; "))         
       )
-    info = list(generator=info)
+    #info = list(generator=info)
+    info = list(info)
     names(info) = insert@filename
     return(info)    
   } else { ## "full" ---  show variables and parameters
@@ -17,7 +18,10 @@ insertVGSubTree = function(insert, insertStyle="full") {
                      gsub(fixed=TRUE, "{;", "{",
                           paste(printFunctionBody(insert@generatorCode), 
                                      collapse="; ")))
-    info = c(info, generator=codeInfo)
+    codeInfo = gsub('"', '\\\\"', codeInfo)
+    
+    #info = c(info, generator=codeInfo)
+    info = c(info, codeInfo)
     outputVarInfo = 
       paste0("provides:", capture.output(insert@outputVariable))
     info = c(info, list(outputVarInfo))
@@ -127,7 +131,8 @@ findObjectInScenario = function( index="0_3_4_1", scenario) {
           nodeText = extractTreeText(L1, L2, L3, makeTree(scenario))
           slotOrder = cq(needs="requirements", code="generatorCode",
                          provides="outputVariable", param="parameters")
-          objectList = c(list(),theInsert@requirements, theInsert@generatorCode,
+          objectList = c(list(),theInsert@requirements, 
+                         gsub('"', '\\"', theInsert@generatorCode),
                          theInsert@outputVariable, theInsert@parameters)
           return(objectList[[L3]])
 #           if(grep("code:", nodeText) == 1)
@@ -144,9 +149,9 @@ findObjectInScenario = function( index="0_3_4_1", scenario) {
   return(NULL)
 }
 
-findObjectInScenario("0_3_4")
-findObjectInScenario("0_3_4_1")
-findObjectInScenario("0_3_4_2")
+# findObjectInScenario("0_3_4")
+# findObjectInScenario("0_3_4_1")
+# findObjectInScenario("0_3_4_2")
 
 myjstree.obj = 
   function (x, prefix="", addLevelClass=TRUE, addLevelType=TRUE, addIndex=TRUE, level=0, index="0") 
@@ -199,3 +204,5 @@ myjstree.obj =
       x
     }
   }
+
+

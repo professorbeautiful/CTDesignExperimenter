@@ -1,0 +1,19 @@
+<script>$(function() {$('#jstreeScenario').jstree()})</script> 
+
+
+<div id='jstreeScenario' class="ss-jstree"> NEW STUFF </div>
+
+<script>
+
+var theJsonMessage;
+
+  
+$("#jstreeScenario").jstree({core: { data: function(node, cb) { cb(theJsonMessage); }
+  }} )  ;
+
+theJsonMessage =  [ "INITIAL TREE ", {"text" : "Second" }]
+
+$('#jstreeScenario').jstree('refresh');
+
+  
+</SCRIPT>

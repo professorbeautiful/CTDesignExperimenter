@@ -11,7 +11,7 @@ shinyServer(function(input, output, session) {
   observe({
     currScen = rValues$currentScenario
     messageSent = 
-             myjstree.obj(
+             myjstree.JSON(
                makeTree(scenario=currScen, "full")
              )
     # messageSent = tags$ul(messageSent)
@@ -186,35 +186,38 @@ output$jstreeScenarioOutput = renderUI({
         if(length(input$jstreeScenario) > 0) {
           nSelected <<- length(input$jstreeScenario) / nColumnsInTreeValue
           rValues$nSelected <<- nSelected
-          try({
+          result = try({
             treeSelection <<- matrix(ncol=nColumnsInTreeValue, input$jstreeScenario, byrow=T,
                                      dimnames=list(1:nSelected,
                                                    names(input$jstreeScenario)[1:nColumnsInTreeValue]))
-          ## Trim leading and trailing whitespace.
-          treeSelection[ , "text"] <<- gsub("^[\n\t ]*", "",
-                                            gsub("[\n\t ]*$", "",
-                                                 treeSelection[ , "text"] ))
-          cat("Entered treeObserver. rValues$treeSelection is:\n")
-          print(treeSelection)
-          rValues$treeSelectionText = paste(treeSelection[ , "text"], collapse=" & ")
-          rValues$treeSelectionIndex = paste(treeSelection[ , "index"], collapse=" & ")
-          rValues$treeSelectionDepth = 
-            length(strsplit(split = "_",
-                            treeSelection[ 1, "index"]) [[1]]) - 1
-          rValues$openingVariableEditor = 
-            (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1) 
-          if(rValues$openingVariableEditor) 
-            rValues$theVar = findObjectInScenario(rValues$treeSelectionIndex)
-          # We do NOT want the insert editor to open automatically
-          rValues$clickedOnInsert = 
-            (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
-          if(rValues$clickedOnInsert) 
-            rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
-#           rValues$openingInsertEditor = 
-#             (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
-#           if(rValues$openingInsertEditor) 
-#             rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
+            ## Trim leading and trailing whitespace.
+            treeSelection[ , "text"] <<- gsub("^[\n\t ]*", "",
+                                              gsub("[\n\t ]*$", "",
+                                                   treeSelection[ , "text"] ))
+            cat("Entered treeObserver. rValues$treeSelection is:\n")
+            print(treeSelection)
+            rValues$treeSelectionText = paste(treeSelection[ , "text"], collapse=" & ")
+            rValues$treeSelectionIndex = paste(treeSelection[ , "index"], collapse=" & ")
+            rValues$treeSelectionDepth = 
+              length(strsplit(split = "_",
+                              treeSelection[ 1, "index"]) [[1]]) - 1
+            rValues$openingVariableEditor = 
+              (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1) 
+            if(rValues$openingVariableEditor) 
+              rValues$theVar = findObjectInScenario(rValues$treeSelectionIndex)
+            # We do NOT want the insert editor to open automatically
+            rValues$clickedOnInsert = 
+              (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
+            if(rValues$clickedOnInsert) 
+              rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
+            #           rValues$openingInsertEditor = 
+            #             (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
+            #           if(rValues$openingInsertEditor) 
+            #             rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
           })
+          if(class(result) ==  'try-error') {
+            cat("problem with treeSelection: ", input$jstreeScenario, "\n")
+          }
         }
         else {
           rValues$treeSelectionText = ""
