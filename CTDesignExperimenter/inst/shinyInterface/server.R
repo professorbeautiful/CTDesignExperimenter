@@ -182,7 +182,7 @@ output$jstreeScenarioOutput = renderUI({
       input$jstreeScenario  ### Added to restore reactivity. Necessary! (a mystery)
       
       if(isolate(input$tabsetID) == "Current scenario") { ### Fixes part of the problem
-        nColumnsInTreeValue = 6  ### 7 if using shinyTree
+        nColumnsInTreeValue = 5  ### 7 if using shinyTree
         if(length(input$jstreeScenario) > 0) {
           nSelected <<- length(input$jstreeScenario) / nColumnsInTreeValue
           rValues$nSelected <<- nSelected
@@ -197,23 +197,23 @@ output$jstreeScenarioOutput = renderUI({
             cat("Entered treeObserver. rValues$treeSelection is:\n")
             print(treeSelection)
             rValues$treeSelectionText = paste(treeSelection[ , "text"], collapse=" & ")
-            rValues$treeSelectionIndex = paste(treeSelection[ , "index"], collapse=" & ")
+            rValues$treeSelectionPath = paste(treeSelection[ , "pathAttr"], collapse=" & ")
             rValues$treeSelectionDepth = 
               length(strsplit(split = "_",
-                              treeSelection[ 1, "index"]) [[1]]) - 1
+                              treeSelection[ 1, "pathAttr"]) [[1]]) - 1
             rValues$openingVariableEditor = 
               (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1) 
             if(rValues$openingVariableEditor) 
-              rValues$theVar = findObjectInScenario(rValues$treeSelectionIndex)
+              rValues$theVar = findObjectInScenario(rValues$treeSelectionPath)
             # We do NOT want the insert editor to open automatically
             rValues$clickedOnInsert = 
               (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
             if(rValues$clickedOnInsert) 
-              rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
+              rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath)
             #           rValues$openingInsertEditor = 
             #             (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
             #           if(rValues$openingInsertEditor) 
-            #             rValues$theInsert = findObjectInScenario(rValues$treeSelectionIndex)
+            #             rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath)
           })
           if(class(result) ==  'try-error') {
             cat("problem with treeSelection: ", input$jstreeScenario, "\n")
@@ -221,7 +221,7 @@ output$jstreeScenarioOutput = renderUI({
         }
         else {
           rValues$treeSelectionText = ""
-          rValues$treeSelectionIndex = ""
+          rValues$treeSelectionPath = ""
           rValues$treeSelectionDepth = 0
         }
       }
@@ -230,7 +230,7 @@ output$jstreeScenarioOutput = renderUI({
   # We need the following to make the values available to JS.  
   # See nodeDepthJSfunction etc.
   output$treeSelectionText = renderText(rValues$treeSelectionText)
-  output$treeSelectionIndex = renderText(rValues$treeSelectionIndex)
+  output$treeSelectionPath = renderText(rValues$treeSelectionPath)
   output$treeSelectionDepth = renderText(rValues$treeSelectionDepth)
   output$openingVariableEditor = renderText(rValues$openingVariableEditor)
   output$openingInsertEditor = renderText(rValues$openingInsertEditor)
@@ -362,14 +362,14 @@ buttonRemoveInsertObserver = observe({
     if(!is.null(input$btnRemoveInsert) & (input$btnRemoveInsert > 0)) {
       isolate({
         # Find in the Scenario object and delete and reconstruct the tree.
-        # This is the actual object (e.g. VG): findObjectInScenario(rValues$treeSelectionIndex)
-        treeSelectionIndex <<- isolate(rValues$treeSelectionIndex)
-        cat("buttonRemoveInsertObserver: treeSelectionIndex is ", treeSelectionIndex, "\n")
+        # This is the actual object (e.g. VG): findObjectInScenario(rValues$treeSelectionPath)
+        treeSelectionPath <<- isolate(rValues$treeSelectionPath)
+        cat("buttonRemoveInsertObserver: treeSelectionPath is ", treeSelectionPath, "\n")
         rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
         selectedInsertIndex <<- which(sapply(
           isolate(rVcS@inserts),
           function(INSERT) 
-            identical(INSERT, findObjectInScenario(treeSelectionIndex,
+            identical(INSERT, findObjectInScenario(treeSelectionPath,
                                                    isolate(rVcS)))))
         if(length(selectedInsertIndex) == 1) {   
           catn("REMOVING insert # ", selectedInsertIndex, ": ",
