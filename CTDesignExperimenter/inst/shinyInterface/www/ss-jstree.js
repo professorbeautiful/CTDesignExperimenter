@@ -29,6 +29,13 @@ $.extend(ss_jstree, {
     console.log(jsonMessage);
     $("#jstreeScenario").jstree('refresh');
     console.log("jstreeScenario is refreshed");
+    $("li.treeclass_1 > ").css("color", "blue");
+    $("li.treeclass_2 > ").css("color", "darkred");
+    $("li.treeclass_3 > ").css("color", "green");
+    $("li.treeclass_1  ").css("color", "blue");
+    $("li.treeclass_2  ").css("color", "darkred");
+    $("li.treeclass_3  ").css("color", "green");
+    
   },
     /**/
 
