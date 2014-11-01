@@ -1,14 +1,27 @@
 $(function () {
   $("#scenarioTree").jstree({
     "types" : {
+    "types" : {
       "level_1" : {
-            'icon' : { 'image' :  "BLOCK32.png" }
+            'icon' : { 'image' :  url('BLOCK32.png') }
       },
       "level_2" : {
-            'icon' : { 'image' :  "glyphicon glyphicon-flash" }
+            'icon' : { 'image' :  url('Insert.png') }
       }
     },
+    },
     // "plugins" : [ "types", "contextmenu", "wholerow" ]
-    "plugins" : [ "contextmenu", "types"]
+    "plugins" : [ "contextmenu", "types"],
+	"contextmenu": {
+	    "items": {
+		"create" : false,
+		"ccp" : false,
+		"rename" : false,
+		"remove" : {
+		    "label" : "&nbsp;Delete",
+		    "icon" : "/images/icon/cross.png"
+		}
+	    }
+	},
   });
 });
