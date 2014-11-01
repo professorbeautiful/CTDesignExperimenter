@@ -182,7 +182,7 @@ output$jstreeScenarioOutput = renderUI({
       input$jstreeScenario  ### Added to restore reactivity. Necessary! (a mystery)
       
       if(isolate(input$tabsetID) == "Current scenario") { ### Fixes part of the problem
-        nColumnsInTreeValue = 5  ### 7 if using shinyTree
+        nColumnsInTreeValue = 6  ### 7 if using shinyTree
         if(length(input$jstreeScenario) > 0) {
           nSelected <<- length(input$jstreeScenario) / nColumnsInTreeValue
           rValues$nSelected <<- nSelected
