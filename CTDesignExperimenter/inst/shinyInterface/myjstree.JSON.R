@@ -28,10 +28,10 @@ myjstree.JSON =
         INDENT(level) %&% ' { "text" : "'    %&% nodeText    %&%    '"'
       nodeString = nodeString %&% 
         ', "li_attr" : { ' %&%
-        '"rel" : "' %&% paste0(prefix, 'level_', level) %&% '", ' %&%
-        '"type" : "' %&% paste0(prefix, 'level_', level) %&% '", ' %&%
-        '"pathAttr" : "' %&% paste0(prefix, pathAttr) %&% '"' %&%
-        #'class : "' %&% paste0(prefix, 'treeclass_', level) %&% '"' %&%
+        '"rel" : "'      %&% paste0(prefix, 'level_', level)      %&% '", ' %&%
+        '"type" : "'     %&% paste0(prefix, 'level_', level)      %&% '", ' %&%
+        '"pathAttr" : "' %&% paste0(prefix, pathAttr)             %&% '", ' %&%
+        '"class" : "'    %&% paste0(prefix, 'treeclass_', level)  %&% '"' %&%
         ' }'
       if(is.list(theItem)) {
         nodeString = nodeString %&%
@@ -41,7 +41,7 @@ myjstree.JSON =
                               addLevelClass=addLevelClass,
                               addLevelType=addLevelType,
                               addPathAttr=addPathAttr,
-                              level=level+1,
+                              level=level,
                               pathAttr=pathAttr
                 )) 
       }
