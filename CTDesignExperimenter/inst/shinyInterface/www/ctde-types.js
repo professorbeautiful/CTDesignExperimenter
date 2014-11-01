@@ -22,6 +22,6 @@ $(function () {
 		    "icon" : "/images/icon/cross.png"
 		}
 	    }
-	},
+	}
   });
 });

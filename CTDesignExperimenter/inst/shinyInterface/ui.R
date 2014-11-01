@@ -154,7 +154,7 @@ CSSreference = singleton(tags$head(tags$link(href = "ctde.css",
 
 myJSincludes = tagList(
   
-  #includeScript("www/ctde-types.js") ## It does find this !
+  includeScript("www/ctde-types.js"), ## It does find this !
  # includeScript("https://code.jquery.com/jquery-2.1.1.min.js"),
 #  includeScript("http://static.jstree.com/3.0.8/assets/dist/jstree.min.js"),
 #  includeScript("http://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.min.js"),
