@@ -6,6 +6,8 @@ var previousHTML;
 var newHTML;
 var message;
 var theEL;
+var tree=function() {return($("#jstreeScenario"));}
+var Trefresh=function() { return(tree().jstree('refresh'));} ;
 
 $.extend(ss_jstree, {
 
