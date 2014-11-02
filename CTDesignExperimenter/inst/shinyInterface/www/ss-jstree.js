@@ -27,7 +27,7 @@ $.extend(ss_jstree, {
     theJsonMessage = jsonMessage;
 
     treeData = theJsonMessage;
-    $('#newStuff').jstree('refresh');
+//    $('#newStuff').jstree('refresh');
     console.log(jsonMessage);
     $("#jstreeScenario").jstree('refresh');
     console.log("jstreeScenario is refreshed");
