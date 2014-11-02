@@ -170,7 +170,7 @@ myJSincludes = tagList(
   , CSSreference ### OK. Works (for text colors)
   , treeSelectionDepthJSfunction
   , treeSelectionTextJSfunction
-  , singleton(tags$script("outputPreamble = '" %&% outputPreamble %&% "';"))
+  , singleton(tags$script("var outputPreamble = '" %&% outputPreamble %&% "';"))
   , singleton(tagToOpenTree)
 )
 
