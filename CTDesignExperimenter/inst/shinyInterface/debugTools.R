@@ -17,10 +17,10 @@ output$evaluatedOutput = renderText({
       capture.output(eval(parse(text=evalString)))
     }
     else {
-       if(evalToggle == "JSoutput")
-         evalJS(paste0(outputPreamble, evalString))
-#       else
-        evalJS(evalString)
+      if(evalToggle == "JSoutput")
+        evalJS(paste0(outputPreamble, evalString))
+      #       else
+      evalJS(evalString)
       "JS output is in alert window, if there was no error."
     }
   }
@@ -49,7 +49,7 @@ output$JSevaluation = renderUI({
   }
 })  
 
-  
+
 ### Evaluation examples:
 ### example:   options(shiny.trace=input$traceButton)[[1]]
 ### example:   options("shiny.trace")[[1]]
@@ -68,37 +68,40 @@ output$debugTools = renderUI({
       singleton(tags$script(paste(
         "outputPreamble = '", outputPreamble, "';")))
       ,
-      em(strong("Debugging aids")),
-      tag("table", list(
-        tag("tr", 
-            list(
-              tag("TD",
-                  list(width=120, style="color: blue",
-                       checkboxInput(inputId="traceCheckbox", 
-                                     value=FALSE,
-                                     label=textOutput("shiny.trace.text")
-                       ))),
-              tag("TD", list(HTML(paste0(rep("&nbsp;",15), collapse="")))),
-              tag("TD", 
-                  list(actionButton("evalButton", 
-                                    HTML("<font color='red'> evaluate</font>")))),
-              tag("TD", list( 
-                radioButtons("evalToggle", "", c("R","JS"))
-                #              div(style="size:large;color:red", "R"),
-                #                  div(style="size:small;color:black", "/JS")
-              )),
-              tag("TD",
-                  list(width=10, textInput(inputId="evalString", label="", value="1+1"))),
-              tag("TD", list(style="color:red", HTML("&rarr;"))),
-              tag("TD",
-                  list(width=800, 
-                       style='text-align:"right"; color:white', 
-                       uiOutput(outputId="evaluatedOutput"))),
-              uiOutput(outputId='JSevaluation')
-            )
-        )
+      checkboxInput(inputId='debugToolsCheckbox', value=TRUE,
+                    label=em(strong("Debugging aids"))),
+      conditionalPanel('input.debugToolsCheckbox',
+                      tag("table", list(
+                        tag("tr", 
+                            list(
+                              tag("TD",
+                                  list(width=120, style="color: blue",
+                                       checkboxInput(inputId="traceCheckbox", 
+                                                     value=FALSE,
+                                                     label=textOutput("shiny.trace.text")
+                                       ))),
+                              tag("TD", list(HTML(paste0(rep("&nbsp;",15), collapse="")))),
+                              tag("TD", 
+                                  list(actionButton("evalButton", 
+                                                    HTML("<font color='red'> evaluate</font>")))),
+                              tag("TD", list( 
+                                radioButtons("evalToggle", "", c("R","JS"))
+                                #              div(style="size:large;color:red", "R"),
+                                #                  div(style="size:small;color:black", "/JS")
+                              )),
+                              tag("TD",
+                                  list(width=10, textInput(inputId="evalString", label="", value="1+1"))),
+                              tag("TD", list(style="color:red", HTML("&rarr;"))),
+                              tag("TD",
+                                  list(width=800, 
+                                       style='text-align:"right"; color:white', 
+                                       uiOutput(outputId="evaluatedOutput"))),
+                              uiOutput(outputId='JSevaluation')
+                            )
+                        )
+                      )
+                      )
       )
-    )
-  )
+      )
 })
 
