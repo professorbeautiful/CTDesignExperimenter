@@ -6,25 +6,35 @@
 
 /* li.treeclass_1 > .jstree-icon { PLACED to the left, not replacing old icon */
 /* li.treeclass_1 > .jstree-ocl { */
+
 a.jstree-anchor ,
 a.jstree-anchor > i.jstree-icon,
 li > ul > .jstree-icon
 {
   background: none !important; 
 }
-li.treeclass_1 > a.jstree-anchor ,
-li.treeclass_1 > ul > .jstree-icon {
+
+ li.treeclass_1 > i > a > .jstree-icon 
+	/*li.treeclass_1 > ul > .jstree-icon */
+{
+	/* Aha, this IS where the icons on the line are appearing */
+	/*  li.treeclass_1.  Unfortunately, NOT replacing the bullets */
   background: url("BLOCK32.png") 0px 0px no-repeat !important; 
 }
-li.treeclass_2 > a.jstree-anchor ,
-li.treeclass_2 > ul > .jstree-icon {
-  background: url("Insert32.png") 0px 0px no-repeat !important; 
-}
 
+/*
+li.treeclass_2 > a.jstree-anchor ,
+li.treeclass_2 > ul > .jstree-icon
+{ background: url("Insert32.png") 0px 0px no-repeat !important; }
+
+
+/* These colors work well on the buttons, using BLOCKlevel etc */
+/* On the tree, they work on the bullets, not the text. */
 
 .treeclass_1, .BLOCKlevel {
  /*  background-color:lightgrey;*/
   color:blue;
+  /* No good here: background: url("BLOCK32.png") 0px 0px no-repeat !important; */
 }
 
 /*.jstree-default > li .treeclass_1  {*/
