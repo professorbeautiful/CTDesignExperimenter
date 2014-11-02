@@ -1,7 +1,7 @@
 
 
 require(shiny)
-require(shinysky)
+#require(shinysky)
 #require(shinyTable)
 require("CTDesignExperimenter")
 

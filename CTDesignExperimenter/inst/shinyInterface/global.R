@@ -1,5 +1,5 @@
 require("CTDesignExperimenter")
-require(shinysky) 
+#require(shinysky) 
 options(shiny.trace=FALSE)
 
 scaffoldObjectNames = scaffoldObjects[[1]]
