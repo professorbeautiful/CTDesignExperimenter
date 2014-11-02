@@ -29,16 +29,23 @@ $.extend(ss_jstree, {
     treeData = theJsonMessage;
 //    $('#newStuff').jstree('refresh');
     console.log(jsonMessage);
+    $("#jstreeScenario").core.themes.icons(false);
     $("#jstreeScenario").jstree('refresh');
     console.log("jstreeScenario is refreshed");
-    $("li.treeclass_1 > ").css("color", "blue");
-    $("li.treeclass_2 > ").css("color", "darkred");
-    $("li.treeclass_3 > ").css("color", "green");
+/*  BULLETS-- but not necessary; ctde.css does it.
     $("li.treeclass_1  ").css("color", "blue");
     $("li.treeclass_2  ").css("color", "darkred");
     $("li.treeclass_3  ").css("color", "green");
-    
-  },
+*/
+/* The following DO change the text, in the console but not from the JS box. */
+    $("li.treeclass_1 > a ").css("color", "blue");
+    $('li.treeclass_2 > a ').style('color', 'darkred', 'important');
+//    $('li.treeclass_3 > a ').each(function() this.style('color', 'green', 'important'));
+    console.log("colors changed!?");
+//    console.log($('li.treeclass_3 > a ').style('color'));
+//    console.log($('li.treeclass_3 > a ').style().getPropertyPriority('color'));
+
+},
     /**/
 
   find: function(scope) {
