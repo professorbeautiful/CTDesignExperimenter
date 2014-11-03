@@ -131,6 +131,7 @@ scenarioPanel = tabPanel(
 #                   { core: { data: function (node, cb) { cb(jsonMessage); } }
 #               });")
   , includeHTML("jstreeScenarioContent.html")
+  , tags$script('ss_jstree.subscribe(tree(), function() { fixColors(); }); ')
   , tagToOpenTree  ## This tag MUST be AFTER myTree! Why? (Can be inside the div or not)
 
 )
@@ -154,9 +155,19 @@ CSSreference = singleton(tags$head(tags$link(href = "ctde.css",
 
 
 myJSincludes = tagList(
-  
-  includeScript("www/ctde-types.js"), ## It does find this !
-    includeScript("www/priority.js"), 
+  singleton(tags$head("<script src='www/ctde-types.js'> </script> ")),
+  singleton(tags$head("<script src='www/priority.js'> </script> ")),
+  singleton(tags$head("<script> 
+    var fixColors = function(){
+      $('li.treeclass_1 > a ').css('color', 'blue');
+      $('li.treeclass_2 > a ')css('color', 'darkred');
+      $('li.treeclass_3 > a ')css('color', 'green');
+  //    $('li.treeclass_3 > a ').each(function() this.style('color', 'green', 'important'));
+      };
+                      </script>"
+                      )),
+                      #  includeScript("www/ctde-types.js"), ## It does find this !
+ #   includeScript("www/priority.js"), 
   # includeScript("https://code.jquery.com/jquery-2.1.1.min.js"),
 #  includeScript("http://static.jstree.com/3.0.8/assets/dist/jstree.min.js"),
 #  includeScript("http://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.min.js"),

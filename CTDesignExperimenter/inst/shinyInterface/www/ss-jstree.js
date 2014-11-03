@@ -8,6 +8,12 @@ var message;
 var theEL;
 var tree=function() {return($("#jstreeScenario"));}
 var Trefresh=function() { return(tree().jstree('refresh'));} ;
+var fixColors = function(){
+      $('li.treeclass_1 > a').css('color', 'blue');
+      $('li.treeclass_2 > a').css('color', 'darkred');
+      $('li.treeclass_3 > a').css('color', 'green');
+  //    $('li.treeclass_3 > a ').each(function() this.style('color', 'green', 'important'));
+      };
 
 $.extend(ss_jstree, {
 
@@ -29,7 +35,7 @@ $.extend(ss_jstree, {
     treeData = theJsonMessage;
 //    $('#newStuff').jstree('refresh');
     console.log(jsonMessage);
-    $("#jstreeScenario").core.themes.icons(false);
+//    $("#jstreeScenario").core.themes.icons(false); doesn't work.
     $("#jstreeScenario").jstree('refresh');
     console.log("jstreeScenario is refreshed");
 /*  BULLETS-- but not necessary; ctde.css does it.
@@ -38,8 +44,10 @@ $.extend(ss_jstree, {
     $("li.treeclass_3  ").css("color", "green");
 */
 /* The following DO change the text, in the console but not from the JS box. */
-    $("li.treeclass_1 > a ").css("color", "blue");
-    $('li.treeclass_2 > a ').style('color', 'darkred', 'important');
+    fixColors();
+    // At this point these selectors return nothing-- tree html only says "Loading...
+//    $("li.treeclass_1 > a ").css("color", "blue");
+//    $('li.treeclass_2 > a ').style('color', 'darkred', 'important');
 //    $('li.treeclass_3 > a ').each(function() this.style('color', 'green', 'important'));
     console.log("colors changed!?");
 //    console.log($('li.treeclass_3 > a ').style('color'));
