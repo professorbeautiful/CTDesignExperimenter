@@ -11,9 +11,9 @@ shinyServer(function(input, output, session) {
   observe({
     currScen = rValues$currentScenario
     messageSent = 
-             myjstree.JSON(
-               makeTree(scenario=currScen, "full")
-             )
+      myjstree.JSON(
+        makeTree(scenario=currScen, "full")
+      )
     # messageSent = tags$ul(messageSent)
     #messageSent = jstree("jstreeScenario",  messageSent)
     messageSent = capture.output(  print(messageSent))
@@ -42,60 +42,60 @@ shinyServer(function(input, output, session) {
   ### Without this "reactive" wrapper, I get the error 
   # Error in .getReactiveEnvironment()$currentContext() : 
   #   Operation not allowed without an active reactive context. (You tried to do something that can only be done from inside a reactive expression or observer.)
-#   rValues$scenarioTree = reactive({
-#     catn("reloadScenario, length of inserts is ",
-#         length(rValues$currentScenario@inserts))
-#     makeTree(scenario=rValues$currentScenario, "full")
-#     #catn("length of scenarioTree is ", length(rValues$scenarioTree))
-#     # length(scenarioTree) is 13
-#   })
-
+  #   rValues$scenarioTree = reactive({
+  #     catn("reloadScenario, length of inserts is ",
+  #         length(rValues$currentScenario@inserts))
+  #     makeTree(scenario=rValues$currentScenario, "full")
+  #     #catn("length of scenarioTree is ", length(rValues$scenarioTree))
+  #     # length(scenarioTree) is 13
+  #   })
+  
   # myTree was initially created in global.R. 
-# Must wrap this in "reactive", or else "Operation no allowed withou an active reacive context..."
-# rValues$myTree =  reactive({
-#   catn("Changing myTree in reactive expression. Number of inserts is ",
-#        length(rValues$currentScenario@inserts))
-#   jstree("jstreeScenario",  myjstree.obj(
-#     makeTree(scenario=rValues$currentScenario, "full")))
-# })
-
-output$jstreeScenarioOutput = renderUI({
-  ##rValues$myTree  ## No error message here.
-  catn("Changing myTree in reactive expression. Number of inserts is ",
-       length(rValues$currentScenario@inserts))
-  div(style="overflow:scroll;height:400px;",
-      myListToJStreeTags("jstreeScenario",  
-                         myjstree.obj(
-                           makeTree(scenario=rValues$currentScenario, "full")))
-    , singleton(tagToOpenTree) ### does not help
-    , singleton(tags$script(OpenSesame) )  ### does not help
-  )
-})
-
-#  
-#   observe({
-#     catn("class of myTreeObj is ", class(rValues$myTreeObj))
-#   })
-#   output$myTree = jstree(id="jstreeScenario", rValues$myTreeObj)
-#   output$TEMP = renderText({"TEMP"})
+  #   Must wrap this in "reactive", or else "Operation no allowed withou an active reacive context..."
+  #   rValues$myTree =  reactive({
+  #   catn("Changing myTree in reactive expression. Number of inserts is ",
+  #        length(rValues$currentScenario@inserts))
+  #   jstree("jstreeScenario",  myjstree.obj(
+  #     makeTree(scenario=rValues$currentScenario, "full")))
+  # })
+  
+  output$jstreeScenarioOutput = renderUI({
+    ##rValues$myTree  ## No error message here.
+    catn("Changing myTree in reactive expression. Number of inserts is ",
+         length(rValues$currentScenario@inserts))
+    div(style="overflow:scroll;height:400px;",
+        myListToJStreeTags("jstreeScenario",  
+                           myjstree.obj(
+                             makeTree(scenario=rValues$currentScenario, "full")))
+        , singleton(tagToOpenTree) ### does not help
+        , singleton(tags$script(OpenSesame) )  ### does not help
+    )
+  })
+  
+  #  
+  #   observe({
+  #     catn("class of myTreeObj is ", class(rValues$myTreeObj))
+  #   })
+  #   output$myTree = jstree(id="jstreeScenario", rValues$myTreeObj)
+  #   output$TEMP = renderText({"TEMP"})
   # class(renderText({"TEMP"}))  is   shiny.render.function function
-#   output$myTree = renderUI({
-#     rValues$myTreeObj # temporary; make sure it's reactive
-#     catn("renderUI for myTree")
-#      returnvalue = jstree(id="jstreeScenario", rValues$myTreeObj)
-#      catn("renderUI for myTree: class of returnvalue is ", class(returnvalue))
-#      #div(returnvalue)
- #"jstree HERE"
-#     textOutput('TEMP')
- # class(renderText({"TEMP"}))  is   shiny.render.function function
-#   })
-## components of output$:
+  #   output$myTree = renderUI({
+  #     rValues$myTreeObj # temporary; make sure it's reactive
+  #     catn("renderUI for myTree")
+  #      returnvalue = jstree(id="jstreeScenario", rValues$myTreeObj)
+  #      catn("renderUI for myTree: class of returnvalue is ", class(returnvalue))
+  #      #div(returnvalue)
+  #"jstree HERE"
+  #     textOutput('TEMP')
+  # class(renderText({"TEMP"}))  is   shiny.render.function function
+  #   })
+  ## components of output$:
   # window.Shiny.shinyapp.$bindings.myTree.el  is HTMLDivElement
   # so is window.Shiny.shinyapp.$bindings.treeSelectionText.el
- #window.Shiny.shinyapp.$bindings.treeSelectionText.el.attributes.length is 2
-# From window.Shiny.shinyapp.$bindings.myTree.el.attributes.class.value, we get
-#          shiny-html-output shiny-bound-output shiny-output-error
-# Handy code:  pbcopy(capture.output(myTree)); sink()
+  #window.Shiny.shinyapp.$bindings.treeSelectionText.el.attributes.length is 2
+  # From window.Shiny.shinyapp.$bindings.myTree.el.attributes.class.value, we get
+  #          shiny-html-output shiny-bound-output shiny-output-error
+  # Handy code:  pbcopy(capture.output(myTree)); sink()
   
   #   vgNodes = unlist( 
   #     traverse(myTree, callback = 1, searchTerm = "vg_")
@@ -127,7 +127,7 @@ output$jstreeScenarioOutput = renderUI({
   
   ## Start with current Scenario.
   rValues$currentScenario = defaultScenario  
-#  reloadScenario()
+  #  reloadScenario()
   
   
   rValues$openingVariableEditor = FALSE
@@ -144,12 +144,24 @@ output$jstreeScenarioOutput = renderUI({
   )
   
   observeBtnEditInsert = observe(label="observeBtnEditInsert", {
-    if(input$btnEditInsert > 0) {
-      isolate(rValues$openingInsertEditor <- TRUE)
-    }
+    if(exists("input")) 
+      if(!is.null(input$btnEditInsert) ) {
+        if(input$btnEditInsert > 0) {
+          isolate({
+            cat("Setting rValues$openingInsertEditor <- TRUE\n")
+            rValues$openingInsertEditor <- TRUE
+          })
+        }
+      }
   }
   )
-  
+  buttonEditInsertObserver = observe({
+    if(exists("input")) 
+      if(!is.null(input$btnEditInsert) & (input$btnEditInsert > 0)) {
+        isolate({NULL   ### should not be necessary
+        })
+      }
+  })
   editingVariableObserver = observe(label="editingVariableObserver", {
     catn("editingVariableObserver: rValues$openingVariableEditor = ", rValues$openingVariableEditor)
     if(rValues$openingVariableEditor) {
@@ -176,8 +188,7 @@ output$jstreeScenarioOutput = renderUI({
   treeObserver = observe(
     #     observers use eager evaluation; as soon as their dependencies change, they
     #     schedule themselves to re-execute.
-    label="myTreeObserver", 
-    {
+    label="myTreeObserver", {
       cat("treeObserver: tabsetID = ", isolate(input$tabsetID), "\n")
       input$jstreeScenario  ### Added to restore reactivity. Necessary! (a mystery)
       
@@ -250,17 +261,16 @@ output$jstreeScenarioOutput = renderUI({
     cat("popupVariableEditor is called\n")
   } # place holder
   
-  onNodeClick = observe(label="onNodeClick",
-                          {
-                            if(rValues$treeSelectionDepth == 2) {
-                              popupInsertEditor()
-                            }
-                            if(rValues$treeSelectionDepth == 3) {
-                              popupVariableEditor()
-                            }
-                          })
-  
-  
+  onNodeClick = observe(label="onNodeClick", {
+    if(rValues$treeSelectionDepth == 2) {
+      popupInsertEditor()
+    }
+    if(rValues$treeSelectionDepth == 3) {
+      popupVariableEditor()
+    }
+  })
+
+
   output$oneRunResults = renderUI({
     input$btnRunOne ## to kick it off.
     runTrial()
@@ -321,25 +331,24 @@ output$jstreeScenarioOutput = renderUI({
       catn("==== rownames changed...")
       print(experimentTable)
     }
-    
-    observe({
-      if( input$btnCloneScen > 0) {   # Trigger if clicked
-        cat("\nSaving scenario\n")
-        assign(isolate(input$scenarioName), pos = 1,
-               rValues$currentScenario
-               ##TODO: update rValues$currentScenario 
-               ## responding to deletes, insertions, edits in place.
-        )
-        showshinyalert(session, id="cloneScen", styleclass = "inverse",
-                       HTMLtext=paste(
-                         "Saving scenario, name = ",
-                         isolate(input$scenarioName)))
-        #window.prompt("sometext","defaultText");
-      }
-    })
-  }) 
-
-
+  })  
+  observe({
+    if( input$btnCloneScen > 0) {   # Trigger if clicked
+      cat("\nSaving scenario\n")
+      assign(isolate(input$scenarioName), pos = 1,
+             rValues$currentScenario
+             ##TODO: update rValues$currentScenario 
+             ## responding to deletes, insertions, edits in place.
+      )
+      shinysky:::showshinyalert(session, id="cloneScen", styleclass = "inverse",
+                                HTMLtext=paste(
+                                  "Saving scenario, name = ",
+                                  isolate(input$scenarioName)))
+      #window.prompt("sometext","defaultText");
+    }
+  })
+  
+  
   ### Implement the btnRemoveInsert button.
   ### First, allow modification to the tree:
   # operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
@@ -356,35 +365,41 @@ output$jstreeScenarioOutput = renderUI({
                               $('#jstreeScenario').jstree('delete_node', node); // e.g. #j1_2.
                               }
                               ")
-
-buttonRemoveInsertObserver = observe({
-  if(exists("input")) 
-    if(!is.null(input$btnRemoveInsert) & (input$btnRemoveInsert > 0)) {
-      isolate({
-        # Find in the Scenario object and delete and reconstruct the tree.
-        # This is the actual object (e.g. VG): findObjectInScenario(rValues$treeSelectionPath)
-        treeSelectionPath <<- isolate(rValues$treeSelectionPath)
-        cat("buttonRemoveInsertObserver: treeSelectionPath is ", treeSelectionPath, "\n")
-        rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
-        selectedInsertIndex <<- which(sapply(
-          isolate(rVcS@inserts),
-          function(INSERT) 
-            identical(INSERT, findObjectInScenario(treeSelectionPath,
-                                                   isolate(rVcS)))))
-        if(length(selectedInsertIndex) == 1) {   
-          catn("REMOVING insert # ", selectedInsertIndex, ": ",
-               names(rVcS@inserts)[[selectedInsertIndex]])
-          rValues$currentScenario@inserts <<- 
-            new('ListOfInserts', isolate(rVcS@inserts)[-selectedInsertIndex])
-          #reloadScenario()  #This creates a new mytree.
-          catn("#inserts is now ", length(isolate(rVcS@inserts)))
-          ##   $('#jstreeScenario').jstree('refresh')  ## not enough.
-          # http://stackoverflow.com/questions/11139482/how-to-refresh-a-jstree-without-triggering-select-node-again
-          
-        }
-        else catn("ERROR in removing insert from Scenario: selectedInsertIndex is ",
-                  selectedInsertIndex)
-      })
+  
+  removeInsert = function(rVcS, treeSelectionPath) {
+    cat("buttonRemoveInsertObserver: treeSelectionPath is ", treeSelectionPath, "\n")
+    # Find in the Scenario object and delete and reconstruct the tree.
+    # This is the actual object (e.g. VG): findObjectInScenario(rValues$treeSelectionPath)
+    selectedInsertIndex <<- which(sapply(
+      rVcS@inserts,
+      function(INSERT) 
+        identical(INSERT, findObjectInScenario(treeSelectionPath,
+                                               (rVcS)))))
+    if(length(selectedInsertIndex) == 1) {   
+      catn("REMOVING insert # ", selectedInsertIndex, ": ",
+           names(rVcS@inserts)[[selectedInsertIndex]])
+      rVcS@inserts <- 
+        new('ListOfInserts', (rVcS@inserts)[-selectedInsertIndex])
+      catn("#inserts is now ", length(isolate(rVcS@inserts)))
     }
-})
-})
+    else catn("ERROR in removing insert from Scenario: selectedInsertIndex is ",
+              selectedInsertIndex, "\n  No insert was deleted. Still ", length((rVcS@inserts)),
+              " inserts.")
+    return (rVcS)
+  }
+  
+  buttonRemoveInsertObserver = observe({
+    if(exists("input")) 
+      if(!is.null(input$btnRemoveInsert) & (input$btnRemoveInsert > 0)) {
+        isolate({
+          treeSelectionPath <<- isolate(rValues$treeSelectionPath)
+          rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
+          rValues$currentScenario <- removeInsert(rVcS, treeSelectionPath)
+          # http://stackoverflow.com/questions/11139482/how-to-refresh-a-jstree-without-triggering-select-node-again
+        })
+      }
+  })
+  
+  
+  
+})  ### End of ShinyServer call
