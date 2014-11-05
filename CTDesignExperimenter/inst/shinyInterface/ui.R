@@ -145,25 +145,24 @@ CSSreference = singleton(tags$head(tags$link(href = "ctde.css",
 
 
 myJSincludes = tagList(
-  singleton(tags$head("<script src='www/ctde-types.js'> </script> ")),
-  singleton(tags$head("<script src='www/priority.js'> </script> ")),
-                      #  includeScript("www/ctde-types.js"), ## It does find this !
- #   includeScript("www/priority.js"), 
-  # includeScript("https://code.jquery.com/jquery-2.1.1.min.js"),
-#  includeScript("http://static.jstree.com/3.0.8/assets/dist/jstree.min.js"),
-#  includeScript("http://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.min.js"),
-#   includeScript("www/jquery-2.1.1.min.js"),
-   includeScript("www/jstree.min.js"),
-#   includeScript("www/json2.min.js"),
-  
-  # includeScript("www/html-to-json.js")
+  includeScript("www/jstree.min.js"),
   includeScript("www/ss-jstree.js")  # and this.  
-#  , includeScript("http://cdn.datatables.net/1.10.1/js/jquery.dataTables.min.js")
   , CSSreference ### OK. Works (for text colors)
   , treeSelectionDepthJSfunction
   , treeSelectionTextJSfunction
   , singleton(tags$script("var outputPreamble = '" %&% outputPreamble %&% "';"))
   , singleton(tagToOpenTree)
+  # singleton(tags$head("<script src='www/ctde-types.js'> </script> ")),
+  # singleton(tags$head("<script src='www/priority.js'> </script> ")),
+  #  includeScript("www/ctde-types.js"), ## It does find this !
+  #   includeScript("www/priority.js"), 
+  # includeScript("https://code.jquery.com/jquery-2.1.1.min.js"),
+  #  includeScript("http://static.jstree.com/3.0.8/assets/dist/jstree.min.js"),
+  #  includeScript("http://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.min.js"),
+  #   includeScript("www/jquery-2.1.1.min.js"),
+  #   includeScript("www/json2.min.js"),
+  #  , includeScript("http://cdn.datatables.net/1.10.1/js/jquery.dataTables.min.js")
+  # includeScript("www/html-to-json.js")
 )
 
 ##  Fiddling with jqueryUI popups:
