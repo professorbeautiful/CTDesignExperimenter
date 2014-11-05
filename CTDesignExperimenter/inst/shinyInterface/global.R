@@ -1,5 +1,5 @@
 require("CTDesignExperimenter")
-#require(shinysky) 
+require(shinysky) #  needed for renderHotable, shinyalert, etc but not for ss_jstree
 options(shiny.trace=FALSE)
 
 scaffoldObjectNames = scaffoldObjects[[1]]
