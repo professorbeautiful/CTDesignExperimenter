@@ -68,7 +68,7 @@ output$debugTools = renderUI({
       singleton(tags$script(paste(
         "outputPreamble = '", outputPreamble, "';")))
       ,
-      checkboxInput(inputId='debugToolsCheckbox', value=TRUE,
+      checkboxInput(inputId='debugToolsCheckbox', value=FALSE,
                     label=em(strong("Debugging aids"))),
       conditionalPanel('input.debugToolsCheckbox',
                       tag("table", list(
