@@ -38,6 +38,7 @@ li.treeclass_2 > ul > .jstree-icon
 }
 
 /*.jstree-default > li .treeclass_1  {*/
+
 li.treeclass_1  { 
 	/*icon:"www/BLOCK.gif";*/
 	/* icon: url("BLOCK.gif") 0px 0px left center no-repeat !important; */

@@ -12,6 +12,11 @@ var fixColors = function(){
       $('li.treeclass_1 > a').css('color', 'blue');
       $('li.treeclass_2 > a').css('color', 'darkred');
       $('li.treeclass_3 > a').css('color', 'green');
+      $('li.treeclass_1 ').css('icon', 'url(BLOCK32.png)');
+      $('li.treeclass_1 >').css('icon', 'BLOCK32.png');
+      //$('li.treeclass_2 > a.jstree-anchor').style('icon', 'Insert32.png', '0px 0px no-repeat !important');
+      //li.treeclass_2 > ul > .jstree-icon
+//{ background: url("Insert32.png") ; }
   //    $('li.treeclass_3 > a ').each(function() this.style('color', 'green', 'important'));
       };
 
