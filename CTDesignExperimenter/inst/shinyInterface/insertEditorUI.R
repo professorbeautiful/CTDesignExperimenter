@@ -34,7 +34,7 @@ output$insertEditorUI = renderUI({
   iFilenames <<- rev(dir(swapMeetDir(), pattern = "^I_"))
   allInsertsList = lapply(iFilenames, function(fname) {
     tempInsert = source(swapMeetDir() %&% fname, local=TRUE)$value
-    if(! (class(theInsert)=="VariableGenerator"))
+    if(! (class(tempInsert)=="VariableGenerator"))
       browser()
     insertToDataframe(tempInsert)
   })
