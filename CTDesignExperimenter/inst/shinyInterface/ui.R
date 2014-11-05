@@ -186,35 +186,40 @@ popupJSincludes = tagList(
 ## The context menu appears with the standard menu, not in place of.
 
 shinyUI(
-  navbarPage(
-    inverse=TRUE,
-    id="tabsetID",
-    title = "CTDE: Clinical trial design experimenter",
-    header=tagList(myJSincludes,
-                   hr(),
-                   popupJSincludes,
-                   # textInput("console", "Enter an R Command"),
-                   # uiOutput("varEditPopup"), ### Alternative to using tabsets.
-                   uiOutput(outputId="debugTools"),
-                   hr()),
-    # message-handler code causes hang.
-    #       singleton(
-    #         tags$head(tags$script(src = "message-handler.js"))
-    #       ),
-    scenarioPanel,
-    editorPanel,
-    tabPanel("One CT run", 
-             "Display results from a single CT run for the selected scenario.",
-             hr(),
-             actionButton(inputId="btnRunOne", label="Run one CT", styleclass = "success")
-             , uiOutput("oneRunResults")
-    ),
-    tabPanel("Criteria",
-             "Criteria will be selected and created here."),
-    tabPanel("Experiment",
-             "A table, scenarios by criteria."
-             , actionButton(inputId="btnRunExperiment" , label="Run Experiment", styleclass = "success")
-             , tableOutput("experimentTableOut")
-    )
+  div(h1("CTDE: Clinical trial design experimenter"),  hr(),
+      navbarPage(
+        inverse=TRUE,
+        id="tabsetID",
+#        title = div(h2("CTDE: Clinical trial design experimenter"), hr()),
+        title="",
+        header=tagList(myJSincludes,
+                       hr(),
+                       popupJSincludes,
+                       # textInput("console", "Enter an R Command"),
+                       # uiOutput("varEditPopup"), ### Alternative to using tabsets.
+                       uiOutput(outputId="debugTools"),
+                       hr()),
+        # message-handler code causes hang.
+        #       singleton(
+        #         tags$head(tags$script(src = "message-handler.js"))
+        #       ),
+        scenarioPanel,
+        # editorPanel,
+        tabPanel("Insert Editor", uiOutput("insertEditorUI")),
+        tabPanel("Variable Editor", uiOutput("varEditorUI")),
+        tabPanel("One CT run", 
+                 "Display results from a single CT run for the selected scenario.",
+                 hr(),
+                 actionButton(inputId="btnRunOne", label="Run one CT", styleclass = "success")
+                 , uiOutput("oneRunResults")
+        ),
+        tabPanel("Criteria",
+                 "Criteria will be selected and created here."),
+        tabPanel("Experiment",
+                 "A table, scenarios by criteria."
+                 , actionButton(inputId="btnRunExperiment" , label="Run Experiment", styleclass = "success")
+                 , tableOutput("experimentTableOut")
+        )
+      )
   )
 )
