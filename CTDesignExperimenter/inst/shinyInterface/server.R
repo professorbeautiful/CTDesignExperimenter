@@ -153,24 +153,24 @@ output$jstreeScenarioOutput = renderUI({
   editingVariableObserver = observe(label="editingVariableObserver", {
     catn("editingVariableObserver: rValues$openingVariableEditor = ", rValues$openingVariableEditor)
     if(rValues$openingVariableEditor) {
-      updateTabsetPanel(session, "tabsetID", selected = "Editors")
+      updateTabsetPanel(session, "tabsetID", selected = "Variable Editor")
     }    #"selected" is the title on the tab.
   }
   )
   editingInsertObserver = observe(label="editingInsertObserver", {
     catn("editingInsertObserver: rValues$openingInsertEditor = ", rValues$openingInsertEditor)
     if(rValues$openingInsertEditor) {
-      updateTabsetPanel(session, "tabsetID", selected = "Editors")
+      updateTabsetPanel(session, "tabsetID", selected = "Insert Editor")
     }    #"selected" is the title on the tab.
   }
   )
   
   observeTabReset = observe(label = "observeTabReset", {
     cat("observed:  Resetting the tabset to ", input$tabsetID, "\n")
-    if(input$tabsetID != "Editors") {    ## react if tab changes
+    if(input$tabsetID != "Variable Editor")     ## react if tab changes
       rValues$openingVariableEditor <- FALSE
+    if(input$tabsetID != "Insert Editor")     ## react if tab changes
       rValues$openingInsertEditor <- FALSE
-    }
   })
   
   treeObserver = observe(
