@@ -273,7 +273,7 @@ observe({
 Insert = VariableGenerator
 makeInsert = function() {
   theNewParameters = hot.to.df(input$parameterHOT)
-  
+  if(is.null(theNewParameters)) theNewParameters = list()
   try(
     Insert(insertSubType = rValues$theInsert@insertSubType,
     #       name = input$insertName, 
