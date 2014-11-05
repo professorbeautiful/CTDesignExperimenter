@@ -147,15 +147,6 @@ CSSreference = singleton(tags$head(tags$link(href = "ctde.css",
 myJSincludes = tagList(
   singleton(tags$head("<script src='www/ctde-types.js'> </script> ")),
   singleton(tags$head("<script src='www/priority.js'> </script> ")),
-  singleton(tags$head("<script> 
-    var fixColors = function(){
-      $('li.treeclass_1 > a ').css('color', 'blue');
-      $('li.treeclass_2 > a ')css('color', 'darkred');
-      $('li.treeclass_3 > a ')css('color', 'green');
-  //    $('li.treeclass_3 > a ').each(function() this.style('color', 'green', 'important'));
-      };
-                      </script>"
-                      )),
                       #  includeScript("www/ctde-types.js"), ## It does find this !
  #   includeScript("www/priority.js"), 
   # includeScript("https://code.jquery.com/jquery-2.1.1.min.js"),
