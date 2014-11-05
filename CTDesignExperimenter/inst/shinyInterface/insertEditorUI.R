@@ -75,7 +75,7 @@ output$insertEditorUI = renderUI({
     cat("requirementHOT: df is:\n")
     print(df)
     print(dim(df))
-    rownames(df) = c("description", "checkDataType")
+    if(dim(df)[1] > 0) rownames(df) = c("description", "checkDataType")
     df
   }, readOnly = FALSE)
   
