@@ -136,16 +136,6 @@ scenarioPanel = tabPanel(
 
 )
 
-editorPanel = #conditionalPanel(condition = 'true',
-  # Sadly, cannot put a conditionalPanel in a tabsetPanel.
-  tabPanel("Editors",
-           conditionalPanel(condition = 'treeSelectionDepth()==2',
-                            uiOutput("insertEditorUI")),
-           conditionalPanel(condition = 'treeSelectionDepth()==3
-                            && (is_needed() || is_provision() ) ',
-                            uiOutput("varEditorUI"))
-  )
-
 CSSreference = singleton(tags$head(tags$link(href = "ctde.css", 
                                              rel = "stylesheet")))
 # getLevelOfSelection = singleton(tags$head(tags$script(
