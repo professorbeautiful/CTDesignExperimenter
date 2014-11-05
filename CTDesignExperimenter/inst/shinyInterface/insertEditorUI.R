@@ -143,8 +143,8 @@ output$insertEditorUI = renderUI({
                          label=div("Search for insert", class = "INSERTlevel")),
             actionButton(inputId="btnSaveInsert" , 
                          label=div("Save insert", class = "INSERTlevel")),
-            actionButton(inputId="btnSaveInsertAs" , 
-                         label=div("Save Insert as...", class="INSERTlevel"))
+            actionButton(inputId="btnReplaceInsertInScenario" , 
+                         label=div("ReplaceInsertInScenario", class="INSERTlevel"))
             # css.class doesnt work.   css.class = "treeclass-2"),
         ),
         tagAppendAttributes(tag=strong(
@@ -286,9 +286,10 @@ makeInsert = function() {
     ) 
 }
 
+### This writes the file!
 observeBtnSaveInsert = observe(label="observeBtnSaveInsert", {       
-  ### Save Insert in the scenario
-  if(input$tabsetID=="Editors" & !is.null(input$btnSavInserte)){
+  ### Save Insert in a swapMeet file.
+  if(input$tabsetID=="Insert Editor" & !is.null(input$btnSaveInsert)){
     if(input$btnSaveInsert > 0) {
       theInsert = makeInsert()
       if(class(theInsert) == "try-error")
@@ -296,7 +297,7 @@ observeBtnSaveInsert = observe(label="observeBtnSaveInsert", {
       else {
         theInsert = writeSwapMeetFile(theInsert, verbose = TRUE)
         shinyalert("observeBtnSaveInsert/makeInsert: made new Insert. Wrote file "%&%
-                     theInsert$filename)
+                     theInsert@filename %&% ". CAUTION: This will NOT (yet) replace in Scenario." )
         rValues$theInsert = theInsert
         # TODO:  insert into Scenario, 
         #    switch to Scenario tab,
@@ -306,16 +307,31 @@ observeBtnSaveInsert = observe(label="observeBtnSaveInsert", {
   }
 })
 
-### This writes the file!
-observeBtnSaveInsertAs = observe(label="observeBtnSaveInsertAs", { 
-  ### Save Insert in a swapMeet file.
-  if(input$tabsetID=="Editors" & !is.null(input$btnSaveInsertAs)){
-    if(input$btnSaveInsertAs > 0) {
-      theInsert = makeInsert()
-      if(class(theInsert) == "try-error")
-        shinyalert("Error in Insert: " %&% theInsert)
-      else 
-        rValues$theInsert = theInsert = writeSwapMeetFile(theInsert, verbose = TRUE)      
+addInsert = function(rVcS, theInsert) {
+  rVcS@inserts =  
+    new('ListOfInserts', c(rVcS@inserts, theInsert))
+  return(rVcS)
+}
+observeBtnReplaceInsertInScenario = observe(label="observeReplaceInsertInScenario", { 
+  ### Save Insert in the scenario
+  if(input$tabsetID=="Insert Editor" & !is.null(input$btnReplaceInsertInScenario)){
+    if(input$btnReplaceInsertInScenario > 0) {
+      isolate({
+        theInsert = makeInsert()
+        if(class(theInsert) == "try-error")
+          shinyalert("Error in Insert: " %&% theInsert)
+        else {
+          rValues$theInsert = theInsert = writeSwapMeetFile(theInsert, verbose = TRUE) 
+          if(!is.null(input$treeSelectionDepth))
+            if(input$treeSelectionDepth == 2) {
+              ### Replace
+              treeSelectionPath <<- isolate(rValues$treeSelectionPath)
+              rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
+              rVcS = removeInsert(rVcS, treeSelectionPath)
+              rValues$currentScenario <- addInsert(rVcS, theInsert) 
+            }
+        }
+      })
     }
   }
 })
