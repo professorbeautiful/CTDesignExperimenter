@@ -115,11 +115,11 @@ scenarioPanel = tabPanel(
                    ) 
   )
   , hr()
+  , "SCENARIO TREE"
   # THE FOLLOWING div LINE IS RESPONSIBLE FOR NOT SHOWING UP IN CHROME AND SAFARI
   # Specifically, it is overflow:auto.  Also overflow:scroll breaks it.
-  #, div(style="overflow:auto; height:800px" 
+  #, div(style="height:800px;" 
   #, div(style="overflow:scroll;height:400px;background-color:lightgrey"
-  , "SCENARIO TREE"
   ### myTree responds to JS (tagToOpenTree, and conditionals)
   ### The uiOutput element does not.
   #  , uiOutput(outputId = 'jstreeScenarioOutput')  
@@ -136,7 +136,7 @@ scenarioPanel = tabPanel(
   , includeHTML("jstreeScenarioContent.html")
   , tags$script('ss_jstree.subscribe(tree(), function() { fixColors(); }); ')
   , tagToOpenTree  ## This tag MUST be AFTER myTree! Why? (Can be inside the div or not)
-  ##   )  ###  end of overflow div..  Fails in chrome and safari
+   #  )  ###  end of overflow div..  Fails in chrome and safari
 )
 
 CSSreference = singleton(tags$head(tags$link(href = "ctde.css", 
