@@ -136,14 +136,14 @@ shinyServer(function(input, output, session) {
   source("varEditorUI.R", local=TRUE)
   source("insertEditorUI.R", local=TRUE)
   
-  observeBtnEditVariable = observe(label="observeBtnEditVariable", {
+  observerBtnEditVariable = observe(label="observerBtnEditVariable", {
     if(input$btnEditVariable > 0) {
       isolate(rValues$openingVariableEditor <- TRUE)
     }
   }
   )
   
-  observeBtnEditInsert = observe(label="observeBtnEditInsert", {
+  observerBtnEditInsert = observe(label="observerBtnEditInsert", {
     if(exists("input")) 
       if(!is.null(input$btnEditInsert) ) {
         if(input$btnEditInsert > 0) {
@@ -155,14 +155,14 @@ shinyServer(function(input, output, session) {
       }
   }
   )
-  buttonEditInsertObserver = observe({
+  observerButtonEditInsert = observe({
     if(exists("input")) 
       if(!is.null(input$btnEditInsert) & (input$btnEditInsert > 0)) {
         isolate({NULL   ### should not be necessary
         })
       }
   })
-  editingVariableObserver = observe(label="editingVariableObserver", {
+  observerEditingVariable = observe(label="observerEditingVariable", {
     catn("editingVariableObserver: rValues$openingVariableEditor = ", rValues$openingVariableEditor)
     if(rValues$openingVariableEditor) {
       updateTabsetPanel(session, "tabsetID", selected = "Variable Editor")
