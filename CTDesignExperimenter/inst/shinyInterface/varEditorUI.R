@@ -8,8 +8,14 @@ varToDataframe = function(theVar){
     filename=theVar@filename      
   )
 }
+
+makeTemplateVariable = function() 
+  Variable(name = "(name)", description = "", checkDataType = function(x)is.boolean(x))
+
 output$varEditorUI = renderUI({ 
   rValues$openingVariableEditor <<- FALSE
+  if(is.null(rValues$theVar))
+    rValues$theVar = makeTemplateVariable()
   theVar = rValues$theVar
   CHECK = printFunctionBody(theVar@checkDataType)
   catn("output$varEditorUI: var is ", capture.output(theVar))
@@ -18,7 +24,7 @@ output$varEditorUI = renderUI({
     tempVar = source(swapMeetDir() %&% fname, local=TRUE)$value
     varToDataframe(tempVar)
   })
-  allVariablesDF <<- Reduce(rbind, allVariablesList)
+  allVariablesDF = Reduce(rbind, allVariablesList)
   radioButtons = sapply(1:nrow(allVariablesDF),
                         function(rownum)
                           HTML("<input type=\"radio\" name=\"chooseVariable\" 
@@ -26,7 +32,8 @@ output$varEditorUI = renderUI({
                                %&% "\" value=" %&% rownum %&% ">"))
   allVariablesDF = data.frame(select=radioButtons, allVariablesDF) 
   
-  allVarnames <<- data.frame(name=unique(allVariablesDF$name))
+  allVarnames = data.frame(name=unique(allVariablesDF$name))
+  
   output$allVariablesTable <<- renderDataTable(allVariablesDF,
         options=list(
             fnInitComplete = I("function(oSettings, json) {
@@ -141,8 +148,8 @@ output$varEditorUI = renderUI({
 })
 
 observe(label="searchVariableObserver", {
-  catn("searchVariableObserver: input$btnSearchVar = ", 
-       input$btnSearchVar)
+  catn("searchVariableObserver: input$btnSearchVar = /", 
+       capture.output(input$btnSearchVar), "/")
   if(!is.null(input$btnSearchVar))
     if(input$btnSearchVar > 0) 
       if(!is.null(input$searchTypeAhead)) 
@@ -199,12 +206,17 @@ observe({       ### Save Variable in a swapMeet file.
   }
 })
 
-observe({
-  varFileName = allVariablesDF[input$chooseVariable, "filename"]
-  catn("varFileName = ", varFileName)
-  theVar = try(
-    source(swapMeetDir() %&% varFileName, local=TRUE)$value
-  )
-  if(class(theVar) != "try-error")
-    rValues$theVar = theVar
+
+observerChooseVariable = observe({
+  chooseVariable = input$chooseVariable ## reactivity here 
+  if(!is.null(chooseVariable))
+    isolate({
+      varFileName = rValues$allVariablesDF[input$chooseVariable, "filename"]
+      catn("varFileName = ", varFileName)
+      theVar = try(
+        source(swapMeetDir() %&% varFileName, local=TRUE)$value
+      )
+      if(class(theVar) != "try-error")
+        rValues$theVar <- theVar
+    })
 })
