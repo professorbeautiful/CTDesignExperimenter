@@ -201,9 +201,11 @@ shinyUI(
         tabPanel("Insert Editor", uiOutput("insertEditorUI")),
         tabPanel("Variable Editor", uiOutput("varEditorUI")),
         tabPanel("One CT run", 
-                 "Display results from a single CT run for the selected scenario.",
-                 hr(),
-                 actionButton(inputId="btnRunOne", label="Run one CT", styleclass = "success")
+                 h2("Display results from a single CT run for the selected scenario."),
+                 hr()
+                 , uiOutput("oneRunHeader")
+                 , actionButton(inputId="btnOneRun", label="Run one CT", styleclass = "success")
+                 , uiOutput("oneRunSummaries")
                  , uiOutput("oneRunResults")
         ),
         tabPanel("Criteria",
