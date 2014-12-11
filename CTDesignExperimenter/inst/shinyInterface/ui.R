@@ -7,8 +7,11 @@
 conditionPanelNoneSelected = conditionalPanel(
   '$("#jstreeScenario").jstree().get_selected().length == 0',  #This works!! 0 1 2 etc.
   div(class="row-fluid span3",
-      actionButton(inputId="btnCloneScen", 
-                   label="Clone and save scenario", 
+      actionButton(inputId="btnWriteScenarioToSwapmeet", 
+                   label="Write to Swapmeet", 
+                   css.class = "BLOCKlevel"),
+      actionButton(inputId="btnSaveScenarioToGlobalEnv", 
+                   label="Save scenario to GlobalEnv", 
                    css.class = "BLOCKlevel"),
       actionButton(inputId="btnFindScen" , 
                    label="Find &replace scenario", css.class = "BLOCKlevel"),

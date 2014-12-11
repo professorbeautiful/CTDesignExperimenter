@@ -365,6 +365,14 @@ shinyServer(function(input, output, session) {
     }
   })  
   
+  observeBtnFindScen = observe(label="observeBtnFindScen", {
+    if(input$btnFindScen > 0) { ### Make reactive to button.
+      rValues$findingScenario = TRUE
+      # Now, replace the tree with a scenario file table
+      
+    }
+  })  
+  
   output$experimentTableOut = renderTable({
     if(input$btnAddScen>0) {  ### Make reactive to button. Trigger if clicked.
       experimentTable[nrow(experimentTable)+1, ] <<- NA
@@ -379,17 +387,34 @@ shinyServer(function(input, output, session) {
       print(experimentTable)
     }
   })  
-  observe({
-    if( input$btnCloneScen > 0) {   # Trigger if clicked
+
+  observerSaveScenarioToGlobalEnv = observe({
+    if( input$btnSaveScenarioToGlobalEnv > 0) {   # Trigger if clicked
       cat("\nSaving scenario\n")
       assign(isolate(input$scenarioName), pos = 1,
              rValues$currentScenario
              ##TODO: update rValues$currentScenario 
              ## responding to deletes, insertions, edits in place.
       )
-      shinysky:::showshinyalert(session, id="cloneScen", styleclass = "inverse",
+      shinysky:::showshinyalert(session, id="SaveScenarioToGlobalEnv", styleclass = "inverse",
                                 HTMLtext=paste(
-                                  "Saving scenario, name = ",
+                                  "Saving scenario to GlobalEnv, name = ",
+                                  isolate(input$scenarioName)))
+      #window.prompt("sometext","defaultText");
+    }
+  })
+  
+  observerWriteScenarioToSwapmeet = observe({
+    if( input$btnWriteScenarioToSwapmeet > 0) {   # Trigger if clicked
+      cat("\nWriting scenario\n")
+      assign(isolate(input$scenarioName), pos = 1,
+             rValues$currentScenario
+             ##TODO: update rValues$currentScenario 
+             ## responding to deletes, insertions, edits in place.
+      )
+      shinysky:::showshinyalert(session, id="SaveScenarioToGlobalEnv", styleclass = "inverse",
+                                HTMLtext=paste(
+                                  "Saving scenario to GlobalEnv, name = ",
                                   isolate(input$scenarioName)))
       #window.prompt("sometext","defaultText");
     }
