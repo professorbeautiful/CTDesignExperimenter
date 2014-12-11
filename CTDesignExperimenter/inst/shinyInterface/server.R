@@ -8,7 +8,7 @@ require("CTDesignExperimenter")
 
 shinyServer(function(input, output, session) {
   
-  observe({
+  observerCurrentScenario = observe({
     currScen = rValues$currentScenario
     messageSent = 
       myjstree.JSON(
