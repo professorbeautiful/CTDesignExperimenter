@@ -1,3 +1,9 @@
+makeTemplateVG = function() {
+  vg = VariableGenerator(outputVariable = makeTemplateVariable(), generatorCode=function()TRUE)
+  vg@name = "I_Template"
+  vg@description = "(description here)"
+  vg
+}
 
 
 insertToDataframe = function(theInsert) {
@@ -30,6 +36,8 @@ output$insertEditorUI = renderUI({
   try(rm(parameterDF_old))
   rValues$openingInsertEditor = FALSE
   theInsert = rValues$theInsert
+  if(is.null(theInsert)) 
+    theInsert = makeTemplateVG()
   catn("output$insertEditorUI: insert is ", capture.output(theInsert))
   iFilenames <<- rev(dir(swapMeetDir(), pattern = "^I_"))
   allInsertsList = lapply(iFilenames, function(fname) {
