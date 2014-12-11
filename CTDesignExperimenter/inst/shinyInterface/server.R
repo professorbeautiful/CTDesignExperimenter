@@ -269,39 +269,86 @@ shinyServer(function(input, output, session) {
       popupVariableEditor()
     }
   })
-
-
-  output$oneRunResults = renderUI({
-    input$btnRunOne ## to kick it off.
-    runTrial()
-    nPatients = length(trialData$patientData)
-    returnvalueString1 = paste0(
+  
+  
+  
+  #### Display Design Parameters.
+  oneRunHeader =   function() {
+    returnvalueStringDesignParameters = paste0(
       "tagList(",
-      "div(",
+      "div(h3('Trial Design Parameters'), ",
+      paste("'", capture.output(
+        printVVenv(trialData$designParameters))
+        , "'", collapse=","),
+      "))")
+    returnvalueStringPopulationParameters = paste0(
+      "<div> <h3>Population Parameters</h3> "
+      , paste(
+        gsub("\\(parameter\\)", "",
+             grep(value=TRUE, "(parameter)", capture.output(
+               printVVenv(trialData$candidatePatient$VVenv))))
+        , collapse="<br/>")
+      , "</div>")
+    #    catn("returnvalueStringPopulationParameters = ", returnvalueStringPopulationParameters)
+    return(tagList(
+      eval(parse(text=returnvalueStringDesignParameters)),
+      HTML(returnvalueStringPopulationParameters),
+      hr()
+    ))
+  }
+  
+  oneRunSummaries =   function() {
+    if(input$btnOneRun > 0)## to kick it off.
+      runTrial()
+    nPatients = length(trialData$patientData)
+    catn("nPatients = ", nPatients)
+    returnvalueStringTrialSummaries = paste0(
+      "tagList(",
+      "div(h3('Summaries of the Trial'), ",
       paste("'", capture.output(
         printVVenv(trialData$trialSummaries))
         , "'", collapse=","),
       "))")
-    returnvalue = eval(parse(text=returnvalueString1))
+    returnvalue = eval(parse(text=returnvalueStringTrialSummaries))
+    returnvalue = tagList(returnvalue, hr(),
+                          div(h3('Individual Patients (variable values)')))
+    returnvalue = tagList(returnvalue, 
+                          paste("# patients = ", nPatients))
+    returnvalue = tagList(returnvalue, 
+                          numericInput(inputId = "patientChoice", "View Patient (#)",
+                                       value=1, min=1, max=nPatients, step=1))
     
-    for(iPatient in 1:nPatients) {
-      returnvalueString2 = paste0(
-        "tagList(hr(), ",
-        "p(style='fontsize:large', em('Patient #",
-        iPatient,
-        "')), ",
-        "hr(), ",
-        paste("div('", capture.output(
-          printVVenv(trialData$patientData[[iPatient]]$VVenv))
-          , "')", collapse=", \n") ,
+    return(returnvalue)
+  }
+  
+    
+  oneRunResults =   function() {
+    if(input$btnOneRun > 0)
+      iPatient = input$patientChoice
+    catn("iPatient = ", capture.output(iPatient))  
+    if(is.null(iPatient)) 
+      return("")
+    else {
+      returnvalueStringChosenPatient = paste0(
+        "<hr/> <p style='fontsize:large'> 
+        <em> ", paste('Patient #', iPatient),
+        "</em> </p>",
+        paste(
+          gsub("\\(variable value\\)", "",
+               grep(value=TRUE, "(variable value)", capture.output(
+                 printVVenv(trialData$patientData[[iPatient]]$VVenv))))
+          , collapse="<br/>"),
         ")")
-      returnvalue = tagList(
-        returnvalue , eval(parse(text=returnvalueString2))
-      ) 
+      return(HTML(text=returnvalueStringChosenPatient))
     }
     returnvalue
-  })
+  }
+  #  debug(oneRunResults)
   
+  output$oneRunHeader = renderUI({oneRunHeader()})
+  output$oneRunSummaries = renderUI({oneRunSummaries()})
+  output$oneRunResults = renderUI({oneRunResults()})
+
   is_needed = function()
     return (grep(rValues$treeSelectionText, 'needs:') > 0 )
   is_code = function()
