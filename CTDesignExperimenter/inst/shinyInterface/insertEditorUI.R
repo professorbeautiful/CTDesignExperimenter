@@ -5,8 +5,7 @@ makeTemplateVG = function() {
   vg
 }
 
-
-insertToDataframe = function(theInsert) {
+convertInsertToDataframe = function(theInsert) {
   data.frame( 
     output=capture.output(show(theInsert@outputVariable)),
     parameters=ifelse(is.null(theInsert@parameters) | length(theInsert@parameters)==0,
@@ -23,8 +22,7 @@ insertToDataframe = function(theInsert) {
     generator=printFunctionBody(theInsert@generatorCode),
     author=theInsert@author,
     timestamp=capture.output(theInsert@timestamp),
-    filename=theInsert@filename      
-    
+    filename=theInsert@filename          
   )
 }
 
@@ -43,8 +41,8 @@ output$insertEditorUI = renderUI({
   allInsertsList = lapply(iFilenames, function(fname) {
     tempInsert = source(swapMeetDir() %&% fname, local=TRUE)$value
     if(! (class(tempInsert)=="VariableGenerator"))
-      browser()
-    insertToDataframe(tempInsert)
+      browser("Inside iFilenames list for Inserts")
+    convertInsertToDataframe(tempInsert)
   })
   allInsertsDF <<- Reduce(rbind, allInsertsList)
   radioButtons = sapply(1:nrow(allInsertsDF),
@@ -52,15 +50,14 @@ output$insertEditorUI = renderUI({
                           HTML("<input type=\"radio\" name=\"chooseInsert\" 
                                id=\"chooseInsert" %&% rownum
                                %&% "\" value=" %&% rownum %&% ">"))
-  allInsertsDF = data.frame(select=radioButtons, allInsertsDF) 
+  allInsertsDF <<- data.frame(select=radioButtons, allInsertsDF) 
   
-  allInsertnames <<- data.frame(name=unique(allInsertsDF$name))
   output$allInsertsTable <<- renderDataTable(allInsertsDF)
   
   
   ###################  REQUIREMENTS  ##############################
-  
-  observe({
+
+  observerRequirements = observe({
     if(exists("requirementDF"))
       requirementDF_old <<- requirementDF
     requirementDF <<- hot.to.df(input$requirementHOT)
@@ -77,18 +74,22 @@ output$insertEditorUI = renderUI({
   )
   
   output$requirementHOT <- renderHotable({
-    df = as.data.frame(sapply(theInsert@requirements,
-                  function(v) c(v@description, printFunctionBody(v@checkDataType))))
-    names(df) = sapply(theInsert@requirements, slot, name="name")
-    cat("requirementHOT: df is:\n")
-    print(df)
-    print(dim(df))
-    if(dim(df)[1] > 0) rownames(df) = c("description", "checkDataType")
-    df
+    if(is.null(rValues$theInsert))
+      NULL
+    else {
+      df = as.data.frame(sapply(rValues$theInsert@requirements,
+                                function(v) c(v@description, printFunctionBody(v@checkDataType))))
+      names(df) = sapply(rValues$theInsert@requirements, slot, name="name")
+      cat("requirementHOT: df is:\n")
+      print(df)
+      print(dim(df))
+      if(dim(df)[1] > 0) rownames(df) = c("description", "checkDataType")
+      df
+    }
   }, readOnly = FALSE)
   
   ###################  PARAMETERS  ##############################
-  observe({
+  observerParameterDF = observe({
     if(exists("parameterDF"))
       parameterDF_old <<- parameterDF
     parameterDF <<- hot.to.df(input$parameterHOT)
@@ -131,14 +132,11 @@ output$insertEditorUI = renderUI({
   div(
     ### Let's see if we can put all this on one line,
     # using the ideas at https://groups.google.com/forum/#!searchin/shiny-discuss/shinysky/shiny-discuss/rYMmnAtYuJY/_nnzF1ka1vYJ.
-    list(
+    fluidRow(
       ## If divs instead of columns, vertical instead of horizontal.
       ## Negative offsets are the same as zero. widths must be in 1,...,12.
-        column(width=2, offset=-10, strong("Editing an insert ", class="INSERTlevel")),
-        column(width=1, offset=-10, img(src='Insert32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
-        column(width=1, offset=-10, strong(" in block ", class="BLOCKlevel")),
-        column(width=1, offset=-10, img(src='BLOCK32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
-        column(width=6, offset=-10, div(class="BLOCKlevel", textOutput("insertSubTypeTOP"))) 
+        column(width=2, offset=0, strong("Editing an insert ", class="INSERTlevel")),
+        column(width=1, offset=-10, img(src='Insert32.png', align="absmiddle"))  ### Place in app root. Also, "www/" will not work.
     )
     ,
     br(),
@@ -155,6 +153,15 @@ output$insertEditorUI = renderUI({
                          label=div("ReplaceInsertInScenario", class="INSERTlevel"))
             # css.class doesnt work.   css.class = "treeclass-2"),
         ),
+        fluidRow(
+          column(width=1, offset=0, img(src='BLOCK32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
+          column(width=2, offset=-1, strong(" Placed in block ", class="BLOCKlevel")),
+          column(width=8, offset=-1, div(class="BLOCKlevel", 
+                          selectInput(inputId="selectedBlock", 
+                                      label="block name",
+                                      selected=theInsert@insertSubType,
+                                      choices=scaffoldObjectNames))
+        )),
         tagAppendAttributes(tag=strong(
                               textInput("insertName", 
                                         label = strong("name", class="INSERTlevel"), 
@@ -250,10 +257,21 @@ searchInsertObserver = observe(label="searchInsertObserver", {
         }
 })
 
+observer_selectedBlock = observe(label="observer_selectedBlock",
+  {
+    input$selectedBlock
+    isolate({
+      if(!is.null(rValues$theInsert)) {
+        theInsert = rValues$theInsert
+        theInsert@insertSubType <- input$selectedBlock
+        rValues$theInsert = theInsert
+      }
+    })
+  })
 
-
-observe({       ### Find and load a Insert from a file.
-  if(input$tabsetID=="Editors" & !is.null(input$btnSearchInsert)){
+observer_searchInsert = observe(label="observer_searchInsert",
+  {       ### Find and load a Insert from a file.
+  if(isolate(input$tabsetID)=="Insert Editor" & !is.null(input$btnSearchInsert)){
     if(input$btnSearchInsert > 0 & !is.null(input$insertSearchFileInput)) {
       try({
         theInsert = source(swapMeetDir() %&% input$insertSearchFileInput, 
@@ -268,17 +286,18 @@ observe({       ### Find and load a Insert from a file.
 
 ###################### Clear the inputs to create a new Insert   ##############
 
-observe({       
-  if(input$tabsetID=="Editors" & !is.null(input$btnNewInsert)){
+observer_newInsert = observe(label="observer_newInsert",
+  {       
+  if(isolate(input$tabsetID)=="Insert Editor" & !is.null(input$btnNewInsert)){
     if(input$btnNewInsert > 0) {
-      cat("NewInsert functionality is not yet implemented\n")
-#       rValues$theInsert = 
-#         VariableGenerator(name = "", description = "", checkDataType = function(x){TRUE})
+      cat("New Insert is generated\n")
+      rValues$theInsert = makeTemplateVG()
     }
   }
 })
 
 Insert = VariableGenerator
+
 makeInsert = function() {
   theNewParameters = hot.to.df(input$parameterHOT)
   if(is.null(theNewParameters)) theNewParameters = list()
@@ -297,7 +316,7 @@ makeInsert = function() {
 ### This writes the file!
 observeBtnSaveInsert = observe(label="observeBtnSaveInsert", {       
   ### Save Insert in a swapMeet file.
-  if(input$tabsetID=="Insert Editor" & !is.null(input$btnSaveInsert)){
+  if(isolate(input$tabsetID)=="Insert Editor" & !is.null(input$btnSaveInsert)){
     if(input$btnSaveInsert > 0) {
       theInsert = makeInsert()
       if(class(theInsert) == "try-error")
@@ -322,7 +341,7 @@ addInsert = function(rVcS, theInsert) {
 }
 observeBtnReplaceInsertInScenario = observe(label="observeReplaceInsertInScenario", { 
   ### Save Insert in the scenario
-  if(input$tabsetID=="Insert Editor" & !is.null(input$btnReplaceInsertInScenario)){
+  if(isolate(input$tabsetID)=="Insert Editor" & !is.null(input$btnReplaceInsertInScenario)){
     if(input$btnReplaceInsertInScenario > 0) {
       isolate({
         theInsert = makeInsert()
@@ -345,13 +364,17 @@ observeBtnReplaceInsertInScenario = observe(label="observeReplaceInsertInScenari
 })
 
 observeChooseInsert = observe(label="observeChooseInsert", {
-  insertFileName = allInsertsDF[input$chooseInsert, "filename"]
-  catn("insertFileName = ", insertFileName)
-  theInsert = try(
-    source(swapMeetDir() %&% insertFileName, local=TRUE)$value
-  )
-  if(class(theInsert) != "try-error")
-    rValues$theInsert = theInsert
-  else
-    cat("observeChooseInsert:  insert reading went bad", theInsert, "\n")
+  chooseInsert = input$chooseInsert  # reactivity here
+  if(!is.null(chooseInsert))
+    isolate({
+      insertFileName = allInsertsDF[input$chooseInsert, "filename"]
+      catn("insertFileName = ", insertFileName)
+      theInsert = try(
+        source(swapMeetDir() %&% insertFileName, local=TRUE)$value
+      )
+      if(class(theInsert) != "try-error")
+        rValues$theInsert = theInsert
+      else
+        cat("observeChooseInsert:  insert reading went bad", theInsert, "\n")
+    })
 })
