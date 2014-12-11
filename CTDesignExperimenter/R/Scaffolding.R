@@ -368,7 +368,6 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
                                    gitAction="none")
   # cat("....... ", eligibilityVariables)   ###   OK
   vg_notEligible = VariableGenerator(insertSubType="EligibilityCriterion",
-                                     parameters=list(iAmAParameter=TRUE),
                                      requirements=eligibilityVariables,
                                      provisions=v_notEligibleVariable,
                                      generatorCode=function(){} # body is filled in below.
