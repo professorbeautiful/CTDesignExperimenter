@@ -1,5 +1,9 @@
 /* http://www.w3schools.com/cssref/trysel.asp */
 
+.jstree, .ss-jstree{
+overflow-y: auto !important;
+}
+
 .noSelection {
  /*  background-color:black;*/
 }
