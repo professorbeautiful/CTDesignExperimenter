@@ -141,9 +141,10 @@ findObjectInScenario = function( index="0_3_4_1", scenario) {
           else if(length(grep("^provides:", nodeText)) == 1)
             return(theInsert@outputVariable)
           else if(length(grep("^needs:", nodeText)) == 1) {
-            whichOne = match(gsub("needs: ", "", nodeText),
-                             lapply(theInsert@requirements, capture.output))
-            return(theInsert@requirements[[whichOne]])
+            #             whichOne = match(gsub("needs: ", "", nodeText),
+            #                              lapply(theInsert@requirements, capture.output))
+            #             # return(theInsert@requirements[[whichOne]])
+            return(theInsert@requirements[[L3]])  ### Needs come first!
           }
           else if(length(grep("^param:", nodeText)) == 1) {
             paramName = gsub("=.*", "", 
