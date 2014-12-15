@@ -128,25 +128,34 @@ findObjectInScenario = function( index="0_3_4_1", scenario) {
         if(is.na(L3))  ### It's an insert
           return(theInsert)
         else {
-          nodeText = extractTreeText(L1, L2, L3, makeTree(scenario))
-          slotOrder = cq(needs="requirements", code="generatorCode",
-                         provides="outputVariable", param="parameters")
-          objectList = c(list(),theInsert@requirements, 
-                         gsub('"', '\\"', theInsert@generatorCode),
-                         theInsert@outputVariable, theInsert@parameters)
-          return(objectList[[L3]])
-#           if(grep("code:", nodeText) == 1)
-#             return(theInsert@generatorCode)
-#           else if(grep("provides:", nodeText) == 1)
-#             return(theInsert@outputVariable)
-#           else if(grep("needs:", nodeText) == 1) {
-#             
-#             return(theInsert@)
-           }
+          nodeText = makeTree(currentScenario)[[L1]][[L2]][[L3]] 
+          #  NO LONGER WORKS:  extractTreeText(L1, L2, L3, makeTree(scenario))
+          #           slotOrder = cq(needs="requirements", code="generatorCode",
+          #                          provides="outputVariable", param="parameters")
+          #           objectList = c(list(),theInsert@requirements, 
+          #                          gsub('"', '\\"', body(theInsert@generatorCode)),
+          #                          theInsert@outputVariable, theInsert@parameters)
+          #           return(objectList[[L3]])
+          if(length(grep("^code:", nodeText)) == 1)
+            return(theInsert@generatorCode)
+          else if(length(grep("^provides:", nodeText)) == 1)
+            return(theInsert@outputVariable)
+          else if(length(grep("^needs:", nodeText)) == 1) {
+            whichOne = match(gsub("needs: ", "", nodeText),
+                             lapply(theInsert@requirements, capture.output))
+            return(theInsert@requirements[[whichOne]])
+          }
+          else if(length(grep("^param:", nodeText)) == 1) {
+            paramName = gsub("=.*", "", 
+                             gsub("param: ", "", nodeText) )
+            whichOne = match(paramName, names(theInsert@parameters) )
+            return(theInsert@parameters[whichOne])              
+          }
         }
+        return(NULL)
       }
     }
-  return(NULL)
+  }
 }
 
 # findObjectInScenario("0_3_4")
