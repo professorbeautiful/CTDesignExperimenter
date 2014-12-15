@@ -25,12 +25,21 @@ output$varEditorUI = renderUI({
     varToDataframe(tempVar)
   })
   allVariablesDF = Reduce(rbind, allVariablesList)
-  radioButtons = sapply(1:nrow(allVariablesDF),
+  myRadioButtons = sapply(1:nrow(allVariablesDF),
                         function(rownum)
-                          HTML("<input type=\"radio\" name=\"chooseVariable\" 
+      HTML("<label class=\"radio \">
+            <input type=\"radio\" name=\"chooseVariable\" 
                 id=\"chooseVariable" %&% rownum
-                               %&% "\" value=" %&% rownum %&% ">"))
-  allVariablesDF = data.frame(select=radioButtons, allVariablesDF) 
+                               %&% "\" value=\"" %&% rownum %&% "\" />"
+                            %&% "<span>" %&% rownum %&% "</span>"
+                               %&% "</label>"
+           )
+  )
+  catn("myRadioButtons[1]: ", myRadioButtons[1])
+  
+  # Must assign globally here, to reach the chooseVariable observer.
+  allVariablesDF <<- allVariablesDF
+  #allVariablesDF <<- data.frame(select=myRadioButtons, allVariablesDF) 
   
   allVarnames = data.frame(name=unique(allVariablesDF$name))
   
@@ -48,10 +57,11 @@ output$varEditorUI = renderUI({
               " function(row, data) {
                     $(row).on('click', function() {
                       console.log('Row Clicked. ', 
-                        this, data, data[5]);
+                        this, data, data[6]);
                       $(row).bgColor = '#131';
                       window.Shiny.shinyapp.$values['fileToLoad']
-                         = data[5];
+                         = data[6];
+                      // OK this works, but how to read 'fileToLoad' in R?
                       //row.addClass('rowClicked');
                     });
                     window.DollarRow = $(row);
@@ -61,37 +71,8 @@ output$varEditorUI = renderUI({
                   }"
               )
         )
-#               , callback="function(oTable) {
-#                     // This approach does not get me the cell info.
-#                     oTable.on('click', function(el) {
-#                       window.thisRow = el;
-#                       //thisRow.currentTarget is HTMLTableElement
-#                       //thisRow.currentTarget.children[0].innerHTML It's the header row!
-#                       //alert('Row clicked.' + this); // HTMLTableElement
-#                       //this.parent().find('td').each(function() {
-#                       //  console.log(this.html());
-#                       });
-#                    });
-#                }"
-                           #                    
-                          #                    // Cell click
-                          #                    $('td', nRow).on('click', function() {
-                          #                      console.log('Col Clicked.', this, aData, iDisplayIndex, iDisplayIndexFull);
-                          #                    });
   )  # End of renderDataTable()
-  
-  #                ,
-  #                callback = 'function(oTable) {
-  #                   /*"initComplete": function () {*/
-  #                       var api = this.api();
-  #                       api.$("td").click( function () {
-  #                           
-  #                           api.search( this.innerHTML ).draw();
-  #                           input.selectedTableRow = api.search( this.innerHTML );
-  #                       } );
-  #                     }
-  #                   } 
-  #                 ' )
+
 
   ### RETURN VALUE FOR UI
   div(
@@ -135,11 +116,11 @@ output$varEditorUI = renderUI({
         #                      )
         #fileInput("varSearchFileInput", "varSearchFileInput"))
         hr(),
-        textInput("varName", label = "name", theVar@name),
+        textInput("varName", label = "name", rValues$theVar@name),
         tagAppendAttributes(div(
-          textInput("varDescription", label = "description", theVar@description)),
+          textInput("varDescription", label = "description", rValues$theVar@description)),
           style="width:100%"),
-        textInput("varCHECK", label = "check", printFunctionBody(theVar@checkDataType)),
+        textInput("varCHECK", label = "check", printFunctionBody(rValues$theVar@checkDataType)),
         hr(),
         renderText({"author: " %&% theVar@author}),
         renderText({"timestamp: " %&% capture.output(theVar@timestamp)}),
@@ -148,11 +129,18 @@ output$varEditorUI = renderUI({
     div(class='col-6',
         conditionalPanel("input.btnSearchVar > 0", 
                          hr(),
-                         dataTableOutput("allVariablesTable"))
+                         HTML('<div id="chooseVariable" class="control-group shiny-input-radiogroup">
+                           <label class="control-label" for="chooseVariable">Swapmeet Variables</label>'),
+                         HTML(paste(unlist(myRadioButtons), collapse=" ")),
+                         HTML('</div>'),
+                         dataTableOutput("allVariablesTable")
+        )
     )
   )
 })
 
+
+## TODO: this observer may serve no purpose.
 observe(label="searchVariableObserver", {
   catn("searchVariableObserver: input$btnSearchVar = /", 
        capture.output(input$btnSearchVar), "/")
@@ -214,13 +202,13 @@ observe({       ### Save Variable in a swapMeet file.
   }
 })
 
-
 observerChooseVariable = observe({
   chooseVariable = input$chooseVariable ## reactivity here 
+  catn("observerChooseVariable:  chooseVariable number= ", chooseVariable)
   if(!is.null(chooseVariable))
     isolate({
-      varFileName = rValues$allVariablesDF[input$chooseVariable, "filename"]
-      catn("varFileName = ", varFileName)
+      varFileName = allVariablesDF[chooseVariable, "filename"]
+      catn("observerChooseVariable:  varFileName = ", varFileName)
       theVar = try(
         source(swapMeetDir() %&% varFileName, local=TRUE)$value
       )
