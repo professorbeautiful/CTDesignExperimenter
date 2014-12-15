@@ -107,18 +107,19 @@ output$varEditorUI = renderUI({
         actionButton(inputId="btnSaveVarAs" , 
                      label="Save variable as...", css.class = "treeClass-3"),
         hr(),
-        #                      textInput.typeahead(id="searchTypeAhead", "Search typeahead var name",
+        #  textInput.typeahead(id="searchTypeAhead", "Search typeahead var name",
         #                                          local=allVarnames,
         #                                          tokens=1:nrow(allVarnames), #gsub("V_", "", vFilenames),
         #                                          valueKey="name", 
         #                                          template=HTML('<p>{{name}}</p>')
         #                      )
-        #   textInput.typeahead(id="searchTypeAhead", "LABEL", 
-        #                     local=allVariablesDF, 
-        #                     tokens=paste(allVariablesDF$name,
-        #                                  allVariablesDF$description), 
-        #                     valueKey="filename", 
-        #                     template="<p style='width:2000px'>{{name}} : {{description}}")
+          textInput.typeahead(id="searchTypeAhead", "LABEL", 
+                            local=allVariablesDF, 
+                            tokens=paste(allVariablesDF$name,
+                                         allVariablesDF$description), 
+                            valueKey="filename", 
+                            template=HTML("{{name}} : {{description}}")
+          ),
         #       textInput.typeahead(id="searchTypeAhead", "Search typeahead",
         #                           local=allVariablesDF,
         #                           tokens=1:nrow(allVariablesDF), #gsub("V_", "", vFilenames),
