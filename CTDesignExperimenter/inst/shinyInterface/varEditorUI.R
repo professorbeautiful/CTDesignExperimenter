@@ -10,7 +10,7 @@ varToDataframe = function(theVar){
 }
 
 makeTemplateVariable = function() 
-  Variable(name = "(name)", description = "", checkDataType = function(x)is.boolean(x))
+  Variable(name = "(name)", description = "(description)", checkDataType = function(x)is.boolean(x))
 
 output$varEditorUI = renderUI({ 
   rValues$openingVariableEditor <<- FALSE
@@ -36,45 +36,49 @@ output$varEditorUI = renderUI({
   
   output$allVariablesTable <<- renderDataTable(allVariablesDF,
         options=list(
-            fnInitComplete = I("function(oSettings, json) {
+            initComplete = I("function(oSettings, json) {
                                     //alert('Done.');
                                     console.log('Done.');
                                     }")
            # fnInitComplete works.
-          , fnRowCallback= I(
-              " function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                    $(nRow).on('click', function() {
+          , rowCallback= I(   
+            #This callback allows you to 'post process' each row after it have
+            #been generated for each table draw, but before it is rendered into
+            #the document.
+              " function(row, data) {
+                    $(row).on('click', function() {
                       console.log('Row Clicked. ', 
-                        this, aData, aData[5],
-                        iDisplayIndex, iDisplayIndexFull);
-                      $(nRow).bgColor = '#131';
+                        this, data, data[5]);
+                      $(row).bgColor = '#131';
                       window.Shiny.shinyapp.$values['fileToLoad']
-                         = aData[5];
-                      //nRow.addClass('rowClicked');
+                         = data[5];
+                      //row.addClass('rowClicked');
                     });
-                    window.DollarnRow = $(nRow);
-                    window.nRow = nRow;
-                    window.aData = aData;
-                  }")
+                    window.DollarRow = $(row);
+                    window.DTrow = row;
+                    window.DTdata = data;
+                    console.log('rowCallback is complete');
+                  }"
               )
-              , callback="function(oTable) {
-                    // This approach does not get me the cell info.
-                    oTable.on('click', function(el) {
-                      window.thisRow = el;
-//thisRow.currentTarget is HTMLTableElement
-//thisRow.currentTarget.children[0].innerHTML It's the header row!
-                      //alert('Row clicked.' + this); // HTMLTableElement
-                      //this.parent().find('td').each(function() {
-                      //  console.log(this.html());
-                      //});
-                   });
-               }"
-                                               #                    
-                                               #                    // Cell click
-                                               #                    $('td', nRow).on('click', function() {
-                                               #                      console.log('Col Clicked.', this, aData, iDisplayIndex, iDisplayIndexFull);
-                                               #                    });
-  )
+        )
+#               , callback="function(oTable) {
+#                     // This approach does not get me the cell info.
+#                     oTable.on('click', function(el) {
+#                       window.thisRow = el;
+#                       //thisRow.currentTarget is HTMLTableElement
+#                       //thisRow.currentTarget.children[0].innerHTML It's the header row!
+#                       //alert('Row clicked.' + this); // HTMLTableElement
+#                       //this.parent().find('td').each(function() {
+#                       //  console.log(this.html());
+#                       });
+#                    });
+#                }"
+                           #                    
+                          #                    // Cell click
+                          #                    $('td', nRow).on('click', function() {
+                          #                      console.log('Col Clicked.', this, aData, iDisplayIndex, iDisplayIndexFull);
+                          #                    });
+  )  # End of renderDataTable()
   
   #                ,
   #                callback = 'function(oTable) {
@@ -88,7 +92,8 @@ output$varEditorUI = renderUI({
   #                     }
   #                   } 
   #                 ' )
-  ### RETURN UI
+
+  ### RETURN VALUE FOR UI
   div(
     HTML(" Variable Editor "),
     hr(),
