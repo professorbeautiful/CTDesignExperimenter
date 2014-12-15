@@ -162,13 +162,15 @@ observe(label="searchVariableObserver", {
           theVar = try(source(swapMeetDir() %&% input$searchTypeAhead, 
                               local = TRUE)$value) 
           if(class(theVar) == "Variable") rValues$theVar = theVar
-          else shinyalert("Sorry, it wasn't a Variable file.")
+          else {
+            shinyalert("Sorry, it wasn't a Variable file.")
+          }
         }
 })
 
 
 observe({       ### Find and load a variable from a file.
-  if(input$tabsetID=="Editors" & !is.null(input$btnSearchVar)){
+  if(input$tabsetID=="Variable Editor" & !is.null(input$btnSearchVar)){
     if(input$btnSearchVar > 0 & !is.null(input$varSearchFileInput)) {
       try({
         #         fileInfo = input$varSearchFileInput
@@ -186,7 +188,7 @@ observe({       ### Find and load a variable from a file.
 
 
 observe({       ### Clear the inputs to create a new variable.
-  if(input$tabsetID=="Editors" & !is.null(input$btnNewVar)){
+  if(input$tabsetID=="Variable Editor" & !is.null(input$btnNewVar)){
     if(input$btnNewVar > 0) {
       rValues$theVar = 
         Variable(name = "", description = "", checkDataType = function(x){TRUE})
@@ -195,7 +197,7 @@ observe({       ### Clear the inputs to create a new variable.
 })
 
 observe({       ### Save Variable in a swapMeet file.
-  if(input$tabsetID=="Editors" & !is.null(input$btnSaveVarAs)){
+  if(input$tabsetID=="Variable Editor" & !is.null(input$btnSaveVarAs)){
     if(input$btnSaveVarAs > 0) {
       theVar = try(
         Variable(name = input$varName, 
