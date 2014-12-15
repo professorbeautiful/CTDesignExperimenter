@@ -215,9 +215,10 @@ shinyServer(function(input, output, session) {
             rValues$openingVariableEditor = 
               (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1) 
             if(rValues$openingVariableEditor) 
-            rValues$clickedOnInsert = 
               rValues$theVar = findObjectInScenario(rValues$treeSelectionPath, scenario=currentScenario)
-            # We do NOT want the insert editor to open automatically <<<=====
+
+              # We do NOT want the insert editor to open automatically <<<=====
+            rValues$clickedOnInsert = 
               (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
             if(rValues$clickedOnInsert) 
               rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath)
