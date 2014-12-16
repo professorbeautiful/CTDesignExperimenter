@@ -24,26 +24,35 @@ output$varEditorUI = renderUI({
     tempVar = source(swapMeetDir() %&% fname, local=TRUE)$value
     varToDataframe(tempVar)
   })
-  allVariablesDF = Reduce(rbind, allVariablesList)
+  allVariablesDF <<- Reduce(rbind, allVariablesList)
+  # Must assign allVariablesDF globally here, to reach the chooseVariable observer.
+  
   myRadioButtons = sapply(1:nrow(allVariablesDF),
-                        function(rownum)
-      HTML("<label class=\"radio \">
+                        function(rownum) # HTML
+       HTML("<label class=\"radio\">
             <input type=\"radio\" name=\"chooseVariable\" 
                 id=\"chooseVariable" %&% rownum
-                               %&% "\" value=\"" %&% rownum %&% "\" />"
+                               %&% "\" value=\"" %&% rownum %&% "\" >"
                             %&% "<span>" %&% rownum %&% "</span>"
                                %&% "</label>"
            )
   )
-  catn("myRadioButtons[1]: ", myRadioButtons[1])
-  
-  # Must assign globally here, to reach the chooseVariable observer.
-  allVariablesDF <<- allVariablesDF
-  #allVariablesDF <<- data.frame(select=myRadioButtons, allVariablesDF) 
+  ### A new approach:  did not work. Shows up in the table as Object.
+  #   radioButtonGroup = radioButtons("chooseVariable", "Swapmeet Variable", 
+  #                                  choices = 1:nrow(allVariablesDF))
+  #   radioButtonList = radioButtonGroup[[3]][[2]]
+  #   length(radioButtonList)
+  #   radioButtonList31 = lapply(lapply(radioButtonList, getElement, name=3), getElement, name=1)
+  #   radioButtonList31
+  #  allVariablesDF$select <<- radioButtonList31  ### Shows up in the table as Object.
+  allVariablesDF$select <<- myRadioButtons  ### Aha! Just use the text string. 
+  ### The problem before was: allVariablesDF was assigned locally before globally,
+  ### and the local version was being used, thus no "select" column.
   
   allVarnames = data.frame(name=unique(allVariablesDF$name))
   
-  output$allVariablesTable <<- renderDataTable(allVariablesDF,
+  output$allVariablesTable <<- renderDataTable(get("allVariablesDF", pos=1),
+  #output$allVariablesTable <<- renderTable(allVariablesDF,
         options=list(
             initComplete = I("function(oSettings, json) {
                                     //alert('Done.');
@@ -61,7 +70,7 @@ output$varEditorUI = renderUI({
                       $(row).bgColor = '#131';
                       window.Shiny.shinyapp.$values['fileToLoad']
                          = data[6];
-                      // OK this works, but how to read 'fileToLoad' in R?
+                      
                       //row.addClass('rowClicked');
                     });
                     window.DollarRow = $(row);
@@ -69,7 +78,7 @@ output$varEditorUI = renderUI({
                     window.DTdata = data;
                     console.log('rowCallback is complete');
                   }"
-              )
+              ) ### // OK this works, but how to read 'fileToLoad' from R?
         )
   )  # End of renderDataTable()
 
@@ -127,13 +136,24 @@ output$varEditorUI = renderUI({
         renderText({"file: " %&% theVar@filename})
     ),
     div(class='col-6',
-        conditionalPanel("input.btnSearchVar > 0", 
-                         hr(),
-                         HTML('<div id="chooseVariable" class="control-group shiny-input-radiogroup">
+        conditionalPanel(
+          condition="input.btnSearchVar > 0", 
+          hr(),
+          h3("Use typeahead to subset the rows."),
+          textInput.typeahead(id="searchTypeAhead", "typeahead", 
+                              local=allVariablesDF, 
+                              tokens=paste(allVariablesDF$name,
+                                           allVariablesDF$description), 
+                              valueKey="filename", 
+                              template=HTML("{{name}} : {{description}}")
+          ),
+          h3("Click on the radiobutton to load the Variable into the template above."),
+          #radioButtonGroup[2],
+          HTML('<div id="chooseVariable" class="control-group shiny-input-radiogroup">
                            <label class="control-label" for="chooseVariable">Swapmeet Variables</label>'),
-                         HTML(paste(unlist(myRadioButtons), collapse=" ")),
-                         HTML('</div>'),
-                         dataTableOutput("allVariablesTable")
+          #HTML(paste(unlist(myRadioButtons), collapse=" ")),
+          dataTableOutput("allVariablesTable"),
+          HTML('</div>')
         )
     )
   )
