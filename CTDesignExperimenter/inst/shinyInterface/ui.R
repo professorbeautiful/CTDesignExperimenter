@@ -6,18 +6,31 @@
 
 conditionPanelNoneSelected = conditionalPanel(
   '$("#jstreeScenario").jstree().get_selected().length == 0',  #This works!! 0 1 2 etc.
+  ####  To UNSELECT, Cmd-click on the selected node.
   div(class="row-fluid span3",
       actionButton(inputId="btnWriteScenarioToSwapmeet", 
-                   label="Write to Swapmeet", 
-                   css.class = "BLOCKlevel"),
+                   label="Write scenario to Swapmeet"),
       actionButton(inputId="btnSaveScenarioToGlobalEnv", 
+                   label="Save scenario to GlobalEnv"),
+      actionButton(inputId="btnFindScen", 
+                   label="Find &replace scenario"),
+      actionButton(inputId="btnAddScen", 
+                   label="Add scenario to experiment"),
+      hr())
+)
+
+conditionPanelBlockSelected = conditionalPanel(
+  '($("#jstreeScenario").jstree().get_selected().length == 1) & (treeSelectionDepth() == 1)', 
+  div(class="row-fluid span3",
+      img(src="BLOCK32.png"),
+      actionButton(inputId="btnWriteBlockToSwapmeet", 
+                   label="Write this block to Swapmeet", 
+                   css.class = "BLOCKlevel"),
+      actionButton(inputId="btnSaveBlockToGlobalEnv", 
                    label="Save scenario to GlobalEnv", 
                    css.class = "BLOCKlevel"),
-      actionButton(inputId="btnFindScen" , 
-                   label="Find &replace scenario", css.class = "BLOCKlevel"),
-      actionButton(inputId="btnAddScen" , 
-                   label="Add scenario to experiment", css.class = "BLOCKlevel"),
-      shinyalert(id = "cloneScen"),
+      actionButton(inputId="btnFindBlock" , 
+                   label="Find & replace block", css.class = "BLOCKlevel"),
       hr())
 )
 
@@ -38,7 +51,8 @@ treeSelectionTextJSfunction = singleton(tags$script(
 conditionPanel_1_insert = conditionalPanel(condition = 
        '($("#jstreeScenario").jstree().get_selected().length == 1) & (treeSelectionDepth() == 2)', 
      ## THE FOLLOWING expression shows #j1_2 etc:
-     ## 'alert($("#jstreeScenario").jstree().get_selected().toString())',  
+     ## 'alert($("#jstreeScenario").jstree().get_selected().toString())', 
+     img(src="Insert32.png"),
      actionButton(inputId="btnRemoveInsert" , label="Remove insert", css.class = "treeclass_2"),
      actionButton(inputId="btnCloneInsert" , label="Clone insert", css.class = "treeclass_2"),
      actionButton(inputId="btnEditInsert" , label="Edit insert", css.class = "treeclass_2"),
@@ -86,13 +100,16 @@ conditionPanel_moreThan1_insert =
   )
 
 scenarioPanel = tabPanel(
-  "Current scenario",
+  title="Current scenario",
+  h3("Current scenario"),
   #div(class="row-fluid span1",
   #includeHTML("jstreeTestContent.html"),
   textInput(inputId="scenarioName",  
-            label="scenario name",
+            label=em("Scenario name"),
             value=currentScenario@name),
+  hr(),
   conditionPanelNoneSelected,
+  conditionPanelBlockSelected,
   conditionPanel_1_insert,
   conditionPanel_1_vg_code,
   conditionPanel_1_needed_var,
@@ -114,8 +131,7 @@ scenarioPanel = tabPanel(
                        )
                    ) 
   )
-  , hr()
-  , "SCENARIO TREE"
+  , em("SCENARIO TREE")
   # THE FOLLOWING div LINE IS RESPONSIBLE FOR NOT SHOWING UP IN CHROME AND SAFARI
   # Specifically, it is overflow:auto.  Also overflow:scroll breaks it.
   #, div(style="height:800px;" 
