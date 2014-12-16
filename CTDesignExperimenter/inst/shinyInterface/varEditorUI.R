@@ -84,47 +84,21 @@ output$varEditorUI = renderUI({
 
 
   ### RETURN VALUE FOR UI
-  div(
-    HTML(" Variable Editor "),
+  div(css.class="VARlevel",
+    tagAppendAttributes(h3(" Variable Editor"), class="VARlevel"),
     hr(),
     div(class='col-6',
         actionButton(inputId="btnNewVar" , 
-                     label="New variable", css.class = "treeClass-3"),
+                     label="New variable", css.class = "VARlevel"),
         actionButton(inputId="btnSearchVar" , 
-                     label="Find and load variable", css.class = "treeClass-3"),
+                     label="Find and load variable", css.class = "VARlevel"),
         actionButton(inputId="btnSaveVar" , 
-                     label="Save variable in scenario", css.class = "treeClass-3"),
+                     label="Save variable in scenario", css.class = "VARlevel"),
         actionButton(inputId="btnSaveVarAs" , 
-                     label="Save variable as...", css.class = "treeClass-3"),
+                     label="Save variable as...", css.class = "VARlevel"),
         hr(),
-        #  textInput.typeahead(id="searchTypeAhead", "Search typeahead var name",
-        #                                          local=allVarnames,
-        #                                          tokens=1:nrow(allVarnames), #gsub("V_", "", vFilenames),
-        #                                          valueKey="name", 
-        #                                          template=HTML('<p>{{name}}</p>')
-        #                      )
-          textInput.typeahead(id="searchTypeAhead", "LABEL", 
-                            local=allVariablesDF, 
-                            tokens=paste(allVariablesDF$name,
-                                         allVariablesDF$description), 
-                            valueKey="filename", 
-                            template=HTML("{{name}} : {{description}}")
-          ),
-        #       textInput.typeahead(id="searchTypeAhead", "Search typeahead",
-        #                           local=allVariablesDF,
-        #                           tokens=1:nrow(allVariablesDF), #gsub("V_", "", vFilenames),
-        #                           valueKey="filename", 
-        #                           template=
-        #                             #tagAppendAttributes(
-        #                               '<p style="width:100%">{{filename}} :  {{description}}</p>' #) 
-        # select2Input WORKS, and variable loads, but not what we want.
-        #           select2Input("varSearchFileInput", "varSearchFileInput",
-        #                      #selectize=FALSE,
-        #                      choices=vFilenames,
-        #                      style="width:100%"
-        #                      )
-        #fileInput("varSearchFileInput", "varSearchFileInput"))
-        hr(),
+        # select2Input WORKS, and variable loads, but not very usable.
+        tagAppendAttributes(h3(" Variable slots"), class="VARlevel"),
         textInput("varName", label = "name", rValues$theVar@name),
         tagAppendAttributes(div(
           textInput("varDescription", label = "description", rValues$theVar@description)),
