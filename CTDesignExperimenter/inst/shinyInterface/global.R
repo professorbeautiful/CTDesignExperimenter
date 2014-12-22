@@ -8,6 +8,7 @@ currentScenario = defaultScenario
 
 source("makeTree.R")
 source("myjstree.JSON.R")
+source("swapMeetObjectTables.R")
 
 
 OpenSesame = '$("#jstreeScenario").jstree("open_all");'
