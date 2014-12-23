@@ -56,7 +56,7 @@ output$varEditorUI = renderUI({
           h3("Click on the radiobutton to load the Variable into the template above."),
           HTML('<div id="chooseVariable" class="control-group shiny-input-radiogroup">
                            <label class="control-label" for="chooseVariable">Swapmeet Variables</label>'),
-          dataTableOutput("allObjectsTable"),
+          dataTableOutput("allVariablesTable"),
           HTML('</div>')
         )
     )

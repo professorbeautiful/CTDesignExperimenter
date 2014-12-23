@@ -225,7 +225,7 @@ output$insertEditorUI = renderUI({
           h3("Click on the radiobutton to load the Insert into the template above."),
           HTML('<div id="chooseInsert" class="control-group shiny-input-radiogroup">
                            <label class="control-label" for="chooseInsert">Swapmeet Inserts</label>'),
-          dataTableOutput("allObjectsTable"),
+          dataTableOutput("allInsertsTable"),
           HTML('</div>')
         )
     )
