@@ -1,7 +1,4 @@
 
-makeTemplateVariable = function() 
-  Variable(name = "(name)", description = "(description)", checkDataType = function(x)is.boolean(x))
-
 output$varEditorUI = renderUI({ 
   rValues$openingVariableEditor <<- FALSE
   if(is.null(rValues$theVar))
@@ -9,67 +6,7 @@ output$varEditorUI = renderUI({
   theVar = rValues$theVar
   CHECK = printFunctionBody(theVar@checkDataType)
   catn("output$varEditorUI: var is ", capture.output(theVar))
-  #   vFilenames = rev(dir(swapMeetDir(), pattern = "^V_"))
-  #   allVariablesList = lapply(vFilenames, function(fname) {
-  #     tempVar = source(swapMeetDir() %&% fname, local=TRUE)$value
-  #     varToDataframe(tempVar)
-  #   })
-  #   allVariablesDF <<- Reduce(rbind, allVariablesList)
-  #   # Must assign allVariablesDF globally here, to reach the chooseVariable observer.
-  #   
-  #   myRadioButtons = sapply(1:nrow(allVariablesDF),
-  #                         function(rownum) # HTML
-  #        HTML("<label class=\"radio\">
-  #             <input type=\"radio\" name=\"chooseVariable\" 
-  #                 id=\"chooseVariable" %&% rownum
-  #                                %&% "\" value=\"" %&% rownum %&% "\" >"
-  #                             %&% "<span>" %&% rownum %&% "</span>"
-  #                                %&% "</label>"
-  #            )
-  #   )
-  #   ### A new approach:  did not work. Shows up in the table as Object.
-  #   #   radioButtonGroup = radioButtons("chooseVariable", "Swapmeet Variable", 
-  #   #                                  choices = 1:nrow(allVariablesDF))
-  #   #   radioButtonList = radioButtonGroup[[3]][[2]]
-  #   #   length(radioButtonList)
-  #   #   radioButtonList31 = lapply(lapply(radioButtonList, getElement, name=3), getElement, name=1)
-  #   #   radioButtonList31
-  #   #  allVariablesDF$select <<- radioButtonList31  ### Shows up in the table as Object.
-  #   allVariablesDF$select <<- myRadioButtons  ### Aha! Just use the text string. 
-  #   ### The problem before was: allVariablesDF was assigned locally before globally,
-  #   ### and the local version was being used, thus no "select" column.
-  #   
-  #   output$allVariablesTable <<- renderDataTable(get("allVariablesDF", pos=1),
-  #   #output$allVariablesTable <<- renderTable(allVariablesDF,
-  #         options=list(
-  #             initComplete = I("function(oSettings, json) {
-  #                                     //alert('Done.');
-  #                                     console.log('Done.');
-  #                                     }")
-  #            # fnInitComplete works.
-  #           , rowCallback= I(   
-  #             #This callback allows you to 'post process' each row after it have
-  #             #been generated for each table draw, but before it is rendered into
-  #             #the document.
-  #               " function(row, data) {
-  #                     $(row).on('click', function() {
-  #                       console.log('Row Clicked. ', 
-  #                         this, data, data[6]);
-  #                       $(row).bgColor = '#131';
-  #                       window.Shiny.shinyapp.$values['fileToLoad']
-  #                          = data[6];
-  #                       
-  #                       //row.addClass('rowClicked');
-  #                     });
-  #                     window.DollarRow = $(row);
-  #                     window.DTrow = row;
-  #                     window.DTdata = data;
-  #                     console.log('rowCallback is complete');
-  #                   }"
-  #               ) ### // OK this works, but how to read 'fileToLoad' from R?
-  #         )
-  #   )  # End of renderDataTable()
-  
+
   pattern = "^V_"
   objectTypeName="Variable"
   source("createSwapMeetObjectTable.R", local=TRUE)  
@@ -81,8 +18,11 @@ output$varEditorUI = renderUI({
     div(class='col-6',
         actionButton(inputId="btnNewVar" , 
                      label="New variable", css.class = "VARlevel"),
-        actionButton(inputId="btnSearchVar" , 
-                     label="Find and load variable", css.class = "VARlevel"),
+        tagAppendAttributes(a(
+          actionButton(inputId="btnSearchVar" , 
+                       label="Find and load variable", css.class = "VARlevel")
+          ),
+          href="#idSearchVariable"),
         actionButton(inputId="btnSaveVar" , 
                      label="Save variable in scenario", css.class = "VARlevel"),
         actionButton(inputId="btnSaveVarAs" , 
@@ -112,6 +52,7 @@ output$varEditorUI = renderUI({
                               valueKey="filename", 
                               template=HTML("{{name}} : {{description}}")
           ),
+          tagAppendAttributes(a(""), id="idSearchVariable"),
           h3("Click on the radiobutton to load the Variable into the template above."),
           HTML('<div id="chooseVariable" class="control-group shiny-input-radiogroup">
                            <label class="control-label" for="chooseVariable">Swapmeet Variables</label>'),

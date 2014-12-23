@@ -1,30 +1,3 @@
-makeTemplateVG = function() {
-  vg = VariableGenerator(outputVariable = makeTemplateVariable(), generatorCode=function()TRUE)
-  vg@name = "I_Template"
-  vg@description = "(description here)"
-  vg
-}
-
-convertInsertToDataframe = function(theInsert) {
-  data.frame( 
-    output=capture.output(show(theInsert@outputVariable)),
-    parameters=ifelse(is.null(theInsert@parameters) | length(theInsert@parameters)==0,
-                      character(0),
-                      paste(names(theInsert@parameters), 
-                            as.vector(capture.output(theInsert@parameters)),
-                            sep="=", collapse="\n")
-    ),
-    needed=ifelse(is.null(theInsert@requirements),
-                  "",
-                  paste(sapply(theInsert@requirements, capture.output), 
-                        collapse="\n")
-    ),
-    generator=printFunctionBody(theInsert@generatorCode),
-    author=theInsert@author,
-    timestamp=capture.output(theInsert@timestamp),
-    filename=theInsert@filename          
-  )
-}
 
 
 output$insertEditorUI = renderUI({ 
@@ -35,25 +8,31 @@ output$insertEditorUI = renderUI({
   rValues$openingInsertEditor = FALSE
   theInsert = rValues$theInsert
   if(is.null(theInsert)) 
-    theInsert = makeTemplateVG()
+    theInsert = makeTemplateInsert()
   catn("output$insertEditorUI: insert is ", capture.output(theInsert))
-  iFilenames <<- rev(dir(swapMeetDir(), pattern = "^I_"))
-  allInsertsList = lapply(iFilenames, function(fname) {
-    tempInsert = source(swapMeetDir() %&% fname, local=TRUE)$value
-    if(! (class(tempInsert)=="VariableGenerator"))
-      browser("Inside iFilenames list for Inserts")
-    convertInsertToDataframe(tempInsert)
-  })
-  allInsertsDF <<- Reduce(rbind, allInsertsList)
-  radioButtons = sapply(1:nrow(allInsertsDF),
-                        function(rownum)
-                          HTML("<input type=\"radio\" name=\"chooseInsert\" 
-                               id=\"chooseInsert" %&% rownum
-                               %&% "\" value=" %&% rownum %&% ">"))
-  allInsertsDF <<- data.frame(select=radioButtons, allInsertsDF) 
+
   
-  output$allInsertsTable <<- renderDataTable(allInsertsDF)
+  pattern = "^I_"
+  objectTypeName="Insert"
+  source("createSwapMeetObjectTable.R", local=TRUE)  
   
+#   iFilenames <<- rev(dir(swapMeetDir(), pattern = "^I_"))
+#   allInsertsList = lapply(iFilenames, function(fname) {
+#     tempInsert = source(swapMeetDir() %&% fname, local=TRUE)$value
+#     if(! (class(tempInsert)=="VariableGenerator"))
+#       browser("Inside iFilenames list for Inserts")
+#     convertInsertToDataframe(tempInsert)
+#   })
+#   allInsertsDF <<- Reduce(rbind, allInsertsList)
+#   radioButtons = sapply(1:nrow(allInsertsDF),
+#                         function(rownum)
+#                           HTML("<input type=\"radio\" name=\"chooseInsert\" 
+#                                id=\"chooseInsert" %&% rownum
+#                                %&% "\" value=" %&% rownum %&% ">"))
+#   allInsertsDF <<- data.frame(select=radioButtons, allInsertsDF) 
+#   
+#   output$allInsertsTable <<- renderDataTable(allInsertsDF)
+#   
   
   ###################  REQUIREMENTS  ##############################
 
@@ -145,8 +124,11 @@ output$insertEditorUI = renderUI({
         div(class = "well container-fluid", 
             actionButton(inputId="btnNewInsert" , 
                          label=div("New Insert", class = "INSERTlevel")),
-            actionButton(inputId="btnSearchInsert" , 
-                         label=div("Search for insert", class = "INSERTlevel")),
+            tagAppendAttributes(a(
+              actionButton(inputId="btnSearchInsert" , 
+                         label=div("Search for insert", class = "INSERTlevel"),
+                         )),
+              href="#idSearchInsert"),
             actionButton(inputId="btnSaveInsert" , 
                          label=div("Save insert", class = "INSERTlevel")),
             actionButton(inputId="btnReplaceInsertInScenario" , 
@@ -235,9 +217,17 @@ output$insertEditorUI = renderUI({
       )
     ),
     div(class='col-6',
-        conditionalPanel("input.btnSearchInsert > 0", 
-                         hr(),
-                         dataTableOutput("allInsertsTable"))
+        conditionalPanel(
+          "input.btnSearchInsert > 0", 
+          hr(),
+          #        dataTableOutput("allInsertsTable"))
+          tagAppendAttributes(a(""), id="idSearchInsert"),
+          h3("Click on the radiobutton to load the Insert into the template above."),
+          HTML('<div id="chooseInsert" class="control-group shiny-input-radiogroup">
+                           <label class="control-label" for="chooseInsert">Swapmeet Inserts</label>'),
+          dataTableOutput("allObjectsTable"),
+          HTML('</div>')
+        )
     )
   )
 })
@@ -291,7 +281,7 @@ observer_newInsert = observe(label="observer_newInsert",
   if(isolate(input$tabsetID)=="Insert Editor" & !is.null(input$btnNewInsert)){
     if(input$btnNewInsert > 0) {
       cat("New Insert is generated\n")
-      rValues$theInsert = makeTemplateVG()
+      rValues$theInsert = makeTemplateInsert()
     }
   }
 })
