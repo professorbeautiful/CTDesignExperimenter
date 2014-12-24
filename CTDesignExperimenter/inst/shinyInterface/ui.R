@@ -12,8 +12,11 @@ conditionPanelNoneSelected = conditionalPanel(
                    label="Write scenario to Swapmeet"),
       actionButton(inputId="btnSaveScenarioToGlobalEnv", 
                    label="Save scenario to GlobalEnv"),
-      actionButton(inputId="btnFindScen", 
-                   label="Find &replace scenario"),
+      tagAppendAttributes(a(
+        actionButton(inputId="btnSearchScenario", 
+                     label="Find &replace scenario")
+        ),
+        href="#idSearchScenario"),
       actionButton(inputId="btnAddScen", 
                    label="Add scenario to experiment"),
       hr())
@@ -48,16 +51,18 @@ treeSelectionTextJSfunction = singleton(tags$script(
    function is_provision() {return treeSelectionText().search('provides:') == 0;}; 
   "))
 
-conditionPanel_1_insert = conditionalPanel(condition = 
-       '($("#jstreeScenario").jstree().get_selected().length == 1) & (treeSelectionDepth() == 2)', 
-     ## THE FOLLOWING expression shows #j1_2 etc:
-     ## 'alert($("#jstreeScenario").jstree().get_selected().toString())', 
-     img(src="Insert32.png"),
-     actionButton(inputId="btnRemoveInsert" , label="Remove insert", css.class = "treeclass_2"),
-     actionButton(inputId="btnCloneInsert" , label="Clone insert", css.class = "treeclass_2"),
-     actionButton(inputId="btnEditInsert" , label="Edit insert", css.class = "treeclass_2"),
-     #actionButton(inputId="btnAddRequirement" , label="Add a needed Variable", css.class = "treeclass_2"),
-     hr()
+conditionPanel_1_insert = 
+  conditionalPanel(
+    condition = 
+      '($("#jstreeScenario").jstree().get_selected().length == 1) & (treeSelectionDepth() == 2)', 
+    ## THE FOLLOWING expression shows #j1_2 etc:
+    ## 'alert($("#jstreeScenario").jstree().get_selected().toString())', 
+    img(src="Insert32.png"),
+    actionButton(inputId="btnRemoveInsert" , label="Remove insert", css.class = "treeclass_2"),
+    actionButton(inputId="btnCloneInsert" , label="Clone insert", css.class = "treeclass_2"),
+    actionButton(inputId="btnEditInsert" , label="Edit insert", css.class = "treeclass_2"),
+    #actionButton(inputId="btnAddRequirement" , label="Add a needed Variable", css.class = "treeclass_2"),
+    hr()
 )
 
 ###  TODO:   this condition is not working correctly.
@@ -139,20 +144,34 @@ scenarioPanel = tabPanel(
   ### myTree responds to JS (tagToOpenTree, and conditionals)
   ### The uiOutput element does not.
   #  , uiOutput(outputId = 'jstreeScenarioOutput')  
-#   , jstree("jstreeScenario",  
-#           myjstree.obj(list("a","b"))
-#           # myjstree.obj(makeTree(scenario=currentScenario, "full"))
-#     )
-# 
-#   #) 
-#   , tags$script("  var jsonMessage;
-#                 $('#jstreeScenario').jstree(
-#                   { core: { data: function (node, cb) { cb(jsonMessage); } }
-#               });")
+  #   , jstree("jstreeScenario",  
+  #           myjstree.obj(list("a","b"))
+  #           # myjstree.obj(makeTree(scenario=currentScenario, "full"))
+  #     )
+  # 
+  #   #) 
+  #   , tags$script("  var jsonMessage;
+  #                 $('#jstreeScenario').jstree(
+  #                   { core: { data: function (node, cb) { cb(jsonMessage); } }
+  #               });")
   , includeHTML("jstreeScenarioContent.html")
   , tags$script('ss_jstree.subscribe(tree(), function() { fixColors(); }); ')
   , tagToOpenTree  ## This tag MUST be AFTER myTree! Why? (Can be inside the div or not)
-   #  )  ###  end of overflow div..  Fails in chrome and safari
+  , uiOutput('scenarioSearchTable')
+  #   , div(class='col-6',
+  #         conditionalPanel(
+  #           "input.btnSearchScenario > 0", 
+  #           hr(),
+  #           tagAppendAttributes(a(""), id="idSearchScenario"),
+  #           h3("Click on the radiobutton to load the Scenario into the template above."),
+  #           HTML('<div id="chooseScenario" class="control-group shiny-input-radiogroup">
+  #                    <label class="control-label" for="chooseScenario">Swapmeet Scenarios</label>'),
+  #           dataTableOutput("allScenariosTable"),
+  #           HTML('</div>')
+  #         )
+  #   )
+  
+  #  )  ###  end of overflow div..  Fails in chrome and safari
 )
 
 CSSreference = singleton(tags$head(tags$link(href = "ctde.css", 
@@ -199,7 +218,7 @@ shinyUI(
       navbarPage(
         inverse=TRUE,
         id="tabsetID",
-#        title = div(h2("CTDE: Clinical trial design experimenter"), hr()),
+        #        title = div(h2("CTDE: Clinical trial design experimenter"), hr()),
         title="",
         header=tagList(myJSincludes,
                        hr(),
@@ -214,8 +233,12 @@ shinyUI(
         #       ),
         scenarioPanel,
         # editorPanel,
+        # tabPanel("Scenario Editor", uiOutput("scenarioEditorUI")),
+        
         tabPanel("Insert Editor", uiOutput("insertEditorUI")),
+        
         tabPanel("Variable Editor", uiOutput("varEditorUI")),
+        
         tabPanel("One CT run", 
                  h2("Display results from a single CT run for the selected scenario."),
                  hr()
