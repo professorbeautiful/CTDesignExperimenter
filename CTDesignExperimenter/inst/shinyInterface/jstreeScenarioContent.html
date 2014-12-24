@@ -4,15 +4,15 @@
 <div id='jstreeScenario' class="ss-jstree" > NEW STUFF </div>
 
 <script>
-
-var  theJsonMessage =  [ "INITIAL TREE ", {"text" : "Second" }];
-
+  console.log('Beginning of jstreeScenarioContent.html');
   
-$("#jstreeScenario").jstree({core: { data: function(node, cb) { cb(theJsonMessage); }
+  var  theJsonMessage =  [ "INITIAL TREE ", {"text" : "Second" }];
+
+  $("#jstreeScenario").jstree({core: { data: function(node, cb) { cb(theJsonMessage); }
   }} )  ;
 
+  $('#jstreeScenario').jstree('refresh');
 
-$('#jstreeScenario').jstree('refresh');
-
+  console.log('End of jstreeScenarioContent.html');
   
 </script>
