@@ -37,6 +37,8 @@ insertVGSubTree = function(insert, insertStyle="full") {
 }
 
 makeTree = function(scenario=defaultScenario, insertStyle="full") {
+  if(is.null(names(scenario@inserts)))
+    names(scenario@inserts) = sapply(scenario@inserts, function(insert) insert@filename)
   scenarioTree = 
     sapply(scaffoldObjectNames, simplify=F, function(x) list())
   scenarioMap = data.frame(insertName=names(scenario@inserts))
@@ -78,6 +80,7 @@ makeTree = function(scenario=defaultScenario, insertStyle="full") {
   scenarioTree
 }
 
+# debug(makeTree)
 
 extractTreeText = function(L1=3, L2=4, L3=1, start=myTreeObj) {
   nodeLevel1 = ## 3rd in scaffold
