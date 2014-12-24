@@ -71,19 +71,42 @@ writeVariableFile = function(var, commitIt=FALSE, ...) {
 
 writeInsertFile = function(insert, commitIt=FALSE, ...) {
   if(is.list(insert@requirements)) 
-    for(vNum in seq(along=insert@requirements)) 
-      insert@requirements[[vNum]] = 
-        writeVariableFile(insert@requirements[[vNum]])
-  else if(is(insert@requirements, "Variable"))
-    insert@requirements = writeVariableFile(
-      insert@requirements)
+    for(vNum in seq(along=insert@requirements)) {
+      if(insert@requirements[[vNum]]@filename == "")
+        insert@requirements[[vNum]] = 
+          writeVariableFile(insert@requirements[[vNum]])
+      else if (!file.exists(insert@requirements[[vNum]]@filename))
+        warning("writeInsertFile:  the file " 
+                %&% insert@requirements[[vNum]]@filename
+                %&% "does not exist.")
+    }
+  else if(is(insert@requirements, "Variable")) {
+    if(insert@requirements@filename == "")
+      insert@requirements = writeVariableFile(insert@requirements)
+    else if (!file.exists(insert@requirements@filename))
+      warning("writeInsertFile:  the file " 
+              %&% insert@requirements@filename
+              %&% "does not exist.")
+  }
   if(is.list(insert@provisions)) {
-    for(vNum in seq(along=insert@provisions)) 
-      insert@provisions[[vNum]] =
+    for(vNum in seq(along=insert@provisions)) {
+      if(insert@provisions[[vNum]]@filename == "")
+        insert@provisions[[vNum]] = 
         writeVariableFile(insert@provisions[[vNum]])
+      else if (!file.exists(insert@provisions[[vNum]]@filename))
+        warning("writeInsertFile:  the file " 
+                %&% insert@provisions[[vNum]]@filename
+                %&% "does not exist.")
+    }
     insert@outputVariable = insert@provisions[[1]] #temporary
   }
-  else  {
+  else if(is(insert@provisions, "Variable")) {
+    if(insert@provisions@filename == "")
+      insert@provisions = writeVariableFile(insert@provisions)
+    else if (!file.exists(insert@provisions@filename))
+      warning("writeInsertFile:  the file " 
+              %&% insert@provisions@filename
+              %&% "does not exist.")
     insert@provisions = writeVariableFile(
       insert@provisions)
     insert@outputVariable = insert@provisions
@@ -93,8 +116,9 @@ writeInsertFile = function(insert, commitIt=FALSE, ...) {
 
 writeScenarioFile = function(scenario, commitIt=FALSE, ...) {
   for(insertName in names(scenario@inserts))  {
-    scenario@inserts[[insertName]] = writeInsertFile(
-      scenario@inserts[[insertName]])
+    if(scenario@inserts[[insertName]]@filename == "")
+      scenario@inserts[[insertName]] = writeInsertFile(
+        scenario@inserts[[insertName]])
   }
   names(scenario@inserts@.Data) = 
     sapply(scenario@inserts@.Data, slot, "filename")
