@@ -30,7 +30,7 @@ shinyServer(function(input, output, session) {
     session$sendInputMessage("jstreeScenario", messageSent)
     
     #session$sendInputMessage("jstreeScenario", newTree)
-    #catn("str of messageSent[[5]][[3]] is ", str(messageSent))
+    catn("str of messageSent[[5]][[3]] is ", str(messageSent))
   })
   
   source("debugTools.R", local=TRUE)
@@ -133,35 +133,46 @@ shinyServer(function(input, output, session) {
   rValues$openingVariableEditor = FALSE
   rValues$openingInsertEditor = FALSE
   
+  wasClicked =  function(button) {
+    if(exists("input"))  
+      if(!is.null(button) ) {
+        if(button > 0) {        
+          return(TRUE)
+        }
+      }
+    return(FALSE)
+  }
+  
   source("varEditorUI.R", local=TRUE)
   source("insertEditorUI.R", local=TRUE)
+  source("scenarioSearchTableUI.R", local=TRUE)
+  #source("scenarioEditorUI.R", local=TRUE)
+  
+  
   
   observerBtnEditVariable = observe(label="observerBtnEditVariable", {
-    if(input$btnEditVariable > 0) {
+    if(wasClicked(input$btnEditVariable)) {
       isolate(rValues$openingVariableEditor <- TRUE)
     }
   }
   )
   
   observerBtnEditInsert = observe(label="observerBtnEditInsert", {
-    if(exists("input")) 
-      if(!is.null(input$btnEditInsert) ) {
-        if(input$btnEditInsert > 0) {
+      if(wasClicked(input$btnEditInsert) ) {
           isolate({
             cat("Setting rValues$openingInsertEditor <- TRUE\n")
             rValues$openingInsertEditor <- TRUE
           })
         }
-      }
   }
   )
-  observerButtonEditInsert = observe({
-    if(exists("input")) 
-      if(!is.null(input$btnEditInsert) & (input$btnEditInsert > 0)) {
-        isolate({NULL   ### should not be necessary
-        })
-      }
-  })
+  
+#   observerButtonEditInsert = observe({
+#       if(wasClicked(input$btnEditInsert) ) {
+#         isolate({NULL   ### should not be necessary
+#         })
+#       }
+#   })
   observerEditingVariable = observe(label="observerEditingVariable", {
     catn("editingVariableObserver: rValues$openingVariableEditor = ", rValues$openingVariableEditor)
     if(rValues$openingVariableEditor) {
@@ -255,23 +266,6 @@ shinyServer(function(input, output, session) {
     print(paste0("selectedNodes ", input$jstreeScenario, collapse = ", "))
   })
   
-  popupInsertEditor = function() {
-    cat("popupInsertEditor is called\n")
-  } # place holder
-  popupVariableEditor = function() {
-    cat("popupVariableEditor is called\n")
-  } # place holder
-  
-  onNodeClick = observe(label="onNodeClick", {
-    if(rValues$treeSelectionDepth == 2) {
-      popupInsertEditor()
-    }
-    if(rValues$treeSelectionDepth == 3) {
-      popupVariableEditor()
-    }
-  })
-  
-  
   
   #### Display Design Parameters.
   oneRunHeader =   function() {
@@ -360,14 +354,14 @@ shinyServer(function(input, output, session) {
     return (grep(rValues$treeSelectionText, 'provides:') > 0 )
   
   observeBtnAddScen = observe(label="observeBtnAddScen", {
-    if(input$btnAddScen > 0) { ### Make reactive to button.
+    if(wasClicked(input$btnAddScen) ) { ### Make reactive to button.
       updateTabsetPanel(session, "tabsetID", selected = "Experiment")
       catn("==== doing updateTabsetPanel to Experiment")
     }
   })  
   
   observeBtnFindScen = observe(label="observeBtnFindScen", {
-    if(input$btnFindScen > 0) { ### Make reactive to button.
+    if(wasClicked(input$btnFindScen) ) { ### Make reactive to button.
       rValues$findingScenario = TRUE
       # Now, replace the tree with a scenario file table
       
@@ -375,7 +369,7 @@ shinyServer(function(input, output, session) {
   })  
   
   output$experimentTableOut = renderTable({
-    if(input$btnAddScen>0) {  ### Make reactive to button. Trigger if clicked.
+    if(wasClicked(input$btnAddScen)) {  ### Make reactive to button. Trigger if clicked.
       experimentTable[nrow(experimentTable)+1, ] <<- NA
       catn("==== appended...")
       print(rownames(experimentTable))
@@ -390,7 +384,7 @@ shinyServer(function(input, output, session) {
   })  
 
   observerSaveScenarioToGlobalEnv = observe({
-    if( input$btnSaveScenarioToGlobalEnv > 0) {   # Trigger if clicked
+    if( wasClicked(input$btnSaveScenarioToGlobalEnv) ) {   # Trigger if clicked
       cat("\nSaving scenario\n")
       assign(isolate(input$scenarioName), pos = 1,
              rValues$currentScenario
@@ -406,7 +400,7 @@ shinyServer(function(input, output, session) {
   })
   
   observerWriteScenarioToSwapmeet = observe({
-    if( input$btnWriteScenarioToSwapmeet > 0) {   # Trigger if clicked
+    if( wasClicked(input$btnWriteScenarioToSwapmeet) ) {   # Trigger if clicked
       cat("\nWriting scenario\n")
       assign(isolate(input$scenarioName), pos = 1,
              rValues$currentScenario
@@ -462,8 +456,7 @@ shinyServer(function(input, output, session) {
   }
   
   buttonRemoveInsertObserver = observe({
-    if(exists("input")) 
-      if(!is.null(input$btnRemoveInsert) & (input$btnRemoveInsert > 0)) {
+      if(wasClicked(input$btnRemoveInsert) ) {
         isolate({
           treeSelectionPath <<- isolate(rValues$treeSelectionPath)
           rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
