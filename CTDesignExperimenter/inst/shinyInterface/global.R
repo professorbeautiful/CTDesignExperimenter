@@ -1,5 +1,8 @@
 require("CTDesignExperimenter")
 require(shinysky) #  needed for renderHotable, shinyalert, etc but not for ss_jstree
+require(shinyBS)  #  See http://spark.rstudio.com/johnharrison/shinyBS-Demo/, 
+          #  useful for many bootstrap functions including alerts, Modal and popups.
+
 options(shiny.trace=FALSE)
 
 scaffoldObjectNames = scaffoldObjects[[1]]
