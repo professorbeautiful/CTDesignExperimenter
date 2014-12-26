@@ -1,5 +1,9 @@
 cat("==========  gitUtilities =========\n")
 
+readSwapMeetFile = function(fileName) {
+  source(swapMeetDir() %&% fileName, local=TRUE)$value
+}
+
 writeSwapMeetFile = function(item,
                              commitIt=FALSE,
                              verbose=TRUE,
