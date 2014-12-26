@@ -16,26 +16,26 @@ output$insertEditorUI = renderUI({
   objectTypeName="Insert"
   source("createSwapMeetObjectTable.R", local=TRUE)  
   
-#   iFilenames <<- rev(dir(swapMeetDir(), pattern = "^I_"))
-#   allInsertsList = lapply(iFilenames, function(fname) {
-#     tempInsert = source(swapMeetDir() %&% fname, local=TRUE)$value
-#     if(! (class(tempInsert)=="VariableGenerator"))
-#       browser("Inside iFilenames list for Inserts")
-#     convertInsertToDataframe(tempInsert)
-#   })
-#   allInsertsDF <<- Reduce(rbind, allInsertsList)
-#   radioButtons = sapply(1:nrow(allInsertsDF),
-#                         function(rownum)
-#                           HTML("<input type=\"radio\" name=\"chooseInsert\" 
-#                                id=\"chooseInsert" %&% rownum
-#                                %&% "\" value=" %&% rownum %&% ">"))
-#   allInsertsDF <<- data.frame(select=radioButtons, allInsertsDF) 
-#   
-#   output$allInsertsTable <<- renderDataTable(allInsertsDF)
-#   
+  #   iFilenames <<- rev(dir(swapMeetDir(), pattern = "^I_"))
+  #   allInsertsList = lapply(iFilenames, function(fname) {
+  #     tempInsert = source(swapMeetDir() %&% fname, local=TRUE)$value
+  #     if(! (class(tempInsert)=="VariableGenerator"))
+  #       browser("Inside iFilenames list for Inserts")
+  #     convertInsertToDataframe(tempInsert)
+  #   })
+  #   allInsertsDF <<- Reduce(rbind, allInsertsList)
+  #   radioButtons = sapply(1:nrow(allInsertsDF),
+  #                         function(rownum)
+  #                           HTML("<input type=\"radio\" name=\"chooseInsert\" 
+  #                                id=\"chooseInsert" %&% rownum
+  #                                %&% "\" value=" %&% rownum %&% ">"))
+  #   allInsertsDF <<- data.frame(select=radioButtons, allInsertsDF) 
+  #   
+  #   output$allInsertsTable <<- renderDataTable(allInsertsDF)
+  #   
   
   ###################  REQUIREMENTS  ##############################
-
+  
   observerRequirements = observe({
     if(exists("requirementDF"))
       requirementDF_old <<- requirementDF
@@ -45,7 +45,7 @@ output$insertEditorUI = renderUI({
       cat("requirement is changed: ")
       for(pName in names(requirementDF)) {
         #if( requirementDF_old[[pName]] != requirementDF[[pName]])
-          cat(pName, " changed from ", requirementDF_old[[pName]], " to ", requirementDF[[pName]])
+        cat(pName, " changed from ", requirementDF_old[[pName]], " to ", requirementDF[[pName]])
       }
       cat("\n")
     }
@@ -78,13 +78,13 @@ output$insertEditorUI = renderUI({
       cat("Parameter is changed: ")
       for(pName in names(parameterDF)) {
         #if( parameterDF_old[[pName]] != parameterDF[[pName]])
-          catn(pName, " changed from ", parameterDF_old[[pName]], " to ", parameterDF[[pName]])
+        catn(pName, " changed from ", parameterDF_old[[pName]], " to ", parameterDF[[pName]])
       }
       cat("\n")
     }
   }
   )
-
+  
   output$parameterHOT <- renderHotable({
     df = as.data.frame(theInsert@parameters)
     #names(df) = namessapply(theInsert@requirements, slot, name="name")
@@ -97,125 +97,148 @@ output$insertEditorUI = renderUI({
   
   output$insertSubTypeTOP = renderText( {  theInsert@insertSubType})
   
+  output$insertBlockString = renderText( { 
+    scaffoldObjectNames[which(scaffoldInsertSubTypes==input$selectedInsertSubType)] })
+  ## We should probably rename scaffoldObjectNames. 
+  
   ############ showEditableInsertSlot, a FAILED EXPERIMENT ? ####################
   
-#   showEditableInsertSlot = function(label, slotName) {
-#     tagList(tag('table', tag('tr', 
-#                              tagList(tag('th', label), 
-#                              tag('th', 
-#                                  renderText({slot(rValues$theInsert, slot=slotName)}))
-#     ))))
-#   }
+  #   showEditableInsertSlot = function(label, slotName) {
+  #     tagList(tag('table', tag('tr', 
+  #                              tagList(tag('th', label), 
+  #                              tag('th', 
+  #                                  renderText({slot(rValues$theInsert, slot=slotName)}))
+  #     ))))
+  #   }
+  
+  textAreaResize.html = readLines(con = file('textAreaResize.html'))
   
   ### Return value for renderUI "expr" arg starts here.
   div(
     ### Let's see if we can put all this on one line,
     # using the ideas at https://groups.google.com/forum/#!searchin/shiny-discuss/shinysky/shiny-discuss/rYMmnAtYuJY/_nnzF1ka1vYJ.
-    fluidRow(
-      ## If divs instead of columns, vertical instead of horizontal.
-      ## Negative offsets are the same as zero. widths must be in 1,...,12.
-        column(width=2, offset=0, strong("Editing an insert ", class="INSERTlevel")),
-        column(width=1, offset=-10, img(src='Insert32.png', align="absmiddle"))  ### Place in app root. Also, "www/" will not work.
+    #fluidRow(
+    ## If divs instead of columns, vertical instead of horizontal.
+    ## Negative offsets are the same as zero. widths must be in 1,...,12.
+    #    column(width=2, offset=0, strong("Editing an insert ", class="INSERTlevel")),
+    #    column(width=1, offset=-10, img(src='Insert32.png', align="absmiddle"))  ### Place in app root. Also, "www/" will not work.
+    h2(strong("Editing an insert ",
+              img(width=50, height=50, src='Insert32.png', align="absmiddle"),  ### Place in app root. Also, "www/" will not work.
+              class="INSERTlevel")),
+    #),
+    #    br(),
+    #    hr(),
+    #    div(class='col-12',
+    div(class = "well container-fluid", 
+        actionButton(inputId="btnNewInsert" , 
+                     label=div("New Insert", class = "INSERTlevel")),
+        tagAppendAttributes(a(
+          actionButton(inputId="btnSearchInsert" , 
+                       label=div("Search for insert", class = "INSERTlevel"),
+          )),
+          href="#idSearchInsert"),
+        actionButton(inputId="btnSaveInsert" , 
+                     label=div("Save insert", class = "INSERTlevel")),
+        actionButton(inputId="btnReplaceInsertInScenario" , 
+                     label=div("Replace Insert In Scenario", class="INSERTlevel"))
+        # css.class doesnt work.   css.class = "treeclass-2",
+    ),
+    div(class = "well container-fluid", 
+        fluidRow(
+          #      span(class="BLOCKlevel", 
+          column(width = 2, selectInput(inputId="selectedInsertSubType", 
+                                        label=em(class="BLOCKlevel", "Insert Type"),
+                                        selected=theInsert@insertSubType,
+                                        choices=scaffoldInsertSubTypes)),
+          column(width=2, 
+                 em("  which is placed in block ", class="BLOCKlevel"),
+                 br(),
+                 fluidRow(
+                   column(width=4,
+                          img(src='BLOCK32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
+                   column(width=8,
+                          span(class="BLOCKlevel", 
+                               textOutput(outputId='insertBlockString')
+                          )
+                   )
+                 )
+          )
+        )
     )
     ,
+    tags$style(type="text/css", 
+               "#insertName {width: 450px; }"),
+    textInput(inputId="insertName", 
+              label = strong("name", class="INSERTlevel"), 
+              theInsert@name),
+    tags$style(type="text/css", 
+               "#insertDescription {width: 450px; }"),
+    div(tags$label(strong("description", class="INSERTlevel")), 
+        tags$textarea(id = "insertDescription", rows=3, cols=80,
+              theInsert@description)),
+    # showEditableInsertSlot("DESCRIPTION", "description"),
+    #         tagAppendAttributes(tag=div(class="row-fluid",
+    #                                     strong(
+    #           textInput("insertDescription", label = ("description"), 
+    #                     theInsert@description))),
+    #           class="INSERTlevel,row-fluid", 
+    #           style="width:100%"),
+    div(strong("output variable (click icon to edit)", class="INSERTlevel"), 
+        img(src="Var32.png"),
+        renderText( { capture.output(theInsert@outputVariable) })),
     br(),
-    hr(),
-    div(class='col-12',
-        div(class = "well container-fluid", 
-            actionButton(inputId="btnNewInsert" , 
-                         label=div("New Insert", class = "INSERTlevel")),
-            tagAppendAttributes(a(
-              actionButton(inputId="btnSearchInsert" , 
-                         label=div("Search for insert", class = "INSERTlevel"),
-                         )),
-              href="#idSearchInsert"),
-            actionButton(inputId="btnSaveInsert" , 
-                         label=div("Save insert", class = "INSERTlevel")),
-            actionButton(inputId="btnReplaceInsertInScenario" , 
-                         label=div("ReplaceInsertInScenario", class="INSERTlevel"))
-            # css.class doesnt work.   css.class = "treeclass-2"),
-        ),
-        fluidRow(
-          column(width=1, offset=0, img(src='BLOCK32.png', align="absmiddle")),  ### Place in app root. Also, "www/" will not work.
-          column(width=2, offset=-1, strong(" Placed in block ", class="BLOCKlevel")),
-          column(width=8, offset=-1, div(class="BLOCKlevel", 
-                          selectInput(inputId="selectedBlock", 
-                                      label="block name",
-                                      selected=theInsert@insertSubType,
-                                      choices=scaffoldObjectNames))
-        )),
-        tagAppendAttributes(tag=strong(
-                              textInput("insertName", 
-                                        label = strong("name", class="INSERTlevel"), 
-                                        theInsert@name)),
-                            style="width:100%"),
-        textInput("insertDescription", 
-                  label = strong("description", class="INSERTlevel"), 
-                  theInsert@description),
-        # showEditableInsertSlot("DESCRIPTION", "description"),
-        #         tagAppendAttributes(tag=div(class="row-fluid",
-        #                                     strong(
-        #           textInput("insertDescription", label = ("description"), 
-        #                     theInsert@description))),
-        #           class="INSERTlevel,row-fluid", 
-        #           style="width:100%"),
-        div(strong("output variable", class="INSERTlevel"), 
-            img(src="Var32.png")),
-        renderText( { capture.output(theInsert@outputVariable) }),
-        
-        div(strong("generatorCode", class="INSERTlevel"), 
-            div(style="width:1000", 
-              textInput(inputId = "generatorCode",  label = "",
-                        printFunctionBody(theInsert@generatorCode)),
-              actionButton(inputId="btnCheckCode", "check code (not implemented)")
-            ))
-        ,
-        
-        #tags$script('vb.width("100%").css("bold")'),  THE CULPRIT!!! Caused all the renderText elements to fail.
-        
-        div(class = "well container-fluid", 
-            div(strong("requirements", class="INSERTlevel")), 
-            div(class = "row-fluid", 
-                conditionalPanel('window.Shiny.shinyapp.$bindings.requirementHOT.el.attributes.length > 0',
-                                 hotable("requirementHOT"))),
-            img(src="Var32.png"),
-            actionButton(inputId="btnAddRequirement" , 
-                         label=div("Add requirement (not implemented yet)", 
-                                   class = "VARlevel")),
+    singleton(tags$head(textAreaResize.html)),
+    div(tags$label(strong("generatorCode", class="INSERTlevel")), 
+        tags$textarea(id = "generatorCode", rows=3, cols=80,
+                      printFunctionBody(theInsert@generatorCode)),
+        actionButton(inputId="btnCheckCode", "check code"),
+        fluidRow(column(width=4, bsAlert(inputId='generatorCodeAlert')))
+        )
+    ,
+    #tags$script('vb.width("100%").css("bold")'),  THE CULPRIT!!! Caused all the renderText elements to fail.
+    div(class = "well container-fluid", 
+        div(strong("requirements", class="INSERTlevel")), 
+        div(class = "row-fluid", 
             conditionalPanel('window.Shiny.shinyapp.$bindings.requirementHOT.el.attributes.length > 0',
-                             ## Use JS version of outputPreamble?
-                             actionButton(inputId="btnEditRequirement" , 
-                                          label=div("Edit requirement (not implemented yet)", 
-                                                    class = "VARlevel")),
-                             actionButton(inputId="btnRemoveRequirement" , 
-                                          label=div("Remove requirement (not implemented yet)", 
-                                                    class = "VARlevel"))
-            )
-        ),    
-        
-        div(class = "well container-fluid", 
-            div(strong("parameters", class="INSERTlevel")), 
-            div(class = "row-fluid", hotable("parameterHOT")),
-            actionButton(inputId="btnAddParameter" , 
-                         label=div("Add parameter (not implemented yet)", 
-                                   class = "INSERTlevel")),
-            actionButton(inputId="btnCheckParameter" , 
-                         label=div("Check parameter (not implemented yet)", 
-                                   class = "INSERTlevel")),
-            actionButton(inputId="btnRemoveParameter" , 
-                         label=div("Remove parameter (not implemented yet)", 
-                                   class = "INSERTlevel"))
-            ,
-            tableOutput(outputId = "parameterTable")
-        ),     
-        
-        hr(),
-      div(class="INSERTlevel",
+                             hotable("requirementHOT"))),
+        img(src="Var32.png"),
+        actionButton(inputId="btnAddRequirement" , 
+                     label=div("Add requirement (not implemented yet)", 
+                               class = "VARlevel")),
+        conditionalPanel('window.Shiny.shinyapp.$bindings.requirementHOT.el.attributes.length > 0',
+                         ## Use JS version of outputPreamble?
+                         actionButton(inputId="btnEditRequirement" , 
+                                      label=div("Edit requirement (not implemented yet)", 
+                                                class = "VARlevel")),
+                         actionButton(inputId="btnRemoveRequirement" , 
+                                      label=div("Remove requirement (not implemented yet)", 
+                                                class = "VARlevel"))
+        )
+    ),    
+    
+    div(class = "well container-fluid", 
+        div(strong("parameters", class="INSERTlevel")), 
+        div(class = "row-fluid", hotable("parameterHOT")),
+        actionButton(inputId="btnAddParameter" , 
+                     label=div("Add parameter (not implemented yet)", 
+                               class = "INSERTlevel")),
+        actionButton(inputId="btnCheckParameter" , 
+                     label=div("Check parameter (not implemented yet)", 
+                               class = "INSERTlevel")),
+        actionButton(inputId="btnRemoveParameter" , 
+                     label=div("Remove parameter (not implemented yet)", 
+                               class = "INSERTlevel"))
+        ,
+        tableOutput(outputId = "parameterTable")
+    ),     
+    
+    hr(),
+    div(class="INSERTlevel",
         renderText({"author: " %&% theInsert@author}),
         renderText({"timestamp: " %&% capture.output(theInsert@timestamp)}),
         renderText({"file: " %&% theInsert@filename})
-      )
     ),
+    
     div(class='col-6',
         conditionalPanel(
           "input.btnSearchInsert > 0", 
@@ -247,13 +270,13 @@ searchInsertObserver = observe(label="searchInsertObserver", {
         }
 })
 
-observer_selectedBlock = observe(label="observer_selectedBlock",
+observer_selectedInsertSubType = observe(label="observer_selectedInsertSubType",
   {
-    input$selectedBlock
+    input$selectedInsertSubType
     isolate({
       if(!is.null(rValues$theInsert)) {
         theInsert = rValues$theInsert
-        theInsert@insertSubType <- input$selectedBlock
+        theInsert@insertSubType <- input$selectedInsertSubType
         rValues$theInsert = theInsert
       }
     })
@@ -271,6 +294,21 @@ observer_searchInsert = observe(label="observer_searchInsert",
         else shinyalert("Sorry, it wasn't a VariableGenerator file.")
       })
     }
+  }
+})
+
+observe({
+  if(wasClicked(input$btnCheckCode)) {
+    fString = isolate(input$generatorCode)
+    theFunction = try(eval(parse(text=fString)))
+    theMessage = ifelse(class(theFunction) ==  'try-error',
+      "error! " %&% theFunction,
+      "generatorCode parses fine" %&% if(!is.function(theFunction)) " but it's not a function."
+    )
+    createAlert(session, inputId='generatorCodeAlert', alertId = 'generatorCodeAlertCreatorID',
+                title='Alert: generatorCode parsing result',
+                message=theMessage,
+                append=FALSE)
   }
 })
 
