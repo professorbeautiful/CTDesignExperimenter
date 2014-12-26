@@ -224,11 +224,29 @@ shinyServer(function(input, output, session) {
               length(strsplit(split = "_",
                               treeSelection[ 1, "pathAttr"]) [[1]]) - 1
             rValues$openingVariableEditor = 
-              (rValues$treeSelectionDepth == 3 & rValues$nSelected == 1) 
+              (rValues$treeSelectionDepth == 3  
+                 & ( identical(1, grep("^provides:|^needs:", 
+                                     rValues$treeSelectionText)))
+                 &  rValues$nSelected == 1) 
             if(rValues$openingVariableEditor) 
               rValues$theVar = findObjectInScenario(rValues$treeSelectionPath, scenario=currentScenario)
 
+            rValues$clickedOnGenerator = 
+              (rValues$treeSelectionDepth == 3  
+               & ( identical(1, grep("^code:", 
+                                     rValues$treeSelectionText)))
+               &  rValues$nSelected == 1) 
+            
+            rValues$clickedOnParameter = 
+              (rValues$treeSelectionDepth == 3  
+               & ( identical(1, grep("^param:", 
+                                     rValues$treeSelectionText)))
+               &  rValues$nSelected == 1) 
+            
+            
+              
               # We do NOT want the insert editor to open automatically <<<=====
+              #  Instead, we provide custom buttons.
             rValues$clickedOnInsert = 
               (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
             if(rValues$clickedOnInsert) 
