@@ -13,20 +13,22 @@ output$varEditorUI = renderUI({
   
   ### RETURN VALUE FOR UI
   div(css.class="VARlevel",
-    tagAppendAttributes(h3(" Variable Editor"), class="VARlevel"),
+      h2(strong("Editing a Variable ",
+                img(width=50, height=50, src='Var32.png', align="absmiddle"),  ### Place in app root. Also, "www/" will not work.
+                class="VARlevel")),
     hr(),
     div(class='col-6',
         actionButton(inputId="btnNewVar" , 
-                     label="New variable", css.class = "VARlevel"),
+                     label="New Variable", css.class = "VARlevel"),
         tagAppendAttributes(a(
           actionButton(inputId="btnSearchVar" , 
-                       label="Find and load variable", css.class = "VARlevel")
+                       label="Search swapmeet & load Variable", css.class = "VARlevel")
           ),
           href="#idSearchVariable"),
-        actionButton(inputId="btnSaveVar" , 
-                     label="Save variable in scenario", css.class = "VARlevel"),
+        actionButton(inputId="btnReplaceVariableInInsert" ,
+                     label="Replace Variable in Insert", css.class = "VARlevel"),
         actionButton(inputId="btnSaveVarAs" , 
-                     label="Save variable as...", css.class = "VARlevel"),
+                     label="Save Variable as...", css.class = "VARlevel"),
         hr(),
         # select2Input WORKS, and variable loads, but not very usable.
         tagAppendAttributes(h3(" Variable slots"), class="VARlevel"),

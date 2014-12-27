@@ -8,17 +8,19 @@ conditionPanelNoneSelected = conditionalPanel(
   '$("#jstreeScenario").jstree().get_selected().length == 0',  #This works!! 0 1 2 etc.
   ####  To UNSELECT, Cmd-click on the selected node.
   div(class="row-fluid span3",
-      actionButton(inputId="btnWriteScenarioToSwapmeet", 
-                   label="Write scenario to Swapmeet"),
-      actionButton(inputId="btnSaveScenarioToGlobalEnv", 
-                   label="Save scenario to GlobalEnv"),
-      tagAppendAttributes(a(
+      actionButton(inputId="btnNewScenario", 
+                   label="New Scenario"),
+      tagAppendAttributes(tag = a(
         actionButton(inputId="btnSearchScenario", 
-                     label="Find &replace scenario")
-        ),
-        href="#idSearchScenario"),
+                     label="Search swapmeet & load Scenario"),
+        href="#idSearchScenario")
+      ),
       actionButton(inputId="btnAddScen", 
-                   label="Add scenario to experiment"),
+                   label="Add Scenario to Experiment"),
+      actionButton(inputId="btnSaveScenarioToGlobalEnv", 
+                   label="Save Scenario to GlobalEnv"),
+      actionButton(inputId="btnWriteScenarioToSwapmeet", 
+                   label="Write Scenario to Swapmeet"),
       hr())
 )
 

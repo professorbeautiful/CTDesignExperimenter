@@ -134,20 +134,20 @@ output$insertEditorUI = renderUI({
                      label=div("New Insert", class = "INSERTlevel")),
         tagAppendAttributes(a(
           actionButton(inputId="btnSearchInsert" , 
-                       label=div("Search for insert", class = "INSERTlevel"),
+                       label=div("Search swapmeet & load Insert", class = "INSERTlevel"),
           )),
           href="#idSearchInsert"),
-        actionButton(inputId="btnSaveInsert" , 
-                     label=div("Save insert", class = "INSERTlevel")),
         actionButton(inputId="btnReplaceInsertInScenario" , 
-                     label=div("Replace Insert In Scenario", class="INSERTlevel"))
-        # css.class doesnt work.   css.class = "treeclass-2",
+                     label=div("Replace Insert In Scenario", class="INSERTlevel")),
+        actionButton(inputId="btnSaveInsert" , 
+                     label=div("Save Insert...", class = "INSERTlevel"))
+        # css.class doesnt work here.   css.class = "treeclass-2",
     ),
     div(class = "well container-fluid", 
         fluidRow(
           #      span(class="BLOCKlevel", 
           column(width = 2, selectInput(inputId="selectedInsertSubType", 
-                                        label=em(class="BLOCKlevel", "Insert Type"),
+                                        label=strong(class="INSERTlevel", "Insert Type"),
                                         selected=theInsert@insertSubType,
                                         choices=scaffoldInsertSubTypes)),
           column(width=2, 
