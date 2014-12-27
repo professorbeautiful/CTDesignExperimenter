@@ -111,7 +111,9 @@ output$insertEditorUI = renderUI({
   #     ))))
   #   }
   
-  textAreaResize.html = readLines(con = file('textAreaResize.html'))
+  textAreaResize.con = file('textAreaResize.html')
+  textAreaResize.html = readLines(con = textAreaResize.con)
+  close(textAreaResize.con)
   
   ### Return value for renderUI "expr" arg starts here.
   div(
