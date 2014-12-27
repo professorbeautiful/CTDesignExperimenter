@@ -111,20 +111,45 @@ observe({       ### Clear the inputs to create a new variable.
   }
 })
 
-observe({       ### Save Variable in a swapMeet file.
-  if(input$tabsetID=="Variable Editor" & !is.null(input$btnSaveVarAs)){
-    if(input$btnSaveVarAs > 0) {
-      theVar = try(
-        Variable(name = input$varName, 
-                 description = input$varDescription, 
-                 checkDataType = eval(parse(text=input$varCHECK)))) 
-      if(class(theVar) == "try-error")
-        shinyalert("Error in variable: " %&% theVar)
+readVarFromPage = function() {
+  theVar = try(
+    Variable(name = input$varName, 
+             description = input$varDescription, 
+             checkDataType = eval(parse(text=input$varCHECK)))) 
+  if(class(theVar) == "try-error")
+    shinyalert("Error in variable: " %&% theVar)
+  else
+    rValues$theVar = theVar
+  return(theVar)
+}
+
+observerBtnReplaceVariableInInsert = observe({
+  if(wasClicked(input$btnReplaceVariableInInsert)){
+    isolate({
+      if(rValues$editingOutputVariable) {
+        theVar = readVarFromPage()
+        if(class(theVar) != 'try-error') {
+          rValues$theInsert@outputVariable = rValues$theVar
+          rValues$editingOutputVariable = FALSE
+          updateTabsetPanel(session, "tabsetID", selected = "Insert Editor")  
+        }
+      }
       else {
+        ## TODO: load directly into insert in current scenario
+      }
+    })
+  }
+})
+
+observe({       ### Save Variable in a swapMeet file.
+  if(input$tabsetID=="Variable Editor" & wasClicked(input$btnSaveVarAs)){
+    isolate({
+      theVar = readVarFromPage()
+      if(class(theVar) != "try-error") {
         theVar = writeSwapMeetFile(theVar, verbose = TRUE)
         rValues$theVar = theVar
       }
-    }
+    })
   }
 })
 
