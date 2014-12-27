@@ -167,21 +167,15 @@ shinyServer(function(input, output, session) {
   }
   )
   
-#   observerButtonEditInsert = observe({
-#       if(wasClicked(input$btnEditInsert) ) {
-#         isolate({NULL   ### should not be necessary
-#         })
-#       }
-#   })
   observerEditingVariable = observe(label="observerEditingVariable", {
-    catn("editingVariableObserver: rValues$openingVariableEditor = ", rValues$openingVariableEditor)
+    catn("observerEditingVariable: rValues$openingVariableEditor = ", rValues$openingVariableEditor)
     if(rValues$openingVariableEditor) {
       updateTabsetPanel(session, "tabsetID", selected = "Variable Editor")
     }    #"selected" is the title on the tab.
   }
   )
-  editingInsertObserver = observe(label="editingInsertObserver", {
-    catn("editingInsertObserver: rValues$openingInsertEditor = ", rValues$openingInsertEditor)
+  observerEditingInsert = observe(label="observerEditingInsert", {
+    catn("observerEditingInsert: rValues$openingInsertEditor = ", rValues$openingInsertEditor)
     if(rValues$openingInsertEditor) {
       updateTabsetPanel(session, "tabsetID", selected = "Insert Editor")
     }    #"selected" is the title on the tab.
@@ -243,8 +237,6 @@ shinyServer(function(input, output, session) {
                                      rValues$treeSelectionText)))
                &  rValues$nSelected == 1) 
             
-            
-              
               # We do NOT want the insert editor to open automatically <<<=====
               #  Instead, we provide custom buttons.
             rValues$clickedOnInsert = 
