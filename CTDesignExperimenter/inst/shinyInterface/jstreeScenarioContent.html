@@ -8,8 +8,29 @@
   
   var  theJsonMessage =  [ "INITIAL TREE ", {"text" : "Second" }];
 
-  $("#jstreeScenario").jstree({core: { data: function(node, cb) { cb(theJsonMessage); }
-  }} )  ;
+  $("#jstreeScenario").jstree(
+	{
+		core: { data: function(node, cb) { cb(theJsonMessage); }},
+	        "types" : {
+		    "valid_children" : [ "level_1", "level_2" ],
+		    "types" : {
+			"treelevel_1" : {
+			    "icon" : { 
+				"image" : "Insert32.png" 
+			    },
+			"treelevel_2" : {
+			    "icon" : { 
+				"image" : "BLOCK32.png" 
+			    },
+			},
+			"default" : {
+			    "valid_children" : [ "default" ]
+			}
+		    }
+		}
+	  }
+       }
+ )  ;
 
   $('#jstreeScenario').jstree('refresh');
 
