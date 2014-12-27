@@ -8,7 +8,7 @@ output$insertEditorUI = renderUI({
   rValues$openingInsertEditor = FALSE
   theInsert = rValues$theInsert
   if(is.null(theInsert)) 
-    theInsert = makeTemplateInsert()
+    rValues$theInsert = theInsert = makeTemplateInsert()
   catn("output$insertEditorUI: insert is ", capture.output(theInsert))
 
   
@@ -33,6 +33,14 @@ output$insertEditorUI = renderUI({
   #   
   #   output$allInsertsTable <<- renderDataTable(allInsertsDF)
   #   
+  
+  observerBtnEditOutputVariable = observe({
+    if(wasClicked(input$btnEditOutputVariable)) {
+      rValues$editingOutputVariable = TRUE
+      rValues$theVariable = rValues$theInsert@outputVariable
+      updateTabsetPanel(session, "tabsetID", selected = "Variable Editor")
+    }
+  })
   
   ###################  REQUIREMENTS  ##############################
   
@@ -116,7 +124,7 @@ output$insertEditorUI = renderUI({
   close(textAreaResize.con)
   
   ### Return value for renderUI "expr" arg starts here.
-  div(
+  div(style="overflow:auto;",
     ### Let's see if we can put all this on one line,
     # using the ideas at https://groups.google.com/forum/#!searchin/shiny-discuss/shinysky/shiny-discuss/rYMmnAtYuJY/_nnzF1ka1vYJ.
     #fluidRow(
@@ -124,7 +132,7 @@ output$insertEditorUI = renderUI({
     ## Negative offsets are the same as zero. widths must be in 1,...,12.
     #    column(width=2, offset=0, strong("Editing an insert ", class="INSERTlevel")),
     #    column(width=1, offset=-10, img(src='Insert32.png', align="absmiddle"))  ### Place in app root. Also, "www/" will not work.
-    h2(strong("Editing an insert ",
+    h2(strong("Editing an Insert ",
               img(width=50, height=50, src='Insert32.png', align="absmiddle"),  ### Place in app root. Also, "www/" will not work.
               class="INSERTlevel")),
     #),
@@ -185,11 +193,14 @@ output$insertEditorUI = renderUI({
     #                     theInsert@description))),
     #           class="INSERTlevel,row-fluid", 
     #           style="width:100%"),
-    div(strong("output variable (click icon to edit)", class="INSERTlevel"), 
-        img(src="Var32.png"),
+    div(class="INSERTlevel", strong("output variable (click ",
+               bsActionButton(inputId="btnEditOutputVariable",
+                              label=img(src="Var32.png"),
+                              style="link"),
+               " to edit)" ),        
         renderText( { capture.output(theInsert@outputVariable) })),
     br(),
-    singleton(tags$head(textAreaResize.html)),
+    #singleton(tags$head(textAreaResize.html)),
     div(tags$label(strong("generatorCode", class="INSERTlevel")), 
         tags$textarea(id = "generatorCode", rows=3, cols=80,
                       printFunctionBody(theInsert@generatorCode)),
