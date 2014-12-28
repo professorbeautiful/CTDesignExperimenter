@@ -138,7 +138,9 @@ scenarioPanel = tabPanel(
                        )
                    ) 
   )
-  , em("SCENARIO TREE")
+  , tagAppendAttributes(em(
+          textOutput("SCENARIO_TREE_label"), 
+        class="clickMeToClearSelection"))
   # THE FOLLOWING div LINE IS RESPONSIBLE FOR NOT SHOWING UP IN CHROME AND SAFARI
   # Specifically, it is overflow:auto.  Also overflow:scroll breaks it.
   #, div(style="height:800px;" 
@@ -184,7 +186,7 @@ CSSreference = singleton(tags$head(tags$link(href = "ctde.css",
 #   )))
 
 
-myJSincludes = tagList(
+myJSincludes = tagList(  ### Goes into the header.
   includeScript("www/jstree.min.js"),
   includeScript("www/ss-jstree.js")  # and this.  
   , CSSreference ### OK. Works (for text colors)
@@ -192,6 +194,19 @@ myJSincludes = tagList(
   , treeSelectionTextJSfunction
   , singleton(tags$script("var outputPreamble = '" %&% outputPreamble %&% "';"))
   , singleton(tagToOpenTree)
+  , singleton(tags$script( HTML( #### HTML prevents conversion of & into &amp; .
+    ' $(document).bind("click", 
+        function (e) { 
+          clickEvent = e; // to make available globall
+          if(window.Shiny.shinyapp.$inputValues.tabsetID=="Current scenario" 
+              && !$(e.target).parents(".jstree:eq(0)").length
+              && $(e.target).attr("id")=="SCENARIO_TREE_label") { 
+                      $("#jstreeScenario").jstree("deselect_all");
+                      console.log("DESELECTED");
+                } 
+        }); '
+    )))
+  ### id = $('#jstreeScenario').jstree('get_selected'); $("#" + id[0]) picks up the (first) selected node itself.
   # singleton(tags$head("<script src='www/ctde-types.js'> </script> ")),
   # singleton(tags$head("<script src='www/priority.js'> </script> ")),
   #  includeScript("www/ctde-types.js"), ## It does find this !

@@ -174,11 +174,34 @@ shinyServer(function(input, output, session) {
     }    #"selected" is the title on the tab.
   }
   )
+  
   observerEditingInsert = observe(label="observerEditingInsert", {
     catn("observerEditingInsert: rValues$openingInsertEditor = ", rValues$openingInsertEditor)
     if(rValues$openingInsertEditor) {
       updateTabsetPanel(session, "tabsetID", selected = "Insert Editor")
     }    #"selected" is the title on the tab.
+  }
+  )
+  
+  observerClickedParameter = observe(label="observerClickedParameter", {
+    if(isTRUE(rValues$clickedOnParameter)) {
+      catn("observerClickedParameter: rValues$treeSelectionText = ", rValues$treeSelectionText)
+      rValues$treeSelectionPath = substr(rValues$treeSelectionPath, 1, 5)
+      rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath)
+      updateTabsetPanel(session, "tabsetID", selected = "Insert Editor")
+      rValues$clickedOnParameter = FALSE
+    }
+  }
+  )
+  
+  observerClickedGenerator = observe(label="observerClickedGenerator", {
+    if(isTRUE(rValues$clickedOnGenerator)) {
+      catn("observerClickedGenerator: rValues$treeSelectionText = ", rValues$treeSelectionText)
+      rValues$treeSelectionPath = substr(rValues$treeSelectionPath, 1, 5)
+      rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath)
+      updateTabsetPanel(session, "tabsetID", selected = "Insert Editor")
+      rValues$clickedOnGenerator = FALSE
+    }
   }
   )
   
@@ -227,13 +250,13 @@ shinyServer(function(input, output, session) {
 
             rValues$clickedOnGenerator = 
               (rValues$treeSelectionDepth == 3  
-               & ( identical(1, grep("^code:", 
+               & ( identical(1L, grep("^code:", 
                                      rValues$treeSelectionText)))
                &  rValues$nSelected == 1) 
             
             rValues$clickedOnParameter = 
               (rValues$treeSelectionDepth == 3  
-               & ( identical(1, grep("^param:", 
+               & ( identical(1L, grep("^param:", 
                                      rValues$treeSelectionText)))
                &  rValues$nSelected == 1) 
             
@@ -268,6 +291,12 @@ shinyServer(function(input, output, session) {
   output$openingVariableEditor = renderText(rValues$openingVariableEditor)
   output$openingInsertEditor = renderText(rValues$openingInsertEditor)
   # treeObserver$onInvalidate(function() print("jstreeScenario selection changed!"))
+  
+  output$SCENARIO_TREE_label = renderText({
+    "SCENARIO TREE" %&% ifelse(isTRUE(rValues$treeSelectionText != "")
+                               ,
+                               " (click here to clear selection)", "")
+  })
   
   output$selectedNode = renderText({
     print(paste0("selectedNodes ", paste(input$jstreeScenario, collapse = ", ")))
