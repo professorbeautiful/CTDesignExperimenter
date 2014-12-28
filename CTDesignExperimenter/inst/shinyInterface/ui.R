@@ -40,6 +40,7 @@ conditionPanelBlockSelected = conditionalPanel(
 )
 
 outputPreamble <<- 'window.Shiny.shinyapp.$bindings.'
+inputPreamble <<- 'window.Shiny.shinyapp.$inputValues'
 
 treeSelectionDepthJSfunction = singleton(tags$script(
   "function treeSelectionDepth() { return " %&% outputPreamble %&% 
