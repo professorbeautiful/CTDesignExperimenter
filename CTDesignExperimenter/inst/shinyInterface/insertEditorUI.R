@@ -1,10 +1,10 @@
 
 
 output$insertEditorUI = renderUI({ 
-  try(rm(requirementDF))
-  try(rm(requirementDF_old))
-  try(rm(parameterDF))
-  try(rm(parameterDF_old))
+  try(rm(requirementDF), silent = TRUE)
+  try(rm(requirementDF_old), silent = TRUE)
+  try(rm(parameterDF), silent = TRUE)
+  try(rm(parameterDF_old), silent = TRUE)
   rValues$openingInsertEditor = FALSE
   theInsert = rValues$theInsert
   if(is.null(theInsert)) 
