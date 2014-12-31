@@ -6,6 +6,7 @@ output$insertEditorUI = renderUI({
   try(rm(parameterDF), silent = TRUE)
   try(rm(parameterDF_old), silent = TRUE)
   rValues$openingInsertEditor = FALSE
+
   theInsert = rValues$theInsert
   if(is.null(theInsert)) 
     rValues$theInsert = theInsert = makeTemplateInsert()
@@ -15,24 +16,6 @@ output$insertEditorUI = renderUI({
   pattern = "^I_"
   objectTypeName="Insert"
   source("createSwapMeetObjectTable.R", local=TRUE)  
-  
-  #   iFilenames <<- rev(dir(swapMeetDir(), pattern = "^I_"))
-  #   allInsertsList = lapply(iFilenames, function(fname) {
-  #     tempInsert = source(swapMeetDir() %&% fname, local=TRUE)$value
-  #     if(! (class(tempInsert)=="VariableGenerator"))
-  #       browser("Inside iFilenames list for Inserts")
-  #     convertInsertToDataframe(tempInsert)
-  #   })
-  #   allInsertsDF <<- Reduce(rbind, allInsertsList)
-  #   radioButtons = sapply(1:nrow(allInsertsDF),
-  #                         function(rownum)
-  #                           HTML("<input type=\"radio\" name=\"chooseInsert\" 
-  #                                id=\"chooseInsert" %&% rownum
-  #                                %&% "\" value=" %&% rownum %&% ">"))
-  #   allInsertsDF <<- data.frame(select=radioButtons, allInsertsDF) 
-  #   
-  #   output$allInsertsTable <<- renderDataTable(allInsertsDF)
-  #   
   
   observerBtnEditOutputVariable = observe({
     if(wasClicked(input$btnEditOutputVariable)) {
@@ -95,7 +78,6 @@ output$insertEditorUI = renderUI({
   
   output$parameterHOT <- renderHotable({
     df = as.data.frame(theInsert@parameters)
-    #names(df) = namessapply(theInsert@requirements, slot, name="name")
     cat("parameterHOT: df is:\n")
     print(df)
     print(dim(df))
