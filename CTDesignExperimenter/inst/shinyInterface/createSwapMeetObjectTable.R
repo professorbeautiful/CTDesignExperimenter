@@ -60,7 +60,7 @@ theObjectTable <<- renderDataTable(
   )
 )  # End of renderDataTable()
 
-print(theObjectTable)
+# print(theObjectTable)
 
 if(objectTypeName=="Variable")
   output$allVariablesTable = theObjectTable
