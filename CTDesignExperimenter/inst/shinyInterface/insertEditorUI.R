@@ -107,7 +107,7 @@ output$insertEditorUI = renderUI({
   
   output$insertBlockString = renderText( { 
     scaffoldObjectNames[which(scaffoldInsertSubTypes==input$selectedInsertSubType)] })
-  ## We should probably rename scaffoldObjectNames. 
+  ## We should probably rename scaffoldObjectNames to scaffoldBlockNames. 
   
   ############ showEditableInsertSlot, a FAILED EXPERIMENT ? ####################
   
@@ -121,7 +121,7 @@ output$insertEditorUI = renderUI({
   
   textAreaResize.con = file('textAreaResize.html')
   textAreaResize.html = readLines(con = textAreaResize.con)
-  close(textAreaResize.con)
+  close(textAreaResize.con)  ### Lovely, but it doesn't work.
   
   ### Return value for renderUI "expr" arg starts here.
   div(style="overflow:auto;",
