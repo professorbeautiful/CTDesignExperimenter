@@ -15,13 +15,14 @@ conditionPanelNoneSelected = conditionalPanel(
                      label="Search swapmeet & load Scenario"),
         href="#idSearchScenario")
       ),
-      actionButton(inputId="btnAddScen", 
-                   label="Add Scenario to Experiment"),
       actionButton(inputId="btnSaveScenarioToGlobalEnv", 
                    label="Save Scenario to GlobalEnv"),
       actionButton(inputId="btnWriteScenarioToSwapmeet", 
                    label="Write Scenario to Swapmeet"),
-      hr())
+      actionButton(inputId="btnAddScen", 
+                   label="Add Scenario to Experiment"),
+      hr()
+  )
 )
 
 conditionPanelBlockSelected = conditionalPanel(
@@ -163,19 +164,6 @@ scenarioPanel = tabPanel(
   , tags$script('ss_jstree.subscribe(tree(), function() { fixColors(); }); ')
   , tagToOpenTree  ## This tag MUST be AFTER myTree! Why? (Can be inside the div or not)
   , uiOutput('scenarioSearchTable')
-  #   , div(class='col-6',
-  #         conditionalPanel(
-  #           "input.btnSearchScenario > 0", 
-  #           hr(),
-  #           tagAppendAttributes(a(""), id="idSearchScenario"),
-  #           h3("Click on the radiobutton to load the Scenario into the template above."),
-  #           HTML('<div id="chooseScenario" class="control-group shiny-input-radiogroup">
-  #                    <label class="control-label" for="chooseScenario">Swapmeet Scenarios</label>'),
-  #           dataTableOutput("allScenariosTable"),
-  #           HTML('</div>')
-  #         )
-  #   )
-  
   #  )  ###  end of overflow div..  Fails in chrome and safari
 )
 
