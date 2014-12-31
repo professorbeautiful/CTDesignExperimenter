@@ -66,24 +66,6 @@ output$varEditorUI = renderUI({
 })
 
 
-## TODO: this observer may serve no purpose.
-observe(label="searchVariableObserver", {
-  catn("searchVariableObserver: input$btnSearchVar = /", 
-       capture.output(input$btnSearchVar), "/")
-  if(!is.null(input$btnSearchVar))
-    if(input$btnSearchVar > 0) 
-      if(!is.null(input$searchTypeAhead)) 
-        if(input$searchTypeAhead != "") {
-          theVar = try(source(swapMeetDir() %&% input$searchTypeAhead, 
-                              local = TRUE)$value) 
-          if(class(theVar) == "Variable") rValues$theVar = theVar
-          else {
-            shinyalert("Sorry, it wasn't a Variable file.")
-          }
-        }
-})
-
-
 observe({       ### Find and load a variable from a file.
   if(input$tabsetID=="Variable Editor" & !is.null(input$btnSearchVar)){
     if(input$btnSearchVar > 0 & !is.null(input$varSearchFileInput)) {

@@ -250,20 +250,6 @@ output$insertEditorUI = renderUI({
   )
 })
 
-###  Is the following necessary?
-observer_btnSearchInsertObserver = observe(label="observer_btnSearchInsertObserver", {
-  catn("searchInsertObserver: input$btnSearchInsert = ", 
-       input$btnSearchInsert)
-  if(!is.null(input$btnSearchInsert))
-    if(input$btnSearchInsert > 0) 
-      if(!is.null(input$searchTypeAhead)) 
-        if(input$searchTypeAhead != "") {
-          theInsert = try(source(swapMeetDir() %&% input$searchTypeAhead, 
-                              local = TRUE)$value) 
-          if(class(theInsert) == "VariableGenerator") rValues$theInsert = theInsert
-          else shinyalert("Sorry, it wasn't a VariableGenerator file.")
-        }
-})
 
 observer_selectedInsertSubType = observe(label="observer_selectedInsertSubType",
   {
