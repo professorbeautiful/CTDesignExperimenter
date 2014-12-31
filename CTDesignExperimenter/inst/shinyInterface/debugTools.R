@@ -90,7 +90,8 @@ output$debugTools = renderUI({
                                 #                  div(style="size:small;color:black", "/JS")
                               )),
                               tag("TD",
-                                  list(width=10, textInput(inputId="evalString", label="", value="1+1"))),
+                                  list(width=10, tags$textarea(id = "evalString", 
+                                                               value="1+1"))),
                               tag("TD", list(style="color:red", HTML("&rarr;"))),
                               tag("TD",
                                   list(width=800, 
