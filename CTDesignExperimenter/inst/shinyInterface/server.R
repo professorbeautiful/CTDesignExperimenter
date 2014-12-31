@@ -422,6 +422,15 @@ shinyServer(function(input, output, session) {
     }
   })  
 
+  observerNewScenario = observe({
+    if( wasClicked(input$btnNewScenario) ) {   # Trigger if clicked
+      cat("\nNew scenario\n")
+      scenario = new("Scenario")
+      scenario@inserts = new("ListOfInserts", list(vg_SampleSizeMax_2) )
+      rValues$currentScenario = scenario
+    }
+  })
+      
   observerSaveScenarioToGlobalEnv = observe({
     if( wasClicked(input$btnSaveScenarioToGlobalEnv) ) {   # Trigger if clicked
       cat("\nSaving scenario\n")

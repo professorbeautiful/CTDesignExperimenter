@@ -37,8 +37,13 @@ insertVGSubTree = function(insert, insertStyle="full") {
 }
 
 makeTree = function(scenario=defaultScenario, insertStyle="full") {
-  if(is.null(names(scenario@inserts)))
-    names(scenario@inserts) = sapply(scenario@inserts, function(insert) insert@filename)
+  if(is.null(names(scenario@inserts))) {
+    names(scenario@inserts@.Data) = paste0("vg_", 1:length(scenario@inserts))
+    for(iInsert in seq(along=scenario@inserts)) {
+      if(scenario@inserts[[iInsert]]@filename != "") 
+        names(scenario@inserts@.Data[[iInsert]]) == scenario@inserts[[iInsert]]@filename
+    }
+  }
   scenarioTree = 
     sapply(scaffoldObjectNames, simplify=F, function(x) list())
   scenarioMap = data.frame(insertName=names(scenario@inserts))
