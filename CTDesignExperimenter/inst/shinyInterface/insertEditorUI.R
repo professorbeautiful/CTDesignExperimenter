@@ -241,8 +241,8 @@ output$insertEditorUI = renderUI({
           #        dataTableOutput("allInsertsTable"))
           tagAppendAttributes(a(""), id="idSearchInsert"),
           h3("Click on the radiobutton to load the Insert into the template above."),
-          HTML('<div id="chooseInsert" class="control-group shiny-input-radiogroup">
-                           <label class="control-label" for="chooseInsert">Swapmeet Inserts</label>'),
+          HTML('<div id="chooseInsertRadioGroup" class="control-group shiny-input-radiogroup">
+                           <label class="control-label" for="chooseInsertRadioGroup">Swapmeet Inserts</label>'),
           dataTableOutput("allInsertsTable"),
           HTML('</div>')
         )
@@ -251,7 +251,7 @@ output$insertEditorUI = renderUI({
 })
 
 ###  Is the following necessary?
-searchInsertObserver = observe(label="searchInsertObserver", {
+observer_btnSearchInsertObserver = observe(label="observer_btnSearchInsertObserver", {
   catn("searchInsertObserver: input$btnSearchInsert = ", 
        input$btnSearchInsert)
   if(!is.null(input$btnSearchInsert))
@@ -369,7 +369,7 @@ addInsert = function(rVcS, theInsert) {
     new('ListOfInserts', c(rVcS@inserts, theInsert))
   return(rVcS)
 }
-observeBtnReplaceInsertInScenario = observe(label="observeReplaceInsertInScenario", { 
+observer_btnReplaceInsertInScenario = observe(label="observer_btnReplaceInsertInScenario", { 
   ### Save Insert in the scenario
   if(wasClicked(input$btnReplaceInsertInScenario)) {
       isolate({
@@ -391,11 +391,11 @@ observeBtnReplaceInsertInScenario = observe(label="observeReplaceInsertInScenari
   }
 })
 
-observeChooseInsert = observe(label="observeChooseInsert", {
-  chooseInsert = input$chooseInsert  # reactivity here
-  if(!is.null(chooseInsert))
+observer_chooseInsertRadioGroup = observe(label="observer_chooseInsertRadioGroup", {
+  chooseInsertChoice = input$chooseInsertRadioGroup  # reactivity here
+  if(!is.null(chooseInsertChoice))
     isolate({
-      insertFileName = allInsertsDF[input$chooseInsert, "filename"]
+      insertFileName = allInsertsDF[chooseInsertChoice, "filename"]
       catn("insertFileName = ", insertFileName)
       theInsert = try(
         source(swapMeetDir() %&% insertFileName, local=TRUE)$value
@@ -403,6 +403,6 @@ observeChooseInsert = observe(label="observeChooseInsert", {
       if(class(theInsert) != "try-error")
         rValues$theInsert = theInsert
       else
-        cat("observeChooseInsert:  insert reading went bad", theInsert, "\n")
+        cat("observer_chooseInsertRadioGroup:  insert reading went bad", theInsert, "\n")
     })
 })
