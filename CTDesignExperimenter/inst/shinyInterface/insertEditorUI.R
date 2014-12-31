@@ -342,16 +342,23 @@ Insert = VariableGenerator
 makeInsert = function() {
   theNewParameters = hot.to.df(input$parameterHOT)
   if(is.null(theNewParameters)) theNewParameters = list()
-  try(
-    Insert(insertSubType = rValues$theInsert@insertSubType,
-    #       name = input$insertName, 
-    #       description = input$insertDescription, 
+  result = try(
+    Insert(insertSubType = input$selectedInsertSubType,
            parameters = theNewParameters,
            provisions = rValues$theInsert@provisions,  #Not yet editable
            requirements = rValues$theInsert@requirements,  #Not yet editable,
            outputVariable = rValues$theInsert@outputVariable,  #Not yet editable,
            generatorCode = eval(parse(text="function() " %&% input$generatorCode)))
     ) 
+  if(class(result) == 'try-error') {
+    warning("Could not create the insert: ", result)
+    browser("makeInsert error", result)
+    return(rValues@theInsert)  ##TODO: should we prefer to throw error?
+  }
+  result@name = input$insertName 
+  result@description = input$insertDescription 
+  return(result)
+  
 }
 
 ### This writes the file!
@@ -382,25 +389,23 @@ addInsert = function(rVcS, theInsert) {
 }
 observeBtnReplaceInsertInScenario = observe(label="observeReplaceInsertInScenario", { 
   ### Save Insert in the scenario
-  if(isolate(input$tabsetID)=="Insert Editor" & !is.null(input$btnReplaceInsertInScenario)){
-    if(input$btnReplaceInsertInScenario > 0) {
+  if(wasClicked(input$btnReplaceInsertInScenario)) {
       isolate({
         theInsert = makeInsert()
         if(class(theInsert) == "try-error")
           shinyalert("Error in Insert: " %&% theInsert)
         else {
           rValues$theInsert = theInsert = writeSwapMeetFile(theInsert, verbose = TRUE) 
-          if(!is.null(input$treeSelectionDepth))
-            if(input$treeSelectionDepth == 2) {
-              ### Replace
-              treeSelectionPath <<- isolate(rValues$treeSelectionPath)
-              rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
-              rVcS = removeInsert(rVcS, treeSelectionPath)
-              rValues$currentScenario <- addInsert(rVcS, theInsert) 
-            }
+          #if(!is.null(input$treeSelectionDepth))
+          #  if(input$treeSelectionDepth == 2) {
+          ### Replace
+          rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
+          rVcS = removeInsert(rVcS, rValues$treeSelectionPath)
+          rValues$currentScenario <- addInsert(rVcS, theInsert) 
+          updateTabsetPanel(session, "tabsetID", selected = "Current scenario")
+          #  }
         }
       })
-    }
   }
 })
 

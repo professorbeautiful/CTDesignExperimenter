@@ -37,11 +37,22 @@ insertVGSubTree = function(insert, insertStyle="full") {
 }
 
 makeTree = function(scenario=defaultScenario, insertStyle="full") {
-  if(is.null(names(scenario@inserts))) {
-    names(scenario@inserts@.Data) = paste0("vg_", 1:length(scenario@inserts))
-    for(iInsert in seq(along=scenario@inserts)) {
-      if(scenario@inserts[[iInsert]]@filename != "") 
-        names(scenario@inserts@.Data[[iInsert]]) == scenario@inserts[[iInsert]]@filename
+  if(is.null(names(scenario@inserts))) 
+    names(scenario@inserts@.Data) = paste0("vg_", 1:length(scenario@inserts)) 
+  ##  This is a bizarre aspect of S4 classes.
+  ##  As soon as you assign an attribute to a .Data slot,
+  ##  it is removed and reattached to the parent instance!
+  ##  Ah, true of names attribute and other arbitrary attributes, 
+  ##  but not true of length attribute, and (probably)  dim attribute.
+  ## Thus, after the previous assignment, names(scenario@inserts@.Data) is still NULL,
+  ## but names(scenario@inserts)  has been set!
+  
+  for(iInsert in seq(along=scenario@inserts)) {
+    if(names(scenario@inserts)[[iInsert]] == "") {
+      if(scenario@inserts[[iInsert]]@filename == "") 
+        names(scenario@inserts)[[iInsert]] = scenario@inserts[[iInsert]]@filename
+      else
+        names(scenario@inserts)[[iInsert]] = paste0("vg_", iInsert)
     }
   }
   scenarioTree = 
@@ -57,7 +68,9 @@ makeTree = function(scenario=defaultScenario, insertStyle="full") {
   #                            , function(x)list(x))
   for(insertName in names(scenario@inserts)) {
     insert = scenario@inserts[[insertName]]
-    blockIndex = which(scaffoldObjects$eventInsertSubType == insert@insertSubType)
+    blockIndex = try(which(scaffoldObjects$eventInsertSubType == insert@insertSubType))
+    if(class(blockIndex) == 'try-error')
+      browser("makeTree blockIndex error")
     scenarioMap[insertName, "blockIndex"] = blockIndex
     scafBlockName = scaffoldObjects$name[blockIndex]
     thisBranchNum = which(scaffoldObjectNames==scafBlockName)

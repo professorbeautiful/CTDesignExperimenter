@@ -187,8 +187,10 @@ shinyServer(function(input, output, session) {
     if(isTRUE(rValues$clickedOnParameter)) {
       catn("observerClickedParameter: rValues$treeSelectionText = ", rValues$treeSelectionText)
       rValues$treeSelectionPath = substr(rValues$treeSelectionPath, 1, 5)
-      rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath)
+      catn("observerClickedParameter(1): rValues$treeSelectionPath = ", rValues$treeSelectionPath)
+      rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath, scenario=rValues$currentScenario)
       updateTabsetPanel(session, "tabsetID", selected = "Insert Editor")
+      catn("observerClickedParameter(2): rValues$treeSelectionPath = ", rValues$treeSelectionPath)
       rValues$clickedOnParameter = FALSE
     }
   }
@@ -198,8 +200,10 @@ shinyServer(function(input, output, session) {
     if(isTRUE(rValues$clickedOnGenerator)) {
       catn("observerClickedGenerator: rValues$treeSelectionText = ", rValues$treeSelectionText)
       rValues$treeSelectionPath = substr(rValues$treeSelectionPath, 1, 5)
-      rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath)
+      catn("observerClickedGenerator(1): rValues$treeSelectionPath = ", rValues$treeSelectionPath)
+      rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath, scenario=rValues$currentScenario)
       updateTabsetPanel(session, "tabsetID", selected = "Insert Editor")
+      catn("observerClickedGenerator(2): rValues$treeSelectionPath = ", rValues$treeSelectionPath)
       rValues$clickedOnGenerator = FALSE
     }
   }
@@ -246,7 +250,7 @@ shinyServer(function(input, output, session) {
                                      rValues$treeSelectionText)))
                  &  rValues$nSelected == 1) 
             if(rValues$openingVariableEditor) 
-              rValues$theVar = findObjectInScenario(rValues$treeSelectionPath, scenario=currentScenario)
+              rValues$theVar = findObjectInScenario(rValues$treeSelectionPath, scenario=rValues$currentScenario)
 
             rValues$clickedOnGenerator = 
               (rValues$treeSelectionDepth == 3  
@@ -265,11 +269,7 @@ shinyServer(function(input, output, session) {
             rValues$clickedOnInsert = 
               (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
             if(rValues$clickedOnInsert) 
-              rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath)
-            #           rValues$openingInsertEditor = 
-            #             (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
-            #           if(rValues$openingInsertEditor) 
-            #             rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath)
+              rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath, scenario=rValues$currentScenario)
           })
           if(class(result) ==  'try-error') {
             cat("problem with treeSelection: ", input$jstreeScenario, "\n")
