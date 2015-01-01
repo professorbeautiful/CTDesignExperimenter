@@ -8,6 +8,8 @@ require("CTDesignExperimenter")
 
 shinyServer(function(input, output, session) {
   
+  thisSession <<- session
+  
   observerCurrentScenario = observe({
     currScen = rValues$currentScenario
     messageSent = 

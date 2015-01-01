@@ -3,50 +3,71 @@
 outputPreamble <<- 'window.Shiny.shinyapp.$bindings.'
 # EXAMPLE:  window.Shiny.shinyapp.$bindings.selTxt.firstChild.nodeValue
 
-output$evaluatedOutput = renderText({
-  evalString = isolate(input$evalString)
-  ## you have to isolate; otherwise each character typed calls this callback.
+output$evaluatedOutputR = renderText({
+  if(wasClicked(input$evalButtonR)) {
+    evalString = isolate(input$evalStringR)
+  capture.output(eval(parse(text=evalString)))
+  ## you have to isolate input$evalStringR; otherwise each character typed calls this callback.
   ## This might be useful later for up-arrowing through past expressions.
   #   if(is.null(rValues$evalStringHistory))
   #     rValues$evalStringHistory = character(0)
   #  rValues$evalStringHistory = c(rValues$evalStringHistory, evalString)
-  
-  if(input$evalButton > 0) {
-    evalToggle = input$evalToggle
-    if(evalToggle == "R") {
-      capture.output(eval(parse(text=evalString)))
-    }
-    else {
-      if(evalToggle == "JSoutput")
-        evalJS(paste0(outputPreamble, evalString))
-      #       else
-      evalJS(evalString)
-      "JS output is in alert window, if there was no error."
-    }
   }
 })  
 
-evalJS = function(evalString="1+5"){
-  #JSevaluation
-  evalString = gsub('"', "'", evalString) # replace all DQ with SQ.
-  div(list(tags$script(
-    # 'alert(', '"HERE IS JS"', ')'     # THIS WORKS! 
-    # 'alert(eval(', '"1+2"', '))'       # THIS WORKS! 
-    paste0(
-      'alert(eval("', evalString, '"))'       # THIS WORKS!
-    )
-  )))
-}
+outputPreambleJS <<- 'window.Shiny.shinyapp.$bindings.'
+inputPreambleJS <<- 'window.Shiny.shinyapp.$inputValues.'
+wrapperToGetKeys <<- function(x) "Object.keys(" %&% x %&% ")"
+observerPreambleToggles = observe({
+  
+  catn("observerPreambleToggles")
+  input$prependInputPreambleToggle
+  input$prependOutputPreambleToggle
+  try({
+    evalString = isolate(input$evalStringJS)
+    
+    if(wasClicked(input$prependInputPreambleToggle)) {
+      if(substr(evalString, 1, nchar(inputPreambleJS)) != inputPreambleJS)
+        evalString = paste0(inputPreambleJS, evalString)
+    }
+    else ## Remove inputPreambleJS
+      evalString = gsub(inputPreambleJS, "", evalString, fixed=TRUE)
+    
+    if(wasClicked(input$prependOutputPreambleToggle)) {
+      if(substr(evalString, 1, nchar(outputPreambleJS)) != outputPreambleJS)
+        evalString = paste0(outputPreambleJS, evalString)
+    }
+    else ## Remove outputPreambleJS
+      evalString = gsub(outputPreambleJS, "", evalString, fixed=TRUE)
+    isolate( { rValues$evalStringJS = evalString } )
+    catn("Responding to preamble toggles, evalString=", evalString)
+    updateTextInput(thisSession, "evalStringJS", label="", value=rValues$evalStringJS)
+    # You need to specify the label arg too.
+  })
+})
+
+#output$evaluatedOutputJS = renderText({
+  #shinyalert("JS output is in alert window, if there was no error.")
+# }
+# )  
 
 output$JSevaluation = renderUI({
-  # TRY THIS SOME TIME, to avoid the alert window: 
-  #document.getElementById("demo").innerHTML = fruits;
-  
-  evalString = isolate(input$evalString)
-  if(input$evalButton > 0) {
-    if(input$evalToggle == "JS")
-      evalJS(evalString)
+
+    
+  if(wasClicked(input$evalButtonJS) ) {
+
+    evalString = gsub('"', "'", isolate(input$evalStringJS)) # replace all DQ with SQ.
+    
+    div(list(tags$script(
+      # 'alert(', '"HERE IS JS"', ')'     # THIS WORKS! 
+      # 'alert(eval(', '"1+2"', '))'       # THIS WORKS! 
+      paste0(
+        'alert(eval("', evalString, '"))'       # THIS WORKS!
+      )
+    )))
   }
+  # TRY THIS SOME TIME, to avoid creating an alert window: 
+  #document.getElementById("demo").innerHTML = fruits;
 })  
 
 
@@ -79,24 +100,44 @@ output$debugTools = renderUI({
                                        checkboxInput(inputId="traceCheckbox", 
                                                      value=FALSE,
                                                      label=textOutput("shiny.trace.text")
-                                       ))),
+                                       ))) ,
                               tag("TD", list(HTML(paste0(rep("&nbsp;",15), collapse="")))),
                               tag("TD", 
-                                  list(actionButton("evalButton", 
-                                                    HTML("<font color='red'> evaluate</font>")))),
-                              tag("TD", list( 
-                                radioButtons("evalToggle", "", c("R","JS"))
-                                #              div(style="size:large;color:red", "R"),
-                                #                  div(style="size:small;color:black", "/JS")
-                              )),
+                                  list(
+                                    actionButton("evalButtonJS", 
+                                                    HTML("<font color='red'> evaluate JS</font>"))
+                                       %>% tagAppendAttributes(
+                                         style="display: flex; justify-content:flex-end;")
+                                    # Cool! Too bad it doesn't work.
+                                  , checkboxInput(inputId="prependOutputPreambleToggle",
+                                                  value=FALSE,
+                                                  label="prependOutputPreambleToggle")
+                                  , checkboxInput(inputId="prependInputPreambleToggle",
+                                                  value=FALSE,
+                                                  label="prependInputPreambleToggle")
+                                  )
+                              ),
                               tag("TD",
-                                  list(width=10, tags$textarea(id = "evalString", 
-                                                               value="1+1"))),
+                                  list(width=10, tags$textarea(id = "evalStringJS", 
+                                                               value=""))),
+                              tag("TD", list(HTML(paste0(rep("&nbsp;",15), collapse="")))),
+                              
+                              tag("TD", 
+                                  list(actionButton("evalButtonR", 
+                                                    HTML("<font color='red'> evaluate R</font>"))
+                                       , HTML(paste0(rep("&nbsp;",25), collapse=""))
+                                       , br()
+                                       , br()
+                                  )
+                              ),
                               tag("TD", list(style="color:red", HTML("&rarr;"))),
+                              tag("TD",
+                                  list(width=10, tags$textarea(id = "evalStringR", 
+                                                               value=""))),
                               tag("TD",
                                   list(width=800, 
                                        style='text-align:"right"; color:white', 
-                                       uiOutput(outputId="evaluatedOutput"))),
+                                       uiOutput(outputId="evaluatedOutputR"))),
                               uiOutput(outputId='JSevaluation')
                             )
                         )
