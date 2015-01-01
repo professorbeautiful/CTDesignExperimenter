@@ -137,9 +137,14 @@ scenarioPanel = tabPanel(
                        )
                    ) 
   )
-  , tagAppendAttributes(em(
+  # , br()  # Not enough 
+  # , hr()  # Not enough
+  , HTML('&nbsp;')  ## must have some non trivial content
+  ### The previous line is necessary, or else the next panel will not show up in Chrome and Safari.
+  , div(style="overflow-y: auto; max-height: 400px;" 
+        , tagAppendAttributes(em(
           textOutput("SCENARIO_TREE_label"), 
-        class="clickMeToClearSelection"))
+          class="clickMeToClearSelection"))
   # THE FOLLOWING div LINE IS RESPONSIBLE FOR NOT SHOWING UP IN CHROME AND SAFARI
   # Specifically, it is overflow:auto.  Also overflow:scroll breaks it.
   #, div(style="height:800px;" 
@@ -161,7 +166,7 @@ scenarioPanel = tabPanel(
   , tags$script('ss_jstree.subscribe(tree(), function() { fixColors(); }); ')
   , tagToOpenTree  ## This tag MUST be AFTER myTree! Why? (Can be inside the div or not)
   , uiOutput('scenarioSearchTable')
-  #  )  ###  end of overflow div..  Fails in chrome and safari
+    )  ###  end of overflow div..  Fails in chrome and safari
 )
 
 CSSreference = singleton(tags$head(tags$link(href = "ctde.css", 
