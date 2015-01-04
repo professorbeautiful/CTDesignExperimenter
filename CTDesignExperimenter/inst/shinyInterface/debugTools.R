@@ -1,14 +1,11 @@
-##  For source'ing in server.R
-
-outputPreamble <<- 'window.Shiny.shinyapp.$bindings.'
-# EXAMPLE:  window.Shiny.shinyapp.$bindings.selTxt.firstChild.nodeValue
+##  For source'ing in server.R, and using in ui.R via uiOutput("debugTools")
 
 output$evaluatedOutputR = renderText({
   if(wasClicked(input$evalButtonR)) {
     evalString = isolate(input$evalStringR)
   capture.output(eval(parse(text=evalString)))
-  ## you have to isolate input$evalStringR; otherwise each character typed calls this callback.
-  ## This might be useful later for up-arrowing through past expressions.
+  ## You have to isolate input$evalStringR; otherwise each character typed calls this callback.
+  ## The following might be useful later for up-arrowing through past expressions.
   #   if(is.null(rValues$evalStringHistory))
   #     rValues$evalStringHistory = character(0)
   #  rValues$evalStringHistory = c(rValues$evalStringHistory, evalString)
@@ -16,16 +13,14 @@ output$evaluatedOutputR = renderText({
 })  
 
 outputPreambleJS <<- 'window.Shiny.shinyapp.$bindings.'
+# EXAMPLE:  window.Shiny.shinyapp.$bindings.selTxt.firstChild.nodeValue
 inputPreambleJS <<- 'window.Shiny.shinyapp.$inputValues.'
 wrapperToGetKeys <<- function(x) "Object.keys(" %&% x %&% ")"
 observerPreambleToggles = observe({
-  
-  catn("observerPreambleToggles")
   input$prependInputPreambleToggle
   input$prependOutputPreambleToggle
   try({
     evalString = isolate(input$evalStringJS)
-    
     if(wasClicked(input$prependInputPreambleToggle)) {
       if(substr(evalString, 1, nchar(inputPreambleJS)) != inputPreambleJS)
         evalString = paste0(inputPreambleJS, evalString)
@@ -42,22 +37,18 @@ observerPreambleToggles = observe({
     isolate( { rValues$evalStringJS = evalString } )
     catn("Responding to preamble toggles, evalString=", evalString)
     updateTextInput(thisSession, "evalStringJS", label="", value=rValues$evalStringJS)
-    # You need to specify the label arg too.
+    # You need to specify the label arg too. The default, NULL, doesn't cut it.
   })
 })
 
 #output$evaluatedOutputJS = renderText({
-  #shinyalert("JS output is in alert window, if there was no error.")
+  #shinyalert("JS output is in a popup alert window, if there was no error. Otherwise nothing happens")
 # }
 # )  
 
 output$JSevaluation = renderUI({
-
-    
   if(wasClicked(input$evalButtonJS) ) {
-
     evalString = gsub('"', "'", isolate(input$evalStringJS)) # replace all DQ with SQ.
-    
     div(list(tags$script(
       # 'alert(', '"HERE IS JS"', ')'     # THIS WORKS! 
       # 'alert(eval(', '"1+2"', '))'       # THIS WORKS! 
@@ -66,14 +57,9 @@ output$JSevaluation = renderUI({
       )
     )))
   }
-  # TRY THIS SOME TIME, to avoid creating an alert window: 
-  #document.getElementById("demo").innerHTML = fruits;
+  # TRY THIS SOME TIME, to avoid creating an alert window for the JS output: 
+  #document.getElementById("demo").innerHTML = ... ;
 })  
-
-
-### Evaluation examples:
-### example:   options(shiny.trace=input$traceButton)[[1]]
-### example:   options("shiny.trace")[[1]]
 
 output$shiny.trace.text = renderText({
   eval(options(shiny.trace=input$traceCheckbox), envir = .GlobalEnv);
