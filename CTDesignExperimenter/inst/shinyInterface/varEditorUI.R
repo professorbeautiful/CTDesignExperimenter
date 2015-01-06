@@ -45,6 +45,8 @@ output$varEditorUI = renderUI({
     div(class='col-6',
         conditionalPanel(
           condition="input.btnSearchVar > 0", 
+      HTML('&nbsp;'),
+      div(style="overflow-y: auto; max-height: 400px;", class = "well container-fluid",
           hr(),
           h3("Use typeahead to subset the rows."),
           textInput.typeahead(id="searchTypeAhead", "typeahead", 
