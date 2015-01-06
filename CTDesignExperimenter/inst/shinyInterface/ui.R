@@ -121,6 +121,11 @@ scenarioPanel = tabPanel(
   conditionPanel_1_needed_var,
   conditionPanel_moreThan1_insert,
   conditionalPanel(condition = 
+                     '$("#jstreeScenario").jstree().get_selected().length == 0',
+                   # br(), HTML("&nbsp;"), br(), HTML("&nbsp;")
+                   p(style="margin-bottom: 0.4cm;", HTML("&nbsp;"))
+                   ),
+  conditionalPanel(condition = 
                      '$("#jstreeScenario").jstree().get_selected().length > 0',
                    #$("#modalContents").dialog({bgiframe: true, height: 140, modal: true});
                    div(class="row-fluid", 
@@ -139,43 +144,21 @@ scenarioPanel = tabPanel(
   )
   # , br()  # Not enough 
   # , hr()  # Not enough
-  # , HTML('&nbsp;')  ## must have some non trivial content
-  , tagAppendAttributes(em(
-    textOutput("SCENARIO_TREE_label"), 
-    class="clickMeToClearSelection"))
+  # , HTML('&nbsp;')  ## Must have some non trivial content. This works.
+  , tagAppendAttributes(em( ## This works too (for scrollbar) -- and useful!
+    textOutput("SCENARIO_TREE_label"), ## Uses id=SCENARIO_TREE_label to call JS function.
+    class="clickMeToClearSelection"))   ## The class is not used currently.
     ### The previous line is necessary, or else the next panel will not show up in Chrome and Safari.
   , div(style="overflow-y: auto; max-height: 400px;" 
-  # THE FOLLOWING div LINE IS RESPONSIBLE FOR NOT SHOWING UP IN CHROME AND SAFARI
-  # Specifically, it is overflow:auto.  Also overflow:scroll breaks it.
-  #, div(style="height:800px;" 
-  #, div(style="overflow:scroll;height:400px;background-color:lightgrey"
-  ### myTree responds to JS (tagToOpenTree, and conditionals)
-  ### The uiOutput element does not.
-  #  , uiOutput(outputId = 'jstreeScenarioOutput')  
-  #   , jstree("jstreeScenario",  
-  #           myjstree.obj(list("a","b"))
-  #           # myjstree.obj(makeTree(scenario=currentScenario, "full"))
-  #     )
-  # 
-  #   #) 
-  #   , tags$script("  var jsonMessage;
-  #                 $('#jstreeScenario').jstree(
-  #                   { core: { data: function (node, cb) { cb(jsonMessage); } }
-  #               });")
-  , includeHTML("jstreeScenarioContent.html")
-  , tags$script('ss_jstree.subscribe(tree(), function() { fixColors(); }); ')
-  , tagToOpenTree  ## This tag MUST be AFTER myTree! Why? (Can be inside the div or not)
-  , uiOutput('scenarioSearchTable')
-    )  ###  end of overflow div..  Fails in chrome and safari
+        , includeHTML("jstreeScenarioContent.html")
+        , tags$script('ss_jstree.subscribe(tree(), function() { fixColors(); }); ')
+        , tagToOpenTree  ## This tag MUST be AFTER myTree! Why? (Can be inside the div or not)
+        , uiOutput('scenarioSearchTable')
+  )  ###  end of overflow div..  Failed in chrome and safari, but fixed now.
 )
 
 CSSreference = singleton(tags$head(tags$link(href = "ctde.css", 
                                              rel = "stylesheet")))
-# getLevelOfSelection = singleton(tags$head(tags$script(
-#   var levelOfSelection;
-#   
-#   )))
-
 
 myJSincludes = tagList(  ### Goes into the header.
   includeScript("www/jstree.min.js"),
@@ -188,13 +171,16 @@ myJSincludes = tagList(  ### Goes into the header.
   , singleton(tags$script( HTML( #### HTML prevents conversion of & into &amp; .
     ' $(document).bind("click", 
         function (e) { 
-          clickEvent = e; // to make available globall
-          if(window.Shiny.shinyapp.$inputValues.tabsetID=="Current scenario" 
-              && !$(e.target).parents(".jstree:eq(0)").length
-              && $(e.target).attr("id")=="SCENARIO_TREE_label") { 
+          clickEvent = e; // to make available globally, for debugging.
+          if(     // window.Shiny.shinyapp.$inputValues.tabsetID=="Current scenario" 
+                  //  && !$(e.target).parents(".jstree:eq(0)").length
+              $(e.target).attr("id")=="SCENARIO_TREE_label"
+              || 
+               clickEvent.target.innerText=="Replace Insert In Scenario" //OK
+          ) { 
                       $("#jstreeScenario").jstree("deselect_all");
                       console.log("DESELECTED");
-                } 
+             } 
         }); '
     )))
   ### id = $('#jstreeScenario').jstree('get_selected'); $("#" + id[0]) picks up the (first) selected node itself.
@@ -231,8 +217,6 @@ shinyUI(
         header=tagList(myJSincludes,
                        hr(),
                        popupJSincludes,
-                       # textInput("console", "Enter an R Command"),
-                       # uiOutput("varEditPopup"), ### Alternative to using tabsets.
                        uiOutput(outputId="debugTools"),
                        hr()),
         # message-handler code causes hang.
@@ -240,8 +224,7 @@ shinyUI(
         #         tags$head(tags$script(src = "message-handler.js"))
         #       ),
         scenarioPanel,
-        # editorPanel,
-        # tabPanel("Scenario Editor", uiOutput("scenarioEditorUI")),
+        # tabPanel("Scenario Editor", uiOutput("scenarioEditorUI")), #doesn't work in a separate ui object.
         
         tabPanel("Insert Editor", uiOutput("insertEditorUI")),
         
