@@ -31,7 +31,7 @@ insertVGSubTree = function(insert, insertStyle="full") {
       info = c(info, parameterInfo)
     }
     info = list(info)
-    names(info) = insert@filename
+    names(info) = paste(insert@outputVariable@name, insert@filename, sep=": ")
     return(info)    
   }
 }
@@ -66,22 +66,21 @@ makeTree = function(scenario=defaultScenario, insertStyle="full") {
   # names(scenarioTree) = scaffoldObjectNames
   # rep("inserts", length(scaffoldObjectNames)
   #                            , function(x)list(x))
-  for(insertName in names(scenario@inserts)) {
-    insert = scenario@inserts[[insertName]]
+  for(insertCount in names(scenario@inserts)) {
+    insert = scenario@inserts[[insertCount]]
     blockIndex = try(which(scaffoldObjects$eventInsertSubType == insert@insertSubType))
     if(class(blockIndex) == 'try-error')
       browser("makeTree blockIndex error")
-    scenarioMap[insertName, "blockIndex"] = blockIndex
+    scenarioMap[insertCount, "blockIndex"] = blockIndex
     scafBlockName = scaffoldObjects$name[blockIndex]
     thisBranchNum = which(scaffoldObjectNames==scafBlockName)
     #cat(thisBranchNum, " ")
+    insertedVGSubTree = insertVGSubTree(insert, insertStyle)
     scenarioTree[[thisBranchNum]] = c(
-      scenarioTree[[thisBranchNum]], 
-      insertVGSubTree(insert, insertStyle)) 
+      scenarioTree[[thisBranchNum]], insertedVGSubTree)
     names( scenarioTree[[thisBranchNum]]) [length( scenarioTree[[thisBranchNum]])] =
-      insertName
-    scenarioMap[insertName, "insertIndex"] = length(scenarioTree[[thisBranchNum]])
-    
+      names(insertedVGSubTree)
+    scenarioMap[insertCount, "insertIndex"] = length(scenarioTree[[thisBranchNum]])
   }
   for(i in 1:length(scenarioTree)){
 #     if(length(scenarioTree[[i]])==0) 
