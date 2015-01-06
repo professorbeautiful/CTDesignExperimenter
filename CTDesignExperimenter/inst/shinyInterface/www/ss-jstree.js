@@ -33,7 +33,7 @@ $.extend(ss_jstree, {
     message = message.replace(/'/g, "");
     message = message.replace(/^ *\[1\] *"/, "");
     message = message.replace(/.$/, "");
-    console.log("message is " + message);
+    //console.log("message is " + message);
     jsonMessage = eval(message);
     theJsonMessage = jsonMessage;
 
