@@ -6,7 +6,8 @@ cat("======== aaa.R  ================\n")
 printFunctionBody = function(f) {
   theBody = capture.output(f)
   theBody = gsub("^<environment.*", "", theBody) ## Remove env line if not .Primitive
-  gsub("[\t ]+", " ", paste(collapse="", theBody ) ) 
+  #gsub("[\t ]+", " ", 
+  paste(collapse="\n", theBody) 
 }
 ##  Previously (deparse((body(f)))), but doesnt work on .Primitives
 
