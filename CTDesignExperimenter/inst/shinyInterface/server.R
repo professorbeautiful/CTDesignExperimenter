@@ -185,10 +185,12 @@ shinyServer(function(input, output, session) {
   }
   )
   
-  observerClickedParameter = observe(label="observerClickedParameter", {
+  observerClickedParameter = observe(label="observerClickedParameter", 
+                                     { f.clickedParameter() })
+  f.clickedParameter <<- function() {
     if(isTRUE(rValues$clickedOnParameter)) {
       catn("observerClickedParameter: rValues$treeSelectionText = ", rValues$treeSelectionText)
-      rValues$treeSelectionPath = substr(rValues$treeSelectionPath, 1, 5)
+      rValues$treeSelectionPath = substr(rValues$treeSelectionPath, 1, 5) ## Point to the insert instead of the parameter
       catn("observerClickedParameter(1): rValues$treeSelectionPath = ", rValues$treeSelectionPath)
       rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath, scenario=rValues$currentScenario)
       updateTabsetPanel(session, "tabsetID", selected = "Insert Editor")
@@ -196,12 +198,13 @@ shinyServer(function(input, output, session) {
       rValues$clickedOnParameter = FALSE
     }
   }
-  )
+  
   
   observerClickedGenerator = observe(label="observerClickedGenerator", {
     if(isTRUE(rValues$clickedOnGenerator)) {
       catn("observerClickedGenerator: rValues$treeSelectionText = ", rValues$treeSelectionText)
-      rValues$treeSelectionPath = substr(rValues$treeSelectionPath, 1, 5)
+      rValues$treeSelectionPath = substr(rValues$treeSelectionPath, 1, 
+                                         gregexpr("_", rValues$treeSelectionPath)[[1]][3]-1)
       catn("observerClickedGenerator(1): rValues$treeSelectionPath = ", rValues$treeSelectionPath)
       rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath, scenario=rValues$currentScenario)
       updateTabsetPanel(session, "tabsetID", selected = "Insert Editor")
@@ -266,12 +269,13 @@ shinyServer(function(input, output, session) {
                                      rValues$treeSelectionText)))
                &  rValues$nSelected == 1) 
             
-              # We do NOT want the insert editor to open automatically <<<=====
-              #  Instead, we provide custom buttons.
             rValues$clickedOnInsert = 
               (rValues$treeSelectionDepth == 2 & rValues$nSelected == 1) 
             if(rValues$clickedOnInsert) 
               rValues$theInsert = findObjectInScenario(rValues$treeSelectionPath, scenario=rValues$currentScenario)
+            # When an insert is clicked,
+            # we do NOT want the insert editor to open automatically <<<=====
+            #  Instead, we provide custom buttons.
           })
           if(class(result) ==  'try-error') {
             cat("problem with treeSelection: ", input$jstreeScenario, "\n")
@@ -295,9 +299,8 @@ shinyServer(function(input, output, session) {
   # treeObserver$onInvalidate(function() print("jstreeScenario selection changed!"))
   
   output$SCENARIO_TREE_label = renderText({
-    "SCENARIO TREE" %&% ifelse(isTRUE(rValues$treeSelectionText != "")
-                               ,
-                               " (click here to clear selection)", "")
+    ("SCENARIO TREE" %&% ifelse(isTRUE(rValues$treeSelectionText != ""),
+                                      " (click here to clear selection)", ""))
   })
   
   output$selectedNode = renderText({
