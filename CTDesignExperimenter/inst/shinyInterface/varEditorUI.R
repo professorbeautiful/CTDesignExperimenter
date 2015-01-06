@@ -108,7 +108,7 @@ readVarFromPage = function() {
 observerBtnReplaceVariableInInsert = observe({
   if(wasClicked(input$btnReplaceVariableInInsert)){
     isolate({
-      if(rValues$editingOutputVariable) {
+      if(isTRUE(rValues$editingOutputVariable)) {
         theVar = readVarFromPage()
         if(class(theVar) != 'try-error') {
           rValues$theInsert@outputVariable = rValues$theVar
