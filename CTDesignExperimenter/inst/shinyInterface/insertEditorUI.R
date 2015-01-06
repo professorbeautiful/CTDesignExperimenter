@@ -1,6 +1,8 @@
 
 
-output$insertEditorUI = renderUI({ 
+output$insertEditorUI = renderUI({ f.insertEditorUI() })
+
+f.insertEditorUI <<- function() {
   try(rm(requirementDF), silent = TRUE)
   try(rm(requirementDF_old), silent = TRUE)
   try(rm(parameterDF), silent = TRUE)
@@ -278,7 +280,8 @@ observer_searchInsert = observe(label="observer_searchInsert",
   }
 })
 
-observe({
+observer_btnCheckCode = observe(label="observer_btnCheckCode", { f.btnCheckCode() });
+f.btnCheckCode <<- function() {
   if(wasClicked(input$btnCheckCode)) {
     fString = isolate(input$generatorCode)
     theFunction = try(eval(parse(text=fString)))
@@ -291,7 +294,7 @@ observe({
                 message=theMessage,
                 append=FALSE)
   }
-})
+}
 
 ###################### Clear the inputs to create a new Insert   ##############
 
