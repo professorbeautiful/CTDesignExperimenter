@@ -310,7 +310,7 @@ observer_newInsert = observe(label="observer_newInsert",
 
 Insert = VariableGenerator
 
-makeInsert = function() {
+readInsertFromPage = function() {
   theNewParameters = hot.to.df(input$parameterHOT)
   if(is.null(theNewParameters)) theNewParameters = list()
   result = try(
@@ -323,8 +323,8 @@ makeInsert = function() {
     ) 
   if(class(result) == 'try-error') {
     warning("Could not create the insert: ", result)
-    browser("makeInsert error", result)
-    return(rValues@theInsert)  ##TODO: should we prefer to throw error?
+    browser("readInsertFromPage error", result)
+    return(result)  ##TODO: should we prefer to throw error?
   }
   result@name = input$insertName 
   result@description = input$insertDescription 
@@ -337,12 +337,12 @@ observeBtnSaveInsert = observe(label="observeBtnSaveInsert", {
   ### Save Insert in a swapMeet file.
   if(isolate(input$tabsetID)=="Insert Editor" & !is.null(input$btnSaveInsert)){
     if(input$btnSaveInsert > 0) {
-      theInsert = makeInsert()
       if(class(theInsert) == "try-error")
         shinyalert("Error in observeBtnSaveInsert/makeInsert: " %&% theInsert)
       else {
+    theInsert = readInsertFromPage()
         theInsert = writeSwapMeetFile(theInsert, verbose = TRUE)
-        shinyalert("observeBtnSaveInsert/makeInsert: made new Insert. Wrote file "%&%
+        shinyalert("observeBtnSaveInsert/readInsertFromPage: made new Insert. Wrote file "%&%
                      theInsert@filename %&% ". CAUTION: This will NOT (yet) replace in Scenario." )
         rValues$theInsert = theInsert
         # TODO:  insert into Scenario, 
