@@ -361,22 +361,22 @@ addInsert = function(rVcS, theInsert) {
 observer_btnReplaceInsertInScenario = observe(label="observer_btnReplaceInsertInScenario", { 
   ### Save Insert in the scenario
   if(wasClicked(input$btnReplaceInsertInScenario)) {
-      isolate({
-        theInsert = makeInsert()
-        if(class(theInsert) == "try-error")
-          shinyalert("Error in Insert: " %&% theInsert)
-        else {
-          rValues$theInsert = theInsert = writeSwapMeetFile(theInsert, verbose = TRUE) 
-          #if(!is.null(input$treeSelectionDepth))
-          #  if(input$treeSelectionDepth == 2) {
-          ### Replace
-          rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
-          rVcS = removeInsert(rVcS, rValues$treeSelectionPath)
-          rValues$currentScenario <- addInsert(rVcS, theInsert) 
-          updateTabsetPanel(session, "tabsetID", selected = "Current scenario")
-          #  }
-        }
-      })
+    isolate({
+      theInsert = readInsertFromPage()
+      if(class(theInsert) == "try-error")
+        shinyalert("Error in Insert: " %&% theInsert)
+      else {
+        rValues$theInsert = theInsert = writeSwapMeetFile(theInsert, verbose = TRUE) 
+        #if(!is.null(input$treeSelectionDepth))
+        #  if(input$treeSelectionDepth == 2) {
+        ### Replace
+        rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
+        rVcS = removeInsert(rVcS, rValues$treeSelectionPath)
+        rValues$currentScenario <- addInsert(rVcS, theInsert) 
+        updateTabsetPanel(session, "tabsetID", selected = "Current scenario")
+        #  }
+      }
+    })
   }
 })
 
