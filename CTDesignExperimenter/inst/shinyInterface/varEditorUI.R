@@ -6,7 +6,7 @@ output$varEditorUI = renderUI({
   theVar = rValues$theVar
   CHECK = printFunctionBody(theVar@checkDataType)
   catn("output$varEditorUI: var is ", capture.output(theVar))
-
+  
   pattern = "^V_"
   objectTypeName="Variable"
   source("createSwapMeetObjectTable.R", local=TRUE)  
@@ -16,54 +16,56 @@ output$varEditorUI = renderUI({
       h2(strong("Editing a Variable ",
                 img(width=50, height=50, src='Var32.png', align="absmiddle"),  ### Place in app root. Also, "www/" will not work.
                 class="VARlevel")),
-    hr(),
-    div(class='col-6',
-        actionButton(inputId="btnNewVar" , 
-                     label="New Variable", css.class = "VARlevel"),
-        tagAppendAttributes(a(
-          actionButton(inputId="btnSearchVar" , 
-                       label="Search swapmeet & load Variable", css.class = "VARlevel")
+      hr(),
+      div(class='col-6',
+          actionButton(inputId="btnNewVar" , 
+                       label="New Variable", css.class = "VARlevel"),
+          tagAppendAttributes(a(
+            actionButton(inputId="btnSearchVar" , 
+                         label="Search swapmeet & load Variable", css.class = "VARlevel")
           ),
           href="#idSearchVariable"),
-        actionButton(inputId="btnReplaceVariableInInsert" ,
-                     label="Replace Variable in Insert", css.class = "VARlevel"),
-        actionButton(inputId="btnSaveVarAs" , 
-                     label="Save Variable as...", css.class = "VARlevel"),
-        hr(),
-        # select2Input WORKS, and variable loads, but not very usable.
-        tagAppendAttributes(h3(" Variable slots"), class="VARlevel"),
-        textInput("varName", label = "name", rValues$theVar@name),
-        tagAppendAttributes(div(
-          textInput("varDescription", label = "description", rValues$theVar@description)),
-          style="width:100%"),
-        textInput("varCHECK", label = "check", printFunctionBody(rValues$theVar@checkDataType)),
-        hr(),
-        renderText({"author: " %&% theVar@author}),
-        renderText({"timestamp: " %&% capture.output(theVar@timestamp)}),
-        renderText({"file: " %&% theVar@filename})
-    ),
-    div(class='col-6',
-        conditionalPanel(
-          condition="input.btnSearchVar > 0", 
+          actionButton(inputId="btnReplaceVariableInInsert" ,
+                       label="Replace Variable in Insert", css.class = "VARlevel"),
+          actionButton(inputId="btnSaveVarAs" , 
+                       label="Save Variable as...", css.class = "VARlevel"),
+          hr()
+      )
+      ,
+      # select2Input WORKS, and variable loads, but not very usable.
       HTML('&nbsp;'),
       div(style="overflow-y: auto; max-height: 400px;", class = "well container-fluid",
+          tagAppendAttributes(h3(" Variable slots"), class="VARlevel"),
+          textInput("varName", label = "name", rValues$theVar@name),
+          tagAppendAttributes(div(
+            textInput("varDescription", label = "description", rValues$theVar@description)),
+            style="width:100%"),
+          textInput("varCHECK", label = "check", printFunctionBody(rValues$theVar@checkDataType)),
           hr(),
-          h3("Use typeahead to subset the rows."),
-          textInput.typeahead(id="searchTypeAhead", "typeahead", 
-                              local=allVariablesDF, 
-                              tokens=paste(allVariablesDF$name,
-                                           allVariablesDF$description), 
-                              valueKey="filename", 
-                              template=HTML("{{name}} : {{description}}")
-          ),
-          tagAppendAttributes(a(""), id="idSearchVariable"),
-          h3("Click on the radiobutton to load the Variable into the template above."),
-          HTML('<div id="chooseVariable" class="control-group shiny-input-radiogroup">
+          renderText({"author: " %&% theVar@author}),
+          renderText({"timestamp: " %&% capture.output(theVar@timestamp)}),
+          renderText({"file: " %&% theVar@filename})
+      ),
+      div(class='col-6',
+          conditionalPanel(
+            condition="input.btnSearchVar > 0", 
+            hr(),
+            h3("Use typeahead to subset the rows."),
+            textInput.typeahead(id="searchTypeAhead", "typeahead", 
+                                local=allVariablesDF, 
+                                tokens=paste(allVariablesDF$name,
+                                             allVariablesDF$description), 
+                                valueKey="filename", 
+                                template=HTML("{{name}} : {{description}}")
+            ),
+            tagAppendAttributes(a(""), id="idSearchVariable"),
+            h3("Click on the radiobutton to load the Variable into the template above."),
+            HTML('<div id="chooseVariable" class="control-group shiny-input-radiogroup">
                            <label class="control-label" for="chooseVariable">Swapmeet Variables</label>'),
-          dataTableOutput("allVariablesTable"),
-          HTML('</div>')
-        )
-    )
+            dataTableOutput("allVariablesTable"),
+            HTML('</div>')
+          )
+      )
   )
 })
 
