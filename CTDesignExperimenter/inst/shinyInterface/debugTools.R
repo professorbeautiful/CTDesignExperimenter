@@ -73,7 +73,7 @@ output$shiny.trace.text = renderText({
 output$debugTools = renderUI({
   div(style="background:darkGrey",
       singleton(tags$script(paste(
-        "outputPreamble = '", outputPreamble, "';")))
+        "outputPreambleJS = '", outputPreambleJS, "';")))
       ,
       checkboxInput(inputId='debugToolsCheckbox', value=FALSE,
                     label=em(strong("Debugging aids"))),

@@ -40,11 +40,14 @@ conditionPanelBlockSelected = conditionalPanel(
       hr())
 )
 
+outputPreambleJS <<- 'window.Shiny.shinyapp.$bindings.'
+
+
 treeSelectionDepthJSfunction = singleton(tags$script(
-  "function treeSelectionDepth() { return " %&% outputPreamble %&% 
+  "function treeSelectionDepth() { return " %&% outputPreambleJS %&% 
     " treeSelectionDepth.el.textContent; }; "))
 treeSelectionTextJSfunction = singleton(tags$script(
-  "function treeSelectionText() { return " %&% outputPreamble %&% 
+  "function treeSelectionText() { return " %&% outputPreambleJS %&% 
     " treeSelectionText.el.textContent; };
    function is_needed() {return treeSelectionText().search('needs:') == 0;}; 
    function is_code() {return treeSelectionText().search('generator code:') == 0;}; 
@@ -166,7 +169,7 @@ myJSincludes = tagList(  ### Goes into the header.
   , CSSreference ### OK. Works (for text colors)
   , treeSelectionDepthJSfunction
   , treeSelectionTextJSfunction
-  , singleton(tags$script("var outputPreamble = '" %&% outputPreamble %&% "';"))
+  , singleton(tags$script("var outputPreambleJS = '" %&% outputPreambleJS %&% "';"))
   , singleton(tagToOpenTree)
   , singleton(tags$script( HTML( #### HTML prevents conversion of & into &amp; .
     ' $(document).bind("click", 
