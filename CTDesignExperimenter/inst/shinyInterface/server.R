@@ -442,11 +442,11 @@ shinyServer(function(input, output, session) {
   observerSaveScenarioToGlobalEnv = observe({
     if( wasClicked(input$btnSaveScenarioToGlobalEnv) ) {   # Trigger if clicked
       cat("\nSaving scenario\n")
+       
       assign(isolate(input$scenarioName), pos = 1,
-             rValues$currentScenario
-             ##TODO: update rValues$currentScenario 
-             ## responding to deletes, insertions, edits in place.
-      )
+             rValues$currentScenario)
+      assign("currentScenario", pos = 1,
+                    rValues$currentScenario)
       shinysky:::showshinyalert(session, id="SaveScenarioToGlobalEnv", styleclass = "inverse",
                                 HTMLtext=paste(
                                   "Saving scenario to GlobalEnv, name = ",
