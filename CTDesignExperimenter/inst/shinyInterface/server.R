@@ -310,8 +310,11 @@ shinyServer(function(input, output, session) {
     print(paste0("selectedNodes ", input$jstreeScenario, collapse = ", "))
   })
   
+  ### The trial data will be in .GlobalEnv
+  if( (length(find("trialData")) == 0) || (find("trialData")[[1]] != ".GlobalEnv") )
+    assign("trialData", new.env(), pos=1)
   
-  #### Display Design Parameters.
+    #### Display Design Parameters.
   oneRunHeader =   function() {
     returnvalueStringDesignParameters = paste0(
       "tagList(",
