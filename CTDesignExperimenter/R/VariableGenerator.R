@@ -18,6 +18,7 @@ setClass("VariableGenerator", contains="Specifier",
 )
 
 VariableGenerator = function(insertSubType="PatientAttribute",
+                             name="NEED NAME",
                              parameters=list(),
                              provisions, 
                              requirements=NULL,
@@ -25,6 +26,7 @@ VariableGenerator = function(insertSubType="PatientAttribute",
   if(missing(provisions)) provisions=outputVariable
   if(missing(outputVariable)) outputVariable=provisions
   vg = new("VariableGenerator", 
+           name=name,
            timestamp=Sys.time(),
            author=Sys.getenv("USER"),
            insertSubType=insertSubType,
