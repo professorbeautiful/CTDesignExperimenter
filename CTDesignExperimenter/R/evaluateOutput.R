@@ -122,14 +122,19 @@ evaluateVNoutputs = function(vN, envVariableValues = new.env()) {
 ##' @examples printVVenv(vNvalueEnv)
 
 printVVenv = function(env) {
-  for(vvname in ls(env=env)) {
-    vv = get(vvname, env=env)
-    if(is(vv, "VariableValue"))
-      catn(vv@variable@name, "=", vv, " (variable value)")
-    else
-      catn(vvname, "=", vv, " (parameter)")
+  if(length(env)==0)
+    browser("printVVenv has empty env arg")
+  else {
+    for(vvname in ls(env=env)) {
+      vv = get(vvname, env=env)
+      if(is(vv, "VariableValue"))
+        catn(vv@variable@name, "=", vv, " (variable value)")
+      else
+        catn(vvname, "=", vv, " (parameter)")
+    }
   }
 }
+
 
 
 
