@@ -4,7 +4,8 @@ createVG_FixedSampleSizeMax = function(Nmax = 3) {
                     provisions=v_SampleSizeMax, 
                     generatorCode=function(){
                       SampleSizeMax
-                    }
+                    },
+                    name="vg_SampleSizeMax"
   )
 }
 
@@ -14,6 +15,7 @@ makeDefaultScenario = function(hideOutput=FALSE) {
     sink("/dev/null")
   }
   vg_age = PatientAttribute(parameters=list(ageMean=50, ageCV=0.5),
+                            name="vg_age",
                             generatorCode=function(){
                               rlognorm(1, ageMean, ageCV)
                             },
@@ -21,6 +23,7 @@ makeDefaultScenario = function(hideOutput=FALSE) {
   )
   
   ec_age = EligibilityCriterion( parameters=list(cutoff=50),
+                                 name="ec_age",
                                  requirements=VariableList(v_ageVariable),
                                  outputVariable=Variable(name="isOldEnough",
                                                          description="Patient is old enough",
@@ -32,12 +35,14 @@ makeDefaultScenario = function(hideOutput=FALSE) {
                              gitAction="none",
                              checkDataType=function(x) is.numeric(x))
   vg_liver = PatientAttribute(parameters=list(liverMean=1, liverCV=0.2),
+                              name="vg_liver",
                               generatorCode=function(){
                                 rlognorm(1, liverMean, liverCV)
                               },
                               provisions=v_liverVariable
   )
   ec_liver = EligibilityCriterion( parameters=list(cutoff=1.5),
+                                   name="ec_liver",
                                    requirements=VariableList(v_liverVariable),
                                    outputVariable=Variable(name="liverOK",
                                                            description="Patient has sufficient liver function.",
@@ -51,6 +56,7 @@ makeDefaultScenario = function(hideOutput=FALSE) {
   #                                generatorCode=))
   
   vg_clearanceRate = VariableGenerator(
+    name="vg_clearanceRate",
     parameters=list(clearanceLocation=6,
                     clearanceSD=1),
     provisions=v_clearanceRate,
@@ -70,6 +76,7 @@ makeDefaultScenario = function(hideOutput=FALSE) {
   ######################
   
   vg_responseDoseThreshold  = VariableGenerator(
+    name="vg_responseDoseThreshold",
     parameters=list(responseLoc=0, responseSD=0.01),
     requirements=VariableList(v_clearanceRate),
     provisions=v_responseDoseThreshold, 
@@ -83,6 +90,7 @@ makeDefaultScenario = function(hideOutput=FALSE) {
   #evaluateOutput(vg_responseDoseThreshold)
   
   vg_toxDoseThreshold  = VariableGenerator(
+    name="vg_toxDoseThreshold",
     parameters=list(toxLoc=0.5, toxSD=0.1),
     requirements=VariableList(v_clearanceRate),
     provisions=v_toxDoseThreshold, 
