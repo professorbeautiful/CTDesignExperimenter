@@ -44,7 +44,7 @@ VariableList = function(vList) {
 ###' 
 setClassUnion("Variables", c("Variable", "VariableList", "NULL"))
 setMethod("print", "Variable", function(x)
-  cat(" ", x@name, " (", printFunctionBody(x@checkDataType), ")\n")  ### Omits description.
+  cat(" ", x@name, " (valid:", gsub("\\n$", "", printFunctionBody(x@checkDataType)), ")\n")  ### Omits description.
 ) 
 ## This only works with an explicit print(v) call.
 

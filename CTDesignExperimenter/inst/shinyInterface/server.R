@@ -337,33 +337,36 @@ shinyServer(function(input, output, session) {
   }
   
   oneRunSummaries =   function() {
-    if(input$btnOneRun > 0)## to kick it off.
-      runTrial()
-    nPatients = length(trialData$patientData)
-    catn("nPatients = ", nPatients)
+    if(wasClicked(input$btnOneRun )) { ## to kick it off.
+      runTrial(rValues$currentScenario)
+      nPatients = length(trialData$patientData)
+      catn("nPatients = ", nPatients)
     returnvalueStringTrialSummaries = paste0(
-      "tagList(",
-      "div(h3('Summaries of the Trial'), ",
-      paste("'", capture.output(
-        printVVenv(trialData$trialSummaries))
-        , "'", collapse=","),
-      "))")
-    returnvalue = eval(parse(text=returnvalueStringTrialSummaries))
-    returnvalue = tagList(returnvalue, hr(),
-                          div(h3('Individual Patients (variable values)')))
-    returnvalue = tagList(returnvalue, 
-                          paste("# patients = ", nPatients))
-    returnvalue = tagList(returnvalue, 
-                          numericInput(inputId = "patientChoice", "View Patient (#)",
-                                       value=1, min=1, max=nPatients, step=1))
-    
+        "tagList(",
+        "div(h3('Summaries of the Trial'), ",
+        paste("'", capture.output(
+          printVVenv(trialData$trialSummaries))
+          , "'", collapse=","),
+        "))")
+      returnvalue = eval(parse(text=returnvalueStringTrialSummaries))
+      returnvalue = tagList(returnvalue, hr(),
+                            div(h3('Individual Patients (variable values)')))
+      returnvalue = tagList(returnvalue, 
+                            paste("# patients = ", nPatients))
+      returnvalue = tagList(returnvalue, 
+                            numericInput(inputId = "patientChoice", "View Patient (#)",
+                                         value=1, min=1, max=nPatients, step=1))
+    }
+    else
+      returnvalue = div("Click button to run a trial")
     return(returnvalue)
   }
-  
+#  debug(oneRunSummaries)
     
   oneRunResults =   function() {
-    if(input$btnOneRun > 0)
-      iPatient = input$patientChoice
+    wasClicked(input$btnOneRun)
+    iPatient = input$patientChoice
+    if(is.null(iPatient)) iPatient = 1
     catn("iPatient = ", capture.output(iPatient))  
     if(is.null(iPatient)) 
       return("")
