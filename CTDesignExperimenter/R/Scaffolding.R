@@ -608,7 +608,7 @@ runTrial = function(scenario=defaultScenario) {
   options(error=recover)
   #startup()
   initializeQueue()
-  executeQueue()
+  executeQueue(scenario=scenario)
 }
 
 if(interactive()) runTrial()  ## skip when building.
