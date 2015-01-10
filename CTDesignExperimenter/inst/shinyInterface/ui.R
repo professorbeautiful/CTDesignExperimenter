@@ -236,10 +236,11 @@ shinyUI(
         tabPanel("One CT run", 
                  h2("Display results from a single CT run for the selected scenario."),
                  hr()
-                 , uiOutput("oneRunHeader")
+                 , uiOutput("oneRunHeader") 
                  , actionButton(inputId="btnOneRun", label="Run one CT", styleclass = "success")
-                 , uiOutput("oneRunSummaries")
-                 , uiOutput("oneRunResults")
+                 , uiOutput("oneRunSummaries") 
+                 , div(style="overflow-y:auto; max-height:400px;" 
+                       , uiOutput("oneRunResults") )
         ),
         tabPanel("Criteria",
                  "Criteria will be selected and created here."),
