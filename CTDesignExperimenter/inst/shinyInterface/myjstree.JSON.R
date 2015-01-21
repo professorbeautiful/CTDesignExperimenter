@@ -75,8 +75,8 @@ myjstree.JSON =
 reducedScenario = currentScenario
 reducedScenario@inserts = new("ListOfInserts", reducedScenario@inserts)
 
-pbcopy(#gsub("'", "", substring(first = nchar("\n  'children' : "),
-    myjstree.JSON(
-      makeTree(scenario=reducedScenario, "full")
-      ) 
-    )
+# pbcopy(#gsub("'", "", substring(first = nchar("\n  'children' : "),
+#     myjstree.JSON(
+#       makeTree(scenario=reducedScenario, "full")
+#       ) 
+#     )

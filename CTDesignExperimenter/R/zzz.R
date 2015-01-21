@@ -8,8 +8,17 @@
 	return(invisible(NULL))
 }
 
-startup = function(){
+startup = function(useExistingDefaults=TRUE, useLastScenario=TRUE){
   makeScaffoldObjects()
+  if ( useLastScenario) {
+    result = try( loadLatestScenario())
+    if(class(result) != "try-error")
+      assign("defaultScenario", currentScenario, pos=1)
+    else cat("Error in startup(): ", defaultScenario, "\n")
+  }
+  if( ( exists("defaultScenario", where=1) & useExistingDefaults) )
+    return(invisible())
+  ### no defaultScenario, or we want to revert to the "stock" scenario
   makeVariableGeneratorConstructors()
   vc = createVariableCatalog()
   for(v in ls(env=vc)) 
