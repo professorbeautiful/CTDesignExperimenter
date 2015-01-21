@@ -79,7 +79,7 @@ scaffoldInsertSubTypes = cq(
 )
 scaffoldObjects = data.frame(stringsAsFactors=FALSE,
   row.names=scaffoldObjectNames,
-  name=scaffoldObjectNames,
+  blockName=scaffoldObjectNames,
   eventInsertSubType=scaffoldInsertSubTypes
 )
 scaffoldObjects$eventInsertType = 
@@ -124,10 +124,10 @@ makeScaffoldObjects <- function () {
          assign(
            #assignInMyNamespace( # fails: Error in bindingIsLocked(x, ns)
            pos=1, #works for BUILD, but then objects are lost.
-           print(name), new("ScaffoldEvent",
-                            name=name,
-                            predecessor=ifelse(scaf>1, scaffoldObjects$name[scaf-1], ""),
-                            successor=ifelse(scaf<scafSize, scaffoldObjects$name[scaf+1], ""),
+           print(blockName), new("ScaffoldEvent",
+                            name=blockName,
+                            predecessor=ifelse(scaf>1, scaffoldObjects$blockName[scaf-1], ""),
+                            successor=ifelse(scaf<scafSize, scaffoldObjects$blockName[scaf+1], ""),
                             eventInsertType=scaffoldObjects$eventInsertType[scaf],
                             eventInsertSubType=scaffoldObjects$eventInsertSubType[scaf],
                             jumpIf=scaffoldObjects$jumpIf[scaf],

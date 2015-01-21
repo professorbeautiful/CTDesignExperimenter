@@ -56,24 +56,19 @@ makeTree = function(scenario=defaultScenario, insertStyle="full") {
     }
   }
   scenarioTree = 
-    sapply(scaffoldObjectNames, simplify=F, function(x) list())
+    sapply(scaffoldBlockNames, simplify=F, function(x) list())
   scenarioMap = data.frame(insertName=names(scenario@inserts))
   rownames(scenarioMap) = scenarioMap$insertName
   scenarioMap$blockIndex = NA
   scenarioMap$insertIndex = NA
-  #    rep(list(list(inserts=character(0))), 13)
-  #  as.list(scaffoldObjectNames)
-  # names(scenarioTree) = scaffoldObjectNames
-  # rep("inserts", length(scaffoldObjectNames)
-  #                            , function(x)list(x))
   for(insertCount in names(scenario@inserts)) {
     insert = scenario@inserts[[insertCount]]
     blockIndex = try(which(scaffoldObjects$eventInsertSubType == insert@insertSubType))
     if(class(blockIndex) == 'try-error')
       browser("makeTree blockIndex error")
     scenarioMap[insertCount, "blockIndex"] = blockIndex
-    scafBlockName = scaffoldObjects$name[blockIndex]
-    thisBranchNum = which(scaffoldObjectNames==scafBlockName)
+    scafBlockName = scaffoldObjects$blockName[blockIndex]
+    thisBranchNum = which(scaffoldBlockNames==scafBlockName)
     #cat(thisBranchNum, " ")
     insertedVGSubTree = insertVGSubTree(insert, insertStyle)
     scenarioTree[[thisBranchNum]] = c(
@@ -134,7 +129,7 @@ findObjectInScenario = function( index="0_3_4_1", scenario) {
     loadLatestScenario()
     scenario = latestScenario
   }
-  blockName = scaffoldObjectNames[L1]
+  blockName = scaffoldBlockNames[L1]
   insertSubType = scaffoldInsertSubTypes[L1]
   if( insertSubType == "")
     stop("findInsertInScenario: insertSubType not found")

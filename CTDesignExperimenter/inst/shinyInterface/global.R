@@ -6,7 +6,7 @@ require(magrittr) ###   %>% pipe operator
 
 options(shiny.trace=FALSE)
 
-scaffoldObjectNames = scaffoldObjects[[1]]
+scaffoldBlockNames = scaffoldObjects[[1]]
 
 startup()
 

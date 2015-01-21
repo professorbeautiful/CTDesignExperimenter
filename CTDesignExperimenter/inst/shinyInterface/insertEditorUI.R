@@ -89,8 +89,7 @@ f.insertEditorUI <<- function() {
   output$insertSubTypeTOP = renderText( {  theInsert@insertSubType})
   
   output$insertBlockString = renderText( { 
-    scaffoldObjectNames[which(scaffoldInsertSubTypes==input$selectedInsertSubType)] })
-  ## We should probably rename scaffoldObjectNames to scaffoldBlockNames. 
+    scaffoldBlockNames[which(scaffoldInsertSubTypes==input$selectedInsertSubType)] })
   
   ############ showEditableInsertSlot, a FAILED EXPERIMENT ? ####################
   
