@@ -77,7 +77,7 @@ observe({       ### Find and load a variable from a file.
         #         fileInfo = input$varSearchFileInput
         #         print(fileInfo)
         #        theVar = source(fileInfo$datapath, local = TRUE)$value
-        theVar = source(swapMeetDir() %&% input$varSearchFileInput, 
+        theVar = source(getSwapMeetDir() %&% input$varSearchFileInput, 
                         local = TRUE)$value
         print(str(theVar))
         if(class(theVar) == "Variable") rValues$theVar = theVar
@@ -147,7 +147,7 @@ observerChooseVariable = observe({
       varFileName = allVariablesDF[chooseVariable, "filename"]
       catn("observerChooseVariable:  varFileName = ", varFileName)
       theVar = try(
-        source(swapMeetDir() %&% varFileName, local=TRUE)$value
+        source(getSwapMeetDir() %&% varFileName, local=TRUE)$value
       )
       if(class(theVar) != "try-error")
         rValues$theVar <- theVar

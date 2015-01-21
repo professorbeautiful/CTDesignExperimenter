@@ -12,7 +12,7 @@ output$scenarioSearchTable = renderUI({
         scenarioFileName = allScenariosDF[chooseScenario, "filename"]
         catn("observerChooseScenario:  FileName = ", scenarioFileName)
         currentScenario = try(
-          source(swapMeetDir() %&% scenarioFileName, local=TRUE)$value
+          source(getSwapMeetDir() %&% scenarioFileName, local=TRUE)$value
         )
         if(class(currentScenario) != "try-error")
           rValues$currentScenario <- currentScenario

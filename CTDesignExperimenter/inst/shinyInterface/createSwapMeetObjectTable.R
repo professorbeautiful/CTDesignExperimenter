@@ -4,10 +4,10 @@
 
 catn("Beginning to source createSwapMeetObjectTable.R with objectTypeName=", objectTypeName)
 
-theFilenames = rev(dir(swapMeetDir(), pattern = pattern))
+theFilenames = rev(dir(getSwapMeetDir(), pattern = pattern))
 allObjectsList = lapply(theFilenames, 
                         function(fname) {
-                          tempObject = source(swapMeetDir() %&% fname, local=TRUE)$value
+                          tempObject = source(getSwapMeetDir() %&% fname, local=TRUE)$value
                           objToDataframe(tempObject)
                         })
 allObjectsDF = Reduce(rbind, allObjectsList)

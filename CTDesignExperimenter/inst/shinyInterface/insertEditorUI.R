@@ -275,7 +275,7 @@ observer_searchInsert = observe(label="observer_searchInsert",
   if(isolate(input$tabsetID)=="Insert Editor" & !is.null(input$btnSearchInsert)){
     if(input$btnSearchInsert > 0 & !is.null(input$insertSearchFileInput)) {
       try({
-        theInsert = source(swapMeetDir() %&% input$insertSearchFileInput, 
+        theInsert = source(getSwapMeetDir() %&% input$insertSearchFileInput, 
                            local = TRUE)$value
         print(str(theInsert))
         if(class(theInsert) == "VariableGenerator") rValues$theInsert = theInsert
@@ -393,7 +393,7 @@ observer_chooseInsertRadioGroup = observe(label="observer_chooseInsertRadioGroup
       insertFileName = allInsertsDF[chooseInsertChoice, "filename"]
       catn("insertFileName = ", insertFileName)
       theInsert = try(
-        source(swapMeetDir() %&% insertFileName, local=TRUE)$value
+        source(getSwapMeetDir() %&% insertFileName, local=TRUE)$value
       )
       if(class(theInsert) != "try-error")
         rValues$theInsert = theInsert

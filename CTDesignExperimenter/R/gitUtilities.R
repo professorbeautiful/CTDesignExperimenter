@@ -1,7 +1,7 @@
 cat("==========  gitUtilities =========\n")
 
 readSwapMeetFile = function(fileName) {
-  source(swapMeetDir() %&% fileName, local=TRUE)$value
+  source(getSwapMeetDir() %&% fileName, local=TRUE)$value
 }
 
 writeSwapMeetFile = function(item,
@@ -21,11 +21,11 @@ writeSwapMeetFile = function(item,
   #save(filename, file=path, ascii=FALSE)  
   dput2(x = item, file = makeItemFilePath(item), control="all")
   if(verbose) cat("writeSwapMeetFile: writing ", item@filename, "\n")
-  if(commitIt) commitSwapMeetFiles(item@filename, swapMeetDir(), ...)
+  if(commitIt) commitSwapMeetFiles(item@filename, getSwapMeetDir(), ...)
   return(item)
 }
 
-swapMeetDir = function(dir) {
+getSwapMeetDir = function(dir) {
   if(!missing(dir)) {
     assign('swapDir', dir, pos=1)
     return(dir)
@@ -66,7 +66,7 @@ addItemFileName = function(item, write=TRUE, commitIt=FALSE) {
 }
 
 makeItemFilePath = function(item) {
-  return(swapMeetDir() %&% "/" %&% item@filename)
+  return(getSwapMeetDir() %&% "/" %&% item@filename)
 }
 
 writeVariableFile = function(var, commitIt=FALSE, ...) {
@@ -141,7 +141,7 @@ seeSwapMeetFile = function(item) {
     name = item@filename
   else
     name = item
-  system("cat " %&% swapMeetDir() %&% "/" %&% name)
+  system("cat " %&% getSwapMeetDir() %&% "/" %&% name)
 } 
 
 commitSwapMeetFiles = function(fileNames, dir="../CTDEswapmeet", comment) {
@@ -163,13 +163,13 @@ if(interactive()) {
 }
 
 latestScenarioName <- function() 
-  rev(dir(swapMeetDir(), pattern="^S_"))[1]
+  rev(dir(getSwapMeetDir(), pattern="^S_"))[1]
 
 loadLatestScenario = function(setCurrent=TRUE, verbose=FALSE){
  if(verbose) 
-   catn("swapMeetDir()", swapMeetDir(), "  ", "latestScenarioName:", latestScenarioName())
+   catn("getSwapMeetDir()", getSwapMeetDir(), "  ", "latestScenarioName:", latestScenarioName())
   if(!is.na(latestScenarioName())) {
-    latestScenarioFile <<- swapMeetDir() %&% latestScenarioName()
+    latestScenarioFile <<- getSwapMeetDir() %&% latestScenarioName()
     latestScenario <- dget(latestScenarioFile)
     catn(class(latestScenario))
     names(latestScenario@inserts@.Data) <- sapply(latestScenario@inserts@.Data,
