@@ -378,6 +378,9 @@ observer_btnReplaceInsertInScenario = observe(label="observer_btnReplaceInsertIn
         rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
         rVcS = removeInsert(rVcS, rValues$treeSelectionPath)
         rValues$currentScenario <- addInsert(rVcS, theInsert) 
+        cSlength = length(rValues$currentScenario@inserts)
+        names(rValues$currentScenario@inserts)[cSlength] = 
+          theInsert@filename
         updateTabsetPanel(session, "tabsetID", selected = "Current scenario")
         #  }
       }
