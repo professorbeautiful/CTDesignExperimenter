@@ -316,6 +316,7 @@ shinyServer(function(input, output, session) {
   
     #### Display Design Parameters.
   oneRunHeader =   function() {
+    doThisAction_BeginClinicalTrial(rValues$currentScenario)
     returnvalueStringDesignParameters = paste0(
       "tagList(",
       "div(h3('Trial Design Parameters'), ",
@@ -344,7 +345,7 @@ shinyServer(function(input, output, session) {
       runTrial(rValues$currentScenario)
       nPatients = length(trialData$patientData)
       catn("nPatients = ", nPatients)
-    returnvalueStringTrialSummaries = paste0(
+      returnvalueStringTrialSummaries = paste0(
         "tagList(",
         "div(h3('Summaries of the Trial'), ",
         paste("'", capture.output(
@@ -370,9 +371,8 @@ shinyServer(function(input, output, session) {
     wasClicked(input$btnOneRun)
     iPatient = input$patientChoice
     if(is.null(iPatient)) iPatient = 1
-    catn("iPatient = ", capture.output(iPatient))  
-    if(is.null(iPatient)) 
-      return("")
+    if( length(trialData$patientData) == 0)
+       return("")
     else {
       returnvalueStringChosenPatient = paste0(
         "<hr/> <p style='fontsize:large'> 
@@ -521,7 +521,7 @@ shinyServer(function(input, output, session) {
     return (rVcS)
   }
   
-  buttonRemoveInsertObserver = observe({
+buttonRemoveInsertObserver = observe({
       if(wasClicked(input$btnRemoveInsert) ) {
         isolate({
           treeSelectionPath <<- isolate(rValues$treeSelectionPath)
