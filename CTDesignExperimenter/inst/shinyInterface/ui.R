@@ -15,6 +15,8 @@ conditionPanelNoneSelected = conditionalPanel(
                      label="Search swapmeet & load Scenario"),
         href="#idSearchScenario")
       ),
+      actionButton(inputId="btnSaveScenarioToCurrentScenario", 
+                   label="Save Current Scenario (rValues"),
       actionButton(inputId="btnSaveScenarioToGlobalEnv", 
                    label="Save Scenario to GlobalEnv"),
       actionButton(inputId="btnWriteScenarioToSwapmeet", 
@@ -115,7 +117,7 @@ scenarioPanel = tabPanel(
   #includeHTML("jstreeTestContent.html"),
   textInput(inputId="scenarioName",  
             label=em("Scenario name"),
-            value=currentScenario@name),
+            value=currentScenario@name),  ## not rValues$currentScenario@name .
   hr(),
   conditionPanelNoneSelected,
   conditionPanelBlockSelected,

@@ -444,8 +444,11 @@ shinyServer(function(input, output, session) {
       
   observerSaveScenarioToGlobalEnv = observe({
     if( wasClicked(input$btnSaveScenarioToGlobalEnv) ) {   # Trigger if clicked
-      cat("\nSaving scenario\n")
-       
+      cat("\nSaving scenario to rValues and GlobalEnv\n")
+      isolate({
+        rValues$currentScenario@name = input$scenarioName;
+        updateTextInput(session, "scenarioName", label=em("Scenario name"))
+      })
       assign(isolate(input$scenarioName), pos = 1,
              rValues$currentScenario)
       assign("currentScenario", pos = 1,
@@ -461,6 +464,10 @@ shinyServer(function(input, output, session) {
   observerWriteScenarioToSwapmeet = observe({
     if( wasClicked(input$btnWriteScenarioToSwapmeet) ) {   # Trigger if clicked
       cat("\nWriting scenario\n")
+      isolate({
+        rValues$currentScenario@name = input$scenarioName;
+        updateTextInput(session, "scenarioName", label=em("Scenario name"))
+      })
       assign(isolate(input$scenarioName), pos = 1,
              rValues$currentScenario
              ##TODO: update rValues$currentScenario 
@@ -525,6 +532,9 @@ shinyServer(function(input, output, session) {
       }
   })
   
-  
+scenarioNameObserver = observe({
+  input$scenarioName;
+  updateTextInput(session, "scenarioName", label=em("Scenario name (* not saved)"))
+})
   
 })  ### End of ShinyServer call
