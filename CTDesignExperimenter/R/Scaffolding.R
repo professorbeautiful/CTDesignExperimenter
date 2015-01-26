@@ -291,7 +291,7 @@ setMethod("doAction", signature=list("Event", "Scenario"), ######
 ####debug
 doActionEvent = function(event, scenario=defaultScenario, ...){
   eventName = event@name  ## To see it in Environment tab.
-  doAction(as(object=event, "Event"), scenario=defaultScenario, ...)
+  doAction(as(object=event, "Event"), scenario=scenario, ...)
   doThisAction(event, scenario)
   jumpIfString = event@jumpIf   ## To see it in Environment tab.
   #browser("Stopping for jumpIf", expr=(jumpIfString!="FALSE"))
