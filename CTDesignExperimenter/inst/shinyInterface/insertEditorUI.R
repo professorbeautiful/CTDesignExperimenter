@@ -317,6 +317,14 @@ Insert = VariableGenerator
 
 readInsertFromPage = function() {
   theNewParameters = hot.to.df(input$parameterHOT)
+  #  TODO: more general handling of parameters.
+  theNewParameters = lapply(seq(along=theNewParameters),
+                            function(iPara)
+                              as(theNewParameters[[iPara]],
+                            Class=typeof(rValues$theInsert@parameters[[iPara]])
+                            )
+  )
+  names(theNewParameters) = input$parameterHOT$colHeaders
   if(is.null(theNewParameters)) theNewParameters = list()
   result = try(
     Insert(insertSubType = input$selectedInsertSubType,
@@ -324,7 +332,7 @@ readInsertFromPage = function() {
            provisions = rValues$theInsert@provisions,  #Not yet editable
            requirements = rValues$theInsert@requirements,  #Not yet editable,
            outputVariable = rValues$theInsert@outputVariable,  #Not yet editable,
-           generatorCode = eval(parse(text="function() " %&% input$generatorCode)))
+           generatorCode = eval(parse(text=input$generatorCode)))
   ) 
   if(class(result) == 'try-error') {
     warning("Could not create the insert: ", result)
