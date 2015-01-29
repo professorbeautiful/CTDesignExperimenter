@@ -1,7 +1,7 @@
 cat("======== run  ================\n")
 
 
-run = function(background=FALSE, shinyfolder="shinyInterface", local=TRUE, createCTDEcatalog=FALSE) {
+run = function(background=FALSE, shinyfolder="shinyInterface", local=FALSE, createCTDEcatalog=FALSE) {
 #   if(createCTDEcatalog) createCTDEcatalog()
   #   if(background) { ## Run it in the background outside of this session.
   #     system("echo 'library(CTDesignExplorer); run()' | R --vanilla")
@@ -11,11 +11,15 @@ run = function(background=FALSE, shinyfolder="shinyInterface", local=TRUE, creat
   result = tryCatch( error = function(e) e,
                      expr=require("shiny"))
   if(class(result) != "try-error"){
-    if(local)
+    if(local) {
+      cat("Running locally\n")
       runApp(paste0("CTDesignExperimenter/inst/", shinyfolder))
-    else
+    }
+    else {
+      cat("Running from package folder\n")
       runApp(system.file(
         package="CTDesignExperimenter", shinyfolder))
+    }
     ### NOTE that the folder inst/shinydocs 
     ### becomes just shinydocs after building.
   }
