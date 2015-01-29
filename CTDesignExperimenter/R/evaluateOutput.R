@@ -93,7 +93,7 @@ evaluateVNoutputs = function(vN, envVariableValues = new.env()) {
   iM = try(permuteToUpperTriangular(iM))
   if(is(iM, "try-error")) {
     cat("evaluateVNoutputs: iM try-error \n")
-    browser()  ### TODO: improve this error-handling.
+    # browser()  ### TODO: improve this error-handling.
   }
   for(vName in rownames(iM)) { 
     ifVerboseCat("Processing node ", vName)
@@ -123,7 +123,7 @@ evaluateVNoutputs = function(vN, envVariableValues = new.env()) {
 
 printVVenv = function(env) {
   if(length(env)==0)
-    browser("printVVenv has empty env arg")
+    cat("") #browser("printVVenv has empty env arg")
   else {
     for(vvname in ls(env=env)) {
       vv = get(vvname, env=env)

@@ -425,8 +425,8 @@ envCopy = function(envFrom, envTo, clear=TRUE,
                    excluded=character(0), 
                    copySubEnvironments=FALSE) {
   for(vv in ls(env=envFrom) %except% excluded) {
-    if(vv=="currentPatient") browser()
-    if(vv=="candidatePatient") browser()
+    #if(vv=="currentPatient") browser()
+    #if(vv=="candidatePatient") browser()
     obj = get(vv, env=envFrom)
     if( ( !(class(obj) == "environment")) )
       assign(vv, env=envTo, obj)
