@@ -18,31 +18,48 @@ cat("======== DesignSpecifier-AplusB.R  ================\n")
 
 #####
 ## TODO
-# vg_ABCDE_design_parameters =   
-#   VariableGenerator(parameters=list(
-#     A_initial_cohort_size=3,
-#     B_additional_cohort_size=3,
-#     C_escalate=1, # if < C/A tox
-#     D_MTD_A=2, # if > D/A tox
-#     E_MTD_AplusB=2 #  if > E/(A+B) tox
-#   ),
-#   provisions=VariableList(vList=list(
-#     Variable(name="A", desc="initial cohort size", check=function(x) is.integer(x) & x>0),
-#     Variable(name="B", desc="additional cohort size", check=function(x) is.integer(x) & x>0),
-#     Variable(name="C", desc="escalate if < C/A tox", check=function(x) is.integer(x) & x>0),
-#     Variable(name="D", desc="MTD if > D/A tox", check=function(x) is.integer(x) & x>0),
-#     Variable(name="E", desc="MTD if > E/(A+B) tox", check=function(x) is.integer(x) & x>0)
-#   )),
-#   outputVariable= XXXXXXXXX, ## TODO
-#   generatorCode=function(){
-#     list(A=A_initial_cohort_size,
-#       B=B_additional_cohort_size,
-#       C=C_escalate, # if < C/A tox
-#       D=D_MTD_A, # if > D/A tox
-#       E=E_MTD_AplusB #  if > E/(A+B) tox
-#     )
-#   }
-#   )
+v_doseTierList = Variable(name="doseTierList",
+         desc="list of phase 1 doses",
+         check=function(x) ensure_that(
+           is.numeric(x),
+           all(x >= 0)))
+
+# vg_ABCDE ----------------------------------------------------------------
+
+
+vg_ABCDE_design_parameters =   
+  VariableGenerator(parameters=list(
+    A_initial_cohort_size=3,
+    B_additional_cohort_size=3,
+    C_escalate=1, # if < C/A tox
+    D_MTD_A=2, # if > D/A tox
+    E_MTD_AplusB=2 #  if > E/(A+B) tox
+  ),
+  provisions=VariableList(vList=list(
+    Variable(name="A", desc="initial cohort size", check=function(x) is.integer(x) & x>0),
+    Variable(name="B", desc="additional cohort size", check=function(x) is.integer(x) & x>0),
+    Variable(name="C", desc="escalate if < C/A tox", check=function(x) is.integer(x) & x>0),
+    Variable(name="D", desc="MTD if > D/A tox", check=function(x) is.integer(x) & x>0),
+    Variable(name="E", desc="MTD if > E/(A+B) tox", check=function(x) is.integer(x) & x>0)
+  )),
+  outputVariable= Variable(name="ABCDEspecification",
+                           desc="1 ABCDEspecification",
+                           check=function(x) ensure_that(x,
+                             names(.)==LETTERS[1:5],
+                             fail_with=function(e) 
+                               cat("Error in ABCDEspecification\n"))
+                           ), ## TODO
+  generatorCode=function(){
+    as.integer(
+    c(A=A_initial_cohort_size,
+      B=B_additional_cohort_size,
+      C=C_escalate, # if #tox < C out of A 
+      D=D_MTD_A, # if #tox > D out of A 
+      E=E_MTD_AplusB #  if #tox > E out of (A+B) 
+    )
+    )
+  }
+  )
 
 #####
 ##' A Parameter is a Variable that cannot change during a simulation 
@@ -59,6 +76,8 @@ setClass("Parameter", contains="Variable")
 ##' during a simulation. However, it changes the parameters into variable values,
 ##' making it possible to share parameters among other VGs.
 ##' Pre-set dose tiers in Phase 1 designs are a prime example.
+
+
 
 setClass("ParameterGenerator", contains="VariableGenerator")
 
