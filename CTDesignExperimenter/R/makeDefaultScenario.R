@@ -1,11 +1,14 @@
 createVG_FixedSampleSizeMax = function(Nmax = 3) {
+  v_SampleSizeMax = Variable(name="SampleSizeMax", 
+                             description='Upper bound for sample size', 
+                             checkDataType=is.numeric)
   VariableGenerator(insertSubType="DesignParameter", 
                     parameters=list(SampleSizeMax=Nmax),
                     provisions=v_SampleSizeMax, 
                     generatorCode=function(){
                       SampleSizeMax
                     },
-                    name="vg_SampleSizeMax"
+                    name="vg_SampleSizeMax_" %&% Nmax
   )
 }
 
