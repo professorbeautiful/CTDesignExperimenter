@@ -189,21 +189,22 @@ initializeQueue = function(firstaction=BeginClinicalTrial) {
 #   executeQueue_()
 # }
 
-executeQueue = function(verbose=TRUE, scenario=defaultScenario){
+executeQueue = function(scenario=defaultScenario){
   # Names of the VGs must be unique.
   stopifnot(length(unique(names(scenario@inserts))) == length(scenario@inserts))
   nActions <<- length(actionQueue$actions)
-  if(verbose) cat("executeQueue_: nActions = ", nActions, "\n")
+  ifVerboseCat("executeQueue_: nActions = ", nActions, "\n")
   while(actionQueue$queuePointer <= nActions) {
     doAction(actionQueue$actions[[actionQueue$queuePointer]], scenario)
     increment(ENV=actionQueue, queuePointer)
     nActions <<-length(actionQueue$actions)
-    if(verbose & (actionQueue$queuePointer <= nActions)) 
-      cat("executeQueue_: nActions = ", nActions,
+    ifVerboseCat(  # (actionQueue$queuePointer <= nActions)) 
+      "executeQueue_: nActions = ", nActions,
                     "queuePointer=", actionQueue$queuePointer, 
-                    actionQueue$actions[[actionQueue$queuePointer]]@name, "\n")
+                    actionQueue$actions[[actionQueue$queuePointer]]@name, "\n"
+    )
   }
-  if(verbose) cat("FINISHED executeQueue_")
+  ifVerboseCat("FINISHED executeQueue_")
 }
 #environment(executeQueue) = actionQueue
 
@@ -213,7 +214,7 @@ addToQueue = function(event,
   environment(addToQueue_) = actionQueue
   ## This was to allow debug(addToQueue_), but it didn't work.
   addToQueue_(event, time, who)
-  cat("actionQueue$queueTimes=", actionQueue$queueTimes, "\n")
+  ifVerboseCat("actionQueue$queueTimes=", actionQueue$queueTimes, "\n")
 }  
 
 addToQueue_ = function(event, time, who) {
@@ -253,7 +254,7 @@ addToQueue_ = function(event, time, who) {
 }
 
 viewQueue=function(){
-  cat("actionQueue$queuePointer = ", actionQueue$queuePointer, "\n")
+  ifVerboseCat("actionQueue$queuePointer = ", actionQueue$queuePointer, "\n")
   data.frame( 
     event=sapply(1:length(actionQueue$actions), function(i)actionQueue$actions[[i]]@name),  
     time=actionQueue$queueTimes,
@@ -284,7 +285,7 @@ debug(addToQueue_)
 
 setMethod("doAction", signature=list("Event", "Scenario"), ######
           function(event, scenario=defaultScenario, ...) {
-            cat("Event ", event@name , "is happening\n")
+            ifVerboseCat("Event ", event@name , "is happening\n")
           }
 )
 
@@ -296,7 +297,7 @@ doActionEvent = function(event, scenario=defaultScenario, ...){
   jumpIfString = event@jumpIf   ## To see it in Environment tab.
   #browser("Stopping for jumpIf", expr=(jumpIfString!="FALSE"))
   shouldIjump = eval(parse(text=event@jumpIf))@.Data
-  cat("doAction.ScaffoldEvent: shouldIjump=", shouldIjump, "\n")
+  ifVerboseCat("doAction.ScaffoldEvent: shouldIjump=", shouldIjump, "\n")
   ## TODO: handle getting the value from the patient or CT VN.
   if(event@successor != "") {
     if(shouldIjump)
@@ -317,7 +318,7 @@ doThisAction = function(event, scenario=defaultScenario)
   do.call(paste0("doThisAction_", event@name), list(scenario=scenario))
 
 doThisAction_BeginClinicalTrial = function(scenario=defaultScenario) {
-  cat("Must now initializeCTdata()\n")
+  ifVerboseCat("Must now initializeCTdata()\n")
   assign("trialData", new.env(), pos=1) #where is best?
   vgList = VariableGeneratorList(getVGs(scenario@inserts, 
                                         "DesignParameter"))
@@ -331,7 +332,7 @@ doThisAction_BeginClinicalTrial = function(scenario=defaultScenario) {
 ## TODO:  where do we put the accrual pattern? 
 # Currently in scaffoldObjects$timeToNextEvent
 doThisAction_GeneratePatient = function(scenario=defaultScenario) {
-  cat("Must generate a candidate patient now;  
+  ifVerboseCat("Must generate a candidate patient now;  
       gather VG's and evaluate.\n")
   if(is.null(trialData$candidatePatient))
     assign("candidatePatient", new.env(), env=trialData)
@@ -355,7 +356,7 @@ doThisAction_GeneratePatient = function(scenario=defaultScenario) {
 }
 
 doThisAction_CheckEligibility = function(scenario=defaultScenario) {
-  cat("Gather eligibilityCriterion objects from scenario.",
+  ifVerboseCat("Gather eligibilityCriterion objects from scenario.",
       "Form a Variable Network. ",
       "Retrieve all VariableValues,
       and return the conjunction with all().\n")
@@ -366,7 +367,7 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
                                    description="whether patient is not eligible; used in doThisAction_CheckEligibility",
                                    checkDataType=is.logical,
                                    gitAction="none")
-  # cat("....... ", eligibilityVariables)   ###   OK
+  # ifVerboseCat("....... ", eligibilityVariables)   ###   OK
   vg_notEligible = VariableGenerator(insertSubType="EligibilityCriterion",
                                      requirements=eligibilityVariables,
                                      provisions=v_notEligibleVariable,
@@ -385,7 +386,7 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
     whichViolated = which(criteriaValues == FALSE)
     notEligible = any(whichViolated)
     if(notEligible) 
-      cat('Eligibility violation(s): ', 
+      ifVerboseCat('Eligibility violation(s): ', 
         names(criteriaValues[whichViolated]), '\n')
     return(notEligible)
     }")
@@ -405,7 +406,7 @@ doThisAction_CheckEligibility = function(scenario=defaultScenario) {
 }
 
 doThisAction_EnrollPatient = function(scenario=defaultScenario) {
-  cat("Enrolling the patient; copying patient info!!!!!!!!\n")
+  ifVerboseCat("Enrolling the patient; copying patient info!!!!!!!!\n")
   increment(NpatientsEnrolled, ENV=trialData$trialSummaries)
   trialData$NcurrentPatient = trialData$trialSummaries$NpatientsEnrolled
   trialData$currentPatient =
@@ -463,7 +464,7 @@ doThisAction_GenerateOutcomes = function(scenario=defaultScenario) {
 doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
   ###  CAUTION: we do not want to regenerate the patient values.
   ###  Just add new VGs to the VVenv, and process them.
-  cat("Gather offStudyCriterion objects from scenario.",
+  ifVerboseCat("Gather offStudyCriterion objects from scenario.",
       "Form a Variable Network. ",
       "Retrieve all VariableValues,
       and return the disjunction (union) with any().\n")
@@ -474,7 +475,7 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
                                    description="whether patient is offStudy; used in doThisAction_CheckoffStudy",
                                    checkDataType=is.logical,
                                    gitAction="none")
-  # cat("....... ", offStudyVariables)   ###   OK
+  # ifVerboseCat("....... ", offStudyVariables)   ###   OK
   vg_notOffStudy = VariableGenerator(insertSubType="OffStudyCriterion",
                                      parameters=list(iAmAParameter=TRUE),
                                      requirements=offStudyVariables,
@@ -498,7 +499,7 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
         whichTriggered = which(criteriaValues == FALSE)
         offStudy = any(whichTriggered)
         if(offStudy) 
-          cat('offStudy rule(s) triggered: ', 
+          ifVerboseCat('offStudy rule(s) triggered: ', 
           names(criteriaValues[whichTriggered]), '\n')
         notOffStudy = ! offStudy
         return(notOffStudy)
@@ -509,12 +510,12 @@ doThisAction_CheckOffStudy = function(scenario=defaultScenario) {
     vg_notOffStudy=vg_notOffStudy  ### Adding the final assessment.
   )))
   currentPatient <<- trialData$currentPatient  ## This DOES work here.
-  cat(" CHECKING: in checkEligibility, make sure we don't re-do initial variables.\n")
-  cat("BEFORE\n")
+  ifVerboseCat(" CHECKING: in checkEligibility, make sure we don't re-do initial variables.\n")
+  ifVerboseCat("BEFORE\n")
   ifVerboseCat(printVVenv(currentPatient$VVenv) )   
   currentPatient$VVenv = evaluateVNoutputs(offStudyVN, currentPatient$VVenv)
   ## TODO: in checkEligibility, make sure we don't re-do initial variables.
-  cat("AFTER\n")
+  ifVerboseCat("AFTER\n")
   ifVerboseCat(printVVenv(currentPatient$VVenv))    
 #   > trialData$currentPatient$temp = "current"
 #   > trialData$patientData[[1]]$temp
@@ -538,7 +539,7 @@ doThisAction_SummarizeSimulation = function(scenario=defaultScenario) {
 doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
   ###  CAUTION: we do not want to regenerate the patient values.
   ###  Just add new VGs to the VVenv, and process them.
-  cat("Gather StoppingRule objects from scenario.",
+  ifVerboseCat("Gather StoppingRule objects from scenario.",
       "Form a Variable Network. ",
       "Retrieve all VariableValues,
       and return the conjunction with any().\n")
@@ -570,11 +571,11 @@ doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
       names(criteriaValues) = ", criteriaNameVectorText, "
       print(criteriaValues)
       whichTriggered = which(criteriaValues == TRUE)
-      cat('whichTriggered: ', whichTriggered, '\n')
+      ifVerboseCat('whichTriggered: ', whichTriggered, '\n')
       stopping = any(whichTriggered)
       continueAccrual = ! stopping
       # if(stopping) 
-        cat(' Stopping rules(s): ', 
+        ifVerboseCat(' Stopping rules(s): ', 
           names(criteriaValues[whichTriggered]), '\n')
       return(continueAccrual)
   }")
@@ -590,7 +591,7 @@ doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
           clear=TRUE, copySubEnvironments=FALSE) # These are the defaults anyway.
   trialDataAugmented = 
     evaluateVNoutputs(stoppingVN, envVariableValues=envStopping)
-  cat("trialDataAugmented:\n")
+  ifVerboseCat("trialDataAugmented:\n")
   printENV(trialDataAugmented)
   envCopy(trialDataAugmented, trialData, clear=FALSE)
   
