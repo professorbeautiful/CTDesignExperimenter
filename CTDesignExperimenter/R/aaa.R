@@ -35,25 +35,31 @@ as.cat = function (x)
 catn=function(...) cat(..., "\n")
 
 withNames =
-  function(x, n) {temp = data.frame(x=x,n=n);
-                  x = temp$x;
-                  n = temp$n;
-                  names(x) <- n; 
-                  x}
+  function(x, n) {
+	if(length(x) != length(n))
+		stop("withNames: ",length(x), "!=", length(n)) 
+	if(length(x) == 0)
+		return(NULL)
+	temp = data.frame(x=x,n=n);
+        x = temp$x;
+        n = temp$n;
+        names(x) <- n; 
+        x
+}
 
 ###### Other utilities
 
 shorten = function(vec, cutsize) vec[1: (length(vec)-cutsize)]
 ## should be an S3 generic.
 
-ifVerboseCat = function(...){
+ifVerboseCat = function(..., defaultVerbose=FALSE){
   #print(paste0("ifVerboseCat: sys.call(-1)=", sys.call(-1)))
   f=try(as.character(parse(text=sys.call(-1)[1]))[1] )
   if(class(f) == "try-error") return(invisible(NULL))
-  if(!exists("verboseOptions")) verboseOptions = logical(0)
+  if(!exists("verboseOptions"))
+    assign("verboseOptions", logical(0), pos=1, immediate=TRUE)
   if(is.na(verboseOptions[f])) {
-    verboseOptions[f] <- TRUE
-    assign("verboseOptions", verboseOptions, pos=1, immediate=TRUE)
+    verboseOptions[f] <<- defaultVerbose
     #ifVerboseCat(verboseOptions)
   }
   if(verboseOptions[f]) 
