@@ -5,20 +5,26 @@ cat("======== Inserts.R  ================\n")
 #####
 #' Event
 setClass("Event",    ### Like a Variable
-         slots=list(name="character", description="character"))
+         contains="SwapItem",
+         slots=list(
+           timeToNextEvent="character", #expression
+           who="character" #expression
+           ))
 ### Should there be  a time-to-event name?
 
 #####
 #' Class EventGenerator
 setClass("EventGenerator",    ### Like a VariableGenerator
-         contains="Specifier",
+         contains="VariableGenerator",
          slots=list(
            outputEvent="Event"
            ### this will be the Event caused.
-           , conditionCode="function" 
+           , conditionCode="function"
            ### Arguments are the requirements,
            ### which are VariableValues.
            ### Calculates boolean; if TRUE, places the Event on the queue, 
+           , delayCode="function"
+           ### returns the delta time until   
          )
          ,
          validity=function(object) { # has to be "object"
@@ -28,8 +34,6 @@ setClass("EventGenerator",    ### Like a VariableGenerator
 )
 #####
 setClassUnion("Insert", c("VariableGenerator", "EventGenerator"))
-#setClass("InsertVariable", contains=c("Insert", "VariableGenerator"))
-#setClass("InsertEvent", contains=c("Insert", "EventGenerator"))
 
 #' function EventGenerator
 EventGenerator = function(parameters=list(), provisions, 
@@ -51,7 +55,7 @@ EventGenerator = function(parameters=list(), provisions,
   eg
 }
 
-setClass("EventAtTime", contains="Event", slots=list(eventTime="numeric"))
+# setClass("EventAtTime", contains="Event", slots=list(eventTime="numeric"))
 ###  we are not currently using EventAtTime.
 
 setClassUnion("Action", c("Event", "Variable"))

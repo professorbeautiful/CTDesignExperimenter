@@ -49,9 +49,8 @@ setClass("ScaffoldEvent", contains="Event",
                     eventInsertType="character",
                     eventInsertSubType="character",
                     jumpIf="character", # boolean; condition for alternative
-                    jumpTo="character", # alternative destination
-                    timeToNextEvent="character", #expression
-                    who="character")) #expression
+                    jumpTo="character" # alternative destination
+         )) #expression
 
 ##' scaffoldObjectNames ####
 ##' 
