@@ -145,7 +145,9 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
 #         sapply(vg@provisions@.Data, slot, name="name"))
 #   #   provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
   #                               stringsAsFactors=FALSE)
-  getReqs = function(vg) (vg@requirements)
+  getReqs = function(vg) 
+    withNames(vg@requirements, 
+              rep(vg@name, length(vg@requirements)))
   requirementMap = lapply(vgList, getReqs)
   ## Was sapply.
   if(length(requirementMap) > 0)
