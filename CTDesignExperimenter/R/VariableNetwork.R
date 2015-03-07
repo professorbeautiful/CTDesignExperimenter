@@ -1,53 +1,72 @@
 cat("=========== VariableNetwork.R ===========\n")
 
-#' VariableGeneratorList.class, a class extending "list".
+#' ListOfInserts.class, a class extending "list".
 #' 
+#' A list of Insert objects.
+#' Generally the parameters are the defaults.
+#' When a new Scenario is defined, the parameters may be changed.
 #' 
-setClass("VariableGeneratorList", contains="list")
+#' This will need modification to include EventGenerators
+setClass("ListOfInserts", contains="list")
+
+validity_ListOfInserts = function(object) {
+  if(length(object)==0) return(TRUE)
+  whichAreInserts = sapply(object, is, "Insert")
+  if(all(whichAreInserts)) return(TRUE)
+  return(paste("ERROR in ListOfInserts: ", which(!whichAreInserts)))
+}
+setValidity(Class="ListOfInserts", validity_ListOfInserts)
+
+setClass("VariableGeneratorList", contains="ListOfInserts")
+###  Might contain event generators.
+
+
 # We could assign the return value of setClass to a constructor,
 # and define Validity, as in the following commented-out code.
 # However, we prefer to handle it so that a call to the
 # constructor with an args that is a single VG *not* in a list
 # will not fail.
 
-# VariableGeneratorListValidity = function(object){
+# ListOfInsertsValidity = function(object){
 #   for(vg in object@.Data){
 #     if(!is(vg, "VariableGenerator"))
-#       return("VariableGeneratorList: "
+#       return("ListOfInserts: "
 #              %&% "validity error: not all "
 #              %&% " components are VariableGenerator")
 #   }
 #   return(TRUE)
 # }
-# setValidity("VariableGeneratorList", VariableGeneratorListValidity) 
+# setValidity("ListOfInserts", ListOfInsertsValidity) 
 
-#' VariableGeneratorList.constructor
+#' ListOfInserts.constructor
 #' 
 #' @param vgList  A list of VariableGenerator objects, or a single VariableGenerator. 
-#' @return  A VariableGeneratorList, validated as to the components
-VariableGeneratorList = function(vgList=NULL) {
-  if(is.null(vgList)) return(new("VariableGeneratorList", list()))
+#' @return  A ListOfInserts, validated as to the components
+ListOfInserts = function(vgList=NULL) {
+  if(is.null(vgList)) return(new("ListOfInserts", list()))
   theNames = names(vgList) ## You must assign names to the list.
   if(is.null(theNames))
     theNames = paste0("vg", 1:length(vgList))
   if(is(vgList, "VariableGenerator"))
-    vgListObj = new("VariableGeneratorList", list(vgList))
+    vgListObj = new("ListOfInserts", list(vgList))
   else
-    vgListObj = new("VariableGeneratorList", vgList)
-  print(names(vgListObj))
+    vgListObj = new("ListOfInserts", vgList)
+  ifVerboseCat(names(vgListObj))
   names(vgListObj@.Data) = theNames
   ### validity
   for(vg in vgListObj@.Data){
     if(!is(vg, "VariableGenerator"))
-      stop("VariableGeneratorList: "
+      stop("ListOfInserts: "
            %&% "validity error: not all "
            %&% " components are VariableGenerator")
   }
   vgListObj
 }
 
+VariableGeneratorList = ListOfInserts
+
 setClass("VariableNetwork", contains="Specifier",
-         slots=list(vgList="VariableGeneratorList",
+         slots=list(vgList="ListOfInserts",
                     allProvisions="list",
                     allProvisionNames="character",
                     provisionMap="list",
@@ -69,8 +88,10 @@ getRequirementNames = function(vg){
 }
 
 VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
-  if(is.null(vgList)) vgList = VariableGeneratorList()
-  if(is(vgList, "VariableGenerator")) vgList = list(vgList)
+  cat("VariableNetwork REVISED\n")
+  if(is.null(vgList)) vgList = ListOfInserts()
+  if(is(vgList, "VariableGenerator")) vgList = ListOfInserts(vgList)
+  if(is(vgList, "list")) vgList = ListOfInserts(vgList)
   if(!is.null(varNetworkList)) {
     if(is(varNetworkList, "VariableNetwork")) varNetworkList = list(varNetworkList)
     for(vN in varNetworkList) {
@@ -79,8 +100,8 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
       vgList = c(vgList, vN@vgList@.Data)
     }
     if(any(duplicated(names(vgList)))) 
-      stop("VariableNetwork: all vg names must be unique")
-    vgList = VariableGeneratorList(vgList=vgList)
+      browser("VariableNetwork: all vg names must be unique")
+    vgList = ListOfInserts(vgList=vgList)
   }
   network = new("VariableNetwork", vgList=vgList,
                 timestamp=Sys.time(),
@@ -282,7 +303,7 @@ matsum = function(M)eval(parse(text=paste("matpow(M,",
 hasCycles = function(M) sum(diag(matsum(M))) > 0
 
 # vNexampleWithCycles = VariableNetwork(
-#   vgList=VariableGeneratorList(
+#   vgList=ListOfInserts(
 #     vg1=VariableGenerator(provisions=vA, requirements=VariableList(
 #       new("Variable", ))), )
 # M = incidenceMatrix(vNexampleWithCycles)
@@ -313,7 +334,7 @@ if(interactive()){  ### for testing purposes
                           requirements=VariableList(list(vA)))
   )
   
-  vNexample = VariableNetwork(vgList=VariableGeneratorList(vgListExample)) 
+  vNexample = VariableNetwork(vgList=ListOfInserts(vgListExample)) 
   ### .... in progress...
   # getPopulationModelOutputs = function(popModel, alreadyDone=list()) {
   #   allVGs = function(pModel) {

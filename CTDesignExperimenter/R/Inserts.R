@@ -56,25 +56,6 @@ setClass("EventAtTime", contains="Event", slots=list(eventTime="numeric"))
 
 setClassUnion("Action", c("Event", "Variable"))
 
-setClassUnion("Insert", c("EventGenerator", "VariableGenerator"))
-
-
-
-
-#' ListOfInserts
-#' 
-#' A list of Insert objects.
-#' Generally the parameters are the defaults.
-#' When a new Scenario is defined, the parameters may be changed.
-setClass("ListOfInserts", contains="list")
-
-validity_ListOfInserts = function(object) {
-  if(length(object)==0) return(TRUE)
-  whichAreInserts = sapply(object, is, "Insert")
-  if(all(whichAreInserts)) return(TRUE)
-  return(paste("ERROR in ListOfInserts: ", which(!whichAreInserts)))
-}
-setValidity(Class="ListOfInserts", validity_ListOfInserts)
 
 ##### EligibilityCriteria ##### 
 # TODO: move this to VariableGenerator.
