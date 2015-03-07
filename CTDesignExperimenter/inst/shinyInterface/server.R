@@ -437,7 +437,8 @@ shinyServer(function(input, output, session) {
     if( wasClicked(input$btnNewScenario) ) {   # Trigger if clicked
       cat("\nNew scenario\n")
       scenario = new("Scenario")
-      scenario@inserts = new("ListOfInserts", list(vg_SampleSizeMax_2) )
+      scenario@inserts = new("ListOfInserts", list(
+        createVG_FixedSampleSizeMax() ) )
       rValues$currentScenario = scenario
     }
   })
