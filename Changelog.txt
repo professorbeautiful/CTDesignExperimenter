@@ -1,4 +1,7 @@
 Changelog
 
+2015-01-29
+tag 0.901. fixes to run() and removes some browser calls().
+
 2015-01-26
 tag 0.90. Insert replacement and re-run is working.
