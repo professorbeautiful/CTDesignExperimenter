@@ -547,15 +547,6 @@ doThisAction_CheckModifications = function(scenario=defaultScenario) {
   cat("doThisAction_CheckModifications", " not yet implemented\n")
 }
 
-doThisAction_SummarizePatient = function(scenario=defaultScenario) {
-  cat("doThisAction_SummarizePatient", " not yet implemented\n")
-  ## TODO: implement updating trial summaries in trialData$trialSummaries.
-}
-
-doThisAction_SummarizeSimulation = function(scenario=defaultScenario) {
-  cat("doThisAction_SummarizeSimulation", " not yet implemented\n")
-  ## TODO: implement updating simulation summaries.
-}
 
 doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
   ###  CAUTION: we do not want to regenerate the patient values.
@@ -620,6 +611,25 @@ doThisAction_CheckStoppingRules = function(scenario=defaultScenario) {
   #   > trialData$patientData[[1]]$temp
   #   [1] "current"   # So it works!
 }
+
+doThisAction_SummarizePatient = function(scenario=defaultScenario) {
+  cat("doThisAction_SummarizePatient", " not yet implemented\n")
+  ## TODO: when the patient goes off-study,
+  ##  update patient summaries in trialData$patientData[[iPatient]]$summaries.
+  ##Examples:
+  ##  Final response status.
+  ##  Projecting future events: recurrence, survival.
+}
+
+doThisAction_SummarizeSimulation = function(scenario=defaultScenario) {
+  cat("doThisAction_SummarizeSimulation", " implementation in progress\n")
+  if(exists("VN_SummarizeSimulation"))
+    trialData$SimulationSummary = evaluateVNoutputs(
+      VN_SummarizeSimulation, trialData$VVenv)
+  else
+    trialData$SimulationSummary = NULL
+}
+
 
 doThisAction_SummarizeTrial = function(scenario=defaultScenario) {
   cat("doThisAction_SummarizeTrial", 
