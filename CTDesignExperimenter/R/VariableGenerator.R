@@ -3,7 +3,7 @@ cat("======== VariableGenerator.R ================\n")
 setClass("VariableGenerator", contains="Specifier",
          slots=list(
            insertSubType="character",
-           outputVariable="Variable"
+           outputVariable="Variables"
            ### this will be the provision. At first, a string. Later, a Variable.
            , generatorCode="function" 
            ### Arguments are the requirements,

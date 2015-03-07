@@ -108,24 +108,42 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
                 author=Sys.getenv("USER")
   )
   
-  provisions = c(lapply(vgList, function(vg) vg@provisions))
+  provisions = c(sapply(vgList, function(vg) unlist(vg@provisions)))
   provisions = provisions[!sapply(provisions, is.null)]
+  if(!isTRUE(all(sapply(provisions, class) == "Variable")))
+    browser("VariableNetwork: not all provisions are variables")
   provisions = unique(provisions)   ###### outside view!
   provisions = new("VariableList", provisions)
   if(length(provisions) == 0) provisions = NULL
-  network@provisions = provisions  ###### outside view!
+  network@provisions = provisions  ###### to provide an outside view
   vgNames = names(vgList)
   #  names(network@vgList) = vgNames ### no such slot
-  allProvisionNames = sapply(network@vgList,
-                             function(vg) vg@provisions@name)
-  names(allProvisionNames) = vgNames
+
+  getProvisionNames = function(variables) {
+    if(is(variables, "Variable")) return(variables@name)
+    if(is(variables, "VariableList")) 
+      return(sapply(variables,
+                    slot, name="name"))
+    NULL
+  }
+  allProvisionNames = sapply(provisions, 
+                             getProvisionNames)
+  names(allProvisionNames) = rep(
+    vgNames, 
+    times=sapply(vgList, 
+                function(vg) length(vg@provisions)))
   allProvisions = sapply(network@vgList,
                          function(vg) vg@provisions)
-  names(allProvisions) = vgNames
-  provisionMap = lapply(network@vgList, function(vg)
-    vg@provisions@name)
-  names(provisionMap) = vgNames
-  #   provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
+  names(allProvisions) = names(allProvisionNames)
+  provisionMap = as.list(allProvisionNames)
+  #browser()
+#   provisionMap = sapply(network@vgList, 
+#     function(vg) {
+#       if(is(vg@provisions, "Variable")
+#         vg@provisions@name
+#       else
+#         sapply(vg@provisions@.Data, slot, name="name"))
+#   #   provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
   #                               stringsAsFactors=FALSE)
   getReqs = function(vg) (vg@requirements)
   requirementMap = lapply(vgList, getReqs)
@@ -184,7 +202,7 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
   }
   network@requirements = VariableList(allRequirements[candidateCounts==0])
   ### These are internally unmet requirements.  ### External view!
-  network@allProvisions = allProvisions
+  network@provisions = provisions
   network@allProvisionNames = allProvisionNames
   network@provisionMap = provisionMap
   network@allRequirements = allRequirements
@@ -223,7 +241,8 @@ getNetworkConnections = function(vgList, verbose=FALSE){
     })
   triples = triples[!sapply(triples, is.null)]
   triples = sapply(triples, as.matrix)
-  triples = as.data.frame(t(triples))
+  triples = try(as.data.frame(t(triples)))
+  if(class(triples) == "try-error") browser("Problem with s.data.frame(t(triples)")
   names(triples) = cq(vg, prov, req)
   triples
 }
