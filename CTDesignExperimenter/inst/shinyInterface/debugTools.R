@@ -2,8 +2,10 @@
 
 output$evaluatedOutputR = renderText({
   if(wasClicked(input$evalButtonR)) {
+    cat("evaluatedOutputR\n")
     evalString = isolate(input$evalStringR)
-  capture.output(eval(parse(text=evalString)))
+    paste(collapse="<br>", 
+          gsub(" ", "&nbsp;", capture.output(eval(parse(text=evalString)))))
   ## You have to isolate input$evalStringR; otherwise each character typed calls this callback.
   ## The following might be useful later for up-arrowing through past expressions.
   #   if(is.null(rValues$evalStringHistory))
