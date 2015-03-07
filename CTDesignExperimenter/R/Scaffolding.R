@@ -150,6 +150,28 @@ getVGs = function(scenario, subType) {
   return(it[whichOnes])
 }
 
+createTrialVariableNetworks = function(scenario=currentScenario,
+                                       env=.GlobalEnv) {
+  for(iInsertType in seq(along=scaffoldBlockNames)) {
+    scaffoldInsertSubType = scaffoldInsertSubTypes[iInsertType]
+    if(scaffoldInsertSubType!="") {
+      scaffoldBlockName = scaffoldBlockNames[iInsertType]
+      vgList = VariableGeneratorList(getVGs(scenario@inserts, 
+                                            scaffoldInsertSubType))
+      if(length(vgList) > 0) {
+        theVN = VariableNetwork(vgList=vgList)
+        assign("VN_" %&% scaffoldBlockName,
+               theVN, env=env)
+        ifVerboseCat("VN_" %&% scaffoldBlockName, " matrix: \n",
+                     VN_AssignTreatmentPlan@requirementMatrix)
+      }
+    }
+  } 
+  VN_all = VariableNetwork(
+    vgList=VariableGeneratorList(c(currentScenario@inserts)))
+  assign("VN_all", VN_all, env=env)
+}
+
 #### doAction methods and functions #####
 setGeneric("doAction", function(event, scenario, ...) standardGeneric("doAction"))
 
