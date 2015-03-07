@@ -36,7 +36,10 @@ setClass("VariableList", contains="list",
 )
 VariableList = function(vList) {
   if(!is(vList, "list")) vList = list(vList)
-  new("VariableList", vList)
+  varList = new("VariableList", vList)
+  if(length(vList) > 0)
+    varList@name = sapply(vList, slot, name="name")
+  varList
 }
 ###' Variables
 ###' 
@@ -167,6 +170,6 @@ extractRequirements = function(generator){
 
 setMethod("print", "VariableValue",
           function(x)
-            cat("Variable: ", x@variable@.Data, "  Value: ", x@value, "\n"))
+            cat("Variable: ", x@variable@name, "  Value: ", x@value, "\n"))
 
 setMethod("names", "VariableList", function(x) sapply(x, function(v)v@name))
