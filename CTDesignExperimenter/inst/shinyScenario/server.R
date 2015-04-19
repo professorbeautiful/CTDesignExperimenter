@@ -8,15 +8,17 @@ require("shinyIncubator")
 shinyServer_scaffold = function(input, output, session) {
   cat("Entered shinyServer_scaffold; 
       folder is ", getwd(), "\n")
+  source("debugTools.R", local=TRUE)    ### This is super-useful!
+  
   output$scaffoldTable = renderTable({scaffoldObjects})
-
+  
   for(scafOb in scaffoldObjectNames) {
     parseText = paste0(
-    "output$", scafOb, "<- renderUI({
+      "output$", scafOb, "<- renderUI({
       list(
         renderTable(scaffoldObjects[",
       scafOb,
-    ", ]))
+      ", ]))
     }
     )"
     )
@@ -41,47 +43,48 @@ shinyServer_scaffold = function(input, output, session) {
                  sapply(insert@requirements, slot, "name") ),
            "")
   }
-#  getSlots(class(insert))
+  #  getSlots(class(insert))
   extractOutputVariable = function(insert) 
     insert@outputVariable@name #More later. Hyperlink?
-
-  theUItemplate = 
-    'output$Properties_BeginSimulation = renderTable(scaffoldObjects["BeginSimulation", ])
-    \n
-    insertsFor_BeginSimulation = defaultScenario[which(
-      sapply(defaultScenario, function(insert)
-        insert@insertSubType==
-          scaffoldObjects["BeginSimulation", "eventInsertSubType"]
-      ) ) ]
-    
-    insertsDF_BeginSimulation = 
-           data.frame(
-             params=sapply(insertsFor_BeginSimulation, extractParamNames),
-             needs=sapply(insertsFor_BeginSimulation, extractNeeds),
-             out=sapply(insertsFor_BeginSimulation, extractOutputVariable)
-           )
-    
-    output$insertsDataframe_BeginSimulation =
-            renderTable(insertsDF_BeginSimulation)
-    
-    output$BeginSimulation =
-           renderUI(list(
-               h2("Properties of the BeginSimulation scaffold block:"),
-              \n
-              tableOutput(outputId="Properties_BeginSimulation"),
-              \n
-              h2("In this scenario:"),
-              \n
-              tableOutput(outputId="insertsDataframe_BeginSimulation")
-               ))
-  '
-  print(scaffoldObjectNames)
-  for(scaffoldBlockName in scaffoldObjectNames[[1]]) {
+  scaffoldOutputGenerator = function(scaffoldBlockName) {
     print(scaffoldBlockName)
-    theUItext = gsub("BeginSimulation", scaffoldBlockName, theUItemplate)
-  #  print(theUItext) }
-    eval(parse(text=theUItext))
+    output[["Properties_" %&% scaffoldBlockName]] = 
+      renderTable(scaffoldObjects[scaffoldBlockName, ])
+    insertsFor_scaffoldBlockName = 
+           defaultScenario@inserts[which(
+             sapply(defaultScenario@inserts, function(insert)
+               insert@insertSubType==
+                 scaffoldObjects[scaffoldBlockName, "eventInsertSubType"]
+             ) ) ]
+    insertsDF_scaffoldBlockName = 
+      data.frame(
+        params=sapply(insertsFor_scaffoldBlockName, extractParamNames),
+        needs=sapply(insertsFor_scaffoldBlockName, extractNeeds),
+        out=sapply(insertsFor_scaffoldBlockName, extractOutputVariable)
+      )
+    output[["insertsDataframe_" %&% scaffoldBlockName]] =
+      renderTable(insertsDF_scaffoldBlockName)
+    
+    output[[scaffoldBlockName]] =
+      renderUI(list(
+        h2("Properties of the scaffoldBlockName scaffold block:"),
+        tableOutput(outputId="Properties_" %&% scaffoldBlockName),
+        h2("In this scenario:"),
+        tableOutput(outputId="insertsDataframe_" %&% scaffoldBlockName)
+      ))
+    #'
+    #   print(scaffoldObjectNames)
+    #   for(scaffoldBlockName in scaffoldObjectNames) {
+    #     print(scaffoldBlockName)
+    #     theUItext = gsub("BeginSimulation", scaffoldBlockName, theUItemplate)
+    #     print(theUItext) }
+    #     eval(parse(text=theUItext))
+    #   }
   }
+  lapply(scaffoldObjectNames[[1]], 
+         scaffoldOutputGenerator)
 }
 
+debug(shinyServer_scaffold)
+cat("Will debug shinyServer_scaffold\n")
 shinyServer(shinyServer_scaffold)

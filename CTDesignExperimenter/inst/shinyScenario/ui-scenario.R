@@ -9,6 +9,7 @@ makeTabPanel =  function(scafOb) {
 }
 shinyUI(fluidPage(
   titlePanel("Scenario viewer: default scenario", "Scenario viewer"),
+  uiOutput(outputId="debugTools"),  ### This is super-useful!
   navlistPanel(
     tabPanel("VIEW SCAFFOLD STRUCTURE", 
              uiOutput(outputId="scaffoldTable")),
@@ -24,7 +25,9 @@ shinyUI(fluidPage(
     tabPanel("SummarizePatient", uiOutput("SummarizePatient")) ,
     tabPanel("CheckStoppingRules", uiOutput("CheckStoppingRules")) ,
     tabPanel("SummarizeTrial", uiOutput("SummarizeTrial")) ,
-    tabPanel("SummarizeSimulation", uiOutput("SummarizeSimulation")) )))
+    tabPanel("SummarizeSimulation", uiOutput("SummarizeSimulation")) 
+  )
+))
 
 # Bummer, this use of evalparsetext doesn't work.
 
