@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.2">
+  <help_text>// Uncomment the following line to change the fontsize and font:
+fontsize=14
+fontfamily=Serif //possible: SansSerif,Serif,Monospaced
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Welcome to UMLet!
+//
+// Double-click on elements to add them to the diagram, or to copy them
+// Edit elements by modifying the text in this panel
+// Hold Cmd to select multiple elements
+// Use Cmd+mouse to select via lasso
+//
+// Use +/- or Cmd+mouse wheel to zoom
+// Drag a whole relation at its central square icon
+//
+// Press Cmd+C to copy the whole diagram to the system clipboard (then just paste it to, eg, Word)
+// Edit the files in the "palettes" directory to create your own element palettes
+//
+// Select "Custom Elements &gt; New..." to create new element types
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// This text will be stored with each diagram;  use it for notes.</help_text>
+  <zoom_level>9</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>405</x>
+      <y>0</y>
+      <w>189</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>*&lt;&lt;S4 class&gt;&gt; SwapItem*
+--
+   Slots: 	
+name 
+description
+author
+timestamp
+filename
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>819</x>
+      <y>45</y>
+      <w>189</w>
+      <h>135</h>
+    </coordinates>
+    <panel_attributes>*&lt;&lt;S4 class&gt;&gt; Variable*
+Extends "SwapItem", 
+Member of "Variables", "Action"
+--
+Slots:  checkDataType
+--
+Constructor: Variable()
+--
+Validation
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>216</x>
+      <y>270</y>
+      <w>189</w>
+      <h>153</h>
+    </coordinates>
+    <panel_attributes>*&lt;&lt;S4 class&gt;&gt; Specifier*
+Extends (contains)
+--
+   Slots
+parameters 
+requirements   
+provisions
+--
+  Constructor&amp;methods
+--
+Validation
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1080</x>
+      <y>27</y>
+      <w>189</w>
+      <h>171</h>
+    </coordinates>
+    <panel_attributes>style=wordwrap
+&lt;&lt;S4 class&gt;&gt;
+VariableList
+Extends list
+--
+   Slots:
+--
+   Constructor: VariableList(list)
+--
+   Validation:
+All must be Variable objects.
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1080</x>
+      <y>261</y>
+      <w>207</w>
+      <h>171</h>
+    </coordinates>
+    <panel_attributes>bg=red
+*&lt;&lt;S4 ClassUnion&gt;&gt; Variables*
+Members: Variable, VariableList
+--
+   Slots:
+--
+   Constructor&amp;methods
+--
+   Validation
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>252</x>
+      <y>135</y>
+      <w>243</w>
+      <h>153</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+fg=green
+&lt;&lt;contains&gt;&gt;
+</panel_attributes>
+    <additional_attributes>250.0;10.0;190.0;40.0;190.0;110.0;10.0;150.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>945</x>
+      <y>171</y>
+      <w>153</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>150.0;100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1098</x>
+      <y>189</y>
+      <w>27</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;80.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>999</x>
+      <y>108</y>
+      <w>99</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..n</panel_attributes>
+    <additional_attributes>10.0;20.0;90.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>585</x>
+      <y>90</y>
+      <w>252</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+fg=green
+&lt;&lt;contains&gt;&gt;
+</panel_attributes>
+    <additional_attributes>10.0;20.0;260.0;30.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>153</x>
+      <y>495</y>
+      <w>189</w>
+      <h>153</h>
+    </coordinates>
+    <panel_attributes>*&lt;&lt;S4 class&gt;&gt; VariableGenerator*
+Extends (contains)
+--
+/Slots/
+   generatorCode
+   outputVariable
+--
+Constructor: VariableGenerator()
+Methods:  evaluateGeneratorOutput()
+--
+Validation
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>144</x>
+      <y>324</y>
+      <w>108</w>
+      <h>189</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+fg=green
+&lt;&lt;contains&gt;&gt;
+</panel_attributes>
+    <additional_attributes>80.0;10.0;10.0;60.0;10.0;130.0;100.0;190.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>630</x>
+      <y>243</y>
+      <w>189</w>
+      <h>171</h>
+    </coordinates>
+    <panel_attributes>*&lt;&lt;S4 class&gt;&gt; Event*
+Extends "SwapItem" 
+Member of: "Action"
+--
+Slots:  
+--
+Constructor&amp;methods
+--
+Validation
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>855</x>
+      <y>486</y>
+      <w>207</w>
+      <h>171</h>
+    </coordinates>
+    <panel_attributes>bg=red
+&lt;&lt;S4 ClassUnion&gt;&gt;
+Action
+Members: Variable, Event
+--
+   Slots:
+--
+   Constructor&amp;methods
+--
+   Validation
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>945</x>
+      <y>171</y>
+      <w>27</w>
+      <h>333</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;350.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>810</x>
+      <y>270</y>
+      <w>63</w>
+      <h>243</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>50.0;250.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>603</x>
+      <y>468</y>
+      <w>189</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>*&lt;&lt;S4 class&gt;&gt; ScaffoldEvent*
+Extends "Event" 
+Member of: "Action"
+--
+Slots:  
+--
+Constructor&amp;methods
+--
+Validation
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>684</x>
+      <y>405</y>
+      <w>81</w>
+      <h>81</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+fg=green
+&lt;&lt;contains&gt;&gt;
+</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>540</x>
+      <y>135</y>
+      <w>135</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+fg=green
+&lt;&lt;contains&gt;&gt;
+</panel_attributes>
+    <additional_attributes>10.0;10.0;130.0;120.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>549</x>
+      <y>657</y>
+      <w>225</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;ScaffoldEvent object&gt;&gt; BeginSimulation
+--
+eventInsertSubType: DesignParameter
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>576</x>
+      <y>729</y>
+      <w>225</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;ScaffoldEvent object&gt;&gt; BeginClinicalTrial
+--
+eventInsertSubType: NA
+who: 'Trial'</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>594</x>
+      <y>792</y>
+      <w>225</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;ScaffoldEvent object&gt;&gt; GeneratePatient
+--
+eventInsertSubType: PatientAttribute
+who: 'Candidate'</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>621</x>
+      <y>873</y>
+      <w>225</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;ScaffoldEvent object&gt;&gt; CheckEligibility
+--
+eventInsertSubType: EligibilityCriterion
+who: 'Candidate'
+"jumpIf": "trialData$candidatePatient$
+                   VVenv$notEligible"
+"jumpTo": "GeneratePatient"</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>666</x>
+      <y>990</y>
+      <w>225</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;ScaffoldEvent object&gt;&gt; EnrollPatient
+--
+eventInsertSubType: NA
+who: trialData$NcurrentPatient</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>684</x>
+      <y>1071</y>
+      <w>234</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;ScaffoldEvent object&gt;&gt; AssignTreatmentPlan
+--
+eventInsertSubType: ScheduleTreatment
+who: trialData$NcurrentPatient</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>711</x>
+      <y>1161</y>
+      <w>225</w>
+      <h>117</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;ScaffoldEvent object&gt;&gt; CheckOffStudy
+--
+eventInsertSubType: OffStudyCriterion
+who: trialData$NcurrentPatient
+
+
+
+
+"jumpTo": "SummarizePatient"
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>729</x>
+      <y>1305</y>
+      <w>225</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;ScaffoldEvent object&gt;&gt; CheckModifications
+--
+eventInsertSubType: ModificationRule
+who: trialData$NcurrentPatient
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>657</x>
+      <y>1215</y>
+      <w>108</w>
+      <h>234</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+OffStudy</panel_attributes>
+    <additional_attributes>100.0;240.0;10.0;240.0;10.0;10.0;60.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>540</x>
+      <y>819</y>
+      <w>99</w>
+      <h>135</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+[notEligible]</panel_attributes>
+    <additional_attributes>60.0;10.0;10.0;10.0;10.0;130.0;90.0;130.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>747</x>
+      <y>1395</y>
+      <w>225</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;ScaffoldEvent object&gt;&gt; SummarizePatient
+--
+eventInsertSubType: PatientSummary
+who: trialData$NcurrentPatient
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>765</x>
+      <y>1476</y>
+      <w>225</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;ScaffoldEvent object&gt;&gt; CheckStoppingRules
+--
+eventInsertSubType: StoppingCriterion
+who: trialData$NcurrentPatient
+   [	correct this-- shiould be 'Trial' ]
+"jumpIf": trialData$continueAccrual	
+jumpTo: GeneratePatient</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>783</x>
+      <y>1557</y>
+      <w>225</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;ScaffoldEvent object&gt;&gt; SummarizeTrial
+--
+eventInsertSubType: TrialSummary
+who: 'Trial'
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>441</x>
+      <y>801</y>
+      <w>342</w>
+      <h>738</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;&gt;
+[Not stopping]</panel_attributes>
+    <additional_attributes>360.0;800.0;10.0;800.0;10.0;10.0;170.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>801</x>
+      <y>1638</y>
+      <w>225</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;ScaffoldEvent object&gt;&gt; SummarizeSimulation
+--
+eventInsertSubType: SimulationSummary
+who: 'Trial'
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>684</x>
+      <y>711</y>
+      <w>45</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>30.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>792</x>
+      <y>747</y>
+      <w>45</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>30.0;50.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>810</x>
+      <y>828</y>
+      <w>45</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>30.0;50.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>837</x>
+      <y>936</y>
+      <w>45</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>30.0;50.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>882</x>
+      <y>1026</y>
+      <w>45</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>30.0;50.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>909</x>
+      <y>1116</y>
+      <w>45</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>30.0;50.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>927</x>
+      <y>1269</y>
+      <w>45</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>30.0;40.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>945</x>
+      <y>1359</y>
+      <w>45</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>30.0;40.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>963</x>
+      <y>1440</y>
+      <w>45</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>30.0;40.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>981</x>
+      <y>1530</y>
+      <w>45</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>30.0;30.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>999</x>
+      <y>1602</y>
+      <w>45</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>30.0;40.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>990</x>
+      <y>1476</y>
+      <w>126</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>[	CORRECT THIS! ]
+who should be 'Trial'
+bg=blue
+fg=white
+layer=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>720</x>
+      <y>1215</y>
+      <w>207</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>[	CORRECT THIS! reversed]
+"jumpIf": "trialData$NcurrentPatient$
+                   VVenv$notOffStudy"
+bg=blue
+fg=white
+layer=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>702</y>
+      <w>243</w>
+      <h>153</h>
+    </coordinates>
+    <panel_attributes>*&lt;&lt;S4 class&gt;&gt; VariableNetwork*
+--
+/Slots/
+   vgList allProvisions 
+   allProvisionNames provisionMap 
+   allRequirements allRequirementNames 
+   requirementMap requirementMatrix 
+   howManyNeedMe candidates 
+--
+  Constructor&amp;methods
+--
+Validation
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>63</x>
+      <y>288</y>
+      <w>171</w>
+      <h>432</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+fg=green
+&lt;&lt;contains&gt;&gt;
+</panel_attributes>
+    <additional_attributes>170.0;10.0;10.0;120.0;10.0;340.0;100.0;460.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>612</x>
+      <y>567</y>
+      <w>27</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>630</x>
+      <y>567</y>
+      <w>27</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>648</x>
+      <y>567</y>
+      <w>27</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>666</x>
+      <y>567</y>
+      <w>27</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>684</x>
+      <y>567</y>
+      <w>27</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>702</x>
+      <y>567</y>
+      <w>27</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>558</x>
+      <y>693</y>
+      <w>216</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>who: TrialData [CORRECT THIS]
+bg=blue
+fg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>648</x>
+      <y>1638</y>
+      <w>153</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>?? Should the simulation loop be in the action queue?
+Then all simulated trials are in the same queue?
+Probably better in the Experiment tab only.
+Hence, remove BeginSimulation and SummarizeSimulation.
+bg=blue
+fg=white
+layer=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>351</x>
+      <y>495</y>
+      <w>189</w>
+      <h>153</h>
+    </coordinates>
+    <panel_attributes>*&lt;&lt;S4 class&gt;&gt; EventGenerator*
+Extends (contains)
+--
+/Slots/
+   generatorCode
+   outputVariable
+--
+Constructor: VariableGenerator()
+Methods:  evaluateGeneratorOutput()
+--
+Validation
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>396</x>
+      <y>315</y>
+      <w>171</w>
+      <h>189</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+fg=green
+&lt;&lt;contains&gt;&gt;
+</panel_attributes>
+    <additional_attributes>10.0;10.0;110.0;60.0;110.0;150.0;10.0;190.0</additional_attributes>
+  </element>
+</diagram>
