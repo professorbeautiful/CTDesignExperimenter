@@ -36,11 +36,11 @@ catn=function(...) cat(..., "\n")
 
 withNames =
   function(x, n) {
-	if(length(x) != length(n))
-		stop("withNames: ",length(x), "!=", length(n)) 
-	if(length(x) == 0)
-		return(NULL)
-	temp = data.frame(x=x,n=n);
+    if(length(x) == 0)
+      return(x)
+    if(length(x) != length(n))
+      stop("withNames: ",length(x), "!=", length(n)) 
+    temp = data.frame(x=x,n=n);
         x = temp$x;
         n = temp$n;
         names(x) <- n; 
