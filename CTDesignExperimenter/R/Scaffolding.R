@@ -152,6 +152,8 @@ getVGs = function(scenario, subType) {
 
 createTrialVariableNetworks = function(scenario=currentScenario,
                                        env=.GlobalEnv) {
+  catn("Beginning createTrialVariableNetworks")
+  browser()
   for(iInsertType in seq(along=scaffoldBlockNames)) {
     scaffoldInsertSubType = scaffoldInsertSubTypes[iInsertType]
     if(scaffoldInsertSubType!="") {

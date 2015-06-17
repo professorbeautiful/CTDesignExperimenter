@@ -10,6 +10,7 @@ createObjectsTable = function(theSpecChoice) {
   if(is.null(theSpecChoice)) theSpecChoice = "PopModelSpecifier"
   if(regexpr("\\[", theSpecChoice) > 0)  ### Remove extra characters
     theSpecChoice = substring(theSpecChoice, 1, regexpr("\\[", theSpecChoice) - 2)
+browser()
   theObjects = data.frame(stringsAsFactors=FALSE,
                           instanceNames(theSpecChoice))
   names(theObjects) = "instance"
