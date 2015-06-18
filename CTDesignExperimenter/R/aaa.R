@@ -40,12 +40,13 @@ withNames =
       return(x)
     if(length(x) != length(n))
       stop("withNames: ",length(x), "!=", length(n)) 
-    temp = data.frame(x=x,n=n);
-        x = temp$x;
-        n = temp$n;
-        names(x) <- n; 
-        x
-}
+    result = try(names(x) <- x)
+    if (class(result) == 'try-error') {
+      warning("withNames: Cannot assign names")
+      return(x)
+    }
+    return(result)
+  }
 
 ###### Other utilities
 
@@ -102,12 +103,13 @@ instantiateS4Object <- function(className,slots){
 
 
 ######################
-### Some utility classes and methods.  These may no longer be necessary.
-## Class Union: NumericLogical
-setClassUnion("NumericLogical",c("numeric","logical"))
-
-## Class Union: OptionalNumeric
-setClassUnion("OptionalNumeric",c("numeric","NULL"))
-
-## Class Union: OptionalCharacter
-setClassUnion("OptionalCharacter",c("character","NULL"))
+# ### Some utility classes and methods.  These may no longer be necessary.
+# ## Class Union: NumericLogical
+# setClassUnion("NumericLogical",c("numeric","logical"))
+# 
+# 
+# ## Class Union: OptionalNumeric
+# setClassUnion("OptionalNumeric",c("numeric","NULL"))
+# 
+# ## Class Union: OptionalCharacter
+# setClassUnion("OptionalCharacter",c("character","NULL"))
