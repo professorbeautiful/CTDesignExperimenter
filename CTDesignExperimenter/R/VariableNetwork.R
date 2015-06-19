@@ -161,22 +161,6 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
   browser(expr=(length(vgList)==5))
   if(length(requirementMap) > 0)
     names(requirementMap) = names(vgList)
-  ### From VGs to Variables.get
-  unique.list = function(L) {
-    Lremove = numeric(0); Lind = seq(along=L); 
-    for(ob1 in seq(along=L)) { 
-      for(ob2 in seq(along=L)) { 
-        if(ob1 < ob2) {
-          catn(ob1,ob2,identical(L[[ob1]], L[[ob2]])); 
-          Lremove = c(Lremove, ob2)}; } };   
-    return(L[-Lremove]) }
-  allRequirements = requirementMap
-  if(!is.null(allRequirements)) {
-    if(!is.list(allRequirements)) 
-      allRequirements = list(allRequirements)
-    else
-      allRequirements = unique.list(requirementMap)
-  }
   ## each requirement counted only once.
   allRequirementNames = sapply(allRequirements, function(req)req@name)
   
