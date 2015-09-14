@@ -66,12 +66,12 @@ shinyServer(function(input, output, session) {
     }
   })
   observe({
-    showshinyalert(session, "alert_jstree1", 
+    shinysky:::showshinyalert(session, "alert_jstree1", 
                    paste0("You selected these items in the tree: ", 
                           paste0(input$jstree1, collapse = ", ")))
   })
   observe({
-    showshinyalert(session, "alert_jstree1", 
+    shinysky:::showshinyalert(session, "alert_jstree1", 
                    paste0("You selected these items in the tree: ", 
                           paste0(input$testText, collapse = ", ")))
   })

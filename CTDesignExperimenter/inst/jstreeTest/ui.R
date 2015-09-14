@@ -27,11 +27,11 @@ shinyUI(basicPage(
       div(class="row-fluid" 
           # , jstree("jstree1", jstree.obj(nav))
           # , uiOutput(outputId = 'testTree')
-          , shinyTree('newTree', selected='treeSel')
+          , shinyTree('newTree', selected='treeSel')  ### Native to this package.
           , uiOutput(outputId = 'testText')
           , div(class="span10"
                 , includeScript("www/ctde-types.js") 
-                , shinyalert("alert_jstree1")
+                , shinysky:::shinyalert("alert_jstree1")
                 , actionButton('changeTree', 'changeTree by changing the data')
                 , br()
                 , "The newTree:"
