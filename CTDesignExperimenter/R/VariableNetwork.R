@@ -88,6 +88,11 @@ getRequirementNames = function(vg){
 }
 
 getReqsOrProvs = function(vg, slotName=c("requirements", "provisions"))  {
+  if(is(vg, 'Scenario')) vg = vg@inserts
+  if(is(vg, class2 = 'list') )
+    return(
+      ldply(lapply(vg, getReqsOrProvs, slotName=slotName))
+      )
   contents = slot(vg, slotName)
   if(length(contents) == 0) return( NULL)
   else if(class(contents) == "Variable") 
@@ -160,21 +165,21 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
 #         sapply(vg@provisions@.Data, slot, name="name"))
 #   #   provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
   #                               stringsAsFactors=FALSE)
-  provisionMap = lapply(vgList, getReqsOrProvs, slot="provisions")  ### what if there are no reqs?.
-  provisionMapReduced = Reduce(rbind, provisionMap)
-  ## This will create a single data.frame with names "name" and vgName.
+  provisionMapList = lapply(vgList, getReqsOrProvs, slot="provisions")  ### what if there are no reqs?.
+  provisionMap = Reduce(rbind, provisionMapList)
+  ## This will create a single data.frame with names "name" and "vgName."
   #  browser(expr=(length(vgList)==5))
-  if(length(provisionMap) > 0)
-    names(provisionMap) = names(vgList)
+  if(length(provisionMapList) > 0)
+    names(provisionMapList) = names(provisionMapList)
   allProvisions = lapply(vgList, slot, name="provisions")
-  allProvisionNames = provisionMapReduced[, "name"]
-  names(allProvisionNames) =  provisionMapReduced[, "vgName"]
+  allProvisionNames = provisionMap[, "name"]
+  names(allProvisionNames) =  provisionMap[, "vgName"]
   allProvisions = Reduce( c, lapply(vgList, slot, name="provisions"))
   if(length(allProvisions) > 1) {
     for(r in seq(along=allProvisions))
       attr(allProvisions[[r]]@checkDataType, 'srcref') <- NULL
     ## You have to remove this srcref attribute for 'identical' to work in unique.list().
-    allProvisions = unique.list(allProvisions)
+    allProvisions = unique_list(allProvisions)
     ## each provision counted only once.
     allProvisionNames = sapply(allProvisions, function(req)req@name)
   }  
@@ -186,19 +191,19 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
     browser("length(uniqueProvisionNames) != length(allProvisionNames")
   }
 #############  
-  requirementMap = lapply(vgList, getReqsOrProvs, slotName="requirements")  ### what if there are no reqs?.
-  requirementMapReduced = Reduce(rbind, requirementMap)
+  requirementMapList = lapply(vgList, getReqsOrProvs, slotName="requirements")  ### what if there are no reqs?.
+  requirementMap = Reduce(rbind, requirementMapList)
   ## This will create a single data.frame with names name and vgName.
   #  browser(expr=(length(vgList)==5))
-  if(length(requirementMap) > 0)
-    names(requirementMap) = names(vgList)
+  if(length(requirementMapList) > 0)
+    names(requirementMapList) = names(vgList)
   allRequirements = lapply(vgList, slot, name="requirements")
-  allRequirementNames = requirementMapReduced[, "name"]
+  allRequirementNames = requirementMap[, "name"]
   if(length(allRequirements) > 1)
     for(r in seq(along=allRequirements))
       attr(allRequirements[[r]]@checkDataType, 'srcref') <- NULL
   ## You have to remove this srcref attribute for 'identical' to work in unique.list().
-  allRequirements = unique.list(allRequirements)
+  allRequirements = unique(allRequirements)
   
   ## each requirement counted only once.
   allRequirementNames = sapply(allRequirements, function(req)req@name)
@@ -231,10 +236,10 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
     #colnames(requirementMatrix) = sub('^(I_[^_]*)(_.*)', '\\1', vgNames, perl=T)
     colnames(requirementMatrix) = vgNames
     rownames(requirementMatrix) = uniqueRequirementNames
-    for(iRow in 1:nrow(requirementMapReduced))
+    for(iRow in 1:nrow(requirementMap))
       requirementMatrix[
-        requirementMapReduced$name[iRow], 
-        requirementMapReduced$vgName[iRow]  ] = TRUE
+        requirementMap$name[iRow], 
+        requirementMap$vgName[iRow]  ] = TRUE
     #browser()
     ### From Variables to VGs.
     #   allVariables = union(provisions, unique(allRequirements))
@@ -334,7 +339,7 @@ incidenceMatrix =  function(vN) {  ## migrate to VariableNetwork
 #   provisionEdges = data.frame(VarGen=names(allProvisionNames), 
 #                               Variable=allProvisionNames,
 #                               stringsAsFactors=FALSE)  
-  provisionEdges = provisionMap
+  provisionEdges = vN@provisionMapReduced
   requirementNameList = sapply(vN@vgList, #  or, vN@requirementNameList just as good?
                            function(vg)
                              sapply(vg@requirements, slot, name="name"))
