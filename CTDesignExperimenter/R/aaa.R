@@ -1,17 +1,20 @@
 cat("======== aaa.R  ================\n")
 
-
-unique.list = function(L) {
+# if named unique.list, this is returned by getS3method('unique', 'list')
+#There is a unique.list 
+unique_list = function(L) {
   Lremove = numeric(0); Lind = seq(along=L); 
   for(ob1 in seq(along=L)) { 
     for(ob2 in seq(along=L)) { 
       if(ob1 < ob2) {
-        catn(ob1,ob2,identical(L[[ob1]], L[[ob2]])); 
+        print(sys.calls())
+        catn("unique.list:", ob1,ob2,identical(L[[ob1]], L[[ob2]])); 
         if(identical(L[[ob1]], L[[ob2]]))
           Lremove = c(Lremove, ob2) 
       } 
     }
   }
+  if(length(Lremove) == 0) return(L)
   return(L[-Lremove]) 
 }
 
