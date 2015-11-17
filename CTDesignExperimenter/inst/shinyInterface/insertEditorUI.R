@@ -177,7 +177,7 @@ f.insertEditorUI <<- function() {
         #           class="INSERTlevel,row-fluid", 
         #           style="width:100%"),
         div(class="INSERTlevel", strong("output variable (click ",
-                                        bsActionButton(inputId="btnEditOutputVariable",
+                                        bsButton(inputId="btnEditOutputVariable",
                                                        label=img(src="Var32.png"),
                                                        style="link"),
                                         " to edit)" ),        
@@ -278,7 +278,7 @@ observer_searchInsert = observe(label="observer_searchInsert",
                            local = TRUE)$value
         print(str(theInsert))
         if(class(theInsert) == "VariableGenerator") rValues$theInsert = theInsert
-        else shinyalert("Sorry, it wasn't a VariableGenerator file.")
+        else shinysky:::shinyalert("Sorry, it wasn't a VariableGenerator file.")
       })
     }
   }
@@ -352,11 +352,11 @@ observeBtnSaveInsert = observe(label="observeBtnSaveInsert", {
     catn("(input$btnSaveInsert) = ", (input$btnSaveInsert))
     theInsert = readInsertFromPage()
     if(class(theInsert) == "try-error")
-      shinyalert("Error in observeBtnSaveInsert/readInsertFromPage: " %&% theInsert)
+      shinysky:::shinyalert("Error in observeBtnSaveInsert/readInsertFromPage: " %&% theInsert)
     else
       isolate({
         theInsert = writeSwapMeetFile(theInsert, verbose = TRUE)
-        shinyalert("observeBtnSaveInsert/readInsertFromPage: made new Insert. Wrote file "%&%
+        shinysky:::shinyalert("observeBtnSaveInsert/readInsertFromPage: made new Insert. Wrote file "%&%
                      theInsert@filename %&% ". CAUTION: This will NOT (yet) replace in Scenario." )
         # rValues$theInsert = theInsert  ### Skip it; Otherwise, infinite loop.
       })
@@ -377,7 +377,7 @@ observer_btnReplaceInsertInScenario = observe(label="observer_btnReplaceInsertIn
     isolate({
       theInsert = readInsertFromPage()
       if(class(theInsert) == "try-error")
-        shinyalert("Error in Insert: " %&% theInsert)
+        shinysky:::shinyalert("Error in Insert: " %&% theInsert)
       else {
         rValues$theInsert = theInsert = writeSwapMeetFile(theInsert, verbose = TRUE) 
         #if(!is.null(input$treeSelectionDepth))
