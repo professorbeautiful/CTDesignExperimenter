@@ -169,7 +169,7 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
   provisionMap = Reduce(rbind, provisionMapList)
   ## This will create a single data.frame with names "name" and "vgName."
   #  browser(expr=(length(vgList)==5))
-  if(length(provisionMapList) > 0)
+  if(length(provisionMapList) > 0)  ### ????
     names(provisionMapList) = names(provisionMapList)
   allProvisions = lapply(vgList, slot, name="provisions")
   allProvisionNames = provisionMap[, "name"]
