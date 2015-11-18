@@ -38,7 +38,7 @@ VariableList = function(vList) {
   if(!is(vList, "list")) vList = list(vList)
   varList = new("VariableList", vList)
   if(length(vList) > 0)
-    varList@name = sapply(vList, slot, name="name")
+    names(varList@.Data) = sapply(vList, slot, name="name")
   varList
 }
 ###' Variables
