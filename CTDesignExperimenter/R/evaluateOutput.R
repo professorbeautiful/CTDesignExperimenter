@@ -104,6 +104,8 @@ evaluateVNoutputs = function(vN, envVariableValues = new.env()) {
       #      vg = findGenerator(vName, env=parent.frame())
       ifVerboseCat("Processing vg ", vName)
       vg = vN@vgList[[vName]]
+      if( ! class(vg) == "VariableGenerator")
+        browser()
       value = evaluateGeneratorOutput(generator=vg, envir=envVariableValues)
       provName = vg@provisions@name
       ifVerboseCat("Assigning ", value@.Data, " to ", provName)
