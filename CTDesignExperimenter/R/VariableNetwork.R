@@ -169,7 +169,7 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
   provisionMap = Reduce(rbind, provisionMapList)
   ## This will create a single data.frame with names "name" and "vgName."
   #  browser(expr=(length(vgList)==5))
-  if(length(provisionMapList) > 0)  ### ????
+  if(length(provisionMapList) > 0)
     names(provisionMapList) = names(provisionMapList)
   allProvisions = lapply(vgList, slot, name="provisions")
   allProvisionNames = provisionMap[, "name"]
@@ -183,42 +183,21 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
     ## each provision counted only once.
     allProvisionNames = sapply(allProvisions, function(req)req@name)
   }  
-  
   ## but if 2 different Provision variables have the same name, we need to know that. 
   
   uniqueProvisionNames = unique(allProvisionNames)
   if(length(uniqueProvisionNames) != length(allProvisionNames)) {
     browser("length(uniqueProvisionNames) != length(allProvisionNames")
   }
-#############  
-  requirementMapList = lapply(vgList, getReqsOrProvs, slotName="requirements")  ### what if there are no reqs?.
-  requirementMap = Reduce(rbind, requirementMapList)
-  ## This will create a single data.frame with names name and vgName.
-  #  browser(expr=(length(vgList)==5))
-  if(length(requirementMapList) > 0)
-    names(requirementMapList) = names(vgList)
-  allRequirements = lapply(vgList, slot, name="requirements")
-  allRequirementNames = requirementMap[, "name"]
-  if(length(allRequirements) > 1)
-    for(r in seq(along=allRequirements))
-      attr(allRequirements[[r]]@checkDataType, 'srcref') <- NULL
-  ## You have to remove this srcref attribute for 'identical' to work in unique.list().
-  allRequirements = unique(allRequirements)
+  network@provisions = allProvisions
+  network@allProvisionNames = allProvisionNames
+  network@provisionMap = provisionMap
   
-  ## each requirement counted only once.
-  allRequirementNames = sapply(allRequirements, function(req)req@name)
   
-  ## but if 2 different requirement variables have the same name, we need to know that. 
-  
-  uniqueRequirementNames = unique(allRequirementNames)
-  if(length(uniqueRequirementNames) != length(allRequirementNames)) {
-    browser("length(uniqueRequirementNames) != length(allRequirementNames")
-  }
-  #  requirementMatrix = outer(vN@vgList, vN@allRequirements, isRequiredHere)
-  # outer( uniqueRequirementNames, names(vgList), `%in%`)
-
-  
-  #    if(is.null(allRequirements) | length(allRequirements) == 0) {
+  #############  
+  ### TODO:  deal with the no-reqs case.
+  requirementMapList = lapply(vgList, getReqsOrProvs, slotName="requirements") 
+  requirementMapList = Filter(Negate(is.null), requirementMapList)
   if(length(uniqueRequirementNames) == 0) {
     candidates = list()
     requirementMatrix = matrix(nrow=0, ncol=0)
@@ -231,6 +210,39 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
     candidates = list()
     candidateCounts = numeric(0)
   } else {
+    
+    allRequirements = Filter(Negate(is.null), allRequirements)
+    ### what if there are no reqs?.
+    requirementMap = Reduce(rbind, requirementMapList)
+    ## This will create a single data.frame with names name and vgName.
+    #  browser(expr=(length(vgList)==5))
+    if(length(requirementMapList) > 0)
+      names(requirementMapList) = names(vgList)
+    allRequirements = lapply(vgList, slot, name="requirements")
+    allRequirementNames = requirementMap[, "name"]
+    if(length(allRequirements) > 1)
+      for(r in seq(along=allRequirements))
+        attr(allRequirements[[r]]@checkDataType, 'srcref') <- NULL
+    ## You have to remove this srcref attribute for 'identical' to work in unique_list().
+    uniqueRequirements = unique_list(allRequirements)
+    ## each requirement counted only once.
+    uniqueRequirementNames = sapply(allRequirements, 
+                                    function(req)
+                                      ifelse(is.null(req),
+                                             NULL, req@name))
+    
+    ## but if 2 different requirement variables have the same name, we need to know that. 
+    
+    uniqueRequirementNames = unique(allRequirementNames)
+    if(length(uniqueRequirementNames) != length(allRequirementNames)) {
+      browser("length(uniqueRequirementNames) != length(allRequirementNames")
+    }
+    #  requirementMatrix = outer(vN@vgList, vN@allRequirements, isRequiredHere)
+    # outer( uniqueRequirementNames, names(vgList), `%in%`)
+    
+    
+    #    if(is.null(allRequirements) | length(allRequirements) == 0) {
+    
     requirementMatrix = matrix(FALSE, nrow=length(uniqueRequirementNames), 
                                ncol=length(vgNames))
     #colnames(requirementMatrix) = sub('^(I_[^_]*)(_.*)', '\\1', vgNames, perl=T)
@@ -250,23 +262,18 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
     candidates = outer(allRequirementNames, allProvisionNames, "==")
     dimnames(candidates) = list(allRequirementNames, vgNames)
     candidateCounts = apply(candidates, 1, sum)
+    network@requirements = VariableList(allRequirements[candidateCounts==0])
+    ### These are internally unmet requirements.  ### External view!
+    network@allRequirements = allRequirements
+    network@allRequirementNames = allRequirementNames
+    network@requirementMap = requirementMap
+    network@requirementMatrix = requirementMatrix
+    network@howManyNeedMe = howManyNeedMe
+    network@candidates = candidates
   }
-  network@requirements = VariableList(allRequirements[candidateCounts==0])
-  ### These are internally unmet requirements.  ### External view!
-  network@provisions = allProvisions
-  network@allProvisionNames = allProvisionNames
-  network@provisionMap = provisionMap
-  network@allRequirements = allRequirements
-  network@allRequirementNames = allRequirementNames
-  network@requirementMap = requirementMap
-  network@requirementMatrix = requirementMatrix
-  network@howManyNeedMe = howManyNeedMe
-  network@candidates = candidates
   network
 }
 # debug(VariableNetwork)
-
-
 
 #' getNetworkConnections
 #' 
@@ -405,7 +412,9 @@ if(interactive()){  ### for testing purposes
                           requirements=VariableList(list(vA)))
   )
   
-  vNexample = VariableNetwork(vgList=ListOfInserts(vgListExample)) 
+  make_vNexample = function()
+    VariableNetwork(vgList=ListOfInserts(vgListExample))
+  
   ### .... in progress...
   # getPopulationModelOutputs = function(popModel, alreadyDone=list()) {
   #   allVGs = function(pModel) {
