@@ -1,3 +1,4 @@
+cat("======== fixHtmlEscape.R ================\n")
 
 ### to fix a problem where the args text euals character(0).
 

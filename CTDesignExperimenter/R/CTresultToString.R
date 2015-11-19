@@ -1,3 +1,4 @@
+cat("======== CTresultToString.R ================\n")
 
 CTresultToString = function(thisCTresult=oneCTresult, showPatients=TRUE){
   #output = ifelse(!is.null(thisCTresult@CTTimes),  thisCTresult@CTTimes, "") ### NULL
@@ -14,3 +15,5 @@ CTresultToString = function(thisCTresult=oneCTresult, showPatients=TRUE){
 }
 ###patientToString(oneCTresult@PatsData[[2]])
 ### CTresultToString(oneCTresult)
+cat("======== Finished CTresultToString.R ================\n")
+

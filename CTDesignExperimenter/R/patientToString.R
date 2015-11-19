@@ -1,3 +1,4 @@
+cat("======== patientToString.R ================\n")
 # patientToString,CTresultToString
 
 patientToString = function(pat) {
