@@ -5,7 +5,8 @@ cat("======== evaluateOutput.R ================\n")
 ##' @param v1 A Variable object (otherwise, throws error).
 ##' @param v2 A Variable object (otherwise, throws error).
 ##' @return TRUE if identical, FALSE if not. 
-##' @examples sameVar(vg_responseDoseThreshold@requirements, v_clearanceRate)
+#' @examples sameVar(vg_responseDoseThreshold@@requirements, v_clearanceRate)
+## Use double-at-sign to escape it.
 
 sameVar = function(v1, v2) {
   if(!is(v1, "Variable")) stop(paste0("sameVar: v1 should be a Variable", v1))
@@ -48,13 +49,15 @@ findGenerator = function(var, env=parent.frame(), menu=FALSE) {
 }
       
 
-##' 
-##' @name evaluateGeneratorOutput
-##' @description Evaluate a generator expression.
-##' @param generator A SimpleVariableGenerator 
-##' @param input Input "requirements" list of VariableValue objects.
-##' @examples findGeneratorName(vg_responseDoseThreshold@requirements)
-##' @examples findGeneratorName(vg_responseDoseThreshold@provisions
+#' 
+#' evaluateGeneratorOutput
+#' 
+#' Evaluate a generator expression.
+#' 
+#' @param generator A SimpleVariableGenerator 
+#' @param input Input "requirements" list of VariableValue objects.
+#' @examples findGeneratorName(vg_responseDoseThreshold@@requirements)
+#' @examples findGeneratorName(vg_responseDoseThreshold@@provisions
 
 evaluateGeneratorOutput = function(generator, envir=parent.frame(), alreadyDone=list()) {
   ## First, make the generatorCode function available.
@@ -79,9 +82,9 @@ evaluateGeneratorOutput = function(generator, envir=parent.frame(), alreadyDone=
 ##' Evaluate the output variables for all the VGs in a network.
 ##' @param VN A VariableNetwork object.
 ##' @param envVariableValues Previously calculated values.
-##' @examples incidenceMatrix(vNexample)
-##' @examples permuteToUpperTriangular(incidenceMatrix(vNexample))  ### permute to upper triangular.
-##' @examples vNvalueEnv = evaluateVNoutputs(vNexample)
+##' @examples incidenceMatrix(make_vNexample())
+##' @examples permuteToUpperTriangular(incidenceMatrix(make_vNexample()))  ### permute to upper triangular.
+##' @examples vNvalueEnv = evaluateVNoutputs(make_vNexample())
 ##' @examples ls(env=vNvalueEnv)
 
 evaluateVNoutputs = function(vN, envVariableValues = new.env()) {

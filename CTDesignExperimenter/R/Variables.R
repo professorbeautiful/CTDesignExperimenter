@@ -41,10 +41,11 @@ VariableList = function(vList) {
     names(varList@.Data) = sapply(vList, slot, name="name")
   varList
 }
-###' Variables
-###' 
-###' Allows VariableGenerators to use either one Variable or a list of them in provisions and requirements.
-###' 
+
+# class union: Variables   #TODO fix this roxygen2 section.
+# 
+# Allows VariableGenerators to use either one Variable or a list of them in provisions and requirements.
+# 
 setClassUnion("Variables", c("Variable", "VariableList", "NULL"))
 setMethod("print", "Variable", function(x)
   cat(" ", x@name, " (valid:", gsub("\\n$", "", printFunctionBody(x@checkDataType)), ")\n")  ### Omits description.
@@ -113,7 +114,10 @@ VariableValue = function(value, variable) {
 ### You can't use dump on S4 objects.
 
 ############################################################
-##' @title   A component of a PatientModelSpecifier, generating just one variable value.
+
+#' SimpleVariableGenerator
+#' 
+#'  A component of a PatientModelSpecifier, generating just one variable value.
 ##' 
 ##' \code{SimpleVariableGenerator} S4 class for a component of a PatientModelSpecifier, 
 ##' generating just one variable value
