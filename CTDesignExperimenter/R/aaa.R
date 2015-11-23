@@ -7,8 +7,8 @@ unique_list = function(L) {
   for(ob1 in seq(along=L)) { 
     for(ob2 in seq(along=L)) { 
       if(ob1 < ob2) {
-        print(sys.calls())
-        catn("unique.list:", ob1,ob2,identical(L[[ob1]], L[[ob2]])); 
+        #print(sys.calls())
+        #catn("unique_list:", ob1,ob2,identical(L[[ob1]], L[[ob2]])); 
         if(identical(L[[ob1]], L[[ob2]]))
           Lremove = c(Lremove, ob2) 
       } 
