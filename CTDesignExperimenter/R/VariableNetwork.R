@@ -87,6 +87,13 @@ getRequirementNames = function(vg){
   as.vector(sapply(vg@requirements, slot, name="name"))
 }
 
+#' getReqsOrProvs
+#' 
+#' Returns the names of the variables required or provided by this VG.
+#' 
+#' @param vg Variable Generator.
+#' @param slotName Either "requirements" or "provisions"
+#' 
 getReqsOrProvs = function(vg, slotName=c("requirements", "provisions"))  {
   if(is(vg, 'Scenario')) vg = vg@inserts
   if(is(vg, class2 = 'list') )
