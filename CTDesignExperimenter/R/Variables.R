@@ -122,11 +122,11 @@ VariableValue = function(value, variable) {
 ##' \code{SimpleVariableGenerator} S4 class for a component of a PatientModelSpecifier, 
 ##' generating just one variable value
 ##' , and adding it to the values of the inputs.
-##'  \section{Slots} {
-##'   \describe{
-##'   \item{\code{outputVariable}:}{An object of class \code{Variable}}
-##'   \item{\code{generatorCode}:}{A function calculating the value for the variable.}
-##'   }}
+##  \section{Slots} {
+##   \describe{
+##   \item{\code{outputVariable}:}{An object of class \code{Variable}}
+##   \item{\code{generatorCode}:}{A function calculating the value for the variable.}
+##   }}
 # getVariableValues = function(generator){
 #   if(is.null(generator@requirements))
 #     return(list(evaluateOutput(generator)))
@@ -177,3 +177,8 @@ setMethod("print", "VariableValue",
             cat("Variable: ", x@variable@name, "  Value: ", x@value, "\n"))
 
 setMethod("names", "VariableList", function(x) sapply(x, function(v)v@name))
+
+setMethod("identical", c("Variable","Variable"), function(x,y)
+  x@name==y@name & x@description==y@description & 
+    identical(printFunctionBody(x@checkDataType), 
+              printFunctionBody(y@checkDataType)))
