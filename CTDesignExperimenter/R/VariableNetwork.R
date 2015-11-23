@@ -72,9 +72,10 @@ setClass("VariableNetwork", contains="Specifier",
                     provisionMap="list",
                     allRequirements="list",
                     allRequirementNames="character",
+                    requirementEdges="data.frame",
                     requirementMap="list",
-                    requirementMatrix="ANY",
-                    howManyNeedMe="ANY",
+                    #requirementMatrix="ANY",
+                    #howManyNeedMe="ANY",
                     candidates="ANY")
 )
 
@@ -119,6 +120,7 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
   if(is.null(vgList)) vgList = ListOfInserts()
   if(is(vgList, "VariableGenerator")) vgList = ListOfInserts(vgList)
   if(is(vgList, "list")) vgList = ListOfInserts(vgList)
+  vgNames = names(vgList)
   if(!is.null(varNetworkList)) {
     if(is(varNetworkList, "VariableNetwork")) varNetworkList = list(varNetworkList)
     for(vN in varNetworkList) {
@@ -172,16 +174,17 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
 #         sapply(vg@provisions@.Data, slot, name="name"))
 #   #   provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
   #                               stringsAsFactors=FALSE)
-  provisionMapList = lapply(vgList, getReqsOrProvs, slot="provisions")  ### what if there are no reqs?.
+  provisionMapList = lapply(vgList, getReqsOrProvs, slot="provisions")  
+  # This creates a list of data.frame with names "name" and "vgName".
   provisionMap = Reduce(rbind, provisionMapList)
-  ## This will create a single data.frame with names "name" and "vgName."
-  #  browser(expr=(length(vgList)==5))
-  if(length(provisionMapList) > 0)
-    names(provisionMapList) = names(provisionMapList)
+  # This will create a single character data.frame with names "name" and "vgName."
+  # if(length(provisionMapList) > 0)
+#     names(provisionMapList) = names(provisionMapList)
   allProvisions = lapply(vgList, slot, name="provisions")
+  # allProvisions is a list of actual provision slot contents.
   allProvisionNames = provisionMap[, "name"]
   names(allProvisionNames) =  provisionMap[, "vgName"]
-  allProvisions = Reduce( c, lapply(vgList, slot, name="provisions"))
+  allProvisions = Reduce( c, allProvisions)
   if(length(allProvisions) > 1) {
     for(r in seq(along=allProvisions))
       attr(allProvisions[[r]]@checkDataType, 'srcref') <- NULL
@@ -190,13 +193,11 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
     ## each provision counted only once.
     allProvisionNames = sapply(allProvisions, function(req)req@name)
   }  
-  ## but if 2 different Provision variables have the same name, we need to know that. 
-  
   uniqueProvisionNames = unique(allProvisionNames)
   if(length(uniqueProvisionNames) != length(allProvisionNames)) {
     browser("length(uniqueProvisionNames) != length(allProvisionNames")
   }
-  network@provisions = allProvisions
+  network@provisions = VariableList(allProvisions)
   network@allProvisionNames = allProvisionNames
   network@provisionMap = provisionMap
   
@@ -205,67 +206,60 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
   ### TODO:  deal with the no-reqs case.
   requirementMapList = lapply(vgList, getReqsOrProvs, slotName="requirements") 
   requirementMapList = Filter(Negate(is.null), requirementMapList)
-  if(length(uniqueRequirementNames) == 0) {
+  requirementMap = Reduce(rbind, requirementMapList)
+  ## This will create a single data.frame with names name and vgName.
+  #  browser(expr=(length(vgList)==5))
+  
+  if(length(requirementMapList) == 0) {
     candidates = list()
-    requirementMatrix = matrix(nrow=0, ncol=0)
     allRequirements=list()
     allRequirementNames=character(0)
-    requirementMatrix = matrix(nrow=0,ncol=0)
-    howManyNeedMe = numeric(0)
-    candidates = matrix(nrow=0,ncol=0)
-    howManyNeedMe = requirementMatrix
+    #requirementMatrix = matrix(nrow=0,ncol=0)
+    network@requirementEdges = data.frame()
     candidates = list()
     candidateCounts = numeric(0)
   } else {
-    
-    allRequirements = Filter(Negate(is.null), allRequirements)
-    ### what if there are no reqs?.
-    requirementMap = Reduce(rbind, requirementMapList)
-    ## This will create a single data.frame with names name and vgName.
-    #  browser(expr=(length(vgList)==5))
-    if(length(requirementMapList) > 0)
-      names(requirementMapList) = names(vgList)
     allRequirements = lapply(vgList, slot, name="requirements")
     allRequirementNames = requirementMap[, "name"]
-    if(length(allRequirements) > 1)
+    names(allRequirementNames) =  requirementMap[, "vgName"]
+    allRequirements = Reduce( c, lapply(vgList, slot, name="requirements"))
+    if(length(allRequirements) > 1) {
       for(r in seq(along=allRequirements))
         attr(allRequirements[[r]]@checkDataType, 'srcref') <- NULL
-    ## You have to remove this srcref attribute for 'identical' to work in unique_list().
-    uniqueRequirements = unique_list(allRequirements)
+      ## You have to remove this srcref attribute for 'identical' to work in unique.list().
+      uniqueRequirements = unique_list(allRequirements)
+    }  
     ## each requirement counted only once.
-    uniqueRequirementNames = sapply(allRequirements, 
-                                    function(req)
-                                      ifelse(is.null(req),
-                                             NULL, req@name))
+    uniqueRequirementNames = sapply(
+      allRequirements, function(req)
+        ifelse(is.null(req), NULL, req@name))
     
     ## but if 2 different requirement variables have the same name, we need to know that. 
-    
-    uniqueRequirementNames = unique(allRequirementNames)
-    if(length(uniqueRequirementNames) != length(allRequirementNames)) {
-      browser("length(uniqueRequirementNames) != length(allRequirementNames")
-    }
     #  requirementMatrix = outer(vN@vgList, vN@allRequirements, isRequiredHere)
     # outer( uniqueRequirementNames, names(vgList), `%in%`)
-    
-    
     #    if(is.null(allRequirements) | length(allRequirements) == 0) {
     
-    requirementMatrix = matrix(FALSE, nrow=length(uniqueRequirementNames), 
-                               ncol=length(vgNames))
-    #colnames(requirementMatrix) = sub('^(I_[^_]*)(_.*)', '\\1', vgNames, perl=T)
-    colnames(requirementMatrix) = vgNames
-    rownames(requirementMatrix) = uniqueRequirementNames
-    for(iRow in 1:nrow(requirementMap))
-      requirementMatrix[
-        requirementMap$name[iRow], 
-        requirementMap$vgName[iRow]  ] = TRUE
-    #browser()
+    network@requirementEdges = 
+      merge(requirementMap, provisionMap, by="name") 
+    
+#     requirementMatrix = 
+#       matrix(FALSE, 
+#                                nrow=length(vgNames), 
+#                                ncol=length(vgNames))
+# #     #colnames(requirementMatrix) = sub('^(I_[^_]*)(_.*)', '\\1', vgNames, perl=T)
+#     colnames(requirementMatrix) = vgNames
+#     rownames(requirementMatrix) = vgNames
+#     for(iRow in 1:nrow(requirementMap))
+#       requirementMatrix[
+#         requirementMap$name[iRow], 
+#         requirementMap$vgName[iRow]  ] = TRUE
+#     #browser()
     ### From Variables to VGs.
     #   allVariables = union(provisions, unique(allRequirements))
     #   allVariableNames = sapply(allVariables, function(v) v@name)
     # We need a check: no req Variable name should be repeated.
     # TODO here.
-    howManyNeedMe = apply(requirementMatrix, 1, sum)
+    #howManyNeedMe = apply(requirementMatrix, 1, sum)
     candidates = outer(allRequirementNames, allProvisionNames, "==")
     dimnames(candidates) = list(allRequirementNames, vgNames)
     candidateCounts = apply(candidates, 1, sum)
@@ -274,9 +268,10 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
     network@allRequirements = allRequirements
     network@allRequirementNames = allRequirementNames
     network@requirementMap = requirementMap
-    network@requirementMatrix = requirementMatrix
-    network@howManyNeedMe = howManyNeedMe
+    #network@requirementMatrix = requirementMatrix
+    #network@howManyNeedMe = howManyNeedMe
     network@candidates = candidates
+    
   }
   network
 }
@@ -345,38 +340,57 @@ permuteToUpperTriangular = function(M, whenToStop=3, verbose=F) {
   M
 }
 
-
-incidenceMatrix =  function(vN) {  ## migrate to VariableNetwork
-  #if(length(vN@allRequirements) == 0) 
-  #  return(NULL) ## or matrix(nrow=0,ncol=0))
-  allProvisionNames = vN@allProvisionNames
-#   provisionEdges = data.frame(VarGen=names(allProvisionNames), 
-#                               Variable=allProvisionNames,
-#                               stringsAsFactors=FALSE)  
-  provisionEdges = vN@provisionMapReduced
-  requirementNameList = sapply(vN@vgList, #  or, vN@requirementNameList just as good?
-                           function(vg)
-                             sapply(vg@requirements, slot, name="name"))
-  requirementMatrix = vN@requirementMatrix
-  pairs = expand.grid(rownames(requirementMatrix), stringsAsFactors=FALSE,
-                      colnames(requirementMatrix))
-  reqEdges = pairs[which(c(requirementMatrix)), ]
-  if(ncol(reqEdges) == 2)
-    colnames(reqEdges) = c("Variable", "VarGen")
-  
-  allVars = union(reqEdges$Variable, provisionEdges$Variable)
-  nVars = length(allVars)
-  allVGs = union(reqEdges$VarGen, provisionEdges$VarGen)
-  nVG = length(allVGs)
-  allNodes = c(allVars, allVGs)
-  incidenceMatrix = matrix(0, nrow = nVars+nVG, ncol = nVars+nVG)
-  dimnames(incidenceMatrix) = list(allNodes, allNodes)  
-  for(r in 1:nrow(reqEdges)) 
-    incidenceMatrix[reqEdges[r,1], reqEdges[r,2]] = 1
-  for(r in 1:nrow(provisionEdges)) 
-    incidenceMatrix[provisionEdges[r,1], provisionEdges[r,2]] = 1
+incidenceMatrix = function(vN) {
+  if(!is(vN, "VariableNetwork"))
+    stop("Not a VariableNetwork")
+  nVG = length(vN@vgList)
+  incidenceMatrix = matrix(0, nrow=nVG, ncol=nVG)
+  rownames(incidenceMatrix) = 
+    colnames(incidenceMatrix) =
+    names(vN@vgList)
+  if(nrow(vN@requirementEdges) > 0)
+    incidenceMatrix[vN@requirementEdges$vgName.y, 
+                    vN@requirementEdges$vgName.x] = 1
   return(incidenceMatrix)
 }
+          # incidenceMatrix =  function(vN) {  ## migrate to VariableNetwork
+#   #if(length(vN@allRequirements) == 0) 
+#   #  return(NULL) ## or matrix(nrow=0,ncol=0))
+#   allProvisionNames = vN@allProvisionNames
+# #   provisionEdges = data.frame(VarGen=names(allProvisionNames), 
+# #                               Variable=allProvisionNames,
+# #                               stringsAsFactors=FALSE)  
+#   provisionEdges = vN@provisionMap
+#   requirementNameList = sapply(vN@vgList, #  or, vN@requirementNameList just as good?
+#                            function(vg)
+#                              sapply(vg@requirements, slot, name="name"))
+#   requirementMatrix = vN@requirementMatrix
+#   pairs = expand.grid(rownames(requirementMatrix), stringsAsFactors=FALSE,
+#                       colnames(requirementMatrix))
+#   reqEdges = pairs[which(c(requirementMatrix)), ]
+#   if(length(reqEdges) == 0)
+#     return(NULL)
+#   if(ncol(reqEdges) == 2)
+#     colnames(reqEdges) = c("Variable", "VarGen")
+#   
+#   allVars = union(reqEdges$Variable, provisionEdges$name)
+#   nVars = length(allVars)
+#   allVGs = union(reqEdges$VarGen, provisionEdges$vgName)
+#   nVG = length(allVGs)
+#   allNodes = c(allVars, allVGs)
+#   incidenceMatrix = matrix(0, nrow = nVars+nVG, ncol = nVars+nVG)
+#   dimnames(incidenceMatrix) = list(allNodes, allNodes)  
+#   for(r in 1:nrow(reqEdges)) 
+#     incidenceMatrix[reqEdges[r,1], reqEdges[r,2]] = 1
+#   for(r in 1:nrow(provisionEdges)) 
+#     incidenceMatrix[provisionEdges[r,1], provisionEdges[r,2]] = 1
+#   return(incidenceMatrix)
+#   nVG = length(vN@)
+#   incidenceMatrix = matrix(0, nrow=nVG, ncol=nVG)
+#   incidenceMatrix(vN@requirementEdges$vgName.x, 
+#                   vN@requirementEdges$vgName.y) = 1
+#   return(incidenceMatrix)
+# }
 
 
 

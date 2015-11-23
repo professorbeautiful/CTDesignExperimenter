@@ -164,8 +164,8 @@ createTrialVariableNetworks = function(scenario=currentScenario,
         theVN = VariableNetwork(vgList=vgList)
         assign("VN_" %&% scaffoldBlockName,
                theVN, env=env)
-        ifVerboseCat("VN_" %&% scaffoldBlockName, " matrix: \n",
-                     VN_AssignTreatmentPlan@requirementMatrix)
+        ifVerboseCat("VN_" %&% scaffoldBlockName, " EDGES: \n",
+                     VN_AssignTreatmentPlan@requirementEdges)
       }
     }
   } 

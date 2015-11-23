@@ -98,15 +98,16 @@ evaluateVNoutputs = function(vN, envVariableValues = new.env()) {
     cat("evaluateVNoutputs: iM try-error \n")
     # browser()  ### TODO: improve this error-handling.
   }
-  for(vName in rownames(iM)) { 
-    ifVerboseCat("Processing node ", vName)
+  for(vgName in rownames(iM)) { 
+    ifVerboseCat("Processing node ", vgName)
     ifVerboseCat(union(vN@allRequirementNames, names(vN@provisions)))
-    if(vName %in% union(vN@allRequirementNames, names(vN@provisions))) {
-      ifVerboseCat("Skipping Variable ", vName)
-    }   else {
+    ###  why the following line??
+    #if(vName %in% union(vN@allRequirementNames, names(vN@provisions))) {
+    #  ifVerboseCat("Skipping Variable ", vName)
+    #}   else {
       #      vg = findGenerator(vName, env=parent.frame())
-      ifVerboseCat("Processing vg ", vName)
-      vg = vN@vgList[[vName]]
+      ifVerboseCat("Processing vg ", vgName)
+      vg = vN@vgList[[vgName]]
       if( ! class(vg) == "VariableGenerator")
         browser()
       value = evaluateGeneratorOutput(generator=vg, envir=envVariableValues)
@@ -115,7 +116,7 @@ evaluateVNoutputs = function(vN, envVariableValues = new.env()) {
       
       if(length(provName) > 1) stop("more than one provision name")
       assign(provName, value, envir=envVariableValues, inherits=FALSE)
-    }
+    #}
   }
   ifVerboseCat(ls(envir=envVariableValues))
   return(envVariableValues)
