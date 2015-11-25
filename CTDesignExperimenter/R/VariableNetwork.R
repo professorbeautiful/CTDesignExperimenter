@@ -97,10 +97,15 @@ getRequirementNames = function(vg){
 #' 
 getReqsOrProvs = function(vg, slotName=c("requirements", "provisions"))  {
   if(is(vg, 'Scenario')) vg = vg@inserts
-  if(is(vg, class2 = 'list') )
-    return(
-      ldply(lapply(vg, getReqsOrProvs, slotName=slotName))
-      )
+  if(is(vg, class2 = 'list') ) {
+    result = lapply(vg, getReqsOrProvs, slotName=slotName)
+    for(iVG in 1:length(vg))
+      if( ! is.null(result[[iVG]]) )
+        result[[iVG]]$vgName = names(vg)[iVG]
+      ### this handles the case where filename is empty,
+      # for example EC generators.
+    return(result)
+  }
   contents = slot(vg, slotName)
   if(length(contents) == 0) return( NULL)
   else if(class(contents) == "Variable") 
@@ -174,7 +179,7 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
 #         sapply(vg@provisions@.Data, slot, name="name"))
 #   #   provisionEdges = data.frame(VarGen=names(provisionMap), Variable=provisionMap,
   #                               stringsAsFactors=FALSE)
-  provisionMapList = lapply(vgList, getReqsOrProvs, slot="provisions")  
+  provisionMapList = getReqsOrProvs(vgList, slotName="provisions")  
   # This creates a list of data.frame with names "name" and "vgName".
   provisionMap = Reduce(rbind, provisionMapList)
   # This will create a single character data.frame with names "name" and "vgName."
@@ -204,7 +209,7 @@ VariableNetwork = function(vgList=NULL, varNetworkList=NULL){
   
   #############  
   ### TODO:  deal with the no-reqs case.
-  requirementMapList = lapply(vgList, getReqsOrProvs, slotName="requirements") 
+  requirementMapList = getReqsOrProvs(vgList, slotName="requirements") 
   requirementMapList = Filter(Negate(is.null), requirementMapList)
   requirementMap = Reduce(rbind, requirementMapList)
   ## This will create a single data.frame with names name and vgName.
@@ -347,10 +352,11 @@ incidenceMatrix = function(vN) {
   incidenceMatrix = matrix(0, nrow=nVG, ncol=nVG)
   rownames(incidenceMatrix) = 
     colnames(incidenceMatrix) =
-    names(vN@vgList)
+      names(vN@vgList)
   if(nrow(vN@requirementEdges) > 0)
-    incidenceMatrix[vN@requirementEdges$vgName.y, 
-                    vN@requirementEdges$vgName.x] = 1
+    for(iRow in 1:nrow(vN@requirementEdges))
+      incidenceMatrix[vN@requirementEdges$vgName.y[iRow], 
+                      vN@requirementEdges$vgName.x[iRow]] = 1
   return(incidenceMatrix)
 }
           # incidenceMatrix =  function(vN) {  ## migrate to VariableNetwork
