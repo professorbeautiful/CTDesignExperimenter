@@ -188,7 +188,7 @@ f.insertEditorUI <<- function() {
             tags$textarea(id = "generatorCode", rows=3, cols=80,
                           printFunctionBody(theInsert@generatorCode)),
             actionButton(inputId="btnCheckCode", "check code"),
-            fluidRow(column(width=4, bsAlert(inputId='generatorCodeAlert')))
+            fluidRow(column(width=4, bsAlert(anchorId = 'generatorCodeAlert')))
         )
         ,
         #tags$script('vb.width("100%").css("bold")'),  THE CULPRIT!!! Caused all the renderText elements to fail.
