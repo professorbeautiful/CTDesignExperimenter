@@ -10,13 +10,8 @@ conditionPanelNoneSelected = conditionalPanel(
   div(class="row-fluid span3",
       actionButton(inputId="btnNewScenario", 
                    label="New Scenario"),
-      tagAppendAttributes(tag = a(
-        actionButton(inputId="btnSearchScenario", 
-                     label="Search swapmeet & load Scenario"),
-        href="#idSearchScenario")
-      ),
       actionButton(inputId="btnSaveScenarioToCurrentScenario", 
-                   label="Save Current Scenario (rValues"),
+                   label="Save Current Scenario (rValues)"),
       actionButton(inputId="btnSaveScenarioToGlobalEnv", 
                    label="Save Scenario to GlobalEnv"),
       actionButton(inputId="btnWriteScenarioToSwapmeet", 
@@ -115,9 +110,15 @@ scenarioPanel = tabPanel(
   h3("Current scenario"),
   #div(class="row-fluid span1",
   #includeHTML("jstreeTestContent.html"),
-  textInput(inputId="scenarioName",  
-            label=em("Scenario name"),
-            value=currentScenario@name),  ## not rValues$currentScenario@name .
+  span((textInput(inputId="scenarioName",  
+                     label=" Name of scenario",
+                     value=currentScenario@name)),  ## not rValues$currentScenario@name .
+           (tagAppendAttributes(tag = a(
+             actionButton(inputId="btnSearchScenario", 
+                          label="Search Swapmeet & Load Scenario"),
+             href="#idSearchScenario")
+           ))
+  ),
   hr(),
   conditionPanelNoneSelected,
   conditionPanelBlockSelected,
@@ -205,7 +206,8 @@ myJSincludes = tagList(  ### Goes into the header.
 ##  Fiddling with jqueryUI popups:
 popupJSincludes = tagList(
   includeCSS("www/css/jquery-ui.css"),  
-  includeScript("www/js/jquery-ui.js")
+  includeScript("www/js/jquery-ui.js"),
+  includeScript("www/js/debugPopup.js")
   #, includeScript("www/js/varEditPopup.js")
 )
 # also see jQuery-dialogextend,  https://github.com/ROMB/jquery-dialogextend
