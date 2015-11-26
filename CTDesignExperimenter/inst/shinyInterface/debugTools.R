@@ -17,12 +17,13 @@
   `%>%` = magrittr:::`%>%`
 }
   # Here begins the good stuff.
-output$evaluatedOutputR = renderText({
+output$evaluatedOutputR = renderUI({
   if(wasClicked(input$evalButtonR)) {
     cat("evaluatedOutputR\n")
     evalString = isolate(input$evalStringR)
-    paste(collapse="<br>",
-          gsub(" ", "&nbsp;", capture.output(eval(parse(text=evalString)))))
+    capturedOutput =  capture.output(eval(parse(text=evalString)))
+    HTML(paste(collapse="<br>", capturedOutput))
+    #capturedOutput
   ## You have to isolate input$evalStringR; otherwise each character typed calls this callback.
   ## The following might be useful later for up-arrowing through past expressions.
   #   if(is.null(rValues$evalStringHistory))
@@ -141,8 +142,13 @@ output$debugTools = renderUI({
                                                                value=""))),
                               tag("TD",
                                   list(width=800,
-                                       style='text-align:"right"; color:white',
-                                       uiOutput(outputId="evaluatedOutputR"))),
+                                       style='text-align:"right"; color:green',
+                                       bsModal(id = 'evaluateR_popup', 
+                                               title="Output of R command",
+                                               trigger = "evalButtonR",
+                                               size="large",
+                                               uiOutput(outputId="evaluatedOutputR")))
+                                  ),
                               uiOutput(outputId='JSevaluation')
                             )
                         )
