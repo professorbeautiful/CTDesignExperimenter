@@ -238,7 +238,10 @@ shinyUI(
         tabPanel("One CT run", 
                  h2("Display results from a single CT run for the selected scenario."),
                  hr()
-                 , uiOutput("oneRunHeader") 
+                 , uiOutput("oneRunHeader")
+                 , checkboxInput(inputId = "ShowOrHidePatientData", 
+                                 label = 'Show or Hide Patient Data',
+                                 value=FALSE)
                  , actionButton(inputId="btnOneRun", label="Run one CT", styleclass = "success")
                  , uiOutput("oneRunSummaries") 
                  , div(style="overflow-y:auto; max-height:400px;" 

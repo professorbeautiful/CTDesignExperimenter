@@ -377,13 +377,19 @@ shinyServer(function(input, output, session) {
       returnvalueStringChosenPatient = paste0(
         "<hr/> <p style='fontsize:large'> 
         <em> ", paste('Patient #', iPatient),
-        "</em> </p>",
-        paste(
-          gsub("\\(variable value\\)", "",
-               grep(value=TRUE, "(variable value)", capture.output(
-                 printVVenv(trialData$patientData[[iPatient]]$VVenv))))
-          , collapse="<br/>"),
-        ")")
+        "</em> </p>")
+      if(input$ShowOrHidePatientData == TRUE) {
+        returnvalueStringChosenPatient = paste(
+          returnvalueStringChosenPatient,
+          "<br/>",
+          paste(
+            gsub("\\(variable value\\)", "",
+                 grep(value=TRUE, "(variable value)", capture.output(
+                   printVVenv(trialData$patientData[[iPatient]]$VVenv))))
+            , collapse="<br/>"
+          )
+        )
+      }
       return(HTML(text=returnvalueStringChosenPatient))
     }
     returnvalue
