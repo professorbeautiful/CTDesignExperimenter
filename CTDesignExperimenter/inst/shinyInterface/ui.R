@@ -4,6 +4,9 @@
 
 "%&%" = function (a, b)   paste(a, b, sep = "") 
 
+library(shinyjs)
+shinyjs::useShinyjs()
+
 conditionPanelNoneSelected = conditionalPanel(
   '$("#jstreeScenario").jstree().get_selected().length == 0',  #This works!! 0 1 2 etc.
   ####  To UNSELECT, Cmd-click on the selected node.
