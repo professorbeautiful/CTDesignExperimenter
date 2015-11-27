@@ -34,9 +34,16 @@ catn(" dim is ",
     dim(get("all" %&% objectTypeName %&% "sDF", pos=1)))
 
 # allVarnames <<- data.frame(name=unique(allObjectsDF$name))
+fileColumn = reactive( {
+  switch(input$tabsetID, 
+         'Current scenario' = 4,
+         'Insert Editor' = 7,
+         'Variable Editor' = 6)
+} )
 
 theObjectTable <<- renderDataTable(
   get("all" %&% objectTypeName %&% "sDF", pos=1),
+  escape = FALSE, 
   options=list(
     initComplete = I("function(oSettings, json) { console.log('Done.'); }")
     , rowCallback= I(   
@@ -45,10 +52,18 @@ theObjectTable <<- renderDataTable(
       #the document.
       " function(row, data) {
                     $(row).on('click', function() {
+                      this.api().$('td').css('background-color', 'white');
+                      this.api().$('td').css('font-weight', 'normal');
                       console.log('Row Clicked. ', 
-                        this, data, data[6]);
-                      $(row).bgColor = '#131';
-                      window.Shiny.shinyapp.$values['fileToLoad'] = data[6];
+                        this, data, data["
+       %&% fileColumn() %&%
+        "]);
+                      this.api().$(row).css('background-color', '#G00').
+                            css('font-weight', 'bold');
+                      window.Shiny.shinyapp.$values['rowSelected'] = $(row);
+                      window.Shiny.shinyapp.$values['fileToLoad'] = data["
+       %&% fileColumn() %&%
+        "];
                       //row.addClass('rowClicked'); //not needed.
                     });
                     window.DollarRow = $(row);
