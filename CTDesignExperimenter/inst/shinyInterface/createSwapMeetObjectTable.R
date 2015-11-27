@@ -43,7 +43,7 @@ fileColumn = reactive( {
 
 theObjectTable <<- renderDataTable(
   get("all" %&% objectTypeName %&% "sDF", pos=1),
-  escape = FALSE, 
+  escape = FALSE, ## a new option required so that the radioButtons will show.
   options=list(
     initComplete = I("function(oSettings, json) { console.log('Done.'); }")
     , rowCallback= I(   
