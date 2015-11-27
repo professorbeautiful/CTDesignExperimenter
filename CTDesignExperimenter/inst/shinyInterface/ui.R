@@ -114,7 +114,8 @@ scenarioPanel = tabPanel(
   #div(class="row-fluid span1",
   #includeHTML("jstreeTestContent.html"),
   span((textInput(inputId="scenarioName",  
-                     label=" Name of scenario",
+                     label=NULL,
+                     #label=" Name of scenario",
                      value=currentScenario@name)),  ## not rValues$currentScenario@name .
            (tagAppendAttributes(tag = a(
              actionButton(inputId="btnSearchScenario", 
