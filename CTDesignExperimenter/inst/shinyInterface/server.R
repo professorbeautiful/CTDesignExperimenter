@@ -6,7 +6,7 @@ require(shiny)
 require("CTDesignExperimenter")
 
 
-shinyServer(function(input, output, session) {
+shinyServerFunction = function(input, output, session) {
   
   thisSession <<- session
   
@@ -556,6 +556,7 @@ shinyServer(function(input, output, session) {
     return (rVcS)
   }
   
+##### buttonRemoveInsertObserver
   buttonRemoveInsertObserver = observe({
     if(wasClicked(input$btnRemoveInsert) ) {
       isolate({
@@ -570,6 +571,8 @@ shinyServer(function(input, output, session) {
   scenarioNameObserver = observe({
     input$scenarioName;
     updateTextInput(session, "scenarioName", label=em("Scenario name (* not saved)"))
-  })
-  
-})  ### End of ShinyServer call
+  }) 
+}   ### End of shinyServerFunction call
+
+
+shinyServer(shinyServerFunction)  
