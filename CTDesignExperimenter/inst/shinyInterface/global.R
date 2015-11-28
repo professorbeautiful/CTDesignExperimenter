@@ -25,8 +25,3 @@ tagToOpenTree =
        $(document).ready(    // binding only works when jstree is in ui.R, not renderUI.
             $("#jstreeScenario").ready(
               openTree));'))
-
-
-  
-experimentTable = data.frame(sampleSize=NA)
-

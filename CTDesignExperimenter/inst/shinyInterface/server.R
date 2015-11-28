@@ -40,6 +40,8 @@ shinyServer(function(input, output, session) {
   rValues = reactiveValues()
   
   rValues$currentScenario = defaultScenario
+  rValues$experimentTable = data.frame(sampleSize=NA)
+  rValues$scenarioList = list()
   
   ### Without this "reactive" wrapper, I get the error 
   # Error in .getReactiveEnvironment()$currentContext() : 
@@ -160,12 +162,12 @@ shinyServer(function(input, output, session) {
   )
   
   observerBtnEditInsert = observe(label="observerBtnEditInsert", {
-      if(wasClicked(input$btnEditInsert) ) {
-          isolate({
-            cat("Setting rValues$openingInsertEditor <- TRUE\n")
-            rValues$openingInsertEditor <- TRUE
-          })
-        }
+    if(wasClicked(input$btnEditInsert) ) {
+      isolate({
+        cat("Setting rValues$openingInsertEditor <- TRUE\n")
+        rValues$openingInsertEditor <- TRUE
+      })
+    }
   }
   )
   
@@ -251,22 +253,22 @@ shinyServer(function(input, output, session) {
                               treeSelection[ 1, "pathAttr"]) [[1]]) - 1
             rValues$openingVariableEditor = 
               (rValues$treeSelectionDepth == 3  
-                 & ( identical(1, grep("^provides:|^needs:", 
+               & ( identical(1, grep("^provides:|^needs:", 
                                      rValues$treeSelectionText)))
-                 &  rValues$nSelected == 1) 
+               &  rValues$nSelected == 1) 
             if(rValues$openingVariableEditor) 
               rValues$theVar = findObjectInScenario(rValues$treeSelectionPath, scenario=rValues$currentScenario)
-
+            
             rValues$clickedOnGenerator = 
               (rValues$treeSelectionDepth == 3  
                & ( identical(1L, grep("^code:", 
-                                     rValues$treeSelectionText)))
+                                      rValues$treeSelectionText)))
                &  rValues$nSelected == 1) 
             
             rValues$clickedOnParameter = 
               (rValues$treeSelectionDepth == 3  
                & ( identical(1L, grep("^param:", 
-                                     rValues$treeSelectionText)))
+                                      rValues$treeSelectionText)))
                &  rValues$nSelected == 1) 
             
             rValues$clickedOnInsert = 
@@ -300,7 +302,7 @@ shinyServer(function(input, output, session) {
   
   output$SCENARIO_TREE_label = renderText({
     ("SCENARIO TREE" %&% ifelse(isTRUE(rValues$treeSelectionText != ""),
-                                      " (click here to clear selection)", ""))
+                                " (click here to clear selection)", ""))
   })
   
   output$selectedNode = renderText({
@@ -314,7 +316,7 @@ shinyServer(function(input, output, session) {
   if( (length(find("trialData")) == 0) || (find("trialData")[[1]] != ".GlobalEnv") )
     assign("trialData", new.env(), pos=1)
   
-    #### Display Design Parameters.
+  #### Display Design Parameters.
   oneRunHeader =   function() {
     doThisAction_BeginClinicalTrial(rValues$currentScenario)
     returnvalueStringDesignParameters = paste0(
@@ -365,14 +367,14 @@ shinyServer(function(input, output, session) {
       returnvalue = div("Click button to run a trial")
     return(returnvalue)
   }
-#  debug(oneRunSummaries)
-    
+  #  debug(oneRunSummaries)
+  
   oneRunResults =   function() {
     wasClicked(input$btnOneRun)
     iPatient = input$patientChoice
     if(is.null(iPatient)) iPatient = 1
     if( length(trialData$patientData) == 0)
-       return("")
+      return("")
     else {
       returnvalueStringChosenPatient = paste0(
         "<hr/> <p style='fontsize:large'> 
@@ -399,7 +401,7 @@ shinyServer(function(input, output, session) {
   output$oneRunHeader = renderUI({oneRunHeader()})
   output$oneRunSummaries = renderUI({oneRunSummaries()})
   output$oneRunResults = renderUI({oneRunResults()})
-
+  
   is_needed = function()
     return (grep(rValues$treeSelectionText, 'needs:') > 0 )
   is_code = function()
@@ -409,12 +411,6 @@ shinyServer(function(input, output, session) {
   is_provision = function()
     return (grep(rValues$treeSelectionText, 'provides:') > 0 )
   
-  observeBtnAddScen = observe(label="observeBtnAddScen", {
-    if(wasClicked(input$btnAddScen) ) { ### Make reactive to button.
-      updateTabsetPanel(session, "tabsetID", selected = "Experiment")
-      catn("==== doing updateTabsetPanel to Experiment")
-    }
-  })  
   
   observeBtnFindScen = observe(label="observeBtnFindScen", {
     if(wasClicked(input$btnFindScen) ) { ### Make reactive to button.
@@ -424,21 +420,53 @@ shinyServer(function(input, output, session) {
     }
   })  
   
-  output$experimentTableOut = renderTable({
+  observeBtnRunExperiment = observe(
+    label='btnRunExperiment observer',
+     {
+      cat("in observeBtnRunExperiment\n")
+      if(wasClicked(button = input$btnRunExperiment)) {
+        try({
+          isolate({
+            for(iRep in 1:input$nReplications) {
+              for(iScenario in 1:(nrow(rValues$experimentTable)-1)) {
+                cat("Running trial #", iRep, " on scenario ", iScenario, "\n")
+                runTrial(rValues$scenarioList[[iScenario]])
+              }
+            }
+          })
+        })
+      }
+     } )
+  
+  observeBtnAddScen = observe({
+    cat("in observeBtnAddScen\n")
     if(wasClicked(input$btnAddScen)) {  ### Make reactive to button. Trigger if clicked.
-      experimentTable[nrow(experimentTable)+1, ] <<- NA
-      catn("==== appended...")
-      print(rownames(experimentTable))
-      print(input$scenarioName)
-      try(
-        rownames(experimentTable) [nrow(experimentTable)] <<- 
-          input$scenarioName
-      )
-      catn("==== rownames changed...")
-      print(experimentTable)
+      cat("wasClicked(input$btnAddScen\n")
+      try({
+        isolate({
+          if(is.null(rValues$scenarioList)) {
+            rValues$scenarioList <- list(rValues$currentScenario)
+          }
+          else {
+            rValues$scenarioList <- c(rValues$scenarioList, rValues$currentScenario)
+          }
+          newN = nrow(rValues$experimentTable) + 1
+          rValues$experimentTable[newN, 1] <- NA
+          rownames(rValues$experimentTable)[newN] = 
+            paste(newN, rValues$currentScenario@name,sep=":")
+          updateTabsetPanel(session, "tabsetID", selected = "Experiment")
+          catn("==== doing updateTabsetPanel to Experiment")
+          print(rownames(rValues$experimentTable))
+          print(input$scenarioName)
+        })
+      })
     }
+  })
+    
+  output$experimentTableOut = renderTable({
+    print(rValues$experimentTable)
   })  
-
+  
   observerNewScenario = observe({
     if( wasClicked(input$btnNewScenario) ) {   # Trigger if clicked
       cat("\nNew scenario\n")
@@ -448,7 +476,7 @@ shinyServer(function(input, output, session) {
       rValues$currentScenario = scenario
     }
   })
-      
+  
   observerSaveScenarioToGlobalEnv = observe({
     if( wasClicked(input$btnSaveScenarioToGlobalEnv) ) {   # Trigger if clicked
       cat("\nSaving scenario to rValues and GlobalEnv\n")
@@ -459,7 +487,7 @@ shinyServer(function(input, output, session) {
       assign(isolate(input$scenarioName), pos = 1,
              rValues$currentScenario)
       assign("currentScenario", pos = 1,
-                    rValues$currentScenario)
+             rValues$currentScenario)
       shinysky:::showshinyalert(session, id="SaveScenarioToGlobalEnv", styleclass = "inverse",
                                 HTMLtext=paste(
                                   "Saving scenario to GlobalEnv, name = ",
@@ -528,20 +556,20 @@ shinyServer(function(input, output, session) {
     return (rVcS)
   }
   
-buttonRemoveInsertObserver = observe({
-      if(wasClicked(input$btnRemoveInsert) ) {
-        isolate({
-          treeSelectionPath <<- isolate(rValues$treeSelectionPath)
-          rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
-          rValues$currentScenario <- removeInsert(rVcS, treeSelectionPath)
-          # http://stackoverflow.com/questions/11139482/how-to-refresh-a-jstree-without-triggering-select-node-again
-        })
-      }
+  buttonRemoveInsertObserver = observe({
+    if(wasClicked(input$btnRemoveInsert) ) {
+      isolate({
+        treeSelectionPath <<- isolate(rValues$treeSelectionPath)
+        rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
+        rValues$currentScenario <- removeInsert(rVcS, treeSelectionPath)
+        # http://stackoverflow.com/questions/11139482/how-to-refresh-a-jstree-without-triggering-select-node-again
+      })
+    }
   })
   
-scenarioNameObserver = observe({
-  input$scenarioName;
-  updateTextInput(session, "scenarioName", label=em("Scenario name (* not saved)"))
-})
+  scenarioNameObserver = observe({
+    input$scenarioName;
+    updateTextInput(session, "scenarioName", label=em("Scenario name (* not saved)"))
+  })
   
 })  ### End of ShinyServer call
