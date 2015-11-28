@@ -254,9 +254,11 @@ shinyUI(
                        , uiOutput("oneRunResults") )
         ),
         tabPanel("Criteria",
-                 "Criteria will be selected and created here."),
+                h2(strong("Criteria will be selected and created here."))),
         tabPanel("Experiment",
-                 "A table, scenarios by criteria."
+                 h2(strong("A table, scenarios by criteria."))
+                 , numericInput("nReplications", label = "Number of replications per scenario",
+                                value = 2, min = 1, step = 1)
                  , actionButton(inputId="btnRunExperiment" , label="Run Experiment", styleclass = "success")
                  , tableOutput("experimentTableOut")
         )
