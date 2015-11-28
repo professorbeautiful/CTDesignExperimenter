@@ -5,6 +5,7 @@ require(shinyBS)  #  See http://spark.rstudio.com/johnharrison/shinyBS-Demo/,
 require(magrittr) ###   %>% pipe operator
 
 options(shiny.trace=FALSE)
+options(shiny.reactlog=TRUE)
 
 scaffoldBlockNames = scaffoldObjects[[1]]
 
@@ -28,5 +29,4 @@ tagToOpenTree =
 
   
 experimentTable = data.frame(sampleSize=NA)
-
 
