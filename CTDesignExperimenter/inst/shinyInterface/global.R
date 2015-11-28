@@ -9,6 +9,15 @@ options(shiny.reactlog=TRUE)
 
 scaffoldBlockNames = scaffoldObjects[[1]]
 
+wasClicked =  function(button) {
+  if(exists("input"))
+    if(!is.null(button) ) {
+      if(button > 0) {
+        return(TRUE)
+      }
+    }
+  return(FALSE)
+}
 startup()
 
 source("makeTree.R")
