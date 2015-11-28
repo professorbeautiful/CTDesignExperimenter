@@ -639,10 +639,11 @@ doThisAction_SummarizeTrial = function(scenario=defaultScenario) {
 }
 
 runTrial = function(scenario=defaultScenario) {
-  options(error=recover)
+  saveOpts = options(error=recover)
   #startup()
   initializeQueue()
   executeQueue(scenario=scenario)
+  options(saveOpts)
 }
 
 if(interactive()) runTrial()  ## skip when building.
