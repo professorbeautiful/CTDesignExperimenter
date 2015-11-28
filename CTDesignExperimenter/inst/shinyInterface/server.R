@@ -41,8 +41,7 @@ shinyServerFunction = function(input, output, session) {
   
   rValues$currentScenario = defaultScenario
   rValues$experimentTable = data.frame(sampleSize=NA)
-  rValues$scenarioList = list()
-  
+
   ### Without this "reactive" wrapper, I get the error 
   # Error in .getReactiveEnvironment()$currentContext() : 
   #   Operation not allowed without an active reactive context. (You tried to do something that can only be done from inside a reactive expression or observer.)
@@ -428,7 +427,7 @@ shinyServerFunction = function(input, output, session) {
         try({
           isolate({
             for(iRep in 1:input$nReplications) {
-              for(iScenario in 1:(nrow(rValues$experimentTable)-1)) {
+              for(iScenario in 1:nrow(rValues$experimentTable)) {
                 cat("Running trial #", iRep, " on scenario ", iScenario, "\n")
                 runTrial(rValues$scenarioList[[iScenario]])
               }
@@ -446,11 +445,12 @@ shinyServerFunction = function(input, output, session) {
         isolate({
           if(is.null(rValues$scenarioList)) {
             rValues$scenarioList <- list(rValues$currentScenario)
+            newN  = 1
           }
           else {
             rValues$scenarioList <- c(rValues$scenarioList, rValues$currentScenario)
+            newN = nrow(rValues$experimentTable) + 1
           }
-          newN = nrow(rValues$experimentTable) + 1
           rValues$experimentTable[newN, 1] <- NA
           rownames(rValues$experimentTable)[newN] = 
             paste(newN, rValues$currentScenario@name,sep=":")
