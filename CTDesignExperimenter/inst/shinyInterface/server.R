@@ -430,8 +430,12 @@ shinyServerFunction = function(input, output, session) {
       if(wasClicked(button = input$btnRunExperiment)) {
         try({
           isolate({
+#             shinyjs::show('repCounter')
+#             shinyjs::show('scenarioCounter')
             for(iRep in 1:input$nReplications) {
+              rValues$iRep = iRep
               for(iScenario in 1:nrow(rValues$experimentTable)) {
+                rValues$iScenario = iScenario
                 cat("Running trial #", iRep, " on scenario ", iScenario, "\n")
                 runTrial(rValues$scenarioList[[iScenario]])
               }
@@ -441,6 +445,16 @@ shinyServerFunction = function(input, output, session) {
       }
      } )
   
+  observeBtnDelScen = observe({
+    if(wasClicked('btnDelScenarioRow')) {
+      rowsChecked = try({which(sapply(
+        1:nrow(rValues$experimentTable),
+        function(iRow) input[['scenCheck' %&% iRow]])) })
+      ### TODO:  remove row(s)
+      cat("TODO:  remove row(s) " %&% rowsChecked %&% "\n")
+    }
+  })
+  
   observeBtnAddScen = observe({
     cat("in observeBtnAddScen\n")
     if(wasClicked(input$btnAddScen)) {  ### Make reactive to button. Trigger if clicked.
@@ -449,15 +463,26 @@ shinyServerFunction = function(input, output, session) {
         isolate({
           if(is.null(rValues$scenarioList)) {
             rValues$scenarioList <- list(rValues$currentScenario)
+            rValues$experimentTable = data.frame()
             newN  = 1
           }
           else {
             rValues$scenarioList <- c(rValues$scenarioList, rValues$currentScenario)
             newN = nrow(rValues$experimentTable) + 1
           }
-          rValues$experimentTable[newN, 1] <- NA
+          rValues$experimentTable[newN, "scenario"] <- rValues$currentScenario@name
+          rValues$experimentTable[newN, "mean N"] <- NA
           rownames(rValues$experimentTable)[newN] = 
-            paste(newN, rValues$currentScenario@name,sep=":")
+            HTML('<div class="form-group shiny-input-container">
+                 <div class="checkbox">
+                 <label>
+                 <input id=scenCheck' %&% newN 
+                 %&% ' type="checkbox"/>
+                 <span>' %&% newN %&% '</span>
+                 </label>
+                 </div>
+                 </div> ')
+#            paste(newN, rValues$currentScenario@name,sep=":")
           updateTabsetPanel(session, "tabsetID", selected = "Experiment")
           catn("==== doing updateTabsetPanel to Experiment")
           print(rownames(rValues$experimentTable))
@@ -467,9 +492,33 @@ shinyServerFunction = function(input, output, session) {
     }
   })
     
-  output$experimentTableOut = renderTable({
-    print(rValues$experimentTable)
-  })  
+  output$experimentTableOut = renderDataTable(
+    escape = FALSE, 
+    expr = {          
+      experimentTable = rValues$experimentTable
+      checkboxes = 
+        sapply(1:nrow(experimentTable),
+                                function(rownum) 
+               HTML('<div class="form-group shiny-input-container">
+                 <div class="checkbox">
+                 <label>
+                 <input id=scenCheck' %&% rownum 
+                    %&% ' type="checkbox"/>
+                 <span>' %&% rownum %&% '</span>
+                 </label>
+                 </div>
+                 </div> ')
+        )
+#       experimentTable = data.frame(check=checkboxes,
+#                               experimentTable)
+#       cat("=======\n")
+#       print(experimentTable[,1])
+#       cat("=======\n")
+#       print(experimentTable[,2])
+#       cat("=======\n")
+      experimentTable
+    }
+  )  
   
   observerNewScenario = observe({
     if( wasClicked(input$btnNewScenario) ) {   # Trigger if clicked
