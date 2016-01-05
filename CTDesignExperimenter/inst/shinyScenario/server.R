@@ -8,8 +8,8 @@ require("shinyIncubator")
 shinyServer_scaffold = function(input, output, session) {
   cat("Entered shinyServer_scaffold; 
       folder is ", getwd(), "\n")
-  source("debugTools.R", local=TRUE)    ### This is super-useful!
-  
+  shinyDebuggingPanel::makeDebuggingPanelOutput(session)
+
   output$scaffoldTable = renderTable({scaffoldObjects})
   
   for(scafOb in scaffoldObjectNames) {

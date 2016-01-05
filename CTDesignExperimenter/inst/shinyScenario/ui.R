@@ -9,7 +9,7 @@ makeTabPanel =  function(scafOb) {
 }
 shinyUI(fluidPage(
   titlePanel("Scenario viewer: default scenario", "Scenario viewer"),
-  uiOutput(outputId="debugTools"),  ### This is super-useful!
+  shinyDebuggingPanel::withDebuggingPanel(),
   navlistPanel(
     tabPanel("VIEW SCAFFOLD STRUCTURE", 
              uiOutput(outputId="scaffoldTable")),
