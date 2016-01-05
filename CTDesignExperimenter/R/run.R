@@ -1,5 +1,15 @@
 cat("======== run  ================\n")
 
+#' run
+#' 
+#' Run shiny app form CTDesignExperimenter:
+#' shinyInterface:  the whole trip (the default)
+#' shinyScenario: a detailed viewer of a single scenario
+#' 
+#' @param background Run in the background-- not yet working.
+#' @param shinyfolder Default is "shinyInterface", alternative is "shinyScenario".
+#' @param local If FALSE, run version in the package; otherwise relative to current folder.
+#' @param createCTDEcatalog Not used.
 
 run = function(background=FALSE, shinyfolder="shinyInterface", local=FALSE, createCTDEcatalog=FALSE) {
 #   if(createCTDEcatalog) createCTDEcatalog()
