@@ -9,6 +9,10 @@ require("CTDesignExperimenter")
 shinyServerFunction = function(input, output, session) {
   
   thisSession <<- session
+  rValues <<- reactiveValues()
+  
+  rValues$currentScenario = defaultScenario
+  rValues$experimentTable = data.frame(sampleSize=NA)
   
   observerCurrentScenario = observe({
     currScen = rValues$currentScenario
