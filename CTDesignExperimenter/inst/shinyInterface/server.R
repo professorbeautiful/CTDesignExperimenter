@@ -418,6 +418,11 @@ shinyServerFunction = function(input, output, session) {
     }
   })  
   
+  repCounter = renderText('repCounter: ' %&% rValues$iRep
+                          %&% ' of ' %&% isolate(input$nReplications))
+  scenarioCounter = renderText('scenarioCounter: ' %&% rValues$iScenario
+                          %&% ' of ' %&% isolate(nrow(rValues$experimentTable)))
+  
   observeBtnRunExperiment = observe(
     label='btnRunExperiment observer',
      {

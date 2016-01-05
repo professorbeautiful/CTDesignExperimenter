@@ -11,15 +11,15 @@ conditionPanelNoneSelected = conditionalPanel(
   '$("#jstreeScenario").jstree().get_selected().length == 0',  #This works!! 0 1 2 etc.
   ####  To UNSELECT, Cmd-click on the selected node.
   div(class="row-fluid span3",
-      actionButton(inputId="btnNewScenario", 
+      bsButton(inputId="btnNewScenario", 
                    label="New Scenario"),
-      actionButton(inputId="btnSaveScenarioToCurrentScenario", 
+      bsButton(inputId="btnSaveScenarioToCurrentScenario", 
                    label="Save Current Scenario (rValues)"),
-      actionButton(inputId="btnSaveScenarioToGlobalEnv", 
+      bsButton(inputId="btnSaveScenarioToGlobalEnv", 
                    label="Save Scenario to GlobalEnv"),
-      actionButton(inputId="btnWriteScenarioToSwapmeet", 
+      bsButton(inputId="btnWriteScenarioToSwapmeet", 
                    label="Write Scenario to Swapmeet"),
-      actionButton(inputId="btnAddScen", 
+      bsButton(inputId="btnAddScen", 
                    label="Add Scenario to Experiment"),
       hr()
   )
@@ -29,14 +29,15 @@ conditionPanelBlockSelected = conditionalPanel(
   '($("#jstreeScenario").jstree().get_selected().length == 1) & (treeSelectionDepth() == 1)', 
   div(class="row-fluid span3",
       img(src="BLOCK32.png"),
-      actionButton(inputId="btnWriteBlockToSwapmeet", 
+      bsButton(inputId="btnWriteBlockToSwapmeet", 
                    label="Write this block to Swapmeet", 
-                   css.class = "BLOCKlevel"),
-      actionButton(inputId="btnSaveBlockToGlobalEnv", 
-                   label="Save scenario to GlobalEnv", 
-                   css.class = "BLOCKlevel"),
-      actionButton(inputId="btnFindBlock" , 
-                   label="Find & replace block", css.class = "BLOCKlevel"),
+                         class = "BLOCKlevel"),
+      bsButton(inputId="btnSaveBlockToGlobalEnv", 
+                             label="Save scenario to GlobalEnv", 
+                         class = "BLOCKlevel"),
+      bsButton(inputId="btnFindBlock" , 
+                             label="Find & replace block",
+                         class = "BLOCKlevel"),
       hr())
 )
 
@@ -62,10 +63,10 @@ conditionPanel_1_insert =
     ## THE FOLLOWING expression shows #j1_2 etc:
     ## 'alert($("#jstreeScenario").jstree().get_selected().toString())', 
     img(src="Insert32.png"),
-    actionButton(inputId="btnRemoveInsert" , label="Remove insert", css.class = "treeclass_2"),
-    actionButton(inputId="btnCloneInsert" , label="Clone insert", css.class = "treeclass_2"),
-    actionButton(inputId="btnEditInsert" , label="Edit insert", css.class = "treeclass_2"),
-    #actionButton(inputId="btnAddRequirement" , label="Add a needed Variable", css.class = "treeclass_2"),
+    bsButton(inputId="btnRemoveInsert" , label="Remove insert", class = "treeclass_2"),
+    bsButton(inputId="btnCloneInsert" , label="Clone insert", class = "treeclass_2"),
+    bsButton(inputId="btnEditInsert" , label="Edit insert", class = "treeclass_2"),
+    #bsButton(inputId="btnAddRequirement" , label="Add a needed Variable", class = "treeclass_2"),
     hr()
 )
 
@@ -74,7 +75,7 @@ conditionPanel_1_vg_code =
   conditionalPanel(condition = 
                      '($("#jstreeScenario").jstree().get_selected().length == 1) & (treeSelectionDepth() == 3)
                    & is_code()', 
-                   actionButton(inputId="btnEditCode" , label="Edit code", css.class = "treeclass_3"),
+                   bsButton(inputId="btnEditCode" , label="Edit code", class = "treeclass_3"),
                    hr()
   )
 conditionPanel_1_needed_var = 
@@ -83,9 +84,9 @@ conditionPanel_1_needed_var =
                     & (treeSelectionDepth() == 3)
                     & is_needed()', ### Requirement
                    HTML("Selected one variable."),
-                   actionButton(inputId="btnRemoveVariable" , label="Remove Variable", css.class = "treeclass_3"),
-                   actionButton(inputId="btnCloneVariable" , label="Clone Variable", css.class = "treeclass_3"),
-                   actionButton(inputId="btnEditVariable" , label="Edit Variable", css.class = "treeclass_3"),
+                   bsButton(inputId="btnRemoveVariable" , label="Remove Variable", class = "treeclass_3"),
+                   bsButton(inputId="btnCloneVariable" , label="Clone Variable", class = "treeclass_3"),
+                   bsButton(inputId="btnEditVariable" , label="Edit Variable", class = "treeclass_3"),
                    hr()
   )
 conditionPanel_1_generator_code = 
@@ -94,16 +95,16 @@ conditionPanel_1_generator_code =
                    & (treeSelectionDepth() == 3)
                    & is_code()', ### Generator code.
                    HTML("Selected one variable."),
-                   actionButton(inputId="btnRemoveVariable" , label="Remove Variable", css.class = "treeclass_3"),
-                   actionButton(inputId="btnCloneVariable" , label="Clone Variable", css.class = "treeclass_3"),
-                   actionButton(inputId="btnEditVariable" , label="Edit Variable", css.class = "treeclass_3"),
+                   bsButton(inputId="btnRemoveVariable" , label="Remove Variable", class = "treeclass_3"),
+                   bsButton(inputId="btnCloneVariable" , label="Clone Variable", class = "treeclass_3"),
+                   bsButton(inputId="btnEditVariable" , label="Edit Variable", class = "treeclass_3"),
                    hr()
   )
 conditionPanel_moreThan1_insert = 
   conditionalPanel(
     '$("#jstreeScenario").jstree().get_selected().length > 1
     & (treeSelectionDepth() == 2)',
-    actionButton(inputId="btnSaveListOfInserts" , label="btnSaveListOfInserts", css.class = "treeclass_2"),
+    bsButton(inputId="btnSaveListOfInserts" , label="btnSaveListOfInserts", class = "treeclass_2"),
     textOutput("selectedNodes"),
     hr()
   )
@@ -118,7 +119,7 @@ scenarioPanel = tabPanel(
                      #label=" Name of scenario",
                      value=currentScenario@name)),  ## not rValues$currentScenario@name .
            (tagAppendAttributes(tag = a(
-             actionButton(inputId="btnSearchScenario", 
+             bsButton(inputId="btnSearchScenario", 
                           label="Search Swapmeet & Load Scenario"),
              href="#idSearchScenario")
            ))
@@ -248,7 +249,7 @@ shinyUI(
                  , checkboxInput(inputId = "ShowOrHidePatientData", 
                                  label = 'Show or Hide Patient Data',
                                  value=FALSE)
-                 , actionButton(inputId="btnOneRun", label="Run one CT", styleclass = "success")
+                 , bsButton(inputId="btnOneRun", label="Run one CT", styleclass = "success")
                  , uiOutput("oneRunSummaries") 
                  , div(style="overflow-y:auto; max-height:400px;" 
                        , uiOutput("oneRunResults") )
@@ -259,8 +260,12 @@ shinyUI(
                  h2(strong("A table, scenarios by criteria."))
                  , numericInput("nReplications", label = "Number of replications per scenario",
                                 value = 2, min = 1, step = 1)
-                 , actionButton(inputId="btnRunExperiment" , label="Run Experiment", styleclass = "success")
-                 , tableOutput("experimentTableOut")
+                 , bsButton(inputId="btnRunExperiment" , label="Run Experiment", styleclass = "success")
+                 , em(textOutput('repCounter', inline=TRUE))
+                 , em(textOutput('scenarioCounter', inline=TRUE))
+                 , bsButton("btnDelScenarioRow", "delete selected")
+                 , br()
+                 , dataTableOutput("experimentTableOut")
         )
       )
   )
