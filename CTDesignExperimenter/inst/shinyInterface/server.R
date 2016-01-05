@@ -35,12 +35,7 @@ shinyServerFunction = function(input, output, session) {
     catn("str of messageSent[[5]][[3]] is ", str(messageSent))
   })
   
-  source("debugTools.R", local=TRUE)
-  
-  rValues = reactiveValues()
-  
-  rValues$currentScenario = defaultScenario
-  rValues$experimentTable = data.frame(sampleSize=NA)
+  shinyDebuggingPanel::makeDebuggingPanelOutput(thisSession)
 
   ### Without this "reactive" wrapper, I get the error 
   # Error in .getReactiveEnvironment()$currentContext() : 

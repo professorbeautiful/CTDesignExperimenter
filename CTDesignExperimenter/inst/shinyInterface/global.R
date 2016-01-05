@@ -3,6 +3,7 @@ require(shinysky) #  needed for renderHotable, shinyalert, etc but not for ss_js
 require(shinyBS)  #  See http://spark.rstudio.com/johnharrison/shinyBS-Demo/, 
           #  useful for many bootstrap functions including alerts, Modal and popups.
 require(magrittr) ###   %>% pipe operator
+require(shinyDebuggingPanel)
 
 options(shiny.trace=FALSE)
 options(shiny.reactlog=TRUE)

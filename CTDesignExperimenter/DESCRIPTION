@@ -8,5 +8,5 @@ Maintainer: Roger Day <day01@pitt.edu>
 Description: This package presents a highly sharable simulation experiment platform for evaluating clinical trial designs. The code base relies on S4 classes and methods, but details are hidden as much as possible. A scenario is a population model, study design, and outcome model.  In addition there are evaluation criterion  objects.  An action queue implements the simulation and allows for complex decision making at the patient level or CT level. The exchange of common data elements provides interoperability among the objects.
 License: GPL (>=2)
 LazyLoad: yes
-Depends: R (>= 2.10.1), methods, shiny, RBioinf, shinyBS, utils 
+Depends: R (>= 2.10.1), methods, shiny, RBioinf, shinyBS, utils, shinyDebuggingPanel 
 Collate: aaa.R printENV.R dput2.R FromNormalToLognormal.R AAobjects.R functionToString.R showMethods0.R SwapItem.R gitUtilities.R Variables.R Specifier.R VariableGenerator.R Inserts.R ParameterGenerator.R ListOfInserts.R VariableNetwork.R ShowVariableNetwork.R PopulationModel.R evaluateOutput.R makeVariableCatalog.R clearance-and-thresholds.R graphs-variable-networks.R fixHtmlEscape.R patientToString.R CTresultToString.R actionQueue.R scenarios.R Scaffolding.R run.R makeDefaultScenario.R zzz.R smoketest.R collateOrder.R 

@@ -210,8 +210,8 @@ myJSincludes = tagList(  ### Goes into the header.
 ##  Fiddling with jqueryUI popups:
 popupJSincludes = tagList(
   includeCSS("www/css/jquery-ui.css"),  
-  includeScript("www/js/jquery-ui.js"),
-  includeScript("www/js/debugPopup.js")
+  includeScript("www/js/jquery-ui.js")
+  #, includeScript("www/js/debugPopup.js") # use package instead.
   #, includeScript("www/js/varEditPopup.js")
 )
 # also see jQuery-dialogextend,  https://github.com/ROMB/jquery-dialogextend
@@ -228,7 +228,7 @@ shinyUI(
         header=tagList(myJSincludes,
                        hr(),
                        popupJSincludes,
-                       uiOutput(outputId="debugTools"),
+                       shinyDebuggingPanel::withDebuggingPanel(), 
                        hr()),
         # message-handler code causes hang.
         #       singleton(
