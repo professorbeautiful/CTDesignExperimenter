@@ -40,7 +40,7 @@ makeTemplateVariable = function()
 
 convertInsertToDataframe = function(theInsert) {
   data.frame( 
-    output=capture.output(show(theInsert@outputVariable)),
+    output=capture.output(print(theInsert@outputVariable)),
     parameters=ifelse(is.null(theInsert@parameters) | length(theInsert@parameters)==0,
                       character(0),
                       paste(names(theInsert@parameters), 

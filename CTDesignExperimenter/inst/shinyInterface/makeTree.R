@@ -11,7 +11,7 @@ insertVGSubTree = function(insert, insertStyle="full") {
   } else { ## "full" ---  show variables and parameters
     needed = sapply(insert@requirements, 
                           function(v)paste0("needs:",
-                                           capture.output(v), collapse=" "))
+                                           capture.output(print(v)), collapse=" "))
     #names(needed) = "needed"
     info = as.list(needed)
     codeInfo = paste("code:", 
@@ -23,7 +23,7 @@ insertVGSubTree = function(insert, insertStyle="full") {
     #info = c(info, generator=codeInfo)
     info = c(info, codeInfo)
     outputVarInfo = 
-      paste0("provides:", capture.output(insert@outputVariable), collapse=" ")
+      paste0("provides:", capture.output(print(insert@outputVariable)), collapse=" ")
     info = c(info, list(outputVarInfo))
     if(length(insert@parameters > 0)){
       parameterInfo = #insert@parameters 
