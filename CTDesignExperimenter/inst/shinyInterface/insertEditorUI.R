@@ -20,9 +20,11 @@ f.insertEditorUI <<- function() {
   
   observerBtnEditOutputVariable = observe({
     if(wasClicked(input$btnEditOutputVariable)) {
-      rValues$editingOutputVariable = TRUE
-      rValues$theVariable = rValues$theInsert@outputVariable
-      updateTabsetPanel(session, "tabsetID", selected = "Variable Editor")
+      isolate({
+        rValues$editingOutputVariable = TRUE
+        rValues$theVariable = rValues$theInsert@outputVariable
+        updateTabsetPanel(session, "tabsetID", selected = "Variable Editor")
+      })
     }
   })
   
@@ -349,17 +351,17 @@ readInsertFromPage = function() {
 observeBtnSaveInsert = observe(label="observeBtnSaveInsert", {       
   ### Save Insert in a swapMeet file.
   if(wasClicked(input$btnSaveInsert)){
-    catn("(input$btnSaveInsert) = ", (input$btnSaveInsert))
-    theInsert = readInsertFromPage()
-    if(class(theInsert) == "try-error")
-      shinysky:::shinyalert("Error in observeBtnSaveInsert/readInsertFromPage: " %&% theInsert)
-    else
-      isolate({
+    isolate({
+      catn("(input$btnSaveInsert) = ", (input$btnSaveInsert))
+      theInsert = isolate(readInsertFromPage())
+      if(class(theInsert) == "try-error")
+        shinysky:::shinyalert("Error in observeBtnSaveInsert/readInsertFromPage: " %&% theInsert)
+      else
         theInsert = writeSwapMeetFile(theInsert, verbose = TRUE)
-        shinysky:::shinyalert("observeBtnSaveInsert/readInsertFromPage: made new Insert. Wrote file "%&%
-                     theInsert@filename %&% ". CAUTION: This will NOT (yet) replace in Scenario." )
-        # rValues$theInsert = theInsert  ### Skip it; Otherwise, infinite loop.
-      })
+      shinysky:::shinyalert("observeBtnSaveInsert/readInsertFromPage: made new Insert. Wrote file "%&%
+                              theInsert@filename %&% ". CAUTION: This will NOT (yet) replace in Scenario." )
+      # rValues$theInsert = theInsert  ### Skip it; Otherwise, infinite loop.
+    })
     # TODO:  insert into Scenario, 
     #    switch to Scenario tab,
     #    and warn that Scenario is not saved.
@@ -373,28 +375,37 @@ addInsert = function(rVcS, theInsert) {
 }
 observer_btnReplaceInsertInScenario = observe(label="observer_btnReplaceInsertInScenario", { 
   ### Save Insert in the scenario
-  if(wasClicked(input$btnReplaceInsertInScenario)) {
-    isolate({
-      theInsert = readInsertFromPage()
-      if(class(theInsert) == "try-error")
-        shinysky:::shinyalert("Error in Insert: " %&% theInsert)
-      else {
-        rValues$theInsert = theInsert = writeSwapMeetFile(theInsert, verbose = TRUE) 
-        #if(!is.null(input$treeSelectionDepth))
-        #  if(input$treeSelectionDepth == 2) {
-        ### Replace
-        rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
-        rVcS = removeInsert(rVcS, rValues$treeSelectionPath)
-        rValues$currentScenario <- addInsert(rVcS, theInsert) 
-        cSlength = length(rValues$currentScenario@inserts)
-        names(rValues$currentScenario@inserts)[cSlength] = 
-          theInsert@filename
-        updateTabsetPanel(session, "tabsetID", selected = "Current scenario")
-        #  }
-      }
-    })
-  }
+  if(wasClicked(input$btnReplaceInsertInScenario)) 
+    placeInsertInScenario(replace=TRUE)
 })
+observer_btnAddInsertToScenario = observe(label="observer_btnReplaceInsertInScenario", { 
+  ### Save Insert in the scenario
+  if(wasClicked(input$btnAddInsertToScenario)) 
+    placeInsertInScenario(replace=FALSE)
+})
+
+placeInsertInScenario = function(replace=FALSE){
+  isolate({
+    theInsert = readInsertFromPage()
+    if(class(theInsert) == "try-error")
+      shinysky:::shinyalert("Error in Insert: " %&% theInsert)
+    else {
+      rValues$theInsert = theInsert = writeSwapMeetFile(theInsert, verbose = TRUE) 
+      #if(!is.null(input$treeSelectionDepth))
+      #  if(input$treeSelectionDepth == 2) {
+      ### Replace
+      rVcS = rValues$currentScenario  ### Trying to prevent too much reactivity.
+      if(replace)
+        rVcS = removeInsert(rVcS, rValues$treeSelectionPath)
+      rValues$currentScenario <- addInsert(rVcS, theInsert) 
+      cSlength = length(rValues$currentScenario@inserts)
+      names(rValues$currentScenario@inserts)[cSlength] = 
+        theInsert@filename
+      updateTabsetPanel(session, "tabsetID", selected = "Current scenario")
+      #  }
+    }
+  })
+}
 
 observer_chooseInsertRadioGroup = observe(label="observer_chooseInsertRadioGroup", {
   chooseInsertChoice = input$chooseInsertRadioGroup  # reactivity here
