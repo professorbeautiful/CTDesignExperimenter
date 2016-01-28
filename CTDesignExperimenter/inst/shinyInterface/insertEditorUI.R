@@ -133,6 +133,8 @@ f.insertEditorUI <<- function() {
           href="#idSearchInsert"),
         actionButton(inputId="btnReplaceInsertInScenario" , 
                      label=div("Replace Insert In Scenario", class="INSERTlevel")),
+        actionButton(inputId="btnAddInsertToScenario" , 
+                     label=div("Add Insert To Scenario", class="INSERTlevel")),
         actionButton(inputId="btnSaveInsert" , 
                      label=div("Save Insert...", class = "INSERTlevel"))
         # css.class doesnt work here.   css.class = "treeclass-2",
