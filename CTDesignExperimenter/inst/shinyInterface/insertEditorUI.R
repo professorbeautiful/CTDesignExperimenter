@@ -128,7 +128,7 @@ f.insertEditorUI <<- function() {
                      label=div("New Insert", class = "INSERTlevel")),
         tagAppendAttributes(a(
           actionButton(inputId="btnSearchInsert" , 
-                       label=div("Search swapmeet & load Insert", class = "INSERTlevel"),
+                       label=div("Search swapmeet & load Insert", class = "INSERTlevel")
           )),
           href="#idSearchInsert"),
         actionButton(inputId="btnReplaceInsertInScenario" , 
