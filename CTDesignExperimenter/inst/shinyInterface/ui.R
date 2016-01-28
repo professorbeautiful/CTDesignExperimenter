@@ -247,8 +247,8 @@ shinyUI(
                  hr()
                  , uiOutput("oneRunHeader")
                  , checkboxInput(inputId = "ShowOrHidePatientData", 
-                                 label = 'Show or Hide Patient Data',
-                                 value=FALSE)
+                                 label = 'Show individual patient data',
+                                 value=TRUE)
                  , bsButton(inputId="btnOneRun", label="Run one CT", styleclass = "success")
                  , uiOutput("oneRunSummaries") 
                  , div(style="overflow-y:auto; max-height:400px;" 
