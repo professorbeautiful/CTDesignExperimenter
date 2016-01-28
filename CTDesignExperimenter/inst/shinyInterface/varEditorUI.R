@@ -103,7 +103,7 @@ readVarFromPage = function() {
              description = input$varDescription, 
              checkDataType = eval(parse(text=input$varCHECK)))) 
   if(class(theVar) == "try-error")
-    shinyalert("Error in variable: " %&% theVar)
+    shinyalert("Error in readVarFromPage: " %&% theVar)
   else
     rValues$theVar = theVar
   return(theVar)
