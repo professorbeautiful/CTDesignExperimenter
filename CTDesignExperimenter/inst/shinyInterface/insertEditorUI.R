@@ -298,9 +298,9 @@ f.btnCheckCode <<- function() {
                         "error! " %&% theFunction,
                         "generatorCode parses fine" %&% if(!is.function(theFunction)) " but it's not a function."
     );
-    createAlert(session, inputId='generatorCodeAlert', alertId = 'generatorCodeAlertCreatorID',
+    createAlert(session, anchorId='generatorCodeAlert', alertId = 'generatorCodeAlertCreatorID',
                 title='Alert: generatorCode parsing result',
-                message=theMessage,
+                content=theMessage,
                 append=FALSE);
   }
 }
